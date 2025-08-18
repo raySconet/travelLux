@@ -45,4 +45,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function event()
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    public function courtCases()
+    {
+        return $this->belongsToMany(CourtCase::class, 'user_case');
+    }
 }

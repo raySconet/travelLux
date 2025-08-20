@@ -1,4 +1,4 @@
-<table class="table-fixed w-full" id="myTable">
+<table class="table-fixed w-full bg-[#eaf1ff] border-[#fff]" id="myTable">
 	<thead class="" id="thead">
 		<tr class="flex w-full">
             <x-calendar-components.th>Sunday</x-calendar-components.th>
@@ -12,9 +12,9 @@
 	</thead>
 	<tbody id="calendarBody" class="flex flex-col">
         @for($i = 0; $i < 6; $i++)
-            <tr class="flex w-full calendarRowData border-[#fff]" data-week="{{ $i + 1 }}" dataId="">
+            <tr class="flex w-full calendarRowData" data-week="{{ $i + 1 }}" dataId="">
                 <x-calendar-components.td class="sunday" />
-                <x-calendar-components.td class="monday" />
+                <x-calendar-components.td class="monday " />
                 <x-calendar-components.td class="tuesday" />
                 <x-calendar-components.td class="wednesday" />
                 <x-calendar-components.td class="thursday" />

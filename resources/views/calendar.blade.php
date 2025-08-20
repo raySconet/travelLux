@@ -16,7 +16,7 @@
             </div>
             <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    @include('calendar.calendar-sidebar') {{-- Include the calendar sidebar component --}}
+                    @include('calendar.lawyers-sidebar') {{-- Include the calendar sidebar component --}}
                 </div>
             </div>
         </div>

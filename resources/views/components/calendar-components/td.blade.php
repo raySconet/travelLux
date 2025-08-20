@@ -1,0 +1,7 @@
+@props(['class' => '', 'id' => null])
+
+<td
+    id="{{ $id }}"
+    {{ $attributes->merge(['class' => 'd-flex flex-column min-h-[110px] border border-[#fff] calendar-day w-full p-2 ' . $class]) }}>
+    {{ $slot }}
+</td>

@@ -90,6 +90,7 @@ function buildCalendarDays(inputMonth = null, inputYear = null) {
         }
     });
 
+
     // fetchEventsByMonthYear(month, year, currentEventTypeIdFilter, status, subStatus);
 }
 

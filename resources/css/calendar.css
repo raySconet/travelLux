@@ -5,6 +5,12 @@
     border-radius: 6px;
 }
 
+.sidebarCalendarCurrentDay {
+    background-color:rgb(28, 104, 170);
+    color: white;
+    font-weight: 600;
+}
+
 .verticalLine {
     border-left: 1px solid #d1d5db;
     height: 27px;

@@ -30,8 +30,6 @@ $(document).ready(() => {
 });
 
 function buildCalendarDays(inputMonth = null, inputYear = null) {
-    $('#calendarBody td').removeClass('currentDay').empty();
-
     const today = new Date();
     const year = inputYear !== null ? inputYear : today.getFullYear();
     const month = inputMonth !== null ? inputMonth : today.getMonth();
@@ -43,53 +41,59 @@ function buildCalendarDays(inputMonth = null, inputYear = null) {
     const firstDay = new Date(year, month, 1).getDay(); // 0 = Sunday
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    const $tds = $('#calendarBody td');
-    let tdIndex = 0;
-    let day = 1;
-
     // Get previous month info
     const prevMonth = month === 0 ? 11 : month - 1;
     const prevYear = month === 0 ? year - 1 : year;
     const daysInPrevMonth = new Date(prevYear, prevMonth + 1, 0).getDate();
 
-    // Fill days from previous month in the first cells (before firstDay)
-    for (; tdIndex < firstDay && tdIndex < $tds.length; tdIndex++) {
-        const dayNum = daysInPrevMonth - firstDay + 1 + tdIndex;
-        $tds.eq(tdIndex).html(`<span class="font-bold text-gray-500">${dayNum}</span>`);  // muted color for prev month days
-    }
+    ['#calendarBody', '#sidebarCalendarBody'].forEach((calendarId) => {
+        const $tds = $(`${calendarId} td`);
+        let tdIndex = 0;
+        let day = 1;
 
-    // Fill days for current month
-    const isCurrentMonth = month === today.getMonth() && year === today.getFullYear();
+        const currentDayClass = calendarId === '#calendarBody' ? 'currentDay' : 'sidebarCalendarCurrentDay';
 
-    while (day <= daysInMonth && tdIndex < $tds.length) {
-        const $td = $tds.eq(tdIndex);
-        $td.removeClass('currentDay'); // Always clear before setting
-        $td.html('<span class="font-bold">' + day + '</span>');
+        // Clear all td cells
+        $tds.removeClass(currentDayClass).empty();
 
-        if (isCurrentMonth && day === today.getDate()) {
-            $td.addClass('currentDay');
-            // console.log("ping!");
+        // Fill days from previous month in the first cells (before firstDay)
+        for (; tdIndex < firstDay && tdIndex < $tds.length; tdIndex++) {
+            const dayNum = daysInPrevMonth - firstDay + 1 + tdIndex;
+            $tds.eq(tdIndex).html(`<span class="font-bold text-gray-500">${dayNum}</span>`);  // muted color for prev month days
         }
-        day++;
-        tdIndex++;
-    }
 
-    // Fill days from next month if any cells left
-    let nextMonthDay = 1;
-    while (tdIndex < $tds.length) {
-        $tds.eq(tdIndex).html('<span class="font-bold text-gray-500">' + nextMonthDay + '</span>'); // muted color for next month days
-        nextMonthDay++;
-        tdIndex++;
-    }
+        // Fill days for current month
+        const isCurrentMonth = month === today.getMonth() && year === today.getFullYear();
 
-    $('#calendarBody tr').each(function(index) {
-        if (index < weeksNeeded) {
-            $(this).show();
-        } else {
-            $(this).hide();
+        while (day <= daysInMonth && tdIndex < $tds.length) {
+            const $td = $tds.eq(tdIndex);
+            $td.removeClass('currentDay'); // Always clear before setting
+            $td.html('<span class="font-bold">' + day + '</span>');
+
+            if (isCurrentMonth && day === today.getDate()) {
+                $td.addClass(currentDayClass);
+                // console.log("ping!");
+            }
+            day++;
+            tdIndex++;
         }
-    });
 
+        // Fill days from next month if any cells left
+        let nextMonthDay = 1;
+        while (tdIndex < $tds.length) {
+            $tds.eq(tdIndex).html('<span class="font-bold text-gray-500">' + nextMonthDay + '</span>'); // muted color for next month days
+            nextMonthDay++;
+            tdIndex++;
+        }
+
+        $(`${calendarId} tr`).each(function(index) {
+            if (index < weeksNeeded) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    })
 
     // fetchEventsByMonthYear(month, year, currentEventTypeIdFilter, status, subStatus);
 }

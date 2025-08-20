@@ -14,6 +14,11 @@
                     @include('calendar.calendar-sidebar') {{-- Include the calendar sidebar component --}}
                 </div>
             </div>
+            <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    @include('calendar.calendar-sidebar') {{-- Include the calendar sidebar component --}}
+                </div>
+            </div>
         </div>
         <div class="xl:col-span-9 mx-auto">
             <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">

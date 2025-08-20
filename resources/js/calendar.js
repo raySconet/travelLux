@@ -90,6 +90,8 @@ function buildCalendarDays(inputMonth = null, inputYear = null) {
         }
     });
 
+    console.log("TD elements count:", $('#calendarBody td').length);
+
     // fetchEventsByMonthYear(month, year, currentEventTypeIdFilter, status, subStatus);
 }
 

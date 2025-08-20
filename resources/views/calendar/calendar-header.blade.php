@@ -12,7 +12,7 @@
 
         <div class="flex items-center space-x-4">
             <el-dropdown class="inline-block w-max">
-                <button class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-[eaf1ff]">
+                <button class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-[eaf1ff] cursor-pointer">
                     <span id="selectedDayWeekMonthOption">
                         Month View
                     </span>

@@ -162,4 +162,5 @@ function parseMonthYear(monthYear) {
 function updateCalendarHeader(month, year) {
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     $('#calendarMonthYearSelected').text(`${monthNames[month]} ${year}`);
+    $('#sidebarCalendarMonthYearSelected').text(`${monthNames[month]} ${year}`);
 }

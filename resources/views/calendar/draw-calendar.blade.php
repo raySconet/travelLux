@@ -11,16 +11,16 @@
 		</tr>
 	</thead>
 	<tbody id="calendarBody" class="flex flex-col">
-            @for($i = 0; $i < 5; $i++)
-                <tr class="flex w-full calendarRowData border-[#fff]" data-week="{{ $i + 1 }}" dataId="">
-                    <x-td-calendar class="sunday" />
-                    <x-td-calendar class="monday" />
-                    <x-td-calendar class="tuesday" />
-                    <x-td-calendar class="wednesday" />
-                    <x-td-calendar class="thursday" />
-                    <x-td-calendar class="friday" />
-                    <x-td-calendar class="saturday" />
-                </tr>
-            @endfor
-        </tbody>
+        @for($i = 0; $i < 6; $i++)
+            <tr class="flex w-full calendarRowData border-[#fff]" data-week="{{ $i + 1 }}" dataId="">
+                <x-td-calendar class="sunday" />
+                <x-td-calendar class="monday" />
+                <x-td-calendar class="tuesday" />
+                <x-td-calendar class="wednesday" />
+                <x-td-calendar class="thursday" />
+                <x-td-calendar class="friday" />
+                <x-td-calendar class="saturday" />
+            </tr>
+        @endfor
+    </tbody>
 </table>

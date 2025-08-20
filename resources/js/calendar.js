@@ -36,6 +36,9 @@ function buildCalendarDays(inputMonth = null, inputYear = null) {
     const year = inputYear !== null ? inputYear : today.getFullYear();
     const month = inputMonth !== null ? inputMonth : today.getMonth();
 
+    const weeksNeeded = getWeeksCountForCalendar(month, year);
+    console.log("Weeks needed:", weeksNeeded);
+
     // console.log(inputMonth, ",", inputYear);
     const firstDay = new Date(year, month, 1).getDay(); // 0 = Sunday
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -79,8 +82,41 @@ function buildCalendarDays(inputMonth = null, inputYear = null) {
         tdIndex++;
     }
 
+    $('#calendarBody tr').each(function(index) {
+        if (index < weeksNeeded) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+
     // fetchEventsByMonthYear(month, year, currentEventTypeIdFilter, status, subStatus);
 }
+
+function getWeeksCountForCalendar(month, year) {
+    const firstDay = new Date(year, month, 1).getDay();
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const prevMonth = month === 0 ? 11 : month - 1;
+    const prevYear = month === 0 ? year - 1 : year;
+    const daysInPrevMonth = new Date(prevYear, prevMonth + 1, 0).getDate();
+
+    const totalCells = firstDay + daysInMonth;
+
+    let weeks = Math.ceil(totalCells / 7);
+
+    const lastDayWeekday = new Date(year, month, daysInMonth).getDay();
+
+    if (weeks === 5 && (firstDay + daysInMonth) > 35) {
+        weeks = 6;
+    }
+
+    if (weeks < 4) weeks = 4;
+
+    return weeks;
+}
+
 
 function generateCalendarDays() {
     buildCalendarDays(currentMonth, currentYear);

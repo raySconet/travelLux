@@ -1,3 +1,6 @@
+body {
+    overflow-y: scroll;
+}
 .currentDay {
     border: 2px solid rgb(28, 104, 170);
     color: #1e293b;
@@ -14,4 +17,11 @@
 .verticalLine {
     border-left: 1px solid #d1d5db;
     height: 27px;
+}
+
+.eventInfo {
+    border: 1px solid #d3d3d3;
+    padding: 2px 0px 2px 4px;
+    cursor: pointer;
+    margin-bottom: 4px;
 }

@@ -2,6 +2,6 @@
 
 <td
     id="{{ $id }}"
-    {{ $attributes->merge(['class' => 'd-flex flex-column min-h-[110px] border border-[#fff] calendar-day w-full p-2 ' . $class]) }}>
+    {{ $attributes->merge(['class' => 'd-flex flex-column min-h-[144px] border border-[#fff] calendarDay w-full p-2 ' . $class]) }}>
     {{ $slot }}
 </td>

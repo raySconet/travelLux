@@ -14,7 +14,7 @@
         @for($i = 0; $i < 6; $i++)
             <tr class="" data-week="{{ $i + 1 }}" dataId="">
                 <x-calendar-components.td class="sunday" />
-                <x-calendar-components.td class="monday " />
+                <x-calendar-components.td class="monday" />
                 <x-calendar-components.td class="tuesday" />
                 <x-calendar-components.td class="wednesday" />
                 <x-calendar-components.td class="thursday" />

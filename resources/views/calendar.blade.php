@@ -22,8 +22,8 @@
                     @include('calendar.calendar-sidebar') {{-- Include the calendar sidebar component --}}
                 </div>
             </div>
-            <div class=" bg-white overflow-visible shadow-xs sm:rounded-lg mt-2 p-6 h-full">
-                <div class="">
+            <div class="flex-1 bg-white overflow-visible shadow-xs sm:rounded-lg mt-2 p-6">
+                <div class="h-full">
                     @include('calendar.lawyers-sidebar') {{-- Include the calendar sidebar component --}}
                 </div>
             </div>

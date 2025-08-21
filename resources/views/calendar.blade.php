@@ -18,7 +18,6 @@
                             <button id ="sidebarCalendarNextMonth" class="text-gray-600 hover:text-black cursor-pointer">&rarr;</button>
                         </div>
                     </div>
-
                     @include('calendar.calendar-sidebar') {{-- Include the calendar sidebar component --}}
                 </div>
             </div>
@@ -38,8 +37,14 @@
 
                 <div class="mt-2 flex-1 flex flex-col">
                     <div class="flex-1 bg-white xl:overflow-visible overflow-hidden shadow-xs sm:rounded-lg">
-                        <div class="p-6 h-full w-full">
-                            @include('calendar.draw-calendar') {{-- Include the calendar drawing component --}}
+                        <div id="viewMonthly" class="p-6 h-full w-full">
+                            @include('calendar.calendar-view.monthly') {{-- Include the calendar drawing component --}}
+                        </div>
+                        <div id="viewWeekly" class="p-6 h-full w-full hidden">
+                            @include('calendar.calendar-view.weekly') {{-- Include the calendar drawing component --}}
+                        </div>
+                        <div id="viewDaily" class="p-6 h-full w-full hidden">
+                            @include('calendar.calendar-view.daily') {{-- Include the calendar drawing component --}}
                         </div>
                     </div>
                 </div>

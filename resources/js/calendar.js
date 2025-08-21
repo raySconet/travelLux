@@ -1,12 +1,9 @@
 let currentMonth, currentYear;
 
 $(document).ready(() => {
-    console.log("Calendar initialized");
-
     ({ month: currentMonth, year: currentYear } = parseMonthYear($('#calendarMonthYearSelected').text()));
 
     generateCalendarDays();
-
 
     $(document).on('click', '#calendarDayViewOption', function() {
         $('#selectedDayWeekMonthOption').text('Day View');
@@ -27,7 +24,25 @@ $(document).ready(() => {
     $(document).on('click', '#calendarNextMonth, #sidebarCalendarNextMonth', function() {
         goToNextMonth();
     });
+
+    $(document).on('click', '#calendarDayViewOption', function() {
+        showView('Daily');
+    });
+
+    $(document).on('click', '#calendarWeekViewOption', function() {
+        showView('Weekly');
+    });
+
+    $(document).on('click', '#calendarMonthViewOption', function() {
+        showView('Monthly');
+    });
 });
+
+function showView(view) {
+    $('#viewMonthly, #viewWeekly, #viewDaily').addClass('hidden');
+    $('#view' + view).removeClass('hidden');
+    // $('#selectedDayWeekMonthOption').text(view + ' View');
+}
 
 function buildCalendarDays(inputMonth = null, inputYear = null) {
     const today = new Date();

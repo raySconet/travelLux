@@ -41,7 +41,7 @@
                 </el-menu>
             </el-dropdown>
             <span class="verticalLine"></span>
-            <button class="bg-[#1c68aa] hover:opacity-80 text-white font-bold py-2 px-4 rounded cursor-pointer">
+            <button class="bg-[#14548d]  text-white font-semibold py-2 px-4 rounded cursor-pointer">
                 <i class="fa-solid fa-plus"></i>
                 <span class="ml-2">
                     {{ __('Add Event') }}

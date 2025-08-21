@@ -7,7 +7,7 @@
         </h2>
     </x-slot>
 
-    <div class="text-gray-900 px-5 py-12 grid grid-cols-1 xl:grid-cols-12 gap-2">
+    <div class="text-gray-900 px-5 py-7 grid grid-cols-1 xl:grid-cols-12 gap-2">
         <div class="xl:col-span-3">
             <div class="row-span-4 bg-white overflow-hidden shadow-xs sm:rounded-lg">
                 <div class="p-6 text-gray-900">

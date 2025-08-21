@@ -72,6 +72,39 @@ function buildCalendarDays(inputMonth = null, inputYear = null) {
 
             if (isCurrentMonth && day === today.getDate()) {
                 $td.addClass(currentDayClass);
+                if (calendarId === '#calendarBody') {
+                    $td.append(`<div class="event eventContainer text-black EventInfo bg-[#b71c1cb3]"
+                                    id="event"
+                                    draggable="true"
+                                    title="">
+                                    <span>Rony Chammai</span>
+                                </div>
+                                <div class="event eventContainer text-black EventInfo bg-[#b71c1cb3]"
+                                    id="event"
+                                    draggable="true"
+                                    title="">
+                                    <span>Rony Chammai</span>
+                                </div>
+                                <div class="event eventContainer text-black EventInfo bg-[#b71c1cb3]"
+                                    id="event"
+                                    draggable="true"
+                                    title="">
+                                    <span>Rony Chammai</span>
+                                </div>
+                                <div class="event eventContainer text-black EventInfo bg-[#b71c1cb3]"
+                                    id="event"
+                                    draggable="true"
+                                    title="">
+                                    <span>Rony Chammai</span>
+                                </div>
+                                <div class="event eventContainer text-black EventInfo bg-[#b71c1cb3]"
+                                    id="event"
+                                    draggable="true"
+                                    title="">
+                                    <span>Rony Chammai</span>
+                                </div>
+                                `)
+                }
                 // console.log("ping!");
             }
             day++;

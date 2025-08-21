@@ -22,8 +22,9 @@ html {
 }
 
 .eventInfo {
+    font-size: 14px;
     border: 1px solid #d3d3d3;
     padding: 2px 0px 2px 4px;
     cursor: pointer;
-    margin-bottom: 4px;
+    margin-top:3px;
 }

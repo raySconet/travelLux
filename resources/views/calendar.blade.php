@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="flex-1 bg-white overflow-visible shadow-xs sm:rounded-lg mt-2 p-6">
-                <div class="h-full">
+                <div class="h-full max-h-[1040px] overflow-y-auto">
                     @include('calendar.lawyers-sidebar') {{-- Include the calendar sidebar component --}}
                 </div>
             </div>

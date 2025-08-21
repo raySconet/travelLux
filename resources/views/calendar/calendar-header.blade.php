@@ -12,7 +12,7 @@
 
         <x-calendar-components.section class="justify-center space-x-2">
             <x-calendar-components.secondary-btn id="calendarEventTypeFilter">
-                <i class="fa-solid fa-filter"></i>
+                <i class="fa-solid fa-people-group"></i>
                 <span class="ml-2">{{ __('Events') }}</span>
             </x-calendar-components.secondary-btn>
             <x-calendar-components.secondary-btn id="calendarCases">

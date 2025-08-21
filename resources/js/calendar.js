@@ -20,11 +20,11 @@ $(document).ready(() => {
         $('#selectedDayWeekMonthOption').text('Month View');
     });
 
-    $(document).on('click', '#calendarPrevMonth', function() {
+    $(document).on('click', '#calendarPrevMonth, #sidebarCalendarPrevMonth', function() {
         goToPreviousMonth();
     });
 
-    $(document).on('click', '#calendarNextMonth', function() {
+    $(document).on('click', '#calendarNextMonth, #sidebarCalendarNextMonth', function() {
         goToNextMonth();
     });
 });

@@ -1,6 +1,8 @@
-body {
+html {
     overflow-y: scroll;
+    overflow-x: hidden;
 }
+
 .currentDay {
     border: 2px solid rgb(28, 104, 170);
     color: #1e293b;

@@ -75,7 +75,7 @@
                 <x-calendar-components.checkbox data-user-id="123" />
             </label>
         </li>
-         <li>
+        <li>
             <label class="w-full p-3 bg-[#eaf1ff] rounded-lg shadow flex items-center justify-between hover:bg-[#dce9ff] transition duration-200 ease-in-out cursor-pointer">
                 <span class="text-sm font-medium text-[#2d3b50]">Jane Smith</span>
                 <x-calendar-components.checkbox data-user-id="123" />

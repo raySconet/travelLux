@@ -19,9 +19,9 @@
         </div>
 
         <div class="flex justify-end mt-4">
-            <x-primary-button>
+            <x-primary-btn>
                 {{ __('Confirm') }}
-            </x-primary-button>
+            </x-primary-btn>
         </div>
     </form>
 </x-guest-layout>

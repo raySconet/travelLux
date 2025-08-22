@@ -25,4 +25,6 @@ Route::get('/calendar', function () {
 Route::get('/caseInfo', function(){
     return view('caseInfo');
 })->middleware(['auth','verified'])->name('caseInfo');
+
+
 require __DIR__.'/auth.php';

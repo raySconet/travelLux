@@ -5,6 +5,25 @@ $(document).ready(() => {
 
     generateCalendarDays();
 
+    $(document).on('click', '.sidebar-day-btn', function() {
+        const dateStr = $(this).data('date');
+        const [year, month, day] = dateStr.split('-').map(Number);
+
+        const selected = new Date(year, month - 1, day);
+        window.selectedDate = selected;
+
+        currentMonth = selected.getMonth();
+        currentYear = selected.getFullYear();
+
+        updateCalendarHeader(currentMonth, currentYear);
+        buildMonthlyCalendarDays(currentMonth, currentYear);
+        buildDailyView(day, currentMonth, currentYear);
+        updateDailyHeader(selected);
+
+        showView('Daily');
+    });
+
+
     $(document).on('click', '#calendarDayViewOption', function() {
         $('#selectedDayWeekMonthOption').text('Day View');
     });
@@ -15,6 +34,32 @@ $(document).ready(() => {
 
     $(document).on('click', '#calendarMonthViewOption', function() {
         $('#selectedDayWeekMonthOption').text('Month View');
+    });
+
+    $(document).on('click', '#calendarPrevDay', function() {
+        if(!window.selectedDate) window.selectedDate = new Date();
+
+        window.selectedDate.setDate(window.selectedDate.getDate() - 1);
+
+        const newMonth = window.selectedDate.getMonth();
+        const newYear = window.selectedDate.getFullYear();
+
+        if (newMonth !== currentMonth || newYear !== currentYear) {
+            currentMonth = newMonth;
+            currentYear = newYear;
+            updateCalendarHeader(currentMonth, currentYear);
+            buildMonthlyCalendarDays(currentMonth, currentYear);
+        }
+
+        buildDailyView(window.selectedDate.getDate(), window.selectedDate.getMonth(), window.selectedDate.getFullYear());
+        updateDailyHeader(window.selectedDate);
+    })
+
+    $(document).on('click', '#calendarNextDay', function() {
+        if (!window.selectedDate) window.selectedDate = new Date();
+        window.selectedDate.setDate(window.selectedDate.getDate() + 1);
+        buildDailyView(window.selectedDate.getDate(), window.selectedDate.getMonth(), window.selectedDate.getFullYear());
+        updateDailyHeader(window.selectedDate);
     });
 
     $(document).on('click', '#calendarPrevMonth, #sidebarCalendarPrevMonth', function() {
@@ -42,12 +87,53 @@ $(document).ready(() => {
     });
 });
 
+function toggleHeaderForView(view) {
+    if(view === 'Monthly') {
+        $('#monthToggleSection').removeClass('hidden');
+        $('#dayToggleSection').addClass('hidden');
+    } else if(view === 'Daily') {
+        $('#monthToggleSection').addClass('hidden');
+        $('#dayToggleSection').removeClass('hidden');
+
+        if(window.selectedDate) { // storage day
+            updateDailyHeader(window.selectedDate);
+        } else {
+            updateDailyHeader(new Date());
+        }
+    } else {
+        // For Week view or others, you can decide similarly
+        $('#monthToggleSection').removeClass('hidden');
+        $('#dayToggleSection').addClass('hidden');
+    }
+}
+
+function updateDailyHeader(date) {
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayName = dayNames[date.getDay()];
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    $('#calendarDaySelected').html(`${monthNames[month]} ${day}, ${year}`);
+}
+
 function showView(view) {
     $('#viewMonthly, #viewWeekly, #viewDaily').addClass('hidden');
     $('#view' + view).removeClass('hidden');
 
+    toggleHeaderForView(view);
+
     if (view === 'Daily') {
-        buildDailyView();
+        if (window.selectedDate) {
+            buildDailyView(
+                window.selectedDate.getDate(),
+                window.selectedDate.getMonth(),
+                window.selectedDate.getFullYear()
+            );
+        } else {
+            buildDailyView();
+        }
     }
 }
 
@@ -64,27 +150,81 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     const userName = "~Rony Chammai";
 
     // Set day name and user in header
-    const $dailyHeader = $('#viewDaily thead x-calendar-components\\.th');
+    const $dailyHeader = $('#dailyHeader');
+    const $dailyBody = $('#dailyBody');
+
     $dailyHeader.html(`${dayName} ${day} <div>${userName}</div>`);
 
-    // Clear and repopulate events
-    const $dailyBody = $('#viewDaily tbody');
     $dailyBody.empty();
 
     const dailyEvents = getEventsForDate(selectedDate);
 
-    dailyEvents.forEach(event => {
-        const $row = $(`
-            <tr class="calendarRowData">
-                <x-calendar-components.td class="h-full px-4 border-0">
-                    <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
-                        <span>${event.title}</span>
-                    </div>
-                </x-calendar-components.td>
-            </tr>
-        `);
-        $dailyBody.append($row);
-    });
+    if (dailyEvents.length === 1) {
+        $('#dailyViewTable').removeClass('hidden');
+        $('#dailyViewTableHidden').addClass('hidden');
+
+        const user = dailyEvents[0];
+        $('#dailyHeader').html(`${dayName} ${day} <div>${user.user}</div>`);
+
+        const $dailyBody = $('#dailyBody');
+        $dailyBody.empty();
+
+        user.events.forEach(event => {
+            const $row = $(`
+                <tr class="calendarRowData mt-2">
+                    <td class="min-w-[500px] h-full px-4 border-0">
+                        <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                            <span>${event.title}</span>
+                        </div>
+                    </td>
+                </tr>
+            `);
+            $dailyBody.append($row);
+        });
+
+    } else if (dailyEvents.length >= 2) {
+        $('#dailyViewTable').removeClass('hidden');
+        $('#dailyViewTableHidden').removeClass('hidden');
+
+        // Fill first table
+        const user1 = dailyEvents[0];
+        $('#dailyHeader').html(`${dayName} ${day} <div>${user1.user}</div>`);
+        const $dailyBody = $('#dailyBody');
+        $dailyBody.empty();
+        user1.events.forEach(event => {
+            const $row = $(`
+                <tr class="calendarRowData mt-2">
+                    <td class="min-w-[500px] h-full px-4 border-0">
+                        <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                            <span>${event.title}</span>
+                        </div>
+                    </td>
+                </tr>
+            `);
+            $dailyBody.append($row);
+        });
+
+        // Fill second table
+        const user2 = dailyEvents[1];
+        const $headerHidden = $('#dailyHeaderHidden');
+        $headerHidden.html(`${dayName} ${day} <div>${user2.user}</div>`);
+
+        const $bodyHidden = $('#dailyViewTableHidden tbody');
+        $bodyHidden.empty();
+        user2.events.forEach(event => {
+            const $row = $(`
+                <tr class="calendarRowData mt-2">
+                    <td class="min-w-[500px] h-full px-4 border-0">
+                        <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                            <span>${event.title}</span>
+                        </div>
+                    </td>
+                </tr>
+            `);
+            $bodyHidden.append($row);
+        });
+    }
+
 
     console.log("Daily view rendered for:", selectedDate.toDateString());
 }
@@ -92,11 +232,23 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 function getEventsForDate(date) {
     // Stub: replace this with your actual fetch logic
     return [
-        { title: 'AAM - NEW REFERRAL - SIMONE ALEXANDER' },
-        { title: 'Team Sync - Project Phoenix' },
-        { title: 'Follow-up Call with Client' }
+        {
+            user: 'Simone Alexander',
+            events: [
+                { title: 'AAM - NEW REFERRAL - SIMONE ALEXANDER' },
+                { title: 'Morning Briefing' }
+            ]
+        },
+        // {
+        //     user: 'John Doe',
+        //     events: [
+        //         { title: 'Team Sync - Project Phoenix' },
+        //         { title: 'Follow-up Call with Client' }
+        //     ]
+        // }
     ];
 }
+
 
 function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
     const today = new Date();
@@ -137,7 +289,12 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
         while (day <= daysInMonth && tdIndex < $tds.length) {
             const $td = $tds.eq(tdIndex);
             $td.removeClass('currentDay'); // Always clear before setting
-            $td.html('<span class="font-bold">' + day + '</span>');
+            if (calendarId === '#sidebarCalendarBody') {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                $td.html(`<button class="sidebar-day-btn font-bold text-black" data-date="${dateStr}">${day}</button>`);
+            } else {
+                $td.html('<span class="font-bold">' + day + '</span>');
+            }
 
             if (isCurrentMonth && day === today.getDate()) {
                 $td.addClass(currentDayClass);

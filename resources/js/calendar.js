@@ -291,7 +291,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
             $td.removeClass('currentDay'); // Always clear before setting
             if (calendarId === '#sidebarCalendarBody') {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                $td.html(`<button class="sidebar-day-btn font-bold text-black" data-date="${dateStr}">${day}</button>`);
+                $td.html(`<button class="sidebar-day-btn font-bold" data-date="${dateStr}">${day}</button>`);
             } else {
                 $td.html('<span class="font-bold">' + day + '</span>');
             }

@@ -172,7 +172,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         user.events.forEach(event => {
             const $row = $(`
                 <tr class="calendarRowData mt-2">
-                    <td class="min-w-[500px] h-full px-4 border-0">
+                    <td class="min-w-[500px] px-4 border-0">
                         <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                             <span>${event.title}</span>
                         </div>
@@ -194,7 +194,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         user1.events.forEach(event => {
             const $row = $(`
                 <tr class="calendarRowData mt-2">
-                    <td class="min-w-[500px] h-full px-4 border-0">
+                    <td class="min-w-[500px] px-4 border-0">
                         <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                             <span>${event.title}</span>
                         </div>

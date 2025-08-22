@@ -21,7 +21,7 @@
                     @include('calendar.calendar-sidebar') {{-- Include the calendar sidebar component --}}
                 </div>
             </div>
-            <div class="flex-1 bg-white overflow-visible shadow-xs sm:rounded-lg mt-2 py-6 pl-6">
+            <div class="bg-white overflow-visible shadow-xs sm:rounded-lg mt-2 py-6 pl-6">
                 <div class="h-full max-h-[1040px] overflow-y-auto pr-6">
                     @include('calendar.lawyers-sidebar') {{-- Include the calendar sidebar component --}}
                 </div>
@@ -35,18 +35,16 @@
                     </div>
                 </div>
 
-                <div class="mt-2 flex-1 flex flex-col">
-                    <div class="flex-1 bg-white xl:overflow-visible overflow-hidden shadow-xs sm:rounded-lg">
+                <div class="mt-2 flex-1 flex flex-col bg-white xl:overflow-visible overflow-hidden shadow-xs sm:rounded-lg">
                         <div id="viewMonthly" class="p-6 h-full w-full">
                             @include('calendar.calendar-view.monthly') {{-- Include the calendar drawing component --}}
                         </div>
                         <div id="viewWeekly" class="p-6 h-full w-full hidden">
                             @include('calendar.calendar-view.weekly') {{-- Include the calendar drawing component --}}
                         </div>
-                        <div id="viewDaily" class="p-6 h-full w-full hidden">
+                        <div id="viewDaily" class="p-6 h-full flex justify-center hidden">
                             @include('calendar.calendar-view.daily') {{-- Include the calendar drawing component --}}
                         </div>
-                    </div>
                 </div>
             </div>
         </div>

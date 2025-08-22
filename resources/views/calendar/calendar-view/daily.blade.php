@@ -1,26 +1,38 @@
-<table class="table-fixed w-full bg-[#eaf1ff] border-[#fff]" id="dailyTable">
-	<thead class="" id="thead">
-		<tr class="flex w-full">
-            <x-calendar-components.th>Sunday</x-calendar-components.th>
-            <x-calendar-components.th>Monday</x-calendar-components.th>
-            <x-calendar-components.th>Tuesday</x-calendar-components.th>
-            <x-calendar-components.th>Wednesday</x-calendar-components.th>
-            <x-calendar-components.th>Thursday</x-calendar-components.th>
-            <x-calendar-components.th>Friday</x-calendar-components.th>
-            <x-calendar-components.th>Saturday</x-calendar-components.th>
+<table class="table-fixed w-full bg-[#eaf1ff] border border-[#fff]" id="dailyTable">
+	<thead class="grid grid-cols-12 gap-4" id="">
+		<tr class="flex w-full col-span-6">
+            <x-calendar-components.th class="p-4 text-start border-0 flex justify-between">
+                Sunday
+                <div class="">~John Doe</div>
+            </x-calendar-components.th>
+		</tr>
+        <tr class="flex w-full col-span-6">
+            <x-calendar-components.th class="p-4 text-start border-0 flex justify-between">
+                Sunday
+                <div class="">~John Doe</div>
+            </x-calendar-components.th>
 		</tr>
 	</thead>
-	<tbody id="calendarBody" class="flex flex-col">
-        @for($i = 0; $i < 6; $i++)
-            <tr class="flex w-full calendarRowData" data-week="{{ $i + 1 }}" dataId="">
-                <x-calendar-components.td class="sunday h-[210px]" />
-                <x-calendar-components.td class="monday h-[210px]" />
-                <x-calendar-components.td class="tuesday h-[210px]" />
-                <x-calendar-components.td class="wednesday h-[210px]" />
-                <x-calendar-components.td class="thursday h-[210px]" />
-                <x-calendar-components.td class="friday h-[210px]" />
-                <x-calendar-components.td class="saturday h-[210px]" />
-            </tr>
-        @endfor
+	<tbody id="" class="flex flex-col flex-1 border-t-2 border-[#fff]">
+        <tr class="flex size-full calendarRowData" dataId="">
+            <x-calendar-components.td class="flex-1 h-full px-4 border-0">
+                <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]"
+                    id="event"
+                    draggable="true"
+                    title="">
+                    <span>AAM -NEW REFFERAL - SIMONE ALEXANDER;</span>
+                </div>
+            </x-calendar-components.td>
+        </tr>
+        <tr class="flex size-full calendarRowData" dataId="">
+            <x-calendar-components.td class="flex-1 h-full px-4 border-0">
+                <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]"
+                    id="event"
+                    draggable="true"
+                    title="">
+                    <span>AAM -NEW REFFERAL - SIMONE ALEXANDER;</span>
+                </div>
+            </x-calendar-components.td>
+        </tr>
     </tbody>
 </table>

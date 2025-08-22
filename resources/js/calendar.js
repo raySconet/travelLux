@@ -25,23 +25,26 @@ $(document).ready(() => {
         goToNextMonth();
     });
 
-    $(document).on('click', '#calendarDayViewOption', function() {
-        showView('Daily');
-    });
+    $(document).on('click', '#calendarDayViewOption, #calendarWeekViewOption, #calendarMonthViewOption', function() {
+        const id = this.id
 
-    $(document).on('click', '#calendarWeekViewOption', function() {
-        showView('Weekly');
-    });
+        const viewMap = {
+            'calendarDayViewOption': 'Daily',
+            'calendarWeekViewOption': 'Weekly',
+            'calendarMonthViewOption': 'Monthly'
+        };
 
-    $(document).on('click', '#calendarMonthViewOption', function() {
-        showView('Monthly');
+        const view = viewMap[id];
+        showView(view);
+
+        const el = $('#viewOptionsDropdown [popover]')[0];
+        el?.hidePopover?.();
     });
 });
 
 function showView(view) {
     $('#viewMonthly, #viewWeekly, #viewDaily').addClass('hidden');
     $('#view' + view).removeClass('hidden');
-    // $('#selectedDayWeekMonthOption').text(view + ' View');
 }
 
 function buildCalendarDays(inputMonth = null, inputYear = null) {

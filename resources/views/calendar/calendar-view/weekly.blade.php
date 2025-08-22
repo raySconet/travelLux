@@ -13,13 +13,13 @@
 	<tbody id="calendarBody" class="flex flex-col">
         @for($i = 0; $i < 6; $i++)
             <tr class="flex w-full calendarRowData" data-week="{{ $i + 1 }}" dataId="">
-                <x-calendar-components.td class="sunday h-[210px]" />
-                <x-calendar-components.td class="monday h-[210px]" />
-                <x-calendar-components.td class="tuesday h-[210px]" />
-                <x-calendar-components.td class="wednesday h-[210px]" />
-                <x-calendar-components.td class="thursday h-[210px]" />
-                <x-calendar-components.td class="friday h-[210px]" />
-                <x-calendar-components.td class="saturday h-[210px]" />
+                <x-calendar-components.td class="sunday h-[210px] w-full" />
+                <x-calendar-components.td class="monday h-[210px] w-full" />
+                <x-calendar-components.td class="tuesday h-[210px] w-full" />
+                <x-calendar-components.td class="wednesday h-[210px] w-full" />
+                <x-calendar-components.td class="thursday h-[210px] w-full" />
+                <x-calendar-components.td class="friday h-[210px] w-full" />
+                <x-calendar-components.td class="saturday h-[210px] w-full" />
             </tr>
         @endfor
     </tbody>

@@ -22,7 +22,7 @@
         </x-calendar-components.section>
 
         <x-calendar-components.section class="justify-end space-x-4">
-            <el-dropdown class="inline-block w-max">
+            <el-dropdown id="viewOptionsDropdown" class="inline-block w-max">
                 <button class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-[eaf1ff] cursor-pointer w-31">
                     <span id="selectedDayWeekMonthOption">
                         Month View

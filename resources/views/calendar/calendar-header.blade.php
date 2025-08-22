@@ -41,12 +41,12 @@
                 </el-menu>
             </el-dropdown>
             <span class="verticalLine"></span>
-            <button class="bg-[#14548d]  text-white font-semibold py-2 px-4 rounded cursor-pointer">
+            <x-calendar-components.primary-btn class="bg-[#14548d]  text-white font-semibold py-2 px-4 rounded cursor-pointer">
                 <i class="fa-solid fa-plus"></i>
                 <span class="ml-2">
                     {{ __('Add Event') }}
                 </span>
-            </button>
+            </x-calendar-components.primary-btn>
         </x-calendar-components.section>
     </div>
 </div>

@@ -45,9 +45,60 @@ $(document).ready(() => {
 function showView(view) {
     $('#viewMonthly, #viewWeekly, #viewDaily').addClass('hidden');
     $('#view' + view).removeClass('hidden');
+
+    if (view === 'Daily') {
+        buildDailyView();
+    }
 }
 
-function buildCalendarDays(inputMonth = null, inputYear = null) {
+function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
+    const today = new Date();
+
+    const year = inputYear !== null ? inputYear : today.getFullYear();
+    const month = inputMonth !== null ? inputMonth : today.getMonth();
+    const day = inputDay !== null ? inputDay : today.getDate();
+
+    const selectedDate = new Date(year, month, day);
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayName = daysOfWeek[selectedDate.getDay()];
+    const userName = "~Rony Chammai";
+
+    // Set day name and user in header
+    const $dailyHeader = $('#viewDaily thead x-calendar-components\\.th');
+    $dailyHeader.html(`${dayName} ${day} <div>${userName}</div>`);
+
+    // Clear and repopulate events
+    const $dailyBody = $('#viewDaily tbody');
+    $dailyBody.empty();
+
+    const dailyEvents = getEventsForDate(selectedDate);
+
+    dailyEvents.forEach(event => {
+        const $row = $(`
+            <tr class="calendarRowData">
+                <x-calendar-components.td class="h-full px-4 border-0">
+                    <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                        <span>${event.title}</span>
+                    </div>
+                </x-calendar-components.td>
+            </tr>
+        `);
+        $dailyBody.append($row);
+    });
+
+    console.log("Daily view rendered for:", selectedDate.toDateString());
+}
+
+function getEventsForDate(date) {
+    // Stub: replace this with your actual fetch logic
+    return [
+        { title: 'AAM - NEW REFERRAL - SIMONE ALEXANDER' },
+        { title: 'Team Sync - Project Phoenix' },
+        { title: 'Follow-up Call with Client' }
+    ];
+}
+
+function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
     const today = new Date();
     const year = inputYear !== null ? inputYear : today.getFullYear();
     const month = inputMonth !== null ? inputMonth : today.getMonth();
@@ -181,7 +232,7 @@ function getWeeksCountForCalendar(month, year) {
 
 
 function generateCalendarDays() {
-    buildCalendarDays(currentMonth, currentYear);
+    buildMonthlyCalendarDays(currentMonth, currentYear);
 }
 
 function goToNextMonth() {
@@ -193,7 +244,7 @@ function goToNextMonth() {
     }
 
     updateCalendarHeader(currentMonth, currentYear);
-    buildCalendarDays(currentMonth, currentYear);
+    buildMonthlyCalendarDays(currentMonth, currentYear);
 
 }
 
@@ -206,7 +257,7 @@ function goToPreviousMonth() {
     }
 
     updateCalendarHeader(currentMonth, currentYear);
-    buildCalendarDays(currentMonth, currentYear);
+    buildMonthlyCalendarDays(currentMonth, currentYear);
 }
 
 function parseMonthYear(monthYear) {

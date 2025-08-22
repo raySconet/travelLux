@@ -18,7 +18,7 @@
     </tbody>
 </table>
 
-<table class="w-full bg-[#eaf1ff] border border-[#fff]">
+<table class="w-full bg-[#eaf1ff] border border-[#fff] hidden">
     <thead>
         <tr>
             <x-calendar-components.th class="p-4 text-start border-0 flex justify-between">

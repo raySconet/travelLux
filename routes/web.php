@@ -4,7 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth/login');
 });
 
 Route::get('/dashboard', function () {
@@ -21,4 +21,8 @@ Route::get('/calendar', function () {
     return view('calendar');
 })->middleware(['auth', 'verified'])->name('calendar');
 
+
+Route::get('/caseInfo', function(){
+    return view('caseInfo');
+})->middleware(['auth','verified'])->name('caseInfo');
 require __DIR__.'/auth.php';

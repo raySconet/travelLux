@@ -160,7 +160,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     const dailyEvents = getEventsForDate(selectedDate);
 
     if (dailyEvents.length === 1) {
-        $('#dailyViewTable').removeClass('hidden');
+        $('#dailyViewTable').removeClass('hidden').addClass('max-w-[750px]');
         $('#dailyViewTableHidden').addClass('hidden');
 
         const user = dailyEvents[0];
@@ -172,7 +172,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         user.events.forEach(event => {
             const $row = $(`
                 <tr class="calendarRowData mt-2">
-                    <td class="min-w-[500px] px-4 border-0">
+                    <td class="px-4 border-0">
                         <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                             <span>${event.title}</span>
                         </div>
@@ -194,7 +194,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         user1.events.forEach(event => {
             const $row = $(`
                 <tr class="calendarRowData mt-2">
-                    <td class="min-w-[500px] px-4 border-0">
+                    <td class="px-4 border-0">
                         <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                             <span>${event.title}</span>
                         </div>
@@ -214,7 +214,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         user2.events.forEach(event => {
             const $row = $(`
                 <tr class="calendarRowData mt-2">
-                    <td class="min-w-[500px] h-full px-4 border-0">
+                    <td class="px-4 border-0">
                         <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                             <span>${event.title}</span>
                         </div>
@@ -239,13 +239,13 @@ function getEventsForDate(date) {
                 { title: 'Morning Briefing' }
             ]
         },
-        // {
-        //     user: 'John Doe',
-        //     events: [
-        //         { title: 'Team Sync - Project Phoenix' },
-        //         { title: 'Follow-up Call with Client' }
-        //     ]
-        // }
+        {
+            user: 'John Doe',
+            events: [
+                { title: 'Team Sync - Project Phoenix' },
+                { title: 'Follow-up Call with Client' }
+            ]
+        }
     ];
 }
 

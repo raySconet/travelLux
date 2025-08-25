@@ -74,12 +74,8 @@
                             <br>
                             <strong>What’s been done:</strong><br>
                             00/00/00<br>
-                            Spoke to potential client about their case<br>
+                            Spoke to potential client about their caseeee<br>
                             </p>
-
-
-
-
                     </div>
                 </div>
             </div>

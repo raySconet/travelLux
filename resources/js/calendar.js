@@ -223,20 +223,20 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             `;
             bodyHidden.append(row);
         });
-        bodyHidden.append(`
-            <tr class="calendarRowData">
-                <td class="px-2 h-[1150px]">
-                    <div class="dailyEventInfo " draggable="true"></div>
-                </td>
-            </tr>
-        `);
-        dailyBody.append(`
-            <tr class="calendarRowData">
-                <td class="px-2 h-[1150px]">
-                    <div class="dailyEventInfo" draggable="true"></div>
-                </td>
-            </tr>
-        `);
+        // bodyHidden.append(`
+        //     <tr class="calendarRowData">
+        //         <td class="px-2 h-[1150px]">
+        //             <div class="dailyEventInfo " draggable="true"></div>
+        //         </td>
+        //     </tr>
+        // `);
+        // dailyBody.append(`
+        //     <tr class="calendarRowData">
+        //         <td class="px-2 h-[1150px]">
+        //             <div class="dailyEventInfo" draggable="true"></div>
+        //         </td>
+        //     </tr>
+        // `);
     }
 
 

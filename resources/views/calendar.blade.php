@@ -41,7 +41,11 @@
                     <div id="viewWeekly" class="p-6 hidden">
                         @include('calendar.calendar-view.weekly') {{-- Include the calendar drawing component --}}
                     </div>
+<<<<<<< HEAD
                     <div id="viewDaily" class="p-6  hidden">
+=======
+                    <div id="viewDaily" class="grid grid-cols-12 2xl:grid-cols-12 p-6 hidden">
+>>>>>>> dfaee306d2c28994314221b23d6d4a47b1e24549
                         @include('calendar.calendar-view.daily') {{-- Include the calendar drawing component --}}
                     </div>
                 </div>

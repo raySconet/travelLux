@@ -150,36 +150,36 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     const userName = "~Rony Chammai";
 
     // Set day name and user in header
-    const $dailyHeader = $('#dailyHeader');
-    const $dailyBody = $('#dailyBody');
+    const dailyHeader = $('#dailyHeader');
+    const dailyBody = $('#dailyBody');
 
-    $dailyHeader.html(`${dayName} ${day} <div>${userName}</div>`);
+    dailyHeader.html(`${dayName} ${day} <div>${userName}</div>`);
 
-    $dailyBody.empty();
+    dailyBody.empty();
 
     const dailyEvents = getEventsForDate(selectedDate);
 
     if (dailyEvents.length === 1) {
-        $('#dailyViewTable').removeClass('hidden').addClass('max-w-[750px]');
+        $('#dailyViewTable').removeClass('hidden xl:col-span-6').addClass('max-w-[750px] xl:col-span-12 mx-auto');
         $('#dailyViewTableHidden').addClass('hidden');
 
         const user = dailyEvents[0];
         $('#dailyHeader').html(`${dayName} ${day} <div>${user.user}</div>`);
 
-        const $dailyBody = $('#dailyBody');
-        $dailyBody.empty();
+        const dailyBody = $('#dailyBody');
+        dailyBody.empty();
 
         user.events.forEach(event => {
             const $row = $(`
-                <tr class="calendarRowData mt-2">
-                    <td class="px-4 border-0">
+                <tr class="calendarRowData">
+                    <td class="px-2">
                         <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                             <span>${event.title}</span>
                         </div>
                     </td>
                 </tr>
             `);
-            $dailyBody.append($row);
+            dailyBody.append($row);
         });
 
     } else if (dailyEvents.length >= 2) {
@@ -189,40 +189,54 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         // Fill first table
         const user1 = dailyEvents[0];
         $('#dailyHeader').html(`${dayName} ${day} <div>${user1.user}</div>`);
-        const $dailyBody = $('#dailyBody');
-        $dailyBody.empty();
+        const dailyBody = $('#dailyBody');
+        dailyBody.empty();
         user1.events.forEach(event => {
-            const $row = $(`
-                <tr class="calendarRowData mt-2">
-                    <td class="px-4 border-0">
+            const row = $(`
+                <tr class="calendarRowData">
+                    <td class="px-2">
                         <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                             <span>${event.title}</span>
                         </div>
                     </td>
                 </tr>
             `);
-            $dailyBody.append($row);
+            dailyBody.append(row);
         });
 
         // Fill second table
         const user2 = dailyEvents[1];
-        const $headerHidden = $('#dailyHeaderHidden');
-        $headerHidden.html(`${dayName} ${day} <div>${user2.user}</div>`);
+        const headerHidden = $('#dailyHeaderHidden');
+        headerHidden.html(`${dayName} ${day} <div>${user2.user}</div>`);
 
-        const $bodyHidden = $('#dailyViewTableHidden tbody');
-        $bodyHidden.empty();
+        const bodyHidden = $('#dailyViewTableHidden tbody');
+        bodyHidden.empty();
         user2.events.forEach(event => {
-            const $row = $(`
-                <tr class="calendarRowData mt-2">
-                    <td class="px-4 border-0">
+            let row = `
+                <tr class="calendarRowData">
+                    <td class="px-2">
                         <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                             <span>${event.title}</span>
                         </div>
                     </td>
                 </tr>
-            `);
-            $bodyHidden.append($row);
+            `;
+            bodyHidden.append(row);
         });
+        bodyHidden.append(`
+            <tr class="calendarRowData">
+                <td class="px-2 h-[1150px]">
+                    <div class="dailyEventInfo " draggable="true"></div>
+                </td>
+            </tr>
+        `);
+        dailyBody.append(`
+            <tr class="calendarRowData">
+                <td class="px-2 h-[1150px]">
+                    <div class="dailyEventInfo" draggable="true"></div>
+                </td>
+            </tr>
+        `);
     }
 
 

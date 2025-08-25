@@ -31,10 +31,9 @@ html {
 }
 
 .dailyEventInfo {
-    font-size: 14px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
-    padding: 8px;
     cursor: pointer;
-    margin-top:3px;
+    margin-top:5px;
+    padding:10px;
+    border-radius:6px;
+    height:38px;
 }
-

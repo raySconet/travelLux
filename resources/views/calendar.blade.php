@@ -34,7 +34,6 @@
                         @include('calendar.calendar-header') {{-- Include the calendar header component --}}
                     </div>
                 </div>
-
                 <div class="mt-2 flex-1 flex flex-col bg-white xl:overflow-visible overflow-hidden shadow-xs sm:rounded-lg">
                     <div id="viewMonthly" class="p-6">
                         @include('calendar.calendar-view.monthly') {{-- Include the calendar drawing component --}}
@@ -42,11 +41,13 @@
                     <div id="viewWeekly" class="p-6 hidden">
                         @include('calendar.calendar-view.weekly') {{-- Include the calendar drawing component --}}
                     </div>
-                    <div id="viewDaily" class="p-6 flex justify-center hidden">
+                    <div id="viewDaily" class="p-6  hidden">
                         @include('calendar.calendar-view.daily') {{-- Include the calendar drawing component --}}
                     </div>
                 </div>
             </div>
         </div>
+
+
     </div>
 </x-app-layout>

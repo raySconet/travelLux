@@ -1,4 +1,4 @@
-<table id="dailyViewTable" class="table-fixed w-full bg-[#eaf1ff] border border-[#fff]">
+<table id="dailyViewTable" class="w-full bg-[#eaf1ff] border border-[#fff]">
     <thead>
         <tr>
             <x-calendar-components.th id="dailyHeader" class="p-4 text-start border-0 flex justify-between"></x-calendar-components.th>
@@ -10,7 +10,7 @@
 </table>
 
 
-<table id="dailyViewTableHidden" class="table-fixed w-full bg-[#eaf1ff] border border-[#fff] hidden">
+<table id="dailyViewTableHidden" class="w-full bg-[#eaf1ff] border border-[#fff] hidden">
     <thead>
         <tr>
             <x-calendar-components.th id="dailyHeaderHidden" class="p-4 text-start border-0 flex justify-between">

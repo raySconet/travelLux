@@ -1,29 +1,9 @@
 <section>
-    <header>
+
         <h2 class="text-lg font-medium text-gray-900">
             {{ __('Contact Info') }}
         </h2>
 
-        {{-- <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
-        </p> --}}
-    </header>
-
-    <form method="post" action="{{ route('profile.update') }}" class="mt-3">
-        @csrf
-        <div class="flex mt-[-40px] float-right">
-            <x-primary-btn class="">{{ __('Save') }}</x-primary-btn>
-
-            @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
-            @endif
-        </div>
         <div class="grid grid-cols-1 2xl:grid-cols-12 gap-4 w-full">
             <div class="2xl:col-span-3 flex flex-col ">
                 <p class="mb-1 text-md text-gray-600">
@@ -170,5 +150,4 @@
         </div>
 
 
-    </form>
 </section>

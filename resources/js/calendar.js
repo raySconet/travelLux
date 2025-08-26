@@ -63,6 +63,34 @@ $(document).ready(() => {
         updateDailyHeader(window.selectedDate);
     });
 
+    $(document).on('click', '#calendarPrevWeek', function() {
+        if (!window.selectedDate) window.selectedDate = new Date();
+
+        window.selectedDate.setDate(window.selectedDate.getDate() - 7); // Go back 7 days
+
+        buildWeeklyView(
+            window.selectedDate.getDate(),
+            window.selectedDate.getMonth(),
+            window.selectedDate.getFullYear()
+        );
+
+        updateWeeklyHeader(window.selectedDate);
+    });
+
+    $(document).on('click', '#calendarNextWeek', function() {
+        if (!window.selectedDate) window.selectedDate = new Date();
+
+        window.selectedDate.setDate(window.selectedDate.getDate() + 7); // Go forward 7 days
+
+        buildWeeklyView(
+            window.selectedDate.getDate(),
+            window.selectedDate.getMonth(),
+            window.selectedDate.getFullYear()
+        );
+
+        updateWeeklyHeader(window.selectedDate);
+    });
+
     $(document).on('click', '#calendarPrevMonth, #sidebarCalendarPrevMonth', function() {
         goToPreviousMonth();
     });
@@ -91,9 +119,11 @@ $(document).ready(() => {
 function toggleHeaderForView(view) {
     if(view === 'Monthly') {
         $('#monthToggleSection').removeClass('hidden');
+        $('#weekToggleSection').addClass('hidden');
         $('#dayToggleSection').addClass('hidden');
     } else if(view === 'Daily') {
         $('#monthToggleSection').addClass('hidden');
+        $('#weekToggleSection').addClass('hidden');
         $('#dayToggleSection').removeClass('hidden');
 
         if(window.selectedDate) { // storage day
@@ -106,10 +136,12 @@ function toggleHeaderForView(view) {
         $('#dayToggleSection').addClass('hidden');
         $('#weekToggleSection').removeClass('hidden');
 
-        if(window.selectedDate) { // storage day
-            updateDailyHeader(window.selectedDate);
+        if(window.selectedDate) {
+            updateWeeklyHeader(window.selectedDate);
         } else {
-            updateDailyHeader(new Date());
+            const today = new Date();
+            window.selectedDate = today;
+            updateWeeklyHeader(today);
         }
     }
 }
@@ -123,6 +155,37 @@ function updateDailyHeader(date) {
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     $('#calendarDaySelected').html(`${monthNames[month]} ${day}, ${year}`);
+}
+
+function updateWeeklyHeader(date) {
+    const startOfWeek = new Date(date);
+    startOfWeek.setDate(date.getDate() - date.getDay()); // Sunday
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Saturday
+
+    const options = { month: 'short', day: 'numeric' };
+    const startStr = startOfWeek.toLocaleDateString(undefined, options);
+    const endStr = endOfWeek.toLocaleDateString(undefined, options);
+
+    const sameMonth = startOfWeek.getMonth() === endOfWeek.getMonth();
+    const sameYear = startOfWeek.getFullYear() === endOfWeek.getFullYear();
+
+    let label;
+    if (sameYear) {
+        if (sameMonth) {
+            label = `${startStr} - ${endStr}, ${startOfWeek.getFullYear()}`;
+        } else {
+            const endStrFull = endOfWeek.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            label = `${startStr} - ${endStrFull}, ${startOfWeek.getFullYear()}`;
+        }
+    } else {
+        const startStrFull = startOfWeek.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        const endStrFull = endOfWeek.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        label = `${startStrFull} - ${endStrFull}`;
+    }
+
+    $('#calendarWeekSelected').text(label);
 }
 
 function showView(view) {
@@ -321,40 +384,23 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     $('#userHeader').empty();
     $('#userHeaderHidden').empty();
 
-    const allEventsData = getEventsForDate(); // Now returns all events for all users
+    const allEventsData = getEventsForDate(); // Now returns all users and events
 
-    let maxUserCount = 0;
-    let userRow1 = null;
-    let userRow2 = null;
+    // Always assign first 2 users regardless of event count
+    const userRow1 = allEventsData[0] || null;
+    const userRow2 = allEventsData[1] || null;
 
-    // Determine up to two users who have events this week
-    const usersWithWeeklyEvents = [];
-
-    for (const userData of allEventsData) {
-        // Check if user has at least one event this week
-        const hasEventThisWeek = userData.events.some(event => {
-            const eventDate = new Date(event.date);
-            return eventDate >= startOfWeek && eventDate <= new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + 6);
-        });
-
-        if (hasEventThisWeek) {
-            usersWithWeeklyEvents.push(userData);
-        }
-
-        if (usersWithWeeklyEvents.length === 2) break; // Max 2 users
+    // Set headers (show user names or fallback text)
+    if (userRow1) {
+        $('#userHeader').text(userRow1.user);
+    } else {
+        $('#userHeader').text("No user");
     }
 
-    // Set headers and assign to tables
-    if (usersWithWeeklyEvents[0]) {
-        $('#userHeader').text(usersWithWeeklyEvents[0].user);
-        userRow1 = usersWithWeeklyEvents[0];
-    }
-
-    if (usersWithWeeklyEvents[1]) {
-        $('#userHeaderHidden').text(usersWithWeeklyEvents[1].user);
+    if (userRow2) {
+        $('#userHeaderHidden').text(userRow2.user);
         $('#weeklyViewTableHidden').removeClass('hidden');
         $('#viewWeekly').removeClass('grid-rows-1').addClass('grid-rows-2');
-        userRow2 = usersWithWeeklyEvents[1];
     } else {
         $('#weeklyViewTableHidden').addClass('hidden');
         $('#viewWeekly').removeClass('grid-rows-2').addClass('grid-rows-1');
@@ -370,7 +416,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         const cellMain = $(`#weeklyViewTable .${dayClass}`);
         const cellHidden = $(`#weeklyViewTableHidden .${dayClass}`);
 
-        // User 1 events
+        // User 1 events or no events placeholder
         if (userRow1) {
             const eventsForDate = userRow1.events.filter(e => e.date === isoDate);
             if (eventsForDate.length) {
@@ -385,9 +431,11 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             } else {
                 cellMain.append('<div class="text-gray-400 italic dailyEventInfo">No events</div>');
             }
+        } else {
+            cellMain.append('<div class="text-gray-400 italic dailyEventInfo">No user</div>');
         }
 
-        // User 2 events
+        // User 2 events or no events placeholder
         if (userRow2) {
             const eventsForDate = userRow2.events.filter(e => e.date === isoDate);
             if (eventsForDate.length) {
@@ -402,11 +450,14 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             } else {
                 cellHidden.append('<div class="text-gray-400 italic dailyEventInfo">No events</div>');
             }
+        } else {
+            cellHidden.append('<div class="text-gray-400 italic dailyEventInfo">No user</div>');
         }
     }
 
     console.log("Weekly view rendered for:", startOfWeek.toDateString());
 }
+
 
 function getEventsForDate(date) {
     // Stub: replace this with your actual fetch logic
@@ -426,13 +477,13 @@ function getEventsForDate(date) {
                 { title: 'End of Week Wrap-up', date: '2025-09-05' }
             ]
         },
-        {
-            user: 'John Doe',
-            events: [
-                { title: 'Team Sync - Project Phoenix', date: '2025-08-28' },
-                { title: 'Follow-up Call with Client', date: '2025-08-25' }
-            ]
-        }
+        // {
+        //     user: 'John Doe',
+        //     events: [
+        //         { title: 'Team Sync - Project Phoenix', date: '2025-08-28' },
+        //         { title: 'Follow-up Call with Client', date: '2025-08-25' }
+        //     ]
+        // }
     ];
 }
 

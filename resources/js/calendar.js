@@ -466,7 +466,7 @@ function getEventsForDate(date) {
             user: 'Simone Alexander',
             events: [
                 { title: 'AAM - NEW REFERRAL', date: '2025-08-25' },
-                { title: 'Morning Briefing', date: '2025-08-27' },
+                { title: 'Morning Briefing', date: '2025-08-26' },
                 { title: 'Client Meeting - Project Alpha', date: '2025-08-28' },
                 { title: 'Lunch with Team', date: '2025-08-29' },
                 { title: 'Quarterly Report Review', date: '2025-08-30' },
@@ -547,7 +547,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                 const eventsForDay = userEvents.filter(event => event.date === dateStr);
                 eventsForDay.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 EventInfo bg-[#b71c1cb3] mt-1 p-1 rounded text-sm truncate" draggable="true" title="${event.title}">
+                        <div class="text-gray-900 weeklyEvent bg-[#30d80fb3] my-1 p-1 rounded" draggable="true" title="${event.title}">
                             <span>${event.title}</span>
                         </div>
                     `);
@@ -557,9 +557,9 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
 
             if (isCurrentMonth && day === today.getDate()) {
                 $td.addClass(currentDayClass);
-                if (calendarId === '#calendarBody') {
-                    $td.append(``)
-                }
+                // if (calendarId === '#calendarBody') {
+                //     $td.append(``)
+                // }
             }
             day++;
             tdIndex++;

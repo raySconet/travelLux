@@ -38,17 +38,22 @@
                     <div id="viewMonthly" class="p-6">
                         @include('calendar.calendar-view.monthly') {{-- Include the calendar drawing component --}}
                     </div>
-                    <div id="viewWeekly" class="p-6 hidden">
+                    <div id="viewWeekly" class="grid grid-rows-1 gap-px p-6 h-full hidden">
                         @include('calendar.calendar-view.weekly') {{-- Include the calendar drawing component --}}
                     </div>
-                    <div id="viewDaily" class="grid grid-cols-12 2xl:grid-cols-12 p-6 hidden">
-
-                        @include('calendar.calendar-view.daily') {{-- Include the calendar drawing component --}}
+                    <div id="viewDaily" class="p-6 hidden h-full">
+                        <div class="grid grid-cols-12 grid-rows-[auto_1fr] gap-0 h-full">
+                            <div class="col-span-12 grid grid-cols-12 gap-0 h-full">
+                                @include('calendar.calendar-view.daily')
+                            </div>
+                            <div class="col-span-12 grid grid-cols-12 gap-0 h-full">
+                                <div id="dailyBox3" class="bg-[#eaf1ff] col-span-12 xl:col-span-6 h-full border-x-2 border-[#fff]"></div>
+                                <div id="dailyBox4" class="bg-[#eaf1ff] col-span-12 xl:col-span-6 h-full border-x-1 border-[#fff] hidden"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
 </x-app-layout>

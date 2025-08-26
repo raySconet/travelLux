@@ -20,6 +20,7 @@ $(document).ready(() => {
         buildDailyView(day, currentMonth, currentYear);
         updateDailyHeader(selected);
 
+        $('#selectedDayWeekMonthOption').text('Day View');
         showView('Daily');
     });
 
@@ -100,10 +101,16 @@ function toggleHeaderForView(view) {
         } else {
             updateDailyHeader(new Date());
         }
-    } else {
-        // For Week view or others, you can decide similarly
-        $('#monthToggleSection').removeClass('hidden');
+    } else if(view === 'Weekly') {
+        $('#monthToggleSection').addClass('hidden');
         $('#dayToggleSection').addClass('hidden');
+        $('#weekToggleSection').removeClass('hidden');
+
+        if(window.selectedDate) { // storage day
+            updateDailyHeader(window.selectedDate);
+        } else {
+            updateDailyHeader(new Date());
+        }
     }
 }
 
@@ -134,6 +141,16 @@ function showView(view) {
         } else {
             buildDailyView();
         }
+    } else if (view === 'Weekly') {
+        if (window.selectedDate) {
+            buildWeeklyView(
+                window.selectedDate.getDate(),
+                window.selectedDate.getMonth(),
+                window.selectedDate.getFullYear()
+            );
+        } else {
+            buildWeeklyView();
+        }
     }
 }
 
@@ -145,102 +162,250 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     const day = inputDay !== null ? inputDay : today.getDate();
 
     const selectedDate = new Date(year, month, day);
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const dayName = daysOfWeek[selectedDate.getDay()];
-    const userName = "~Rony Chammai";
+    const isoDate = toLocalDateString(selectedDate); // YYYY-MM-DD
+    const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][selectedDate.getDay()];
 
-    // Set day name and user in header
+    const allUsers = getEventsForDate(); // Get full list of users with events
+
+    // DOM references
     const dailyHeader = $('#dailyHeader');
     const dailyBody = $('#dailyBody');
+    const headerHidden = $('#dailyHeaderHidden');
+    const bodyHidden = $('#dailyBodyHidden');
 
-    dailyHeader.html(`${dayName} ${day} <div>${userName}</div>`);
-
+    // Reset UI
+    dailyHeader.empty();
     dailyBody.empty();
+    headerHidden.empty();
+    bodyHidden.empty();
 
-    const dailyEvents = getEventsForDate(selectedDate);
+    $('#dailyViewTable').addClass('hidden');
+    $('#dailyViewTableHidden').addClass('hidden');
+    $('#dailyBox3')?.removeClass('xl:col-span-6').addClass('xl:col-span-12');
+    $('#dailyBox4')?.addClass('hidden');
 
-    if (dailyEvents.length === 1) {
-        $('#dailyViewTable').removeClass('hidden xl:col-span-6').addClass('max-w-[750px] xl:col-span-12 mx-auto');
-        $('#dailyViewTableHidden').addClass('hidden');
-
-        const user = dailyEvents[0];
-        $('#dailyHeader').html(`${dayName} ${day} <div>${user.user}</div>`);
-
-        const dailyBody = $('#dailyBody');
-        dailyBody.empty();
-
-        user.events.forEach(event => {
-            const $row = $(`
-                <tr class="calendarRowData">
-                    <td class="px-2">
-                        <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
-                            <span>${event.title}</span>
-                        </div>
-                    </td>
-                </tr>
-            `);
-            dailyBody.append($row);
-        });
-
-    } else if (dailyEvents.length >= 2) {
+    if (allUsers.length === 0) {
         $('#dailyViewTable').removeClass('hidden');
-        $('#dailyViewTableHidden').removeClass('hidden');
-
-        // Fill first table
-        const user1 = dailyEvents[0];
-        $('#dailyHeader').html(`${dayName} ${day} <div>${user1.user}</div>`);
-        const dailyBody = $('#dailyBody');
-        dailyBody.empty();
-        user1.events.forEach(event => {
-            const row = $(`
-                <tr class="calendarRowData">
-                    <td class="px-2">
-                        <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
-                            <span>${event.title}</span>
-                        </div>
-                    </td>
-                </tr>
-            `);
-            dailyBody.append(row);
-        });
-
-        // Fill second table
-        const user2 = dailyEvents[1];
-        const headerHidden = $('#dailyHeaderHidden');
-        headerHidden.html(`${dayName} ${day} <div>${user2.user}</div>`);
-
-        const bodyHidden = $('#dailyViewTableHidden tbody');
-        bodyHidden.empty();
-        user2.events.forEach(event => {
-            let row = `
-                <tr class="calendarRowData">
-                    <td class="px-2">
-                        <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
-                            <span>${event.title}</span>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            bodyHidden.append(row);
-        });
-        // bodyHidden.append(`
-        //     <tr class="calendarRowData">
-        //         <td class="px-2 h-[1150px]">
-        //             <div class="dailyEventInfo " draggable="true"></div>
-        //         </td>
-        //     </tr>
-        // `);
-        // dailyBody.append(`
-        //     <tr class="calendarRowData">
-        //         <td class="px-2 h-[1150px]">
-        //             <div class="dailyEventInfo" draggable="true"></div>
-        //         </td>
-        //     </tr>
-        // `);
+        dailyHeader.html(`${dayName} ${day} <div class="text-gray-400 italic">No users</div>`);
+        dailyBody.append(`
+            <tr class="calendarRowData">
+                <td class="px-2">
+                    <div class="text-gray-400 italic dailyEventInfo">No events</div>
+                </td>
+            </tr>
+        `);
+        return;
     }
 
+    // === If only 1 user ===
+    if (allUsers.length === 1) {
+        const user = allUsers[0];
+        const eventsToday = user.events.filter(event => event.date === isoDate);
+
+        $('#dailyViewTable').removeClass('hidden xl:col-span-6').addClass('max-w-[750px] xl:col-span-12 mx-auto');
+        $('#dailyViewTableHidden').addClass('hidden');
+        $('#dailyBox3').removeClass('xl:col-span-6').addClass('w-[750px] xl:col-span-12 mx-auto');
+
+        dailyHeader.html(`${dayName} ${day} <div>${user.user}</div>`);
+
+        if (eventsToday.length === 0) {
+            dailyBody.append(`
+                <tr class="calendarRowData">
+                    <td class="px-2">
+                        <div class="text-gray-400 italic dailyEventInfo">No events</div>
+                    </td>
+                </tr>
+            `);
+        } else {
+            eventsToday.forEach(event => {
+                dailyBody.append(`
+                    <tr class="calendarRowData">
+                        <td class="px-2">
+                            <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                                <span>${event.title}</span>
+                            </div>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+
+        return;
+    }
+
+    // === If 2 users (always show both) ===
+    if (allUsers.length >= 2) {
+        const user1 = allUsers[0];
+        const user2 = allUsers[1];
+
+        const eventsUser1 = user1.events.filter(event => event.date === isoDate);
+        const eventsUser2 = user2.events.filter(event => event.date === isoDate);
+
+        $('#dailyViewTable').removeClass('hidden');
+        $('#dailyViewTableHidden').removeClass('hidden');
+        $('#dailyBox3').addClass('xl:col-span-6').removeClass('w-[750px] xl:col-span-12 mx-auto');
+        $('#dailyBox4')?.removeClass('hidden');
+
+        // Fill user 1
+        dailyHeader.html(`${dayName} ${day} <div>${user1.user}</div>`);
+        if (eventsUser1.length === 0) {
+            dailyBody.append(`
+                <tr class="calendarRowData">
+                    <td class="px-2">
+                        <div class="dailyEventInfo text-gray-400 italic">No events</div>
+                    </td>
+                </tr>
+            `);
+        } else {
+            eventsUser1.forEach(event => {
+                dailyBody.append(`
+                    <tr class="calendarRowData">
+                        <td class="px-2">
+                            <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                                <span>${event.title}</span>
+                            </div>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+
+        // Fill user 2
+        headerHidden.html(`${dayName} ${day} <div>${user2.user}</div>`);
+        if (eventsUser2.length === 0) {
+            bodyHidden.append(`
+                <tr class="calendarRowData">
+                    <td class="px-2">
+                        <div class="text-gray-400 italic dailyEventInfo">No events</div>
+                    </td>
+                </tr>
+            `);
+        } else {
+            eventsUser2.forEach(event => {
+                bodyHidden.append(`
+                    <tr class="calendarRowData">
+                        <td class="px-2">
+                            <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                                <span>${event.title}</span>
+                            </div>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+    }
 
     console.log("Daily view rendered for:", selectedDate.toDateString());
+}
+
+
+function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
+    const today = new Date();
+
+    const year = inputYear !== null ? inputYear : today.getFullYear();
+    const month = inputMonth !== null ? inputMonth : today.getMonth();
+    const day = inputDay !== null ? inputDay : today.getDate();
+
+    const selectedDate = new Date(year, month, day);
+    const startOfWeek = new Date(selectedDate);
+    startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay()); // Start from Sunday
+
+    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+    // Clear all cells before rendering new data
+    daysOfWeek.forEach(dayClass => {
+        $(`#weeklyViewTable .${dayClass}`).empty();
+        $(`#weeklyViewTableHidden .${dayClass}`).empty();
+    });
+
+    $('#userHeader').empty();
+    $('#userHeaderHidden').empty();
+
+    const allEventsData = getEventsForDate(); // Now returns all events for all users
+
+    let maxUserCount = 0;
+    let userRow1 = null;
+    let userRow2 = null;
+
+    // Determine up to two users who have events this week
+    const usersWithWeeklyEvents = [];
+
+    for (const userData of allEventsData) {
+        // Check if user has at least one event this week
+        const hasEventThisWeek = userData.events.some(event => {
+            const eventDate = new Date(event.date);
+            return eventDate >= startOfWeek && eventDate <= new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + 6);
+        });
+
+        if (hasEventThisWeek) {
+            usersWithWeeklyEvents.push(userData);
+        }
+
+        if (usersWithWeeklyEvents.length === 2) break; // Max 2 users
+    }
+
+    // Set headers and assign to tables
+    if (usersWithWeeklyEvents[0]) {
+        $('#userHeader').text(usersWithWeeklyEvents[0].user);
+        userRow1 = usersWithWeeklyEvents[0];
+    }
+
+    if (usersWithWeeklyEvents[1]) {
+        $('#userHeaderHidden').text(usersWithWeeklyEvents[1].user);
+        $('#weeklyViewTableHidden').removeClass('hidden');
+        $('#viewWeekly').removeClass('grid-rows-1').addClass('grid-rows-2');
+        userRow2 = usersWithWeeklyEvents[1];
+    } else {
+        $('#weeklyViewTableHidden').addClass('hidden');
+        $('#viewWeekly').removeClass('grid-rows-2').addClass('grid-rows-1');
+    }
+
+    for (let i = 0; i < 7; i++) {
+        const currentDate = new Date(startOfWeek);
+        currentDate.setDate(startOfWeek.getDate() + i);
+
+        const isoDate = toLocalDateString(currentDate); // Format YYYY-MM-DD
+        const dayClass = daysOfWeek[currentDate.getDay()];
+
+        const cellMain = $(`#weeklyViewTable .${dayClass}`);
+        const cellHidden = $(`#weeklyViewTableHidden .${dayClass}`);
+
+        // User 1 events
+        if (userRow1) {
+            const eventsForDate = userRow1.events.filter(e => e.date === isoDate);
+            if (eventsForDate.length) {
+                eventsForDate.forEach(event => {
+                    const eventDiv = $(`
+                        <div class="text-gray-900 weeklyEvent bg-[#30d80fb3] my-1 p-1 rounded" draggable="true">
+                            <span>${event.title}</span>
+                        </div>
+                    `);
+                    cellMain.append(eventDiv);
+                });
+            } else {
+                cellMain.append('<div class="text-gray-400 italic dailyEventInfo">No events</div>');
+            }
+        }
+
+        // User 2 events
+        if (userRow2) {
+            const eventsForDate = userRow2.events.filter(e => e.date === isoDate);
+            if (eventsForDate.length) {
+                eventsForDate.forEach(event => {
+                    const eventDiv = $(`
+                        <div class="text-gray-900 weeklyEvent bg-[#30d80fb3] my-1 p-1 rounded" draggable="true">
+                            <span>${event.title}</span>
+                        </div>
+                    `);
+                    cellHidden.append(eventDiv);
+                });
+            } else {
+                cellHidden.append('<div class="text-gray-400 italic dailyEventInfo">No events</div>');
+            }
+        }
+    }
+
+    console.log("Weekly view rendered for:", startOfWeek.toDateString());
 }
 
 function getEventsForDate(date) {
@@ -249,18 +414,33 @@ function getEventsForDate(date) {
         {
             user: 'Simone Alexander',
             events: [
-                { title: 'AAM - NEW REFERRAL - SIMONE ALEXANDER' },
-                { title: 'Morning Briefing' }
+                { title: 'AAM - NEW REFERRAL - SIMONE ALEXANDER', date: '2025-08-25' },
+                { title: 'Morning Briefing', date: '2025-08-27' },
+                { title: 'Client Meeting - Project Alpha', date: '2025-08-28' },
+                { title: 'Lunch with Team', date: '2025-08-29' },
+                { title: 'Quarterly Report Review', date: '2025-08-30' },
+                { title: 'Strategy Planning Session', date: '2025-09-01' },
+                { title: 'Follow-up Call with Partner', date: '2025-09-02' },
+                { title: 'Product Demo', date: '2025-09-03' },
+                { title: 'Team Building Activity', date: '2025-09-04' },
+                { title: 'End of Week Wrap-up', date: '2025-09-05' }
             ]
         },
         {
             user: 'John Doe',
             events: [
-                { title: 'Team Sync - Project Phoenix' },
-                { title: 'Follow-up Call with Client' }
+                { title: 'Team Sync - Project Phoenix', date: '2025-08-28' },
+                { title: 'Follow-up Call with Client', date: '2025-08-25' }
             ]
         }
     ];
+}
+
+function toLocalDateString(date) {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); // month is 0-based
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
 }
 
 
@@ -305,9 +485,9 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
             $td.removeClass('currentDay'); // Always clear before setting
             if (calendarId === '#sidebarCalendarBody') {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                $td.html(`<button class="sidebar-day-btn font-bold" data-date="${dateStr}">${day}</button>`);
+                $td.html(`<button class="sidebar-day-btn font-bold cursor-pointer" data-date="${dateStr}">${day}</button>`);
             } else {
-                $td.html('<span class="font-bold">' + day + '</span>');
+                $td.html('<span class="font-bold cursor-pointer">' + day + '</span>');
             }
 
             if (isCurrentMonth && day === today.getDate()) {

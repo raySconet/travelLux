@@ -1,15 +1,5 @@
 <div class="calendarHeader">
     <div class="flex justify-between items-center">
-        <x-calendar-components.section id="monthToggleSection" class="space-x-2">
-            <x-secondary-btn id="calendarPrevMonth">
-                <i class="fa-solid fa-chevron-left"></i>
-            </x-secondary-btn>
-            <x-secondary-btn id="calendarNextMonth">
-                <i class="fa-solid fa-chevron-right"></i>
-            </x-secondary-btn>
-            <h2 id="calendarMonthYearSelected" class="text-lg font-semibold text-gray-800">{{ date('F Y') }}</h2>
-        </x-calendar-components.section>
-
         <x-calendar-components.section id="dayToggleSection" class="space-x-2 hidden">
             <x-secondary-btn id="calendarPrevDay">
                 <i class="fa-solid fa-chevron-left"></i>
@@ -18,6 +8,26 @@
                 <i class="fa-solid fa-chevron-right"></i>
             </x-secondary-btn>
             <h2 id="calendarDaySelected" class="text-lg font-semibold text-gray-800"></h2>
+        </x-calendar-components.section>
+
+        <x-calendar-components.section id="weekToggleSection" class="space-x-2 hidden">
+            <x-secondary-btn id="calendarPrevWeek">
+                <i class="fa-solid fa-chevron-left"></i>
+            </x-secondary-btn>
+            <x-secondary-btn id="calendarNextWeek">
+                <i class="fa-solid fa-chevron-right"></i>
+            </x-secondary-btn>
+            <h2 id="calendarWeekSelected" class="text-lg font-semibold text-gray-800"></h2>
+        </x-calendar-components.section>
+
+        <x-calendar-components.section id="monthToggleSection" class="space-x-2">
+            <x-secondary-btn id="calendarPrevMonth">
+                <i class="fa-solid fa-chevron-left"></i>
+            </x-secondary-btn>
+            <x-secondary-btn id="calendarNextMonth">
+                <i class="fa-solid fa-chevron-right"></i>
+            </x-secondary-btn>
+            <h2 id="calendarMonthYearSelected" class="text-lg font-semibold text-gray-800">{{ date('F Y') }}</h2>
         </x-calendar-components.section>
 
         <x-calendar-components.section class="justify-center space-x-2">

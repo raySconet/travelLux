@@ -465,16 +465,16 @@ function getEventsForDate(date) {
         {
             user: 'Simone Alexander',
             events: [
-                { title: 'AAM - NEW REFERRAL - SIMONE ALEXANDER', date: '2025-08-25' },
+                { title: 'AAM - NEW REFERRAL', date: '2025-08-25' },
                 { title: 'Morning Briefing', date: '2025-08-27' },
                 { title: 'Client Meeting - Project Alpha', date: '2025-08-28' },
                 { title: 'Lunch with Team', date: '2025-08-29' },
                 { title: 'Quarterly Report Review', date: '2025-08-30' },
                 { title: 'Strategy Planning Session', date: '2025-09-01' },
                 { title: 'Follow-up Call with Partner', date: '2025-09-02' },
-                { title: 'Product Demo', date: '2025-09-03' },
+                { title: 'Product Demo', date: '2025-09-04' },
                 { title: 'Team Building Activity', date: '2025-09-04' },
-                { title: 'End of Week Wrap-up', date: '2025-09-05' }
+                { title: 'End of Week Wrap-up', date: '2025-09-04' }
             ]
         },
         // {
@@ -494,23 +494,25 @@ function toLocalDateString(date) {
     return `${yyyy}-${mm}-${dd}`;
 }
 
-
 function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
     const today = new Date();
     const year = inputYear !== null ? inputYear : today.getFullYear();
     const month = inputMonth !== null ? inputMonth : today.getMonth();
 
     const weeksNeeded = getWeeksCountForCalendar(month, year);
-    console.log("Weeks needed:", weeksNeeded);
-
-    // console.log(inputMonth, ",", inputYear);
     const firstDay = new Date(year, month, 1).getDay(); // 0 = Sunday
     const daysInMonth = new Date(year, month + 1, 0).getDate();
+    //console.log("Weeks needed:", weeksNeeded);
+    // console.log(inputMonth, ",", inputYear);
 
     // Get previous month info
     const prevMonth = month === 0 ? 11 : month - 1;
     const prevYear = month === 0 ? year - 1 : year;
     const daysInPrevMonth = new Date(prevYear, prevMonth + 1, 0).getDate();
+
+    // 🔹 Get events for this user
+    const userData = getEventsForDate(); // Only one user in your example
+    const userEvents = userData.length > 0 ? userData[0].events : [];
 
     ['#calendarBody', '#sidebarCalendarBody'].forEach((calendarId) => {
         const $tds = $(`${calendarId} td`);
@@ -533,56 +535,31 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
 
         while (day <= daysInMonth && tdIndex < $tds.length) {
             const $td = $tds.eq(tdIndex);
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
             $td.removeClass('currentDay'); // Always clear before setting
             if (calendarId === '#sidebarCalendarBody') {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 $td.html(`<button class="sidebar-day-btn font-bold cursor-pointer" data-date="${dateStr}">${day}</button>`);
             } else {
                 $td.html('<span class="font-bold cursor-pointer">' + day + '</span>');
+
+                // 🔹 Inject events for the day
+                const eventsForDay = userEvents.filter(event => event.date === dateStr);
+                eventsForDay.forEach(event => {
+                    const eventDiv = $(`
+                        <div class="text-gray-900 EventInfo bg-[#b71c1cb3] mt-1 p-1 rounded text-sm truncate" draggable="true" title="${event.title}">
+                            <span>${event.title}</span>
+                        </div>
+                    `);
+                    $td.append(eventDiv);
+                });
             }
 
             if (isCurrentMonth && day === today.getDate()) {
                 $td.addClass(currentDayClass);
                 if (calendarId === '#calendarBody') {
-                    $td.append(`<div class=" text-gray-900 EventInfo bg-[#b71c1cb3]"
-                                    id="event"
-                                    draggable="true"
-                                    title="">
-                                    <span>Rony Chammai</span>
-                                </div>
-                                <div class=" text-gray-900 EventInfo bg-[#b71c1cb3]"
-                                    id="event"
-                                    draggable="true"
-                                    title="">
-                                    <span>Rony Chammai</span>
-                                </div>
-                                <div class=" text-gray-900 EventInfo bg-[#b71c1cb3]"
-                                    id="event"
-                                    draggable="true"
-                                    title="">
-                                    <span>Rony Chammai</span>
-                                </div>
-                                <div class=" text-gray-900 EventInfo bg-[#b71c1cb3]"
-                                    id="event"
-                                    draggable="true"
-                                    title="">
-                                    <span>Rony Chammai</span>
-                                </div>
-                                <div class=" text-gray-900 EventInfo bg-[#b71c1cb3]"
-                                    id="event"
-                                    draggable="true"
-                                    title="">
-                                    <span>Rony Chammai</span>
-                                </div>
-                                <div class=" text-gray-900 EventInfo bg-[#b71c1cb3]"
-                                    id="event"
-                                    draggable="true"
-                                    title="">
-                                    <span>Rony Chammai</span>
-                                </div>
-                                `)
+                    $td.append(``)
                 }
-                // console.log("ping!");
             }
             day++;
             tdIndex++;

@@ -47,7 +47,7 @@
                                 @include('calendar.calendar-view.daily')
                             </div>
                             <div class="col-span-12 grid grid-cols-12 gap-0 h-full">
-                                <div id="dailyBox3" class="bg-[#eaf1ff] col-span-12 xl:col-span-6 h-full border-x-2 border-[#fff]"></div>
+                                <div id="dailyBox3" class="bg-[#eaf1ff] col-span-12 xl:col-span-6 h-full border-x-1 border-[#fff]"></div>
                                 <div id="dailyBox4" class="bg-[#eaf1ff] col-span-12 xl:col-span-6 h-full border-x-1 border-[#fff] hidden"></div>
                             </div>
                         </div>

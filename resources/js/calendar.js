@@ -114,6 +114,35 @@ $(document).ready(() => {
         const el = $('#viewOptionsDropdown [popover]')[0];
         el?.hidePopover?.();
     });
+
+    $(document).on('change', 'input[type="checkbox"][data-user-id]', function () {
+        const view = $('#selectedDayWeekMonthOption').text().trim();
+        const allCheckboxes = $('input[type="checkbox"][data-user-id]');
+        console.log(view);
+        console.log('User ID (changed):', $(this).data('user-id'));
+
+        if (view === 'Month View') {
+            allCheckboxes.not(this).prop('checked', false);
+            $(this).prop('checked', true);
+        } else {
+            const $checked = allCheckboxes.filter(':checked');
+
+            if ($checked.length > 2) {
+                $(this).prop('checked', false);
+                alert('You can select a maximum of 2 users.');
+                return;
+            }
+
+            if ($checked.length === 2) {
+                const selectedUserIds = $checked.map(function () {
+                    return $(this).data('user-id');
+                }).get();
+
+                console.log('Selected User IDs (exactly 2):', selectedUserIds);
+            }
+        }
+    });
+
 });
 
 function toggleHeaderForView(view) {
@@ -232,9 +261,9 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
     // DOM references
     const dailyHeader = $('#dailyHeader');
-    const dailyBody = $('#dailyBody');
+    const dailyBody = $('#dailyBody tr td');
     const headerHidden = $('#dailyHeaderHidden');
-    const bodyHidden = $('#dailyBodyHidden');
+    const bodyHidden = $('#dailyBodyHidden tr td');
 
     // Reset UI
     dailyHeader.empty();
@@ -251,11 +280,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         $('#dailyViewTable').removeClass('hidden');
         dailyHeader.html(`${dayName} ${day} <div class="text-gray-400 italic">No users</div>`);
         dailyBody.append(`
-            <tr class="calendarRowData">
-                <td class="px-2">
-                    <div class="text-gray-400 italic dailyEventInfo">No events</div>
-                </td>
-            </tr>
+            <div class="px-2 text-gray-400 italic dailyEventInfo">No events</div>
         `);
         return;
     }
@@ -273,22 +298,14 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
         if (eventsToday.length === 0) {
             dailyBody.append(`
-                <tr class="calendarRowData">
-                    <td class="px-2">
-                        <div class="text-gray-400 italic dailyEventInfo">No events</div>
-                    </td>
-                </tr>
+                <div class="px-2 text-gray-400 italic dailyEventInfo">No events</div>
             `);
         } else {
             eventsToday.forEach(event => {
                 dailyBody.append(`
-                    <tr class="calendarRowData">
-                        <td class="px-2">
-                            <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
-                                <span>${event.title}</span>
-                            </div>
-                        </td>
-                    </tr>
+                    <div class="px-2 text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                        <span>${event.title}</span>
+                    </div>
                 `);
             });
         }
@@ -313,22 +330,14 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         dailyHeader.html(`${dayName} ${day} <div>${user1.user}</div>`);
         if (eventsUser1.length === 0) {
             dailyBody.append(`
-                <tr class="calendarRowData">
-                    <td class="px-2">
-                        <div class="dailyEventInfo text-gray-400 italic">No events</div>
-                    </td>
-                </tr>
+               <div class="px-2 dailyEventInfo text-gray-400 italic">No events</div>
             `);
         } else {
             eventsUser1.forEach(event => {
                 dailyBody.append(`
-                    <tr class="calendarRowData">
-                        <td class="px-2">
-                            <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
-                                <span>${event.title}</span>
-                            </div>
-                        </td>
-                    </tr>
+                    <div class="px-2 text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                        <span>${event.title}</span>
+                    </div>
                 `);
             });
         }
@@ -337,22 +346,17 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         headerHidden.html(`${dayName} ${day} <div>${user2.user}</div>`);
         if (eventsUser2.length === 0) {
             bodyHidden.append(`
-                <tr class="calendarRowData">
-                    <td class="px-2">
-                        <div class="text-gray-400 italic dailyEventInfo">No events</div>
-                    </td>
-                </tr>
+                <div class="px-2 text-gray-400 italic dailyEventInfo">No events</div>
             `);
         } else {
             eventsUser2.forEach(event => {
                 bodyHidden.append(`
-                    <tr class="calendarRowData">
-                        <td class="px-2">
-                            <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
-                                <span>${event.title}</span>
-                            </div>
-                        </td>
-                    </tr>
+                    <div class="px-2 text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                        <span>${event.title}</span>
+                    </div>
+                    <div class="px-2 text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                        <span>${event.title}</span>
+                    </div>
                 `);
             });
         }
@@ -392,13 +396,13 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 
     // Set headers (show user names or fallback text)
     if (userRow1) {
-        $('#userHeader').text(userRow1.user);
+        $('#userHeader').html(`<div class="border border-[#fff] p-2">${userRow1.user}</div>`);
     } else {
-        $('#userHeader').text("No user");
+        $('#userHeader').html(`<div class="border border-[#fff] p-2">"No user"</div>`);
     }
 
     if (userRow2) {
-        $('#userHeaderHidden').text(userRow2.user);
+        $('#userHeaderHidden').html(`<div class="border border-[#fff] p-2">${userRow2.user}</div>`);
         $('#weeklyViewTableHidden').removeClass('hidden');
         $('#viewWeekly').removeClass('grid-rows-1').addClass('grid-rows-2');
     } else {
@@ -477,13 +481,13 @@ function getEventsForDate(date) {
                 { title: 'End of Week Wrap-up', date: '2025-09-04' }
             ]
         },
-        // {
-        //     user: 'John Doe',
-        //     events: [
-        //         { title: 'Team Sync - Project Phoenix', date: '2025-08-28' },
-        //         { title: 'Follow-up Call with Client', date: '2025-08-25' }
-        //     ]
-        // }
+        {
+            user: 'John Doe',
+            events: [
+                { title: 'Team Sync - Project Phoenix', date: '2025-08-28' },
+                { title: 'Follow-up Call with Client', date: '2025-08-25' }
+            ]
+        }
     ];
 }
 

@@ -3,11 +3,16 @@ html {
     overflow-x: hidden;
 }
 
+body {
+    font-family:lato !important;
+    font-size: 14px !important;
+}
+
 .currentDay {
     color: white;
     border: 2px solid rgb(28, 104, 170);
     color: #1e293b;
-    font-weight: 600;
+    /* font-weight: 600; */
     border-radius: 6px;
 }
 
@@ -23,7 +28,7 @@ html {
 }
 
 .eventInfo {
-    font-size: 14px;
+    /* font-size: 14px; */
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
     padding: 4px;
     cursor: pointer;
@@ -37,3 +42,11 @@ html {
     border-radius:6px;
     height:38px;
 }
+
+.dailyNoEventInfo {
+    margin-top:5px;
+    padding:10px;
+    border-radius:6px;
+    height:38px;
+}
+

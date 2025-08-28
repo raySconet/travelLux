@@ -50,3 +50,6 @@ body {
     height:38px;
 }
 
+.yearlyEventInfo, .weeklyEventInfo, .dailyEventInfo {
+    font-size: 14px;
+}

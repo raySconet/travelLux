@@ -150,6 +150,10 @@ function toggleHeaderForView(view) {
         $('#monthToggleSection').removeClass('hidden');
         $('#weekToggleSection').addClass('hidden');
         $('#dayToggleSection').addClass('hidden');
+
+        const checkboxes = $('input[type="checkbox"][data-user-id]');
+        checkboxes.prop('checked', false);
+        checkboxes.first().prop('checked', true);
     } else if(view === 'Daily') {
         $('#monthToggleSection').addClass('hidden');
         $('#weekToggleSection').addClass('hidden');
@@ -426,17 +430,17 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 weeklyEvent bg-[#30d80fb3] my-1 p-1 rounded" draggable="true">
+                        <div class="text-gray-900 weeklyEventInfo bg-[#30d80fb3] my-1 p-1 rounded cursor-pointer" draggable="true">
                             <span>${event.title}</span>
                         </div>
                     `);
                     cellMain.append(eventDiv);
                 });
             } else {
-                cellMain.append('<div class="text-gray-400 italic dailyEventInfo">No events</div>');
+                cellMain.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
             }
         } else {
-            cellMain.append('<div class="text-gray-400 italic dailyEventInfo">No user</div>');
+            cellMain.append('<div class="text-gray-400 italic weeklyEventInfo">No user</div>');
         }
 
         // User 2 events or no events placeholder
@@ -445,17 +449,17 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 weeklyEvent bg-[#30d80fb3] my-1 p-1 rounded" draggable="true">
+                        <div class="text-gray-900 weeklyEventInfo bg-[#30d80fb3] my-1 p-1 rounded cursor-pointer" draggable="true">
                             <span>${event.title}</span>
                         </div>
                     `);
                     cellHidden.append(eventDiv);
                 });
             } else {
-                cellHidden.append('<div class="text-gray-400 italic dailyEventInfo">No events</div>');
+                cellHidden.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
             }
         } else {
-            cellHidden.append('<div class="text-gray-400 italic dailyEventInfo">No user</div>');
+            cellHidden.append('<div class="text-gray-400 italic weeklyEventInfo">No user</div>');
         }
     }
 
@@ -551,7 +555,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                 const eventsForDay = userEvents.filter(event => event.date === dateStr);
                 eventsForDay.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 weeklyEvent bg-[#30d80fb3] my-1 p-1 rounded" draggable="true" title="${event.title}">
+                        <div class="text-gray-900 yearlyEventInfo bg-[#30d80fb3] my-1 p-1 rounded cursor-pointer" draggable="true" title="${event.title}">
                             <span>${event.title}</span>
                         </div>
                     `);

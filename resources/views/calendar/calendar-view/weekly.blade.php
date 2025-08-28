@@ -1,4 +1,4 @@
-<table id="weeklyViewTable" class="table-fixed h-full bg-[#eaf1ff] border border-[#fff]">
+<table id="weeklyViewTable" class="table-fixed h-full bg-[#eaf1ff] border-t-1 border-r-1 border-b-0 border-l-1 border-[#fff]">
     <thead class="h-[60px]">
         <tr>
             <th id="userHeader"></th>
@@ -26,7 +26,7 @@
     </tbody>
 </table>
 
-<table id="weeklyViewTableHidden" class="table-fixed h-full bg-[#eaf1ff] border border-t-0 border-[#fff] hidden">
+<table id="weeklyViewTableHidden" class="table-fixed h-full bg-[#eaf1ff] border-t-0 border-r-1 border-b-1 border-l-1 border-[#fff] hidden">
     <thead class="h-[60px]">
         <tr>
             <th id="userHeaderHidden"></th>

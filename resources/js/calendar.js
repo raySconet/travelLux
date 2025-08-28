@@ -284,7 +284,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         $('#dailyViewTable').removeClass('hidden');
         dailyHeader.html(`${dayName} ${day} <div class="text-gray-400 italic">No users</div>`);
         dailyBody.append(`
-            <div class="px-2 text-gray-400 italic dailyEventInfo">No events</div>
+            <div class="text-gray-400 italic dailyEventInfo">No events</div>
         `);
         return;
     }
@@ -302,12 +302,12 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
         if (eventsToday.length === 0) {
             dailyBody.append(`
-                <div class="px-2 text-gray-400 italic dailyEventInfo">No events</div>
+                <div class="text-gray-400 italic dailyEventInfo">No events</div>
             `);
         } else {
             eventsToday.forEach(event => {
                 dailyBody.append(`
-                    <div class="px-2 text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                    <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                         <span>${event.title}</span>
                     </div>
                 `);
@@ -334,12 +334,12 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         dailyHeader.html(`${dayName} ${day} <div>${user1.user}</div>`);
         if (eventsUser1.length === 0) {
             dailyBody.append(`
-               <div class="px-2 dailyEventInfo text-gray-400 italic">No events</div>
+               <div class="dailyEventInfo text-gray-400 italic">No events</div>
             `);
         } else {
             eventsUser1.forEach(event => {
                 dailyBody.append(`
-                    <div class="px-2 text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                    <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                         <span>${event.title}</span>
                     </div>
                 `);
@@ -350,15 +350,15 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         headerHidden.html(`${dayName} ${day} <div>${user2.user}</div>`);
         if (eventsUser2.length === 0) {
             bodyHidden.append(`
-                <div class="px-2 text-gray-400 italic dailyEventInfo">No events</div>
+                <div class="text-gray-400 italic dailyEventInfo">No events</div>
             `);
         } else {
             eventsUser2.forEach(event => {
                 bodyHidden.append(`
-                    <div class="px-2 text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                    <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                         <span>${event.title}</span>
                     </div>
-                    <div class="px-2 text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                    <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                         <span>${event.title}</span>
                     </div>
                 `);
@@ -392,13 +392,24 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     $('#userHeader').empty();
     $('#userHeaderHidden').empty();
 
-    const allEventsData = getEventsForDate(); // Now returns all users and events
+    for (let i = 0; i < 7; i++) {
+        const currentDate = new Date(startOfWeek);
+        currentDate.setDate(startOfWeek.getDate() + i);
 
-    // Always assign first 2 users regardless of event count
+        const dayClass = daysOfWeek[currentDate.getDay()];
+        const dayNameCapitalized = dayClass.charAt(0).toUpperCase() + dayClass.slice(1);
+        const dayNumber = currentDate.getDate();
+
+        $(`#weeklyViewTable .th-${dayClass}`).text(`${dayNameCapitalized} ${dayNumber}`);
+        $(`#weeklyViewTableHidden .th-${dayClass}`).text(`${dayNameCapitalized} ${dayNumber}`);
+    }
+
+
+    const allEventsData = getEventsForDate();
+
     const userRow1 = allEventsData[0] || null;
     const userRow2 = allEventsData[1] || null;
 
-    // Set headers (show user names or fallback text)
     if (userRow1) {
         $('#userHeader').html(`<div class="border border-[#fff] p-2">${userRow1.user}</div>`);
     } else {
@@ -555,7 +566,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                 const eventsForDay = userEvents.filter(event => event.date === dateStr);
                 eventsForDay.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 yearlyEventInfo bg-[#30d80fb3] my-1 p-1 rounded cursor-pointer" draggable="true" title="${event.title}">
+                        <div class="text-gray-900 yearlyEventInfo bg-[#00CED1] my-1 p-1 rounded cursor-pointer" draggable="true" title="${event.title}">
                             <span>${event.title}</span>
                         </div>
                     `);

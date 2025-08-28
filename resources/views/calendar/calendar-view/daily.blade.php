@@ -6,7 +6,7 @@
     </thead>
     <tbody id="dailyBody" class="border-t-3 border-[#fff]">
         <tr class="calendarRowData flex min-h-[200px] px-2">
-            <td></td>
+            <td class="w-full"></td>
         </tr>
     </tbody>
 </table>
@@ -20,7 +20,7 @@
     </thead>
     <tbody id="dailyBodyHidden" class="border-t-3 border-[#fff]">
         <tr class="calendarRowData flex min-h-[200px] px-2">
-            <td></td>
+            <td class="w-full"></td>
         </tr>
     </tbody>
 </table>

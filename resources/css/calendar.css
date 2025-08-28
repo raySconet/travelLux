@@ -38,16 +38,16 @@ body {
 .dailyEventInfo {
     cursor: pointer;
     margin-top:5px;
-    padding:10px;
+    padding: 8px;
     border-radius:6px;
-    height:38px;
+    /* height:38px; */
 }
 
 .dailyNoEventInfo {
     margin-top:5px;
     padding:10px;
     border-radius:6px;
-    height:38px;
+    /* height:38px; */
 }
 
 .yearlyEventInfo, .weeklyEventInfo, .dailyEventInfo {

@@ -318,7 +318,7 @@ function showView(view) {
                 updateCalendarHeader(currentMonth, currentYear);
                 buildMonthlyCalendarDays(currentMonth, currentYear);
             }
-            
+
             buildMonthlyCalendarDays(
                 window.selectedDate.getMonth(),
                 window.selectedDate.getFullYear()

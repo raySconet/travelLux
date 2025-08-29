@@ -22,6 +22,8 @@ $(document).ready(() => {
 
         $('#selectedDayWeekMonthOption').text('Day View');
         showView('Daily');
+
+        highlightSelectedSidebarDay();
     });
 
 
@@ -54,19 +56,45 @@ $(document).ready(() => {
 
         buildDailyView(window.selectedDate.getDate(), window.selectedDate.getMonth(), window.selectedDate.getFullYear());
         updateDailyHeader(window.selectedDate);
-    })
+        console.log(window.selectedDate);
+
+        highlightSelectedSidebarDay();
+    });
 
     $(document).on('click', '#calendarNextDay', function() {
         if (!window.selectedDate) window.selectedDate = new Date();
         window.selectedDate.setDate(window.selectedDate.getDate() + 1);
+
+        const newMonth = window.selectedDate.getMonth();
+        const newYear = window.selectedDate.getFullYear();
+
+        if (newMonth !== currentMonth || newYear !== currentYear) {
+            currentMonth = newMonth;
+            currentYear = newYear;
+            updateCalendarHeader(currentMonth, currentYear);
+            buildMonthlyCalendarDays(currentMonth, currentYear);
+        }
+
         buildDailyView(window.selectedDate.getDate(), window.selectedDate.getMonth(), window.selectedDate.getFullYear());
         updateDailyHeader(window.selectedDate);
+
+        highlightSelectedSidebarDay();
     });
 
     $(document).on('click', '#calendarPrevWeek', function() {
         if (!window.selectedDate) window.selectedDate = new Date();
 
         window.selectedDate.setDate(window.selectedDate.getDate() - 7); // Go back 7 days
+
+        const newMonth = window.selectedDate.getMonth();
+        const newYear = window.selectedDate.getFullYear();
+
+        if (newMonth !== currentMonth || newYear !== currentYear) {
+            currentMonth = newMonth;
+            currentYear = newYear;
+            updateCalendarHeader(currentMonth, currentYear);
+            buildMonthlyCalendarDays(currentMonth, currentYear);
+        }
 
         buildWeeklyView(
             window.selectedDate.getDate(),
@@ -81,6 +109,16 @@ $(document).ready(() => {
         if (!window.selectedDate) window.selectedDate = new Date();
 
         window.selectedDate.setDate(window.selectedDate.getDate() + 7); // Go forward 7 days
+
+        const newMonth = window.selectedDate.getMonth();
+        const newYear = window.selectedDate.getFullYear();
+
+        if (newMonth !== currentMonth || newYear !== currentYear) {
+            currentMonth = newMonth;
+            currentYear = newYear;
+            updateCalendarHeader(currentMonth, currentYear);
+            buildMonthlyCalendarDays(currentMonth, currentYear);
+        }
 
         buildWeeklyView(
             window.selectedDate.getDate(),
@@ -109,10 +147,10 @@ $(document).ready(() => {
         };
 
         const view = viewMap[id];
-        showView(view);
-
         const el = $('#viewOptionsDropdown [popover]')[0];
         el?.hidePopover?.();
+        showView(view);
+
     });
 
     $(document).on('change', 'input[type="checkbox"][data-user-id]', function () {
@@ -237,6 +275,8 @@ function showView(view) {
         } else {
             buildDailyView();
         }
+
+        highlightSelectedSidebarDay()
     } else if (view === 'Weekly') {
         if (window.selectedDate) {
             buildWeeklyView(
@@ -247,6 +287,18 @@ function showView(view) {
         } else {
             buildWeeklyView();
         }
+        $('.sidebar-day-btn').removeClass('selected-day');
+    } else if (view === 'Monthly') {
+        if (window.selectedDate) {
+            buildMonthlyCalendarDays(
+                window.selectedDate.getMonth(),
+                window.selectedDate.getFullYear()
+            );
+        } else {
+            buildMonthlyCalendarDays();
+        }
+        $('.sidebar-day-btn').removeClass('selected-day');
+
     }
 }
 
@@ -309,6 +361,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 dailyBody.append(`
                     <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                         <span>${event.title}</span>
+                        <span>~${event.from} - ${event.to}</span>
                     </div>
                 `);
             });
@@ -341,6 +394,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 dailyBody.append(`
                     <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                         <span>${event.title}</span>
+                        <span>~${event.from} - ${event.to}</span>
                     </div>
                 `);
             });
@@ -360,6 +414,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     </div>
                     <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                         <span>${event.title}</span>
+                        <span>~${event.from} - ${event.to}</span>
                     </div>
                 `);
             });
@@ -484,23 +539,23 @@ function getEventsForDate(date) {
         {
             user: 'Simone Alexander',
             events: [
-                { title: 'AAM - NEW REFERRAL', date: '2025-08-25' },
-                { title: 'Morning Briefing', date: '2025-08-26' },
-                { title: 'Client Meeting - Project Alpha', date: '2025-08-28' },
-                { title: 'Lunch with Team', date: '2025-08-29' },
-                { title: 'Quarterly Report Review', date: '2025-08-30' },
-                { title: 'Strategy Planning Session', date: '2025-09-01' },
-                { title: 'Follow-up Call with Partner', date: '2025-09-02' },
-                { title: 'Product Demo', date: '2025-09-04' },
-                { title: 'Team Building Activity', date: '2025-09-04' },
-                { title: 'End of Week Wrap-up', date: '2025-09-04' }
+                { title: 'AAM - NEW REFERRAL', date: '2025-08-25', from: '09:00', to: '09:30' },
+                { title: 'Morning Briefing', date: '2025-08-26', from: '08:30', to: '09:00' },
+                { title: 'Client Meeting - Project Alpha', date: '2025-08-28', from: '11:00', to: '12:00' },
+                { title: 'Lunch with Team', date: '2025-08-29', from: '12:30', to: '13:30' },
+                { title: 'Quarterly Report Review', date: '2025-08-30', from: '15:00', to: '16:00' },
+                { title: 'Strategy Planning Session', date: '2025-09-01', from: '10:00', to: '12:00' },
+                { title: 'Follow-up Call with Partner', date: '2025-09-02', from: '14:00', to: '14:30' },
+                { title: 'Product Demo', date: '2025-09-04', from: '10:00', to: '11:00' },
+                { title: 'Team Building Activity', date: '2025-09-04', from: '13:00', to: '17:00' },
+                { title: 'End of Week Wrap-up', date: '2025-09-04', from: '17:00', to: '17:30' }
             ]
         },
         {
             user: 'John Doe',
             events: [
-                { title: 'Team Sync - Project Phoenix', date: '2025-08-28' },
-                { title: 'Follow-up Call with Client', date: '2025-08-25' }
+                { title: 'Team Sync - Project Phoenix', date: '2025-08-28', from: '10:00', to: '10:30' },
+                { title: 'Follow-up Call with Client', date: '2025-08-25', from: '15:00', to: '15:30' }
             ]
         }
     ];
@@ -558,7 +613,8 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
 
             $td.removeClass('currentDay'); // Always clear before setting
             if (calendarId === '#sidebarCalendarBody') {
-                $td.html(`<button class="sidebar-day-btn font-bold cursor-pointer" data-date="${dateStr}">${day}</button>`);
+                $td.html(`<button class="font-bold cursor-pointer" data-date="${dateStr}">${day}</button>`);
+                $td.addClass('sidebar-day-btn cursor-pointer').attr('data-date', `${dateStr}`);
             } else {
                 $td.html('<span class="font-bold cursor-pointer">' + day + '</span>');
 
@@ -669,4 +725,10 @@ function updateCalendarHeader(month, year) {
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     $('#calendarMonthYearSelected').text(`${monthNames[month]} ${year}`);
     $('#sidebarCalendarMonthYearSelected').text(`${monthNames[month]} ${year}`);
+}
+
+function highlightSelectedSidebarDay() {
+    const selectedDateStr = toLocalDateString(window.selectedDate);
+    $('.sidebar-day-btn').removeClass('selected-day sidebarCalendarCurrentDay');
+    $(`.sidebar-day-btn[data-date="${selectedDateStr}"]`).addClass('selected-day');
 }

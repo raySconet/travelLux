@@ -14,8 +14,8 @@
                     <div class="pb-4 border-b flex items-center justify-between">
                         <h2 id="sidebarCalendarMonthYearSelected" class="text-lg font-semibold">{{ date('F Y') }}</h2>
                         <div class="space-x-2">
-                            <button id="sidebarCalendarPrevMonth" class="text-gray-600 hover:text-black cursor-pointer">&larr;</button>
-                            <button id ="sidebarCalendarNextMonth" class="text-gray-600 hover:text-black cursor-pointer">&rarr;</button>
+                            <button id="sidebarCalendarPrevMonth" class="text-gray-600 hover:text-black cursor-pointer pl-2">&larr;</button>
+                            <button id ="sidebarCalendarNextMonth" class="text-gray-600 hover:text-black cursor-pointer pr-2">&rarr;</button>
                         </div>
                     </div>
                     @include('calendar.calendar-sidebar') {{-- Include the calendar sidebar component --}}

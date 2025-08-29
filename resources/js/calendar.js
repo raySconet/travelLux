@@ -131,10 +131,14 @@ $(document).ready(() => {
 
     $(document).on('click', '#calendarPrevMonth, #sidebarCalendarPrevMonth', function() {
         goToPreviousMonth();
+        highlightSelectedSidebarDay();
+        // $('.sidebar-day-btn').removeClass('selected-day');
     });
 
     $(document).on('click', '#calendarNextMonth, #sidebarCalendarNextMonth', function() {
         goToNextMonth();
+        highlightSelectedSidebarDay();
+        // $('.sidebar-day-btn').removeClass('selected-day');
     });
 
     $(document).on('click', '#calendarDayViewOption, #calendarWeekViewOption, #calendarMonthViewOption', function() {
@@ -150,7 +154,6 @@ $(document).ready(() => {
         const el = $('#viewOptionsDropdown [popover]')[0];
         el?.hidePopover?.();
         showView(view);
-
     });
 
     $(document).on('change', 'input[type="checkbox"][data-user-id]', function () {
@@ -387,7 +390,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             eventsToday.forEach(event => {
                 dailyBody.append(`
-                    <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                    <div class="text-gray-900 dailyEventInfo bg-[#00CED1]" draggable="true">
                         <span>${event.title}</span>
                         <span>~${event.from} - ${event.to}</span>
                     </div>
@@ -420,7 +423,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             eventsUser1.forEach(event => {
                 dailyBody.append(`
-                    <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                    <div class="text-gray-900 dailyEventInfo bg-[#00CED1]" draggable="true">
                         <span>${event.title}</span>
                         <span>~${event.from} - ${event.to}</span>
                     </div>
@@ -437,7 +440,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             eventsUser2.forEach(event => {
                 bodyHidden.append(`
-                    <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
+                    <div class="text-gray-900 dailyEventInfo bg-[#00CED1]" draggable="true">
                         <span>${event.title}</span>
                         <span>~${event.from} - ${event.to}</span>
                     </div>
@@ -521,7 +524,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 weeklyEventInfo bg-[#30d80fb3] my-1 p-1 rounded cursor-pointer" draggable="true">
+                        <div class="text-gray-900 weeklyEventInfo bg-[#00CED1] my-1 p-1 rounded cursor-pointer" draggable="true">
                             <span>${event.title}</span>
                         </div>
                     `);
@@ -540,7 +543,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 weeklyEventInfo bg-[#30d80fb3] my-1 p-1 rounded cursor-pointer" draggable="true">
+                        <div class="text-gray-900 weeklyEventInfo bg-[#00CED1] my-1 p-1 rounded cursor-pointer" draggable="true">
                             <span>${event.title}</span>
                         </div>
                     `);

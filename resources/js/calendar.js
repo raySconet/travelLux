@@ -439,9 +439,6 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 bodyHidden.append(`
                     <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
                         <span>${event.title}</span>
-                    </div>
-                    <div class="text-gray-900 dailyEventInfo bg-[#30d80fb3]" draggable="true">
-                        <span>${event.title}</span>
                         <span>~${event.from} - ${event.to}</span>
                     </div>
                 `);

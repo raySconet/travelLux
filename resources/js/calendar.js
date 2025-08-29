@@ -311,24 +311,6 @@ function showView(view) {
         }
         $('.sidebar-day-btn').removeClass('selected-day');
     } else if (view === 'Monthly') {
-        if (window.selectedDate) {
-            const newMonth = window.selectedDate.getMonth();
-            const newYear = window.selectedDate.getFullYear();
-
-            if (newMonth !== currentMonth || newYear !== currentYear) {
-                currentMonth = newMonth;
-                currentYear = newYear;
-                updateCalendarHeader(currentMonth, currentYear);
-                buildMonthlyCalendarDays(currentMonth, currentYear);
-            }
-
-            buildMonthlyCalendarDays(
-                window.selectedDate.getMonth(),
-                window.selectedDate.getFullYear()
-            );
-        } else {
-            buildMonthlyCalendarDays();
-        }
         $('.sidebar-day-btn').removeClass('selected-day');
     }
 }

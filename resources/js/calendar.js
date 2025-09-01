@@ -309,9 +309,9 @@ function showView(view) {
         } else {
             buildWeeklyView();
         }
-        $('.sidebar-day-btn').removeClass('selected-day');
+        // $('.sidebar-day-btn').removeClass('selected-day');
     } else if (view === 'Monthly') {
-        $('.sidebar-day-btn').removeClass('selected-day');
+        // $('.sidebar-day-btn').removeClass('selected-day');
     }
 }
 

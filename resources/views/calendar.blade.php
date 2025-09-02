@@ -56,5 +56,14 @@
             </div>
         </div>
     </div>
+
+    <div id="addEventModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl p-6 relative border border-gray-300">
+            <button id="closeAddEventModal" class="absolute top-3 right-3 text-gray-500 hover:text-black text-2xl leading-none">&times;</button>
+            <div class="modal-content">
+                <x-calendar-components.add-event-case />
+            </div>
+        </div>
+    </div>
 </x-app-layout>
 

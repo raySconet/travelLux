@@ -192,6 +192,21 @@ $(document).ready(() => {
         }
     });
 
+    $('#openAddEventModal').on('click', function() {
+        $('#addEventModal').removeClass('hidden');
+    });
+
+    // Close modal
+    $('#closeAddEventModal').on('click', function() {
+        $('#addEventModal').addClass('hidden');
+    });
+
+    // Optional: Close when clicking outside modal content
+    $('#addEventModal').on('click', function(e) {
+        if ($(e.target).is('#addEventModal')) {
+            $(this).addClass('hidden');
+        }
+    });
 });
 
 function toggleHeaderForView(view) {
@@ -699,7 +714,6 @@ function getWeeksCountForCalendar(month, year) {
 
     return weeks;
 }
-
 
 function generateCalendarDays() {
     buildMonthlyCalendarDays(currentMonth, currentYear);

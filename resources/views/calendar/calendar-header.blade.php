@@ -61,11 +61,11 @@
                 </el-menu>
             </el-dropdown>
             <span class="verticalLine"></span>
-            <x-primary-btn class="bg-[#14548d] text-white font-semibold py-2 px-4 rounded cursor-pointer">
-                <i class="fa-solid fa-plus"></i>
-                <span class="ml-2">
-                    {{ __('Add E/C') }}
-                </span>
+            <x-primary-btn
+                id="openAddEventModal"
+                class="bg-[#14548d] text-white font-semibold py-2 px-4 rounded cursor-pointer">
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="ml-2">{{ __('Add E/C') }}</span>
             </x-primary-btn>
         </x-calendar-components.section>
     </div>

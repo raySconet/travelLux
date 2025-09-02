@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    protected $table = 'users';
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -50,9 +52,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Event::class);
     }
-
+    // If you omit the pivot table name,
+    // Laravel will assume the table is the alphabetical order of the two model names (snake_case, singular), like court_case_user.
     public function courtCases()
     {
-        return $this->belongsToMany(CourtCase::class, 'user_case');
+        return $this->belongsToMany(CourtCase::class, 'user_case', 'user_id', 'case_id');
     }
 }

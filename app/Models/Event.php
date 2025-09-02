@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
+    protected $table = 'events';
+
     protected $fillable = [
-        'name',
-        'color',
+        'title',
+        'categoryId',
         'user_id',
         'date_from',
         'date_to',
@@ -17,5 +19,11 @@ class Event extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Belongs to a category
+    public function categorie()
+    {
+        return $this->belongsTo(Categorie::class);
     }
 }

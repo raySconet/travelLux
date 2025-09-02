@@ -5,8 +5,8 @@ $(document).ready(() => {
 
     generateCalendarDays();
 
-    $(document).on('click', '.sidebar-day-btn', function() {
-        const dateStr = $(this).data('date');
+    $(document).on('click', '.sidebar-day-btn-parent', function() {
+        const dateStr = $(this).children('.sidebar-day-btn').data('date');
         const [year, month, day] = dateStr.split('-').map(Number);
 
         const selected = new Date(year, month - 1, day);
@@ -83,50 +83,58 @@ $(document).ready(() => {
 
     $(document).on('click', '#calendarPrevWeek', function() {
         if (!window.selectedDate) window.selectedDate = new Date();
+        if (!window.viewedWeekDate) window.viewedWeekDate = new Date(window.selectedDate.getTime());
 
-        window.selectedDate.setDate(window.selectedDate.getDate() - 7); // Go back 7 days
+        window.viewedWeekDate.setDate(window.viewedWeekDate.getDate() - 7);
 
-        const newMonth = window.selectedDate.getMonth();
-        const newYear = window.selectedDate.getFullYear();
+        const newMonth = window.viewedWeekDate.getMonth();
+        const newYear = window.viewedWeekDate.getFullYear();
 
         if (newMonth !== currentMonth || newYear !== currentYear) {
             currentMonth = newMonth;
             currentYear = newYear;
             updateCalendarHeader(currentMonth, currentYear);
             buildMonthlyCalendarDays(currentMonth, currentYear);
+            $('.sidebar-day-btn-parent').removeClass('selected-day sidebarCalendarCurrentDay');
+
+            highlightSelectedSidebarDay();  // <-- Call your function here
         }
 
         buildWeeklyView(
-            window.selectedDate.getDate(),
-            window.selectedDate.getMonth(),
-            window.selectedDate.getFullYear()
+            window.viewedWeekDate.getDate(),
+            window.viewedWeekDate.getMonth(),
+            window.viewedWeekDate.getFullYear()
         );
 
-        updateWeeklyHeader(window.selectedDate);
+        updateWeeklyHeader(window.viewedWeekDate);
     });
 
     $(document).on('click', '#calendarNextWeek', function() {
         if (!window.selectedDate) window.selectedDate = new Date();
+        if (!window.viewedWeekDate) window.viewedWeekDate = new Date(window.selectedDate.getTime());
 
-        window.selectedDate.setDate(window.selectedDate.getDate() + 7); // Go forward 7 days
+        window.viewedWeekDate.setDate(window.viewedWeekDate.getDate() + 7);
 
-        const newMonth = window.selectedDate.getMonth();
-        const newYear = window.selectedDate.getFullYear();
+        const newMonth = window.viewedWeekDate.getMonth();
+        const newYear = window.viewedWeekDate.getFullYear();
 
         if (newMonth !== currentMonth || newYear !== currentYear) {
             currentMonth = newMonth;
             currentYear = newYear;
             updateCalendarHeader(currentMonth, currentYear);
             buildMonthlyCalendarDays(currentMonth, currentYear);
+            $('.sidebar-day-btn-parent').removeClass('selected-day sidebarCalendarCurrentDay');
+
+            highlightSelectedSidebarDay();  // <-- And here too
         }
 
         buildWeeklyView(
-            window.selectedDate.getDate(),
-            window.selectedDate.getMonth(),
-            window.selectedDate.getFullYear()
+            window.viewedWeekDate.getDate(),
+            window.viewedWeekDate.getMonth(),
+            window.viewedWeekDate.getFullYear()
         );
 
-        updateWeeklyHeader(window.selectedDate);
+        updateWeeklyHeader(window.viewedWeekDate);
     });
 
     $(document).on('click', '#calendarPrevMonth, #sidebarCalendarPrevMonth', function() {
@@ -623,8 +631,8 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
 
             $td.removeClass('currentDay'); // Always clear before setting
             if (calendarId === '#sidebarCalendarBody') {
-                $td.html(`<button class="font-bold cursor-pointer" data-date="${dateStr}">${day}</button>`);
-                $td.addClass('sidebar-day-btn cursor-pointer').attr('data-date', `${dateStr}`);
+                $td.html(`<button class="font-bold sidebar-day-btn cursor-pointer" data-date="${dateStr}">${day}</button>`);
+                $td.addClass('sidebar-day-btn-parent cursor-pointer');
             } else {
                 $td.html('<span class="font-bold cursor-pointer">' + day + '</span>');
 
@@ -640,12 +648,10 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                 });
             }
 
-            if (isCurrentMonth && day === today.getDate()) {
+            if (!window.selectedDate && isCurrentMonth && day === today.getDate()) {
                 $td.addClass(currentDayClass);
-                // if (calendarId === '#calendarBody') {
-                //     $td.append(``)
-                // }
             }
+
             day++;
             tdIndex++;
         }
@@ -738,7 +744,30 @@ function updateCalendarHeader(month, year) {
 }
 
 function highlightSelectedSidebarDay() {
-    const selectedDateStr = toLocalDateString(window.selectedDate);
-    $('.sidebar-day-btn').removeClass('selected-day sidebarCalendarCurrentDay');
-    $(`.sidebar-day-btn[data-date="${selectedDateStr}"]`).addClass('selected-day');
+    $('.sidebar-day-btn-parent').removeClass('selected-day sidebarCalendarCurrentDay');
+
+    if (window.selectedDate) {
+        const selectedDateStr = toLocalDateString(window.selectedDate);
+        $(`.sidebar-day-btn[data-date="${selectedDateStr}"]`).parent().addClass('selected-day');
+    } else {
+        const todayStr = toLocalDateString(new Date());
+        $(`.sidebar-day-btn[data-date="${todayStr}"]`).parent().addClass('sidebarCalendarCurrentDay');
+    }
+}
+
+function highlightSelectedWeeklyDay() {
+    // First, clear any existing highlight
+    $('.weekly-day.selected-day').removeClass('selected-day');
+
+    if (!window.selectedDate) return;
+
+    // Format the selected date to YYYY-MM-DD
+    const year = window.selectedDate.getFullYear();
+    const month = (window.selectedDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+    const day = window.selectedDate.getDate().toString().padStart(2, '0');
+
+    const selectedDateStr = `${year}-${month}-${day}`;
+
+    // Find the element in the weekly view with that date and add the highlight class
+    $(`.weekly-day[data-date="${selectedDateStr}"]`).addClass('selected-day');
 }

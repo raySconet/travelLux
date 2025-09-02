@@ -29,4 +29,22 @@ class CourtCase extends Model
     {
         return $this->belongsTo(CaseStage::class);
     }
+
+    public function clients()
+    {
+        return $this->hasMany(CaseClient::class, 'court_case_id', 'id');
+    }
+
+    public function thirdP()
+    {
+        return $this->hasMany(CaseThirdP::class, 'court_case_id', 'id');
+    }
+    public function firstP()
+    {
+        return $this->hasMany(CaseFirstP::class, 'court_case_id', 'id');
+    }
+    public function defenseCouncel()
+    {
+        return $this->hasMany(CaseDefenseCounsel::class, 'court_case_id', 'id');
+    }
 }

@@ -21,8 +21,6 @@
         </div>
 
         <div class="2xl:col-span-3 flex flex-col ">
-            <p class="mb-1 text-md text-gray-600">
-            </p>
             <div>
                 <x-input-label for="doi" :value="__('DOI')" />
                 <x-text-input id="doi" name="doi" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="doi" />
@@ -32,8 +30,6 @@
         </div>
 
         <div class="2xl:col-span-3 flex flex-col ">
-            <p class="mb-1 text-md text-gray-600">
-            </p>
             <div>
                 <x-input-label for="facts" :value="__('Facts')" />
                 <x-text-area id="facts" name="facts" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="facts" />
@@ -42,8 +38,6 @@
         </div>
 
         <div class="2xl:col-span-3 flex flex-col ">
-            <p class="mb-1 text-md text-gray-600">
-            </p>
             <div>
                 <x-input-label for="injuries" :value="__('Injuries')" />
                 <x-text-input id="injuries" name="injuries" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="injuries" />

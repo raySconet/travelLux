@@ -8,8 +8,27 @@ body {
 
 
 
+.incompleteButton {
+  border: 1px solid black;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background-color: white;
+  position: relative;
+  margin-top: 3px;
+  cursor:pointer;
+
+}
 
 
 
-
-
+.completeButton {
+  border: 0px;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background-color: #217346;
+  position: relative;
+  margin-top: 3px;
+  cursor:pointer;
+}

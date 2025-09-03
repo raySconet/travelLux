@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Todo extends Model
+class TodoSection extends Model
 {
     protected $table = 'todos';
 
@@ -16,9 +16,8 @@ class Todo extends Model
         'case_id',
     ];
 
-    // Each todo belongs to one section
-    public function section()
+      public function todos()
     {
-        return $this->belongsTo(TodoSection::class);
+        return $this->hasMany(Todo::class);
     }
 }

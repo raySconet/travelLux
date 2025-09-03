@@ -8,9 +8,9 @@ class CourtCase extends Model
 {
     protected $table = 'court_cases';
 
-    public function todo()
+    public function todoSection()
     {
-        return $this->hasMany(Todo::class);
+        return $this->hasMany(TodoSection::class);
     }
 
     public function users()

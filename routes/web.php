@@ -21,6 +21,9 @@ Route::get('/calendar', function () {
     return view('calendar');
 })->middleware(['auth', 'verified'])->name('calendar');
 
+Route::get('/category', function () {
+    return view('category');
+})->middleware(['auth', 'verified'])->name('category');
 
 Route::get('/caseInfo', function(){
     return view('caseInfo');

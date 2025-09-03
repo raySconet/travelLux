@@ -8,7 +8,7 @@ Alpine.start();
 
 flatpickr(".datetimepicker", {
     enableTime: true,
-    dateFormat: "Y-m-d H:i",
+    dateFormat: "m-d-Y H:i",
     time_24hr: true,
     // defaultDate: new Date(),
 });

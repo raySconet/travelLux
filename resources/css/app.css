@@ -5,7 +5,86 @@ body {
     font-size: 13px ;
 }
 
+/* Tailwind-style calendar container */
+    .flatpickr-calendar {
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb; /* border-gray-200 */
+        border-radius: 0.75rem; /* rounded-xl */
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        padding: 0.5rem;
+        width: auto;
+        z-index: 9999;
+    }
 
+    .flatpickr-months {
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.25rem;
+    }
+
+    .flatpickr-month {
+        color: #1f2937; /* text-gray-800 */
+        font-weight: 600;
+    }
+
+    .flatpickr-weekdays {
+        margin-bottom: 0.25rem;
+    }
+
+    .flatpickr-weekday {
+        color: #6b7280; /* text-gray-500 */
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .flatpickr-day {
+        width: 2.5rem;
+        height: 2.5rem;
+        line-height: 2.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151; /* text-gray-700 */
+        border-radius: 0.5rem; /* rounded-lg */
+        transition: all 0.2s ease-in-out;
+        margin: 2px;
+    }
+
+    .flatpickr-day:hover {
+        background-color: #3b82f6; /* blue-500 */
+        color: white;
+        font-weight: 600;
+    }
+
+    .flatpickr-day.today {
+        border: 2px solid #3b82f6; /* blue-500 */
+        background-color: #eff6ff; /* blue-50 */
+        color: #1e40af; /* blue-900 */
+    }
+
+    .flatpickr-day.selected,
+    .flatpickr-day.startRange,
+    .flatpickr-day.endRange {
+        background-color: #2563eb; /* blue-600 */
+        color: white;
+        font-weight: 600;
+    }
+
+    .flatpickr-time {
+        border-top: 1px solid #e5e7eb;
+        padding-top: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .flatpickr-time input {
+        background: transparent;
+        border: none;
+        color: #111827; /* gray-900 */
+        font-weight: 500;
+    }
+
+    .flatpickr-time .flatpickr-am-pm {
+        color: #6b7280; /* gray-500 */
+    }
 
 
 

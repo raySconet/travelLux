@@ -27,7 +27,6 @@ body {
     font-weight: 600;
 }
 
-<<<<<<< HEAD
 .incompleteButton {
   border: 1px solid black;
   height: 18px;
@@ -38,11 +37,7 @@ body {
   margin-top: 3px;
   cursor:pointer;
 
-=======
-.flatpickr-weekdays {
-    margin-bottom: 0.25rem;
->>>>>>> 5ada7ce040565200914c5f8711a9f8be5b5dc749
-}
+
 
 .flatpickr-weekday {
     color: #6b7280; /* text-gray-500 */
@@ -62,7 +57,6 @@ body {
     margin: 2px;
 }
 
-<<<<<<< HEAD
 .completeButton {
   border: 0px;
   height: 18px;
@@ -73,7 +67,6 @@ body {
   margin-top: 3px;
   cursor:pointer;
 }
-=======
 .flatpickr-day:hover {
     background-color: #3b82f6; /* blue-500 */
     color: white;
@@ -145,5 +138,3 @@ body {
     color: rgba(0, 0, 0, 0.9);
     fill: rgba(0, 0, 0, 0.9);
 }
-
->>>>>>> 5ada7ce040565200914c5f8711a9f8be5b5dc749

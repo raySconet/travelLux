@@ -5,6 +5,32 @@ body {
     font-size: 13px ;
 }
 
+
+
+.incompleteButton {
+  border: 1px solid black;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background-color: white;
+  position: relative;
+  margin-top: 3px;
+  cursor:pointer;
+}
+
+.completeButton {
+  border: 0px;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background-color: #217346;
+  position: relative;
+  margin-top: 3px;
+  cursor:pointer;
+}
+
+
+
 /* Tailwind-style calendar container */
 .flatpickr-calendar {
     background-color: #ffffff;
@@ -27,17 +53,9 @@ body {
     font-weight: 600;
 }
 
-.incompleteButton {
-  border: 1px solid black;
-  height: 18px;
-  width: 18px;
-  border-radius: 50%;
-  background-color: white;
-  position: relative;
-  margin-top: 3px;
-  cursor:pointer;
-
-
+.flatpickr-weekdays {
+    margin-bottom: 0.25rem;
+}
 
 .flatpickr-weekday {
     color: #6b7280; /* text-gray-500 */
@@ -57,16 +75,6 @@ body {
     margin: 2px;
 }
 
-.completeButton {
-  border: 0px;
-  height: 18px;
-  width: 18px;
-  border-radius: 50%;
-  background-color: #217346;
-  position: relative;
-  margin-top: 3px;
-  cursor:pointer;
-}
 .flatpickr-day:hover {
     background-color: #3b82f6; /* blue-500 */
     color: white;
@@ -138,3 +146,5 @@ body {
     color: rgba(0, 0, 0, 0.9);
     fill: rgba(0, 0, 0, 0.9);
 }
+
+/* Tailwind-style calendar container End */

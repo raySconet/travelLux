@@ -1,4 +1,5 @@
 let currentMonth, currentYear;
+let checkedOrder = [];
 
 $(document).ready(() => {
     ({ month: currentMonth, year: currentYear } = parseMonthYear($('#calendarMonthYearSelected').text()));
@@ -167,28 +168,43 @@ $(document).ready(() => {
     $(document).on('change', 'input[type="checkbox"][data-user-id]', function () {
         const view = $('#selectedDayWeekMonthOption').text().trim();
         const allCheckboxes = $('input[type="checkbox"][data-user-id]');
-        console.log(view);
-        console.log('User ID (changed):', $(this).data('user-id'));
+        const $this = $(this);
+        const userId = $this.data('user-id');
+
+        console.log('View:', view);
+        console.log('User ID (changed):', userId);
 
         if (view === 'Month View') {
-            allCheckboxes.not(this).prop('checked', false);
-            $(this).prop('checked', true);
+            allCheckboxes.prop('checked', false);
+            $this.prop('checked', true);
+
+            checkedOrder = [$this.data('user-id')];
         } else {
-            const $checked = allCheckboxes.filter(':checked');
+            if ($this.is(':checked')) {
+                if (!checkedOrder.includes(userId)) {
+                    checkedOrder.push(userId);
+                }
 
-            if ($checked.length > 2) {
-                $(this).prop('checked', false);
-                alert('You can select a maximum of 2 users.');
-                return;
+                checkedOrder = checkedOrder.filter(id =>
+                    $(`input[type="checkbox"][data-user-id="${id}"]`).is(':checked')
+                );
+
+
+                if (checkedOrder.length > 2) {
+                    // Too many checked, remove the first one (oldest)
+                    const firstCheckedId = checkedOrder.shift();
+                    $(`input[type="checkbox"][data-user-id="${firstCheckedId}"]`).prop('checked', false);
+                    console.log(`Unchecking oldest user ID: ${firstCheckedId}`);
+                }
+            } else {
+                // Checkbox is being unchecked manually
+                checkedOrder = checkedOrder.filter(id => id !== userId);
+                console.log(`User ID manually unchecked: ${userId}`);
             }
 
-            if ($checked.length === 2) {
-                const selectedUserIds = $checked.map(function () {
-                    return $(this).data('user-id');
-                }).get();
-
-                console.log('Selected User IDs (exactly 2):', selectedUserIds);
-            }
+            // Optional: Log current checked IDs
+            const currentChecked = checkedOrder;
+            console.log('Currently selected user IDs:', currentChecked);
         }
     });
 
@@ -716,6 +732,13 @@ function getWeeksCountForCalendar(month, year) {
 }
 
 function generateCalendarDays() {
+    const allCheckboxes = $('input[type="checkbox"][data-user-id]');
+    allCheckboxes.prop('checked', false);
+
+    const first = allCheckboxes.first();
+    first.prop('checked', true);
+
+    checkedOrder = [first.data('user-id')];
     buildMonthlyCalendarDays(currentMonth, currentYear);
 }
 

@@ -1,7 +1,11 @@
-@props(['class' => '', 'id' => null])
+@props(['class' => '', 'id' => null, 'dataTarget' => null])
 
 <div
-    id="{{ $id }}"
-    {{ $attributes->merge(['class' => 'flex items-center gap-2 flip bg-[#eaf1ff] border border-[#cacaff] text-gray-800  py-2 px-4 rounded cursor-pointer ' . $class]) }}>
+    {{ $attributes->merge([
+        'class' => 'flex items-center gap-2 flip bg-[#14548d] text-white py-2 px-4 rounded cursor-pointer ' . $class,
+        'id' => $id,
+        'data-target' => $dataTarget,
+    ]) }}
+>
     {{ $slot }}
 </div>

@@ -1,0 +1,339 @@
+$(document).ready(() => {
+    $('#openDrawer').on('click', function () {
+        $('#sidebarDrawer').removeClass('-translate-x-full');
+
+        $('#categoryViewSection')
+            .removeClass('grid-cols-1 xl:grid-cols-[100px_1fr]')
+            .addClass('grid-cols-12');
+
+        $('#categorySidebar')
+            .removeClass('col-span-1')
+            .addClass('col-span-12 xl:col-span-3');
+
+        $('#categoryLayout')
+            .addClass('col-span-12 xl:col-span-9');
+
+        $('#categorySidebar > div > div').addClass('min-h-[900px]');
+    });
+
+    $('#closeDrawer').on('click', function () {
+        $('#sidebarDrawer').addClass('-translate-x-full');
+
+        setTimeout(function () {
+            $('#categoryViewSection')
+                .removeClass('grid-cols-12')
+                .addClass('grid-cols-1 xl:grid-cols-[100px_1fr]');
+
+            $('#categorySidebar')
+                .removeClass('col-span-12 xl:col-span-3');
+
+            $('#categoryLayout')
+                .removeClass('col-span-12 xl:col-span-9');
+
+            $('#categorySidebar > div > div').removeClass('min-h-[900px]');
+        }, 100);
+    });
+
+    $(document).on('click', '.flip', function () {
+        const panelSelector = $(this).data("target");
+        const panel = $(panelSelector);
+        const isOpen = panel.is(":visible");
+
+        if(isOpen) {
+            $(this).addClass('rounded').removeClass('rounded-t');
+        } else {
+            $(this).removeClass('rounded').addClass('rounded-t');
+        }
+
+        // Toggle icons
+        $(this).children(".fa-chevron-right").toggle(isOpen);
+        $(this).children(".fa-chevron-down").toggle(!isOpen);
+
+        // Toggle panel
+        panel.slideToggle();
+    });
+
+    $(document).on('change', 'input[type="checkbox"][data-user-id]', function () {
+        const allCheckboxes = $('input[type="checkbox"][data-user-id]');
+
+        // Uncheck all others
+        allCheckboxes.not(this).prop('checked', false);
+
+        // Check the clicked one
+        $(this).prop('checked', true);
+
+        console.log('Selected User ID:', $(this).data('user-id'));
+    });
+
+    const data = getEventsCases();
+    renderEventCases(data);
+});
+
+function getEventsCases() {
+    const categories = [
+        {
+            id: "1",
+            panelId: "panel1",
+            label: "Discharged",
+            colorClass: "red-500 border-red-800",
+            items: [
+                {
+                    tag: "DISCHARGED",
+                    description: "NA - DISCHARGED - MICHAEL THOMAS + JANE THOMAS (11 yrs)",
+                    from: "Mon 8/18/2025 08:00 AM",
+                    to: "Mon 8/18/2025 10:00 AM"
+                },
+                {
+                    tag: "DISCHARGED",
+                    description: "HRM - DISCHARGED - CLARA LOPEZ *VOLUNTARY RELEASE*",
+                    from: "Thu 8/21/2025 01:30 PM",
+                    to: "Thu 8/21/2025 02:00 PM"
+                }
+            ]
+        },
+        {
+            id: "2",
+            panelId: "panel2",
+            label: "FS",
+            colorClass: "green-500 border-green-800",
+            items: [
+                {
+                    tag: "FS",
+                    description: "HRM - FS - KIMBERLY JOHNSON + jeremiah johnson (9 yrs) *COMMERCIAL*",
+                    from: "Thu 8/7/2025 12:00 AM",
+                    to: "Fri 8/8/2025 12:00 AM"
+                },
+                {
+                    tag: "FS",
+                    description: "HRM - LIT - BRANDYE BEST *COMMERCIAL*",
+                    from: "Fri 8/1/2025 12:00 AM",
+                    to: "Sat 8/2/2025 12:00 AM"
+                },
+                {
+                    tag: "FS",
+                    description: "NA - FS - CESAR BORUNDA cesar + cesar alexander borunda (12 yrs) $50K",
+                    from: "Mon 7/28/2025 12:00 AM",
+                    to: "Tue 7/29/2025 12:00 AM"
+                },
+                {
+                    tag: "FS",
+                    description: "SB*** - FS - JOSE SOLORZANO $100K",
+                    from: "Thu 7/24/2025 12:00 AM",
+                    to: "Fri 7/25/2025 12:00 AM"
+                },
+                {
+                    tag: "FS",
+                    description: "SB*** - FS - ALMA GOMEZ $60K",
+                    from: "Thu 7/24/2025 12:00 AM",
+                    to: "Fri 7/25/2025 12:00 AM"
+                }
+            ]
+        },
+        {
+            id: "3",
+            panelId: "panel3",
+            label: "Meeting",
+            colorClass: "blue-500 border-blue-800",
+            items: [
+                {
+                    tag: "MTG",
+                    description: "HRM - MTG - TEAM STRATEGY SESSION - JOHN DOE + SARAH LEE",
+                    from: "Mon 9/8/2025 09:00 AM",
+                    to: "Mon 9/8/2025 10:30 AM"
+                },
+                {
+                    tag: "MTG",
+                    description: "NA - MTG - CLIENT KICKOFF - LISA KIM + PRODUCT TEAM *INTERNAL*",
+                    from: "Wed 9/10/2025 13:00 PM",
+                    to: "Wed 9/10/2025 14:00 PM"
+                },
+                {
+                    tag: "MTG",
+                    description: "SB - MTG - VENDOR REVIEW - JAMES NGUYEN + PROCUREMENT",
+                    from: "Fri 9/12/2025 15:00 PM",
+                    to: "Fri 9/12/2025 16:30 PM"
+                }
+            ]
+        },
+        {
+            id: "4",
+            panelId: "panel4",
+            label: "Released",
+            colorClass: "yellow-500 border-yellow-800",
+            items: [
+                {
+                    tag: "RELEASED",
+                    description: "HRM - RELEASE - EMILY CARTER *FINALIZED CONTRACT*",
+                    from: "Tue 8/5/2025 10:00 AM",
+                    to: "Tue 8/5/2025 10:15 AM"
+                }
+            ]
+        },
+        {
+            id: "5",
+            panelId: "panel5",
+            label: "Pending",
+            colorClass: "pink-500 border-pink-800",
+            items: []
+        },
+        {
+            id: "6",
+            panelId: "panel6",
+            label: "Cancelled",
+            colorClass: "gray-500 border-gray-800",
+            items: []
+        },
+        {
+            id: "7",
+            panelId: "panel7",
+            label: "Hearings",
+            colorClass: "indigo-500 border-indigo-800",
+            items: []
+        },
+        {
+            id: "8",
+            panelId: "panel8",
+            label: "Depos",
+            colorClass: "purple-500 border-purple-800",
+            items: []
+        },
+        {
+            id: "9",
+            panelId: "panel9",
+            label: "Mediation",
+            colorClass: "teal-500 border-teal-800",
+            items: []
+        },
+        {
+            id: "10",
+            panelId: "panel10",
+            label: "Docket Call",
+            colorClass: "orange-500 border-orange-800",
+            items: []
+        },
+        {
+            id: "11",
+            panelId: "panel11",
+            label: "Lit",
+            colorClass: "rose-500 border-rose-800",
+            items: []
+        },
+        {
+            id: "12",
+            panelId: "panel12",
+            label: "Lit Deadlines",
+            colorClass: "amber-500 border-amber-800",
+            items: []
+        },
+        {
+            id: "13",
+            panelId: "panel13",
+            label: "Negotiating",
+            colorClass: "emerald-500 border-emerald-800",
+            items: []
+        },
+        {
+            id: "14",
+            panelId: "panel14",
+            label: "New Referral",
+            colorClass: "cyan-500 border-cyan-800",
+            items: []
+        },
+        {
+            id: "15",
+            panelId: "panel15",
+            label: "Other",
+            colorClass: "zinc-500 border-zinc-800",
+            items: []
+        },
+        {
+            id: "16",
+            panelId: "panel16",
+            label: "SOL",
+            colorClass: "lime-500 border-lime-800",
+            items: []
+        },
+        {
+            id: "17",
+            panelId: "panel17",
+            label: "To Do",
+            colorClass: "fuchsia-500 border-fuchsia-800",
+            items: []
+        },
+        {
+            id: "18",
+            panelId: "panel18",
+            label: "Treating",
+            colorClass: "sky-500 border-sky-800",
+            items: []
+        },
+    ];
+
+    return categories;
+}
+
+function renderEventCases(data) {
+    const container = $("#categoryLayoutContent");
+    container.empty();
+
+    data.forEach(category => {
+        const itemCount = category.items.length;
+        const isCustomColor = category.colorClass.startsWith("#") || category.colorClass.startsWith("rgb") || /^[a-zA-Z]+$/.test(category.colorClass);
+        const bgClass = isCustomColor ? "" : `bg-${category.colorClass}`;
+        const bgStyle = isCustomColor ? `style="background-color: ${category.colorClass}"` : "";
+
+        // Category Title (flip)
+        const $categoryTitle = $(`
+            <div
+                id="flip${category.id}"
+                data-target="#${category.panelId}"
+                class="flex items-center gap-2 flip bg-[#14548d] text-white py-2 px-4 rounded cursor-pointer"
+            >
+                <i class="fa-solid fa-chevron-right w-[15px] h-[15px]"></i>
+                <i class="fa-solid fa-chevron-down w-[15px] h-[15px]" style="display:none"></i>
+                <div class="w-[13px] h-[26px] border ${bgClass}" ${bgStyle}></div>
+                <label class="text-white">${category.label}: ${itemCount} item(s)</label>
+            </div>
+        `);
+
+        // Category Content Panel
+        const $categoryContent = $(`
+            <div
+                id="${category.panelId}"
+                class="panel bg-[#eaf1ff] border border-[#cacaff] text-gray-800 p-2"
+                style="display:none"
+            ></div>
+        `);
+
+        if (itemCount === 0) {
+            const $noItemsPanel = $(`
+                <div class="grid grid-cols-12 gap-2 mb-1">
+                    <div class="col-span-12 my-auto italic text-gray-400 text-center py-2">No events/cases here</div>
+                </div>
+            `);
+            $categoryContent.append($noItemsPanel);
+        } else {
+            category.items.forEach(item => {
+                const $panel = $(`
+                    <div class="grid grid-cols-12 gap-2 mb-1">
+                        <div class="col-span-2 flex gap-2">
+                            <div class="w-[13px] h-[26px] border ${bgClass}" ${bgStyle}></div>
+                            <label class="my-auto">${item.tag}</label>
+                        </div>
+                        <div class="col-span-6 my-auto">${item.description}</div>
+                        <div class="col-span-2 my-auto">${item.from}</div>
+                        <div class="col-span-2 my-auto">${item.to}</div>
+                    </div>
+                `);
+                $categoryContent.append($panel);
+            });
+        }
+
+        // Wrap title and content inside a container div with mb-1
+        const $categoryDiv = $('<div class="mb-1"></div>');
+        $categoryDiv.append($categoryTitle).append($categoryContent);
+        container.append($categoryDiv);
+    });
+}
+
+

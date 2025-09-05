@@ -20,7 +20,7 @@
     <div id="addEventModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl p-6 relative border border-gray-300">
             <div class="modal-content">
-                <x-calendar-components.add-event-case />
+                @include('calendar.calendar-parts.add-event-case')
             </div>
         </div>
     </div>

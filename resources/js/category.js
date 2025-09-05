@@ -75,7 +75,7 @@ function getEventsCases() {
             id: "1",
             panelId: "panel1",
             label: "Discharged",
-            colorClass: "red-500 border-red-800",
+            colorClass: "#000",
             items: [
                 {
                     tag: "DISCHARGED",

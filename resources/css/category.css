@@ -30,3 +30,11 @@ body {
 .panel {
     display: none;
 }
+
+.lawyersCheckboxSection {
+    background-color: #e4e9ee42;
+}
+
+.lawyersCheckboxSection:hover {
+    background-color: #e4e9eec7;
+}

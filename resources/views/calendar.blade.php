@@ -17,11 +17,30 @@
 
     @include('calendar.calendar-view')
 
-    <div id="addEventModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl p-6 relative border border-gray-300">
-            <div class="modal-content">
-                @include('calendar.calendar-parts.add-event-case')
+    <x-general-modal id="addEventModal">
+        <x-slot name="header">
+            <div class="grid grid-cols-[auto_1fr] items-center gap-2">
+                <i class="fa-solid fa-calendar-plus fa-xl primary-color" style="color: #14548d;"></i>
+                <h2 class="text-xl font-semibold text-gray-800">
+                    {{ __('Add Event or Case') }}
+                </h2>
             </div>
-        </div>
-    </div>
+            <i
+                id="closeAddEventModal"
+                class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+                role="button"
+                data-bs-dismiss="modal"
+                aria-label="Close">
+            </i>
+        </x-slot>
+
+        @include('calendar.calendar-parts.add-event-case')
+
+        <x-slot name="footer">
+            <x-cancel-btn onclick="closeMainModal()" />
+            <x-primary-btn class="justify-self-end">
+                {{ __('Save') }}
+            </x-primary-btn>
+        </x-slot>
+    </x-general-modal>
 </x-app-layout>

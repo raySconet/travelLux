@@ -1,23 +1,6 @@
 <form method="POST" action="" class="space-y-6" id="addEventCaseForm">
     @csrf
 
-    <div class="grid grid-cols-2 items-center">
-        <div class="grid grid-cols-[auto_1fr] items-center gap-2">
-            <i class="fa-solid fa-calendar-plus fa-xl primary-color" style="color: #14548d;"></i>
-            <h2 class="text-xl font-semibold text-gray-800">
-                {{ __('Add Event or Case') }}
-            </h2>
-        </div>
-        <i
-            id="closeAddEventModal"
-            class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
-            role="button"
-            data-bs-dismiss="modal"
-            aria-label="Close">
-        </i>
-    </div>
-
-
     <div>
         <x-input-label
             for="title"
@@ -115,12 +98,5 @@
             class="mt-2"
             :messages="$errors->get('type')"
         />
-    </div>
-
-    <div class="grid grid-cols-2 gap-4">
-        <x-cancel-btn onclick="closeMainModal()" />
-        <x-primary-btn class="justify-self-end">
-            {{ __('Save') }}
-        </x-primary-btn>
     </div>
 </form>

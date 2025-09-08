@@ -65,6 +65,22 @@ $(document).ready(() => {
         console.log('Selected User ID:', $(this).data('user-id'));
     });
 
+    $('#openAddCategoryModal').on('click', function() {
+        $('#addCategoryModal').removeClass('hidden');
+    });
+
+    // Close modal
+    $('#closeAddCategoryModal').on('click', function() {
+        $('#addCategoryModal').addClass('hidden');
+    });
+
+    // Optional: Close when clicking outside modal content
+    $('#addCategoryModal').on('click', function(e) {
+        if ($(e.target).is('#addCategoryModal')) {
+            $(this).addClass('hidden');
+        }
+    });
+
     const data = getEventsCases();
     renderEventCases(data);
 });

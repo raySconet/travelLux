@@ -284,25 +284,25 @@ function renderEventCases(data) {
         const darkerBorderColor = darkenHexColor(baseColor, 20);
 
         const borderStyle = `style="border-color: ${darkerBorderColor}; background-color: ${baseColor};"`;
-
+// bg-[#14548d]
         const $categoryTitle = $(`
             <div
                 id="flip${category.id}"
                 data-target="#${category.panelId}"
-                class="flex items-center gap-2 flip bg-[#14548d] text-white py-2 px-4 rounded cursor-pointer"
+                class="flex items-center gap-2 flip bg-[#e4e9eec7] text-gray-900 py-2 px-4 rounded cursor-pointer"
             >
                 <i class="fa-solid fa-chevron-right w-[15px] h-[15px]"></i>
                 <i class="fa-solid fa-chevron-down w-[15px] h-[15px]" style="display:none"></i>
                 <div class="w-[13px] h-[26px] border" ${borderStyle}></div>
-                <label class="text-white">${category.label}: ${itemCount} item(s)</label>
+                <label>${category.label}: ${itemCount} item(s)</label>
             </div>
         `);
 
-        // Category content panel
+        // Category content panel bg-[#eaf1ff] border border-[#cacaff]
         const $categoryContent = $(`
             <div
                 id="${category.panelId}"
-                class="panel bg-[#eaf1ff] border border-[#cacaff] text-gray-800 p-2"
+                class="panel  text-gray-800 p-2"
                 style="display:none"
             ></div>
         `);

@@ -10,7 +10,7 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" /> {{-- added by rony --}}
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,16 +44,22 @@
             </main>
         </div>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {{-- added by rony --}}
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> {{-- added by rony --}}
 
-        @if(request()->is('calendar') || request()->is('calendar/*')) {{-- added by rony --}}
+        @if(request()->is('calendar') || request()->is('calendar/*')) {{-- added by rony the king  --}}
             @vite('resources/js/calendar.js')
         @endif
 
         @if(request()->is('category') || request()->is('category/*')) {{-- added by rony --}}
             @vite('resources/js/category.js')
         @endif
+
+         @if(request()->is('caseInfo') || request()->is('caseInfo/*')) {{-- added by rony --}}
+            @vite('resources/js/courtCases.js')
+        @endif
+
+
         {{-- Flatpickr JS --}}
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script>

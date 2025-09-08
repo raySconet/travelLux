@@ -81,6 +81,60 @@ $(document).ready(() => {
         }
     });
 
+    // Initialize Spectrum on the square (div)
+    $('#colorBox').css('background-color', '#000');
+    $('#colorBox').spectrum({
+        color: "#000",
+        showPalette: true,
+        showInput: true,
+        allowEmpty: false,
+        preferredFormat: "hex",
+        showInitial: true,
+        palette: [
+            ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'],
+            ['#000000', '#FFFFFF', '#808080', '#C0C0C0', '#800000', '#808000'],
+            ['#3490dc', '#f97316', '#10b981', '#8b5cf6', '#f43f5e', '#eab308'],
+            ['#1abc9c', '#2ecc71', '#9b59b6', '#34495e', '#16a085', '#27ae60'],
+            ['#e67e22', '#e74c3c', '#f39c12', '#d35400', '#c0392b', '#f1c40f'],
+            ['#2980b9', '#3498db', '#5dade2', '#85c1e9', '#aed6f1', '#d6eaf8'],
+            ['#a0522d', '#cd853f', '#deb887', '#f5deb3', '#ffe4b5', '#faf0e6'],
+            ['#ffb6c1', '#ffcccb', '#ffe4e1', '#e0ffff', '#d8bfd8', '#e6e6fa'],
+            ['#39ff14', '#ccff00', '#ff073a', '#fe019a', '#ff6ec7', '#dfff00'],
+            ['#6c757d', '#adb5bd', '#ced4da', '#dee2e6', '#e9ecef', '#f8f9fa'],
+            ['#2e8b57', '#3cb371', '#6b8e23', '#556b2f', '#228b22', '#66cdaa'],
+            ['#007bff', '#6610f2', '#6f42c1', '#e83e8c', '#fd7e14', '#20c997']
+        ],
+
+        // Make it act like an input
+        change: function(color) {
+        const hex = color.toHexString();
+        $('#colorBox').css('background-color', hex);     // Update square visually
+        $('#colorInput').val(hex);                       // Store value (optional)
+        console.log("Selected color:", hex);
+        },
+        move: function(color) {
+        // Live update while dragging
+        $('#colorBox').css('background-color', color.toHexString());
+        },
+        showButtons: false,
+        show: function () {
+            $('.sp-container').addClass('z-50'); // Optional: bring to front if overlapping UI
+        }
+    });
+
+    // Open picker on click
+    $('#colorBox').on('click', function () {
+        $(this).spectrum('show');
+    });
+
+    // Optional: hide picker when clicking outside
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('#colorBox, .sp-container').length) {
+        $('#colorBox').spectrum('hide');
+        }
+    });
+
+
     const data = getEventsCases();
     renderEventCases(data);
 });
@@ -300,7 +354,7 @@ function renderEventCases(data) {
         const darkerBorderColor = darkenHexColor(baseColor, 20);
 
         const borderStyle = `style="border-color: ${darkerBorderColor}; background-color: ${baseColor};"`;
-// bg-[#14548d]
+
         const $categoryTitle = $(`
             <div
                 id="flip${category.id}"
@@ -311,6 +365,16 @@ function renderEventCases(data) {
                 <i class="fa-solid fa-chevron-down w-[15px] h-[15px]" style="display:none"></i>
                 <div class="w-[13px] h-[26px] border" ${borderStyle}></div>
                 <label>${category.label}: ${itemCount} item(s)</label>
+
+                <div class="ml-auto">
+                    <button title="Edit" class="text-green-600 hover:text-green-800 cursor-pointer">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+
+                    <button title="Delete" class="text-red-600 hover:text-red-800 ml-2 cursor-pointer">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
             </div>
         `);
 
@@ -352,7 +416,6 @@ function renderEventCases(data) {
         container.append($categoryDiv);
     });
 }
-
 
 // Darken hex color by a percentage (0-100)
 function darkenHexColor(hex, percent) {

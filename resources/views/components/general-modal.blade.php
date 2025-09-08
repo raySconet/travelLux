@@ -8,7 +8,7 @@
 >
     <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl relative border border-gray-300">
         @isset($header)
-            <div class="modal-title grid grid-cols-2 items-center p-6">
+            <div class="modal-title grid grid-cols-2 items-center p-4">
                 {{ $header }}
             </div>
         @endisset
@@ -22,7 +22,7 @@
         <hr style="color: #cccccc80">
 
         @isset($footer)
-            <div class="modal-footer grid grid-cols-2 gap-4 p-6">
+            <div class="modal-footer grid grid-cols-2 gap-4 p-4">
                 {{ $footer }}
             </div>
         @endisset

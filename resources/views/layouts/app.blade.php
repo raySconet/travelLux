@@ -46,13 +46,19 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> {{-- added by rony --}}
 
-        @if(request()->is('calendar') || request()->is('calendar/*')) {{-- added by rony --}}
+        @if(request()->is('calendar') || request()->is('calendar/*')) {{-- added by rony the king  --}}
             @vite('resources/js/calendar.js')
         @endif
 
         @if(request()->is('category') || request()->is('category/*')) {{-- added by rony --}}
             @vite('resources/js/category.js')
         @endif
+
+         @if(request()->is('caseInfo') || request()->is('caseInfo/*')) {{-- added by rony --}}
+            @vite('resources/js/courtCases.js')
+        @endif
+
+
         {{-- Flatpickr JS --}}
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     </body>

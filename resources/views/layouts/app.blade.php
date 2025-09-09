@@ -44,6 +44,42 @@
             </main>
         </div>
 
+        <x-general-modal id="errorModal" class="hidden">
+            <x-slot name="header">
+                <div class="grid grid-cols-[auto_1fr] items-center gap-2">
+                    <!-- Triangle with exclamation icon -->
+                    <i class="fa-solid fa-triangle-exclamation fa-xl text-yellow-600"></i>
+                    <h2 class="text-xl font-semibold text-yellow-700">Attention</h2>
+                </div>
+                <i
+                    id="closeErrorModal"
+                    class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+                    role="button"
+                    aria-label="Close">
+                </i>
+            </x-slot>
+
+            <div id="modalErrorContent" class="text-sm text-gray-700 space-y-2"></div>
+        </x-general-modal>
+
+        <x-general-modal id="successModal" class="hidden">
+            <x-slot name="header">
+                <div class="grid grid-cols-[auto_1fr] items-center gap-2">
+                    <!-- Check circle icon -->
+                    <i class="fa-solid fa-circle-check fa-xl text-green-600"></i>
+                    <h2 class="text-xl font-semibold text-green-700">Success</h2>
+                </div>
+                <i
+                    id="closeSuccessModal"
+                    class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+                    role="button"
+                    aria-label="Close">
+                </i>
+            </x-slot>
+
+            <div id="modalSuccessContent" class="text-sm text-gray-700 space-y-2"></div>
+        </x-general-modal>
+
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> {{-- added by rony --}}
 

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CourtCasesController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +31,11 @@ Route::get('/category', function () {
 Route::get('/caseInfo', function(){
     return view('caseInfo');
 })->middleware(['auth','verified'])->name('caseInfo');
+
+Route::get('/getCategories', [CategoryController::class, 'index']);
+Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+Route::post('/events/store', [EventController::class, 'store'])->name('events.store');
+Route::post('/cases/store', [CourtCasesController::class, 'store'])->name('cases.store');
 
 
 require __DIR__.'/auth.php';

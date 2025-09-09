@@ -62,7 +62,7 @@
             </el-dropdown>
             <span class="verticalLine"></span>
             <x-primary-btn
-                id="openAddEventModal"
+                id="openAddEventCaseModal"
                 class="bg-[#14548d] text-white font-semibold py-2 px-4 rounded cursor-pointer">
                     <i class="fas fa-folder-plus"></i>
                     <span class="ml-2">{{ __('Add E/C') }}</span>

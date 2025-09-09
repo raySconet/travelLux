@@ -17,7 +17,7 @@
 
     @include('calendar.calendar-view')
 
-    <x-general-modal id="addEventModal">
+    <x-general-modal id="addEventCaseModal">
         <x-slot name="header">
             <div class="grid grid-cols-[auto_1fr] items-center gap-2">
                 <i class="fa-solid fa-calendar-plus fa-xl primary-color" style="color: #14548d;"></i>
@@ -26,7 +26,7 @@
                 </h2>
             </div>
             <i
-                id="closeAddEventModal"
+                id="closeAddEventCaseModal"
                 class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
                 role="button"
                 data-bs-dismiss="modal"
@@ -37,8 +37,7 @@
         @include('calendar.calendar-parts.add-event-case')
 
         <x-slot name="footer">
-            <x-cancel-btn onclick="closeMainModal()" />
-            <x-primary-btn class="justify-self-end">
+            <x-primary-btn class="justify-self-end" id="submitAddEventCaseBtn">
                 {{ __('Save') }}
             </x-primary-btn>
         </x-slot>

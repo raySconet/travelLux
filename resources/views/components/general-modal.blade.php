@@ -22,7 +22,7 @@
         <hr style="color: #cccccc80">
 
         @isset($footer)
-            <div class="modal-footer grid grid-cols-2 gap-4 p-4">
+            <div class="modal-footer grid grid-cols-1 gap-4 p-4">
                 {{ $footer }}
             </div>
         @endisset

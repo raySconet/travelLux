@@ -208,20 +208,103 @@ $(document).ready(() => {
         }
     });
 
-    $('#openAddEventModal').on('click', function() {
-        $('#addEventModal').removeClass('hidden');
+    $('#openAddEventCaseModal').on('click', function() {
+        $('#addEventCaseModal').removeClass('hidden');
+
+        const $select = $('#categorySelect');
+        $select.html('<option>Loading...</option>')
+
+        $.ajax({
+            url: '/getCategories',
+            method: 'GET',
+            success: function (categories) {
+                console.log(categories);
+                $select.empty();
+                $select.append('<option value="-1">Select a category</option>');
+
+                categories.forEach(function (category) {
+                    $select.append(`<option value="${category.id}">${category.categoryName}</option>`);
+                });
+            },
+            error: function () {
+                $select.html('<option>Error loading categories</option>');
+            }
+        });
     });
 
     // Close modal
-    $('#closeAddEventModal').on('click', function() {
-        $('#addEventModal').addClass('hidden');
+    $('#closeAddEventCaseModal').on('click', function() {
+        $('#addEventCaseModal').addClass('hidden');
     });
 
     // Optional: Close when clicking outside modal content
-    $('#addEventModal').on('click', function(e) {
-        if ($(e.target).is('#addEventModal')) {
+    $('#addEventCaseModal').on('click', function(e) {
+        if ($(e.target).is('#addEventCaseModal')) {
             $(this).addClass('hidden');
         }
+    });
+
+    // add event/case steps
+
+    // step 1
+    $('#submitAddEventCaseBtn').on('click', function () {
+        $('#addEventCaseForm').submit();
+    });
+
+    // step 2
+    $('#addEventCaseForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const type = $('input[name="type"]:checked').val();
+        let actionUrl = '';
+
+        if (type === 'event') {
+            actionUrl = "{{ route('events.store') }}";
+        } else if (type === 'case') {
+            actionUrl = "{{ route('cases.store') }}";
+        }
+
+        const $form = $(this);
+        const $button = $('#submitAddEventCaseBtn');
+
+        // Clear previous inline errors & modal errors
+        $('#modalErrorContent').empty();
+        $('#errorModal').addClass('hidden');
+
+        $button.prop('disabled', true).text('Saving...');
+        // console.log($form.serialize());
+        $.ajax({
+            type: 'POST',
+            url: actionUrl,
+            data: $form.serialize(),
+            dataType: 'json',
+            success: function (response) {
+                $form[0].reset();
+                $('#addCategoryModal').addClass('hidden');
+                $('#modalSuccessContent').html(response.message);
+                $('#successModal').removeClass('hidden');
+            },
+            error: function (xhr) {
+                if (xhr.status === 422) {
+                    const errors = xhr.responseJSON.errors || {};
+
+                    if (errors.name) {
+                        let errorHtml = '<ul class="text-sm text-red-600 space-y-1">';
+                        errors.name.forEach(function (error) {
+                            errorHtml += `<li>${error}</li>`;
+                        });
+                        errorHtml += '</ul>';
+                        $('#errorCategoryName').html(errorHtml);
+                    }
+                } else {
+                    $('#modalErrorContent').html('An unexpected error occurred. Please try again.');
+                    $('#errorModal').removeClass('hidden');
+                }
+            },
+            complete: function (response) {
+                $button.prop('disabled', false).text('Add Category');
+            }
+        });
     });
 });
 

@@ -8,6 +8,13 @@ class Categorie extends Model
 {
     protected $table = 'categories';
 
+    protected $fillable = ['categoryName', 'color'];
+
+    public static function getActiveCategories()
+    {
+        return self::where('isDeleted', 0)->orderBy('categoryName')->get();
+    }
+
     public function events()
     {
         return $this->hasMany(Event::class);

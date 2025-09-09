@@ -35,9 +35,8 @@
         @include('category.category-parts.add-category')
 
         <x-slot name="footer">
-            <x-cancel-btn onclick="closeMainModal()" />
-            <x-primary-btn class="justify-self-end">
-                {{ __('Save') }}
+            <x-primary-btn class="ml-auto" id="submitCategoryBtn">
+                {{ __('Add Category') }}
             </x-primary-btn>
         </x-slot>
     </x-general-modal>

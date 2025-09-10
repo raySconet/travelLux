@@ -48,6 +48,11 @@ class User extends Authenticatable
         ];
     }
 
+    public static function getActiveUsers()
+    {
+        return self::where('isDeleted', 0)->orderBy('name')->get();
+    }
+
     public function event()
     {
         return $this->hasMany(Event::class);

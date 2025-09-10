@@ -9,39 +9,34 @@ use Illuminate\Validation\ValidationException;
 class EventController extends Controller
 {
     public function store(Request $request) {
+        $fromDateRaw = str_replace('+', ' ', $request->input('fromDate'));
+        $toDateRaw = str_replace('+', ' ', $request->input('toDate'));
 
-        $fromDateRaw = $request->input('fromDate');
-        $toDateRaw = $request->input('toDate');
-
-        $fromDate = str_replace('+', ' ', $fromDateRaw);
-        $toDate = str_replace('+', ' ', $toDateRaw);
-
-        try {
-            $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $fromDate);
-            $toDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $toDate);
-        } catch (\Exception $e) {
-            return response()->json(['errors' => ['fromDate' => ['Invalid fromDate format'], 'toDate' => ['Invalid toDate format']]], 422);
-        }
-
+        // Merge corrected input back into request
         $request->merge([
-            'fromDate' => $fromDateCarbon->format('Y-m-d H:i:s'),
-            'toDate' => $toDateCarbon->format('Y-m-d H:i:s'),
+            'fromDate' => $fromDateRaw,
+            'toDate' => $toDateRaw,
         ]);
 
+        // Validate input dates in correct format
         $request->validate([
             'title' => 'required|string|max:255',
-            'fromDate' => 'required|date',
-            'toDate' => 'required|date|after_or_equal:fromDate',
             'type' => 'required|in:event',
+            'fromDate' => ['required', 'date_format:m-d-Y H:i'],
+            'toDate' => ['required', 'date_format:m-d-Y H:i', 'after_or_equal:fromDate'],
             'category' => 'required|exists:categories,id',
         ]);
+
+        // Convert to Carbon date for saving
+        $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'));
+        $toDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('toDate'));
 
         $event = Event::create([
             'title' => $request['title'],
             'user_id' => auth()->id(),
             'categoryId' => $request['category'],
-            'date_from' => $request['fromDate'],
-            'date_to' => $request['toDate'],
+            'date_from' => $fromDateCarbon->format('Y-m-d H:i:s'),
+            'date_to' => $toDateCarbon->format('Y-m-d H:i:s'),
         ]);
 
         return response()->json([

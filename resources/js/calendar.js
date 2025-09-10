@@ -5,6 +5,7 @@ $(document).ready(() => {
     ({ month: currentMonth, year: currentYear } = parseMonthYear($('#calendarMonthYearSelected').text()));
 
     generateCalendarDays();
+    updateUserSelectMode();
 
     $(document).on('click', '.sidebar-day-btn-parent', function() {
         const dateStr = $(this).children('.sidebar-day-btn').data('date');
@@ -26,7 +27,6 @@ $(document).ready(() => {
 
         highlightSelectedSidebarDay();
     });
-
 
     $(document).on('click', '#calendarDayViewOption', function() {
         $('#selectedDayWeekMonthOption').text('Day View');
@@ -211,23 +211,44 @@ $(document).ready(() => {
     $('#openAddEventCaseModal').on('click', function() {
         $('#addEventCaseModal').removeClass('hidden');
 
-        const $select = $('#categorySelect');
-        $select.html('<option>Loading...</option>')
+        const $categorySelect = $('#categorySelect');
+        const $userSelect = $('#userSelect');
+
+        $categorySelect.html('<option>Loading...</option>')
+        $userSelect.html('<option>Loading...</option>')
 
         $.ajax({
             url: '/getCategories',
             method: 'GET',
             success: function (categories) {
                 console.log(categories);
-                $select.empty();
-                $select.append('<option value="-1">Select a category</option>');
+                $categorySelect.empty();
+                $categorySelect.append('<option value="-1">Select a category</option>');
 
                 categories.forEach(function (category) {
-                    $select.append(`<option value="${category.id}">${category.categoryName}</option>`);
+                    $categorySelect.append(`<option value="${category.id}">${category.categoryName}</option>`);
                 });
             },
             error: function () {
-                $select.html('<option>Error loading categories</option>');
+                $categorySelect.html('<option>Error loading categories</option>');
+            }
+        });
+
+        $.ajax({
+            url: '/getUsers',
+            method: 'GET',
+            success: function (users) {
+                console.log(users);
+                $userSelect.empty();
+                $userSelect.append('<option value="-1">Select an user(s)</option>');
+
+                users.forEach(function (user) {
+                    console.log(user);
+                    $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
+                });
+            },
+            error: function () {
+                $userSelect.html('<option>Error loading users</option>');
             }
         });
     });
@@ -244,6 +265,9 @@ $(document).ready(() => {
         }
     });
 
+    $('input[name="type"]').on('change', function () {
+        updateUserSelectMode();
+    });
     // add event/case steps
 
     // step 1
@@ -280,6 +304,8 @@ $(document).ready(() => {
         $button.prop('disabled', true).text('Saving...');
         console.log($form.serialize());
         console.log(actionUrl);
+        $('.input-error-text').remove();
+        $('input, select').removeClass('border-red-500');
 
         $.ajax({
             type: 'POST',
@@ -293,25 +319,19 @@ $(document).ready(() => {
                 $('#successModal').removeClass('hidden');
             },
             error: function (xhr) {
-                if (xhr.status === 422) {
+                if (xhr.status) {
                     const errors = xhr.responseJSON.errors;
 
                     // Loop over errors and display inline
                     $.each(errors, function (field, messages) {
-                        // Find input/select/textarea by name attribute
                         const $input = $form.find(`[name="${field}"]`);
 
-                        // Add red border or error class
                         $input.addClass('border-red-500');
 
-                        // Append error message below the input (adjust markup as needed)
                         if ($input.next('.input-error-text').length === 0) {
                             $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
                         }
                     });
-                } else {
-                    $('#modalErrorContent').html('An unexpected error occurred. Please try again.');
-                    $('#errorModal').removeClass('hidden');
                 }
             },
             complete: function () {
@@ -904,3 +924,58 @@ function highlightSelectedWeeklyDay() {
     // Find the element in the weekly view with that date and add the highlight class
     $(`.weekly-day[data-date="${selectedDateStr}"]`).addClass('selected-day');
 }
+
+function updateUserSelectMode() {
+    const selectedType = $('input[name="type"]:checked').val();
+    const $userSelect = $('#userSelect');
+    const $selectedUsers = $('#selectedUsers');
+
+    if (selectedType === 'case') {
+        $('#userSelect').removeClass('selectArrowDown');
+        $userSelect.attr('multiple', 'multiple');
+        $userSelect.attr('name', 'user[]');
+
+        $selectedUsers.empty();
+        let selectedValues = new Set();
+
+        $userSelect.off('change');
+
+        // Bind new change handler
+        $userSelect.on('change', function () {
+            const val = $(this).val();
+
+            if (!val) return;
+
+            val.forEach(v => {
+                if (v !== '-1' && !selectedValues.has(v)) {
+                    selectedValues.add(v);
+
+                    const label = $(this).find(`option[value="${v}"]`).text();
+
+                    const $tag = $('<span></span>')
+                        .addClass('mr-2 px-2 py-1 bg-blue-100 rounded-full inline-flex items-center justify-between text-sm cursor-default select-none')
+                        .css({
+                            'min-width': '100px',
+                            'max-width': '150px',
+                        })
+                        .text((label.length > 15 ? label.slice(0, 14) + '...' : label) + ' ')
+                        .append($('<span class="ml-auto color-red-900"><i class="fas fa-check"></i></span>').addClass('ml-1 text-blue-600'));
+
+                    $selectedUsers.append($tag);
+                }
+            });
+        });
+        $userSelect.val(null);
+    } else {
+        $('#userSelect').addClass('selectArrowDown');
+        $userSelect.removeAttr('multiple');
+        $userSelect.attr('name', 'user');
+
+        $userSelect.off('change');
+
+        $selectedUsers.empty();
+        $userSelect.val('-1');
+    }
+}
+
+

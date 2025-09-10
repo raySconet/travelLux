@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CourtCasesController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,6 +35,8 @@ Route::get('/caseInfo', function(){
 
 Route::get('/getCategories', [CategoryController::class, 'index']);
 Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+
+Route::get('/getUsers', [UserController::class, 'index']);
 
 Route::middleware('auth')->group(function () {
     Route::post('/events/store', [EventController::class, 'store'])->name('events.store');

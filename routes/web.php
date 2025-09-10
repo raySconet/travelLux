@@ -34,8 +34,10 @@ Route::get('/caseInfo', function(){
 
 Route::get('/getCategories', [CategoryController::class, 'index']);
 Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
-Route::post('/events/store', [EventController::class, 'store'])->name('events.store');
-Route::post('/cases/store', [CourtCasesController::class, 'store'])->name('cases.store');
 
+Route::middleware('auth')->group(function () {
+    Route::post('/events/store', [EventController::class, 'store'])->name('events.store');
+    Route::post('/cases/store', [CourtCasesController::class, 'store'])->name('cases.store');
+});
 
 require __DIR__.'/auth.php';

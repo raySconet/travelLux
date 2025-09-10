@@ -256,12 +256,18 @@ $(document).ready(() => {
         e.preventDefault();
 
         const type = $('input[name="type"]:checked').val();
-        let actionUrl = '';
+        const routes = {
+            eventsStore: "events/store",
+            casesStore: "cases/store"
+        };
 
+        let actionUrl;
+
+        // Then in your code:
         if (type === 'event') {
-            actionUrl = "{{ route('events.store') }}";
+            actionUrl = routes.eventsStore;
         } else if (type === 'case') {
-            actionUrl = "{{ route('cases.store') }}";
+            actionUrl = routes.casesStore;
         }
 
         const $form = $(this);
@@ -272,7 +278,9 @@ $(document).ready(() => {
         $('#errorModal').addClass('hidden');
 
         $button.prop('disabled', true).text('Saving...');
-        // console.log($form.serialize());
+        console.log($form.serialize());
+        console.log(actionUrl);
+
         $.ajax({
             type: 'POST',
             url: actionUrl,
@@ -286,22 +294,27 @@ $(document).ready(() => {
             },
             error: function (xhr) {
                 if (xhr.status === 422) {
-                    const errors = xhr.responseJSON.errors || {};
+                    const errors = xhr.responseJSON.errors;
 
-                    if (errors.name) {
-                        let errorHtml = '<ul class="text-sm text-red-600 space-y-1">';
-                        errors.name.forEach(function (error) {
-                            errorHtml += `<li>${error}</li>`;
-                        });
-                        errorHtml += '</ul>';
-                        $('#errorCategoryName').html(errorHtml);
-                    }
+                    // Loop over errors and display inline
+                    $.each(errors, function (field, messages) {
+                        // Find input/select/textarea by name attribute
+                        const $input = $form.find(`[name="${field}"]`);
+
+                        // Add red border or error class
+                        $input.addClass('border-red-500');
+
+                        // Append error message below the input (adjust markup as needed)
+                        if ($input.next('.input-error-text').length === 0) {
+                            $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
+                        }
+                    });
                 } else {
                     $('#modalErrorContent').html('An unexpected error occurred. Please try again.');
                     $('#errorModal').removeClass('hidden');
                 }
             },
-            complete: function (response) {
+            complete: function () {
                 $button.prop('disabled', false).text('Add Category');
             }
         });

@@ -28,6 +28,7 @@
                         </div>
                         @include('case-info.contact-info')
                         @include('case-info.case-info')
+                        @include('case-info.treating-chart')
                     </form>
 
                 </div>

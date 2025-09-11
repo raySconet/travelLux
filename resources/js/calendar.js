@@ -6,6 +6,8 @@ $(document).ready(() => {
 
     generateCalendarDays();
 
+    $('input[name="type"]').on('change', updateUserSelectMode());
+
     $(document).on('click', '.sidebar-day-btn-parent', function() {
         const dateStr = $(this).children('.sidebar-day-btn').data('date');
         const [year, month, day] = dateStr.split('-').map(Number);
@@ -26,7 +28,6 @@ $(document).ready(() => {
 
         highlightSelectedSidebarDay();
     });
-
 
     $(document).on('click', '#calendarDayViewOption', function() {
         $('#selectedDayWeekMonthOption').text('Day View');
@@ -57,7 +58,7 @@ $(document).ready(() => {
 
         buildDailyView(window.selectedDate.getDate(), window.selectedDate.getMonth(), window.selectedDate.getFullYear());
         updateDailyHeader(window.selectedDate);
-        console.log(window.selectedDate);
+        // console.log(window.selectedDate);
 
         highlightSelectedSidebarDay();
     });
@@ -171,8 +172,8 @@ $(document).ready(() => {
         const $this = $(this);
         const userId = $this.data('user-id');
 
-        console.log('View:', view);
-        console.log('User ID (changed):', userId);
+        // console.log('View:', view);
+        // console.log('User ID (changed):', userId);
 
         if (view === 'Month View') {
             allCheckboxes.prop('checked', false);
@@ -194,40 +195,65 @@ $(document).ready(() => {
                     // Too many checked, remove the first one (oldest)
                     const firstCheckedId = checkedOrder.shift();
                     $(`input[type="checkbox"][data-user-id="${firstCheckedId}"]`).prop('checked', false);
-                    console.log(`Unchecking oldest user ID: ${firstCheckedId}`);
+                    // console.log(`Unchecking oldest user ID: ${firstCheckedId}`);
                 }
             } else {
                 // Checkbox is being unchecked manually
                 checkedOrder = checkedOrder.filter(id => id !== userId);
-                console.log(`User ID manually unchecked: ${userId}`);
+                // console.log(`User ID manually unchecked: ${userId}`);
             }
 
             // Optional: Log current checked IDs
             const currentChecked = checkedOrder;
-            console.log('Currently selected user IDs:', currentChecked);
+            // console.log('Currently selected user IDs:', currentChecked);
         }
     });
 
     $('#openAddEventCaseModal').on('click', function() {
         $('#addEventCaseModal').removeClass('hidden');
 
-        const $select = $('#categorySelect');
-        $select.html('<option>Loading...</option>')
+        const $categorySelect = $('#categorySelect');
+        const $userSelect = $('#userSelect');
+
+        $categorySelect.html('<option>Loading...</option>')
+        $userSelect.html('<option>Loading...</option>')
 
         $.ajax({
             url: '/getCategories',
             method: 'GET',
             success: function (categories) {
-                console.log(categories);
-                $select.empty();
-                $select.append('<option value="-1">Select a category</option>');
+                // console.log(categories);
+                $categorySelect.empty();
+                $categorySelect.append('<option value="-1">Select a category</option>');
 
                 categories.forEach(function (category) {
-                    $select.append(`<option value="${category.id}">${category.categoryName}</option>`);
+                    $categorySelect.append(`<option value="${category.id}">${category.categoryName}</option>`);
                 });
+
+                updateUserSelectMode();
             },
             error: function () {
-                $select.html('<option>Error loading categories</option>');
+                $categorySelect.html('<option>Error loading categories</option>');
+            }
+        });
+
+        $.ajax({
+            url: '/getUsers',
+            method: 'GET',
+            success: function (users) {
+                // console.log(users);
+                $userSelect.empty();
+                $userSelect.append('<option value="-1">Select an user(s)</option>');
+
+                users.forEach(function (user) {
+                    // console.log(user);
+                    $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
+                });
+
+                updateUserSelectMode();
+            },
+            error: function () {
+                $userSelect.html('<option>Error loading users</option>');
             }
         });
     });
@@ -244,6 +270,55 @@ $(document).ready(() => {
         }
     });
 
+    $('input[name="type"]').on('change', function () {
+        updateUserSelectMode();
+    });
+
+    $(document).on('click', '.removeUserSelect', function (e) {
+        const $target = $(e.target).closest('.removeUserSelect');
+        const userId = $target.attr('data-user-id');
+        const $userSelect = $('#userSelect');
+        const selectedValues = $userSelect.data('selectedValues');
+
+        if (!userId) {
+            console.warn('No userId found on clicked remove icon');
+            return;
+        }
+
+        $target.parent().parent('span').remove();
+
+        selectedValues?.delete(userId);
+
+        const options = $userSelect[0].options;
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (option.value === userId) {
+                option.classList.remove('option-disabled');
+                // option.classList.add('option-reset');
+                option.selected = false;
+                break;
+            }
+        }
+
+        // Remove from current value array
+        let currentVals = $userSelect.val() || [];
+        const newVals = currentVals.filter(val => val !== userId);
+        $userSelect.val(newVals);
+
+        // Clear selection to allow re-selecting same item
+        setTimeout(() => {
+            $userSelect.val(null);
+        }, 0);
+    });
+
+    $('#closeErrorModal').on('click', function() {
+        $('#errorModal').addClass('hidden');
+    });
+
+    $('#closeSuccessModal').on('click', function() {
+        $('#successModal').addClass('hidden');
+    });
+
     // add event/case steps
 
     // step 1
@@ -256,12 +331,24 @@ $(document).ready(() => {
         e.preventDefault();
 
         const type = $('input[name="type"]:checked').val();
-        let actionUrl = '';
+        const routes = {
+            eventsStore: "events/store",
+            casesStore: "cases/store"
+        };
 
+        let actionUrl;
+
+        // Then in your code:
         if (type === 'event') {
-            actionUrl = "{{ route('events.store') }}";
+            actionUrl = routes.eventsStore;
         } else if (type === 'case') {
-            actionUrl = "{{ route('cases.store') }}";
+            actionUrl = routes.casesStore;
+
+            const selectedUserIds = Array.from($('#selectedUsers i[data-user-id]')).map(el => el.dataset.userId);
+
+            $('#userSelect option').each(function () {
+                $(this).prop('selected', selectedUserIds.includes(this.value));
+            });
         }
 
         const $form = $(this);
@@ -272,7 +359,11 @@ $(document).ready(() => {
         $('#errorModal').addClass('hidden');
 
         $button.prop('disabled', true).text('Saving...');
-        // console.log($form.serialize());
+        console.log($form.serialize());
+        console.log(actionUrl);
+        $('.input-error-text').remove();
+        $('input, select').removeClass('border-red-500');
+
         $.ajax({
             type: 'POST',
             url: actionUrl,
@@ -280,29 +371,34 @@ $(document).ready(() => {
             dataType: 'json',
             success: function (response) {
                 $form[0].reset();
-                $('#addCategoryModal').addClass('hidden');
+                $('#addEventCaseModal').addClass('hidden');
                 $('#modalSuccessContent').html(response.message);
                 $('#successModal').removeClass('hidden');
             },
             error: function (xhr) {
-                if (xhr.status === 422) {
-                    const errors = xhr.responseJSON.errors || {};
+                if (xhr.status) {
+                    const errors = xhr.responseJSON.errors;
 
-                    if (errors.name) {
-                        let errorHtml = '<ul class="text-sm text-red-600 space-y-1">';
-                        errors.name.forEach(function (error) {
-                            errorHtml += `<li>${error}</li>`;
-                        });
-                        errorHtml += '</ul>';
-                        $('#errorCategoryName').html(errorHtml);
-                    }
-                } else {
-                    $('#modalErrorContent').html('An unexpected error occurred. Please try again.');
-                    $('#errorModal').removeClass('hidden');
+                    // Loop over errors and display inline
+                    $.each(errors, function (field, messages) {
+                        let $input = $form.find(`[name="${field}"]`);
+
+                        if ($input.length === 0) {
+                            // Handle array-like error field names like user.0, user.1
+                            const baseField = field.split('.')[0];
+                            $input = $form.find(`[name="${baseField}[]"], [name="${baseField}"]`);
+                        }
+
+                        $input.addClass('border-red-500');
+
+                        if ($input.next('.input-error-text').length === 0) {
+                            $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
+                        }
+                    });
                 }
             },
-            complete: function (response) {
-                $button.prop('disabled', false).text('Add Category');
+            complete: function () {
+                $button.prop('disabled', false).text('Add E/C');
             }
         });
     });
@@ -553,7 +649,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         }
     }
 
-    console.log("Daily view rendered for:", selectedDate.toDateString());
+    // console.log("Daily view rendered for:", selectedDate.toDateString());
 }
 
 
@@ -661,7 +757,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         }
     }
 
-    console.log("Weekly view rendered for:", startOfWeek.toDateString());
+    // console.log("Weekly view rendered for:", startOfWeek.toDateString());
 }
 
 
@@ -890,4 +986,101 @@ function highlightSelectedWeeklyDay() {
 
     // Find the element in the weekly view with that date and add the highlight class
     $(`.weekly-day[data-date="${selectedDateStr}"]`).addClass('selected-day');
+}
+
+function updateUserSelectMode() {
+    const selectedType = $('input[name="type"]:checked').val();
+    const $userSelect = $('#userSelect');
+    const $selectedUsers = $('#selectedUsers');
+    const $userFieldsContainer = $('#userFieldsContainer');
+
+    for (let i = 0; i < $userSelect[0].options.length; i++) {
+        const option = $userSelect[0].options[i];
+
+        if (!option.dataset.originalText) {
+            option.dataset.originalText = option.text;
+        }
+
+        if (i === 0) {
+            option.text = option.dataset.originalText;
+        } else {
+            option.text = `${i}. ${option.dataset.originalText}`;
+        }
+
+        option.classList.remove('option-disabled');
+    }
+
+    $selectedUsers.empty();
+    $userSelect.off('change');
+
+    const selectedValues = new Set();
+    $userSelect.data('selectedValues', selectedValues);
+
+    if (selectedType === 'case') {
+        $userFieldsContainer.removeClass('hidden');
+        $('#userSelect').removeClass('selectArrowDown');
+        $userSelect.attr('multiple', 'multiple');
+        $userSelect.attr('name', 'user[]');
+
+        flatpickr(".datetimepicker", {
+            enableTime: false,
+            dateFormat: "m-d-Y",
+            // defaultDate: new Date(),
+        });
+
+        // Bind new change handler
+        $userSelect.on('change', function () {
+            const val = $(this).val();
+            if (!val) return;
+
+            val.forEach(v => {
+                if (v !== '-1' && !selectedValues.has(v)) {
+                    selectedValues.add(v);
+
+                    let label = '';
+                    for (let i = 0; i < $userSelect[0].options.length; i++) {
+                        const option = $userSelect[0].options[i];
+                        if (option.value === v) {
+                            label = option.text;
+                            option.classList.add('option-disabled');
+                            break;
+                        }
+                    }
+
+                    const $tag = $('<span></span>')
+                        .addClass('mr-2 px-2 py-1 bg-blue-100 rounded-full inline-flex items-center justify-between text-sm cursor-default select-none')
+                        .css({
+                            'min-width': '100px',
+                            'max-width': '150px',
+                        })
+                        .text((label.length > 15 ? label.slice(0, 14) + '...' : label) + ' ')
+                        .append($(`<span class="ml-auto color-red-900">
+                            <i
+                                class="removeUserSelect fa-solid fa-xmark fa-lg text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+                                title="Remove"
+                                data-user-id="${v}"
+                            </i>
+                            </span>`).addClass('ml-1 text-blue-600'));
+
+                    $selectedUsers.append($tag);
+                }
+            });
+        });
+        $userSelect.val(null);
+    } else {
+        $userFieldsContainer.addClass('hidden');
+        flatpickr(".datetimepicker", {
+            enableTime: true,
+            dateFormat: "m-d-Y H:i",
+            time_24hr: true,
+            // defaultDate: new Date(),
+        });
+    }
+    // else {
+    //     $('#userSelect').addClass('selectArrowDown');
+    //     $userSelect.removeAttr('multiple');
+    //     $userSelect.attr('name', 'user');
+
+    //     $userSelect.val('-1');
+    // }
 }

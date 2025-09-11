@@ -7,12 +7,13 @@
             :value="__('Title')"
             class="block mb-1"
         />
-        <x-text-area
+        <x-text-input
             id="title"
             name="title"
             type="text"
             class="block w-full"
             :value="old('title')"
+            placeholder="Enter here..."
             required
             autocomplete="title"
         />
@@ -41,7 +42,7 @@
             />
             <x-input-error
                 class="mt-2"
-                :messages="$errors->get('')"
+                :messages="$errors->get('fromDate')"
             />
         </div>
 
@@ -63,7 +64,7 @@
             />
             <x-input-error
                 class="mt-2"
-                :messages="$errors->get('to')"
+                :messages="$errors->get('toDate')"
             />
         </div>
     </div>
@@ -78,8 +79,8 @@
                 <x-input-radio
                     name="type"
                     value="event"
-                    checked="{{ old('type') === 'event' ? 'checked' : '' }}"
                     required
+                    checked
                 />
                 <span class="ml-2 text-gray-700">Event</span>
             </label>
@@ -88,7 +89,6 @@
                 <x-input-radio
                     name="type"
                     value="case"
-                    checked="{{ old('type') === 'case' ? 'checked' : '' }}"
                     required
                 />
                 <span class="ml-2 text-gray-700">Case</span>
@@ -108,9 +108,10 @@
         />
         <select
             id="categorySelect"
+            name="category"
             class="
                 block w-full rounded-md bg-white border border-gray-300
-                p-1.5 text-gray-900 cursor-pointer appearance-none bg-no-repeat bg-right bg-[length:1.25em_1.25em]
+                px-1.5 text-gray-900 cursor-pointer appearance-none bg-no-repeat bg-right bg-[length:1.25em_1.25em]
             "
              style="background-image: url('data:image/svg+xml,%3csvg fill=\'gray\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3e%3cpath d=\'M5.22 8.22a.75.75 0 011.06 0L10 11.94l3.72-3.72a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.22 9.28a.75.75 0 010-1.06z\'/%3e%3c/svg%3e');"
         >
@@ -119,5 +120,29 @@
             class="mt-2"
             :messages="$errors->get('category')"
         />
+    </div>
+
+    <div id="userFieldsContainer" class="hidden">
+        <x-input-label
+            for="user"
+            :value="__('Users')"
+            class="block mb-1"
+        />
+        <select
+            id="userSelect"
+            name="user"
+            class="
+                block w-full rounded-md bg-white border border-gray-300
+                px-1.5 text-gray-900 cursor-pointer appearance-none bg-no-repeat bg-right bg-[length:1.25em_1.25em]
+                selectArrowDown
+            "
+            required
+        >
+        </select>
+        <x-input-error
+            class="mt-2"
+            :messages="$errors->get('user') ?: $errors->get('user.*')"
+        />
+        <div id="selectedUsers" class="mt-2 grid grid-cols-4 min-w-[120px] gap-2"></div>
     </div>
 </form>

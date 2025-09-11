@@ -9,10 +9,10 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    protected $table = 'users';
-
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -48,6 +48,11 @@ class User extends Authenticatable
         ];
     }
 
+    public static function getActiveUsers()
+    {
+        return self::where('isDeleted', 0)->orderBy('name')->get();
+    }
+
     public function event()
     {
         return $this->hasMany(Event::class);
@@ -56,6 +61,6 @@ class User extends Authenticatable
     // Laravel will assume the table is the alphabetical order of the two model names (snake_case, singular), like court_case_user.
     public function courtCases()
     {
-        return $this->belongsToMany(CourtCase::class, 'user_case', 'user_id', 'case_id');
+        return $this->belongsToMany(CourtCase::class, 'user_case', 'user_id', 'case_id')->withTimestamps();
     }
 }

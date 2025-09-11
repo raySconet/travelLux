@@ -8,6 +8,13 @@ class CourtCase extends Model
 {
     protected $table = 'court_cases';
 
+    protected $fillable = [
+        'caseTitle',
+        'categoryId',
+        'dateFrom',
+        'dateTo',
+    ];
+
     public function todoSection()
     {
         return $this->hasMany(TodoSection::class);
@@ -15,7 +22,7 @@ class CourtCase extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'user_case');
+        return $this->belongsToMany(User::class, 'user_case', 'case_id', 'user_id')->withTimestamps();
     }
 
     // Belongs to a category

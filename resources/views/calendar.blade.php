@@ -38,7 +38,7 @@
 
         <x-slot name="footer">
             <x-primary-btn class="justify-self-end" id="submitAddEventCaseBtn">
-                {{ __('Save') }}
+                {{ __('Add E/C') }}
             </x-primary-btn>
         </x-slot>
     </x-general-modal>

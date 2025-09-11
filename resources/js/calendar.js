@@ -5,7 +5,8 @@ $(document).ready(() => {
     ({ month: currentMonth, year: currentYear } = parseMonthYear($('#calendarMonthYearSelected').text()));
 
     generateCalendarDays();
-    updateUserSelectMode();
+
+    $('input[name="type"]').on('change', updateUserSelectMode());
 
     $(document).on('click', '.sidebar-day-btn-parent', function() {
         const dateStr = $(this).children('.sidebar-day-btn').data('date');
@@ -57,7 +58,7 @@ $(document).ready(() => {
 
         buildDailyView(window.selectedDate.getDate(), window.selectedDate.getMonth(), window.selectedDate.getFullYear());
         updateDailyHeader(window.selectedDate);
-        console.log(window.selectedDate);
+        // console.log(window.selectedDate);
 
         highlightSelectedSidebarDay();
     });
@@ -171,8 +172,8 @@ $(document).ready(() => {
         const $this = $(this);
         const userId = $this.data('user-id');
 
-        console.log('View:', view);
-        console.log('User ID (changed):', userId);
+        // console.log('View:', view);
+        // console.log('User ID (changed):', userId);
 
         if (view === 'Month View') {
             allCheckboxes.prop('checked', false);
@@ -194,17 +195,17 @@ $(document).ready(() => {
                     // Too many checked, remove the first one (oldest)
                     const firstCheckedId = checkedOrder.shift();
                     $(`input[type="checkbox"][data-user-id="${firstCheckedId}"]`).prop('checked', false);
-                    console.log(`Unchecking oldest user ID: ${firstCheckedId}`);
+                    // console.log(`Unchecking oldest user ID: ${firstCheckedId}`);
                 }
             } else {
                 // Checkbox is being unchecked manually
                 checkedOrder = checkedOrder.filter(id => id !== userId);
-                console.log(`User ID manually unchecked: ${userId}`);
+                // console.log(`User ID manually unchecked: ${userId}`);
             }
 
             // Optional: Log current checked IDs
             const currentChecked = checkedOrder;
-            console.log('Currently selected user IDs:', currentChecked);
+            // console.log('Currently selected user IDs:', currentChecked);
         }
     });
 
@@ -221,13 +222,15 @@ $(document).ready(() => {
             url: '/getCategories',
             method: 'GET',
             success: function (categories) {
-                console.log(categories);
+                // console.log(categories);
                 $categorySelect.empty();
                 $categorySelect.append('<option value="-1">Select a category</option>');
 
                 categories.forEach(function (category) {
                     $categorySelect.append(`<option value="${category.id}">${category.categoryName}</option>`);
                 });
+
+                updateUserSelectMode();
             },
             error: function () {
                 $categorySelect.html('<option>Error loading categories</option>');
@@ -238,14 +241,16 @@ $(document).ready(() => {
             url: '/getUsers',
             method: 'GET',
             success: function (users) {
-                console.log(users);
+                // console.log(users);
                 $userSelect.empty();
                 $userSelect.append('<option value="-1">Select an user(s)</option>');
 
                 users.forEach(function (user) {
-                    console.log(user);
+                    // console.log(user);
                     $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
                 });
+
+                updateUserSelectMode();
             },
             error: function () {
                 $userSelect.html('<option>Error loading users</option>');
@@ -268,6 +273,52 @@ $(document).ready(() => {
     $('input[name="type"]').on('change', function () {
         updateUserSelectMode();
     });
+
+    $(document).on('click', '.removeUserSelect', function (e) {
+        const $target = $(e.target).closest('.removeUserSelect');
+        const userId = $target.attr('data-user-id');
+        const $userSelect = $('#userSelect');
+        const selectedValues = $userSelect.data('selectedValues');
+
+        if (!userId) {
+            console.warn('No userId found on clicked remove icon');
+            return;
+        }
+
+        $target.parent().parent('span').remove();
+
+        selectedValues?.delete(userId);
+
+        const options = $userSelect[0].options;
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (option.value === userId) {
+                option.classList.remove('option-disabled');
+                // option.classList.add('option-reset');
+                option.selected = false;
+                break;
+            }
+        }
+
+        // Remove from current value array
+        let currentVals = $userSelect.val() || [];
+        const newVals = currentVals.filter(val => val !== userId);
+        $userSelect.val(newVals);
+
+        // Clear selection to allow re-selecting same item
+        setTimeout(() => {
+            $userSelect.val(null);
+        }, 0);
+    });
+
+    $('#closeErrorModal').on('click', function() {
+        $('#errorModal').addClass('hidden');
+    });
+
+    $('#closeSuccessModal').on('click', function() {
+        $('#successModal').addClass('hidden');
+    });
+
     // add event/case steps
 
     // step 1
@@ -292,6 +343,12 @@ $(document).ready(() => {
             actionUrl = routes.eventsStore;
         } else if (type === 'case') {
             actionUrl = routes.casesStore;
+
+            const selectedUserIds = Array.from($('#selectedUsers i[data-user-id]')).map(el => el.dataset.userId);
+
+            $('#userSelect option').each(function () {
+                $(this).prop('selected', selectedUserIds.includes(this.value));
+            });
         }
 
         const $form = $(this);
@@ -314,7 +371,7 @@ $(document).ready(() => {
             dataType: 'json',
             success: function (response) {
                 $form[0].reset();
-                $('#addCategoryModal').addClass('hidden');
+                $('#addEventCaseModal').addClass('hidden');
                 $('#modalSuccessContent').html(response.message);
                 $('#successModal').removeClass('hidden');
             },
@@ -324,7 +381,13 @@ $(document).ready(() => {
 
                     // Loop over errors and display inline
                     $.each(errors, function (field, messages) {
-                        const $input = $form.find(`[name="${field}"]`);
+                        let $input = $form.find(`[name="${field}"]`);
+
+                        if ($input.length === 0) {
+                            // Handle array-like error field names like user.0, user.1
+                            const baseField = field.split('.')[0];
+                            $input = $form.find(`[name="${baseField}[]"], [name="${baseField}"]`);
+                        }
 
                         $input.addClass('border-red-500');
 
@@ -335,7 +398,7 @@ $(document).ready(() => {
                 }
             },
             complete: function () {
-                $button.prop('disabled', false).text('Add Category');
+                $button.prop('disabled', false).text('Add E/C');
             }
         });
     });
@@ -586,7 +649,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         }
     }
 
-    console.log("Daily view rendered for:", selectedDate.toDateString());
+    // console.log("Daily view rendered for:", selectedDate.toDateString());
 }
 
 
@@ -694,7 +757,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         }
     }
 
-    console.log("Weekly view rendered for:", startOfWeek.toDateString());
+    // console.log("Weekly view rendered for:", startOfWeek.toDateString());
 }
 
 
@@ -929,28 +992,60 @@ function updateUserSelectMode() {
     const selectedType = $('input[name="type"]:checked').val();
     const $userSelect = $('#userSelect');
     const $selectedUsers = $('#selectedUsers');
+    const $userFieldsContainer = $('#userFieldsContainer');
+
+    for (let i = 0; i < $userSelect[0].options.length; i++) {
+        const option = $userSelect[0].options[i];
+
+        if (!option.dataset.originalText) {
+            option.dataset.originalText = option.text;
+        }
+
+        if (i === 0) {
+            option.text = option.dataset.originalText;
+        } else {
+            option.text = `${i}. ${option.dataset.originalText}`;
+        }
+
+        option.classList.remove('option-disabled');
+    }
+
+    $selectedUsers.empty();
+    $userSelect.off('change');
+
+    const selectedValues = new Set();
+    $userSelect.data('selectedValues', selectedValues);
 
     if (selectedType === 'case') {
+        $userFieldsContainer.removeClass('hidden');
         $('#userSelect').removeClass('selectArrowDown');
         $userSelect.attr('multiple', 'multiple');
         $userSelect.attr('name', 'user[]');
 
-        $selectedUsers.empty();
-        let selectedValues = new Set();
-
-        $userSelect.off('change');
+        flatpickr(".datetimepicker", {
+            enableTime: false,
+            dateFormat: "m-d-Y",
+            // defaultDate: new Date(),
+        });
 
         // Bind new change handler
         $userSelect.on('change', function () {
             const val = $(this).val();
-
             if (!val) return;
 
             val.forEach(v => {
                 if (v !== '-1' && !selectedValues.has(v)) {
                     selectedValues.add(v);
 
-                    const label = $(this).find(`option[value="${v}"]`).text();
+                    let label = '';
+                    for (let i = 0; i < $userSelect[0].options.length; i++) {
+                        const option = $userSelect[0].options[i];
+                        if (option.value === v) {
+                            label = option.text;
+                            option.classList.add('option-disabled');
+                            break;
+                        }
+                    }
 
                     const $tag = $('<span></span>')
                         .addClass('mr-2 px-2 py-1 bg-blue-100 rounded-full inline-flex items-center justify-between text-sm cursor-default select-none')
@@ -959,7 +1054,13 @@ function updateUserSelectMode() {
                             'max-width': '150px',
                         })
                         .text((label.length > 15 ? label.slice(0, 14) + '...' : label) + ' ')
-                        .append($('<span class="ml-auto color-red-900"><i class="fas fa-check"></i></span>').addClass('ml-1 text-blue-600'));
+                        .append($(`<span class="ml-auto color-red-900">
+                            <i
+                                class="removeUserSelect fa-solid fa-xmark fa-lg text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+                                title="Remove"
+                                data-user-id="${v}"
+                            </i>
+                            </span>`).addClass('ml-1 text-blue-600'));
 
                     $selectedUsers.append($tag);
                 }
@@ -967,15 +1068,19 @@ function updateUserSelectMode() {
         });
         $userSelect.val(null);
     } else {
-        $('#userSelect').addClass('selectArrowDown');
-        $userSelect.removeAttr('multiple');
-        $userSelect.attr('name', 'user');
-
-        $userSelect.off('change');
-
-        $selectedUsers.empty();
-        $userSelect.val('-1');
+        $userFieldsContainer.addClass('hidden');
+        flatpickr(".datetimepicker", {
+            enableTime: true,
+            dateFormat: "m-d-Y H:i",
+            time_24hr: true,
+            // defaultDate: new Date(),
+        });
     }
+    // else {
+    //     $('#userSelect').addClass('selectArrowDown');
+    //     $userSelect.removeAttr('multiple');
+    //     $userSelect.attr('name', 'user');
+
+    //     $userSelect.val('-1');
+    // }
 }
-
-

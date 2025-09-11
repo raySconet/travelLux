@@ -61,6 +61,6 @@ class User extends Authenticatable
     // Laravel will assume the table is the alphabetical order of the two model names (snake_case, singular), like court_case_user.
     public function courtCases()
     {
-        return $this->belongsToMany(CourtCase::class, 'user_case', 'user_id', 'case_id');
+        return $this->belongsToMany(CourtCase::class, 'user_case', 'user_id', 'case_id')->withTimestamps();
     }
 }

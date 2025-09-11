@@ -25,11 +25,20 @@ class EventController extends Controller
             'fromDate' => ['required', 'date_format:m-d-Y H:i'],
             'toDate' => ['required', 'date_format:m-d-Y H:i', 'after_or_equal:fromDate'],
             'category' => 'required|exists:categories,id',
+            // 'user' => 'required|exists:users,id',
         ]);
 
         // Convert to Carbon date for saving
         $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'));
         $toDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('toDate'));
+
+        // Conflict check
+        if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon)) {
+            throw ValidationException::withMessages([
+                'fromDate' => ['You already have an event during this time.'],
+                'toDate' => ['You already have an event during this time.'],
+            ]);
+        }
 
         $event = Event::create([
             'title' => $request['title'],
@@ -43,6 +52,16 @@ class EventController extends Controller
             'message' => 'Event created successfully!',
             'event' => $event,
         ]);
+    }
+
+    private function hasTimeConflict($userId, $from, $to): bool
+    {
+        return Event::where('user_id', $userId)
+            ->where(function ($query) use ($from, $to) {
+                $query->where('date_from', '<', $to)
+                    ->where('date_to', '>', $from);
+            })
+            ->exists();
     }
 }
 

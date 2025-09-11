@@ -92,3 +92,9 @@ option {
     background-size: 1.25em 1.25em;
 }
 
+.option-disabled {
+    color: gray !important;
+}
+.option-reset {
+    color: # !important;
+}

@@ -9,6 +9,10 @@ $(document).ready(() => {
             .removeClass("fa-plus")
             .addClass("fa-minus");
         $(".appendDuplicates").append($newItem); // add to end
+
+        let $newTreating = $("#treatingToDuplicate").clone(); // duplicate first
+        $(".treatingAppendDuplicates").append($newTreating); // add to end
+
     });
 
     $(document).on('click', '.removeClientInfoButton', function() {
@@ -92,7 +96,6 @@ $(document).ready(() => {
         }, 500);
     });
     // End Add Edit Buttons
-
 
 
 

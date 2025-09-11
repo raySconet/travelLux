@@ -128,21 +128,25 @@
             :value="__('Users')"
             class="block mb-1"
         />
-        <select
-            id="userSelect"
-            name="user"
-            class="
-                block w-full rounded-md bg-white border border-gray-300
-                px-1.5 text-gray-900 cursor-pointer appearance-none bg-no-repeat bg-right bg-[length:1.25em_1.25em]
-                selectArrowDown
-            "
-            required
-        >
-        </select>
-        <x-input-error
-            class="mt-2"
-            :messages="$errors->get('user') ?: $errors->get('user.*')"
-        />
-        <div id="selectedUsers" class="mt-2 grid grid-cols-4 min-w-[120px] gap-2"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <select
+                    id="userSelect"
+                    name="user"
+                    class="
+                        block w-full h-[200px] rounded-md bg-white border border-gray-300
+                        px-1.5 text-gray-900 cursor-pointer appearance-none bg-no-repeat bg-right bg-[length:1.25em_1.25em]
+                        selectArrowDown
+                    "
+                    required
+                >
+                </select>
+                <x-input-error
+                    class="mt-2"
+                    :messages="$errors->get('user') ?: $errors->get('user.*')"
+                />
+            </div>
+            <div id="selectedUsers" class="min-w-[120px] gap-2 border border-gray-300 rounded-md">dfdsfsdfs</div>
+        </div>
     </div>
 </form>

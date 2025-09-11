@@ -994,22 +994,23 @@ function updateUserSelectMode() {
     const $selectedUsers = $('#selectedUsers');
     const $userFieldsContainer = $('#userFieldsContainer');
 
-    for (let i = 0; i < $userSelect[0].options.length; i++) {
-        const option = $userSelect[0].options[i];
+    // for (let i = 0; i < $userSelect[0].options.length; i++) {
+    //     const option = $userSelect[0].options[i];
 
-        if (!option.dataset.originalText) {
-            option.dataset.originalText = option.text;
-        }
+    //     if (!option.dataset.originalText) {
+    //         option.dataset.originalText = option.text;
+    //     }
 
-        if (i === 0) {
-            option.text = option.dataset.originalText;
-        } else {
-            option.text = `${i}. ${option.dataset.originalText}`;
-        }
+    //     if (i === 0) {
+    //         option.text = option.dataset.originalText;
+    //     } else {
+    //         option.text = `${i}. ${option.dataset.originalText}`;
+    //     }
 
-        option.classList.remove('option-disabled');
-    }
+    //     option.classList.remove('option-disabled');
+    // }
 
+    $('option').removeClass('option-disabled');
     $selectedUsers.empty();
     $userSelect.off('change');
 
@@ -1048,12 +1049,12 @@ function updateUserSelectMode() {
                     }
 
                     const $tag = $('<span></span>')
-                        .addClass('mr-2 px-2 py-1 bg-blue-100 rounded-full inline-flex items-center justify-between text-sm cursor-default select-none')
+                        .addClass('block text-sm cursor-default select-none')
                         .css({
                             'min-width': '100px',
                             'max-width': '150px',
                         })
-                        .text((label.length > 15 ? label.slice(0, 14) + '...' : label) + ' ')
+                        .text(label)
                         .append($(`<span class="ml-auto color-red-900">
                             <i
                                 class="removeUserSelect fa-solid fa-xmark fa-lg text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"

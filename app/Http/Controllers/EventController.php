@@ -23,7 +23,7 @@ class EventController extends Controller
             'title' => 'required|string|max:255',
             'type' => 'required|in:event',
             'fromDate' => ['required', 'date_format:m-d-Y H:i'],
-            'toDate' => ['required', 'date_format:m-d-Y H:i', 'after_or_equal:fromDate'],
+            'toDate' => ['required', 'date_format:m-d-Y H:i', 'after:fromDate'],
             'category' => 'required|exists:categories,id',
             // 'user' => 'required|exists:users,id',
         ]);

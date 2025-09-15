@@ -215,8 +215,8 @@ $(document).ready(() => {
         const $categorySelect = $('#categorySelect');
         const $userSelect = $('#userSelect');
 
-        $categorySelect.html('<option>Loading...</option>')
-        $userSelect.html('<option>Loading...</option>')
+        $categorySelect.html('<option value="-1" disabled selected>Loading...</option>')
+        $userSelect.html('<option value="-1" disabled selected>Loading...</option>')
 
         $.ajax({
             url: '/getCategories',
@@ -233,7 +233,7 @@ $(document).ready(() => {
                 updateUserSelectMode();
             },
             error: function () {
-                $categorySelect.html('<option>Error loading categories</option>');
+                $categorySelect.html('<option value="-1" disabled selected>Error loading categories</option>');
             }
         });
 
@@ -253,7 +253,7 @@ $(document).ready(() => {
                 updateUserSelectMode();
             },
             error: function () {
-                $userSelect.html('<option>Error loading users</option>');
+                $userSelect.html('<option value="-1" disabled selected>Error loading users</option>');
             }
         });
     });
@@ -271,8 +271,8 @@ $(document).ready(() => {
     });
 
     $('input[name="type"]').on('change', function () {
-        $('input, select').removeClass('border-red-500');
-        $('.input-error-text').remove();
+        // $('input, select').removeClass('border-red-500');
+        // $('.input-error-text').remove();
         updateUserSelectMode();
     });
 
@@ -364,7 +364,7 @@ $(document).ready(() => {
         console.log($form.serialize());
         console.log(actionUrl);
         $('.input-error-text').remove();
-        $('input, select, #selectedUsers').removeClass('border-red-500');
+        $('input, select').removeClass('border-red-500');
 
         $.ajax({
             type: 'POST',
@@ -393,9 +393,9 @@ $(document).ready(() => {
 
                         $input.addClass('border-red-500');
 
-                        if(field === "user") {
-                            $("#selectedUsers").addClass("border-red-500");
-                        }
+                        // if(field === "user") {
+                        //     $("#selectedUsers").addClass("border-red-500");
+                        // }
 
                         if ($input.next('.input-error-text').length === 0) {
                             $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
@@ -1041,7 +1041,7 @@ function updateUserSelectMode() {
             if (!val) return;
 
             val.forEach(v => {
-                if (v !== '-1' && !selectedValues.has(v)) {
+                if (v && v !== '-1' && !selectedValues.has(v)) {
                     selectedValues.add(v);
 
                     let label = '';
@@ -1086,4 +1086,26 @@ function updateUserSelectMode() {
 
     //     $userSelect.val('-1');
     // }
+}
+
+function getUsers () {
+    $.ajax({
+        url: '/getUsers',
+        method: 'GET',
+        success: function (users) {
+            // console.log(users);
+            $userSelect.empty();
+            // $userSelect.append('<option value="-1">Select an user(s)</option>');
+
+            users.forEach(function (user) {
+                // console.log(user);
+                $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
+            });
+
+            updateUserSelectMode();
+        },
+        error: function () {
+            $userSelect.html('<option value="-1" disabled selected>Error loading users</option>');
+        }
+    });
 }

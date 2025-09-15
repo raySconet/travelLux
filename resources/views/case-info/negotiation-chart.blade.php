@@ -1,12 +1,13 @@
 <section class="mt-1">
-    <h2   class="mb-1 mt-1 text-md  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
-        {{ __('Treating Chart') }}
+    <h2 class="font-semibold text-xl bg-[#eaf1ff] text-gray-800 leading-tight">
+
+        {{ __('Negotiation Chart') }}
     </h2>
 
     <div class="treatingAppendDuplicates">
         <div class= "grid grid-cols-1 2xl:grid-cols-14 gap-2 w-full " id="treatingToDuplicate">
             <x-case-components.col class="2xl:col-span-14 text-center">
-                <p> Norma Treating Chart </p>
+                <p> Norma - Negotiation Chart </p>
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-2">

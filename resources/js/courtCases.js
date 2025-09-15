@@ -1,47 +1,57 @@
 $(document).ready(() => {
     // Add Edit Buttons
     $(document).on('click', '.addClientInfoButton', function() {
-        let $container = $(this).parent().parent();
-        let $newItem = $container.clone(); // duplicate first
+        let container = $(this).parent().parent();
+        let newItem = container.clone(); // duplicate first
+
+        newItem.find("input, textarea, select").each(function () {
+            // clear value
+            $(this).val("");
+        });
+
         $(this).removeClass("addClientInfoButton bg-[#14548d]")
             .addClass("removeClientInfoButton bg-[#a51a1a]")
             .children()
             .removeClass("fa-plus")
             .addClass("fa-minus");
-        $(".appendDuplicates").append($newItem); // add to end
+        $(".appendDuplicates").append(newItem); // add to end
 
-        let $newTreating = $("#treatingToDuplicate").clone(); // duplicate first
-        $(".treatingAppendDuplicates").append($newTreating); // add to end
+        let newTreating = $("#treatingToDuplicate").clone(); // duplicate first
+        newTreating.find("input, textarea, select").each(function () {
+            // clear value
+            $(this).val("");
+        });
+        $(".treatingAppendDuplicates").append(newTreating); // add to end
 
     });
 
     $(document).on('click', '.removeClientInfoButton', function() {
-        let $btn = $('.removeClientInfoButton');
+        let btn = $('.removeClientInfoButton');
         // disable button temporarily
-        $btn.prop('disabled', true);
+        btn.prop('disabled', true);
         $(this).parent().parent().remove();
 
         // enable button again after 1 second
         setTimeout(() => {
-            $btn.prop('disabled', false);
+            btn.prop('disabled', false);
         }, 500);
     });
 
     $(document).on('click', '.addClientInfoButtonFor3p', function() {
-        let $container = $(this).parent().parent();
-        let $newItem = $container.clone(); // duplicate first
+        let container = $(this).parent().parent();
+        let newItem = container.clone(); // duplicate first
         $(this).removeClass("addClientInfoButtonFor3p bg-[#14548d]")
             .addClass("removeClientInfoButtonFor3p bg-[#a51a1a]")
             .children()
             .removeClass("fa-plus")
             .addClass("fa-minus");
-        $(".appendDuplicatesFor3p").append($newItem); // add to end
+        $(".appendDuplicatesFor3p").append(newItem); // add to end
     });
 
     $(document).on('click', '.removeClientInfoButtonFor3p', function() {
-        let $btn = $('.removeClientInfoButtonFor3p');
+        let btn = $('.removeClientInfoButtonFor3p');
         // disable button temporarily
-        $btn.prop('disabled', true);
+        btn.prop('disabled', true);
         $(this).parent().parent().remove();
 
         // enable button again after 1 second
@@ -51,48 +61,48 @@ $(document).ready(() => {
     });
 
     $(document).on('click', '.addClientInfoButtonFor1p', function() {
-        let $container = $(this).parent().parent();
-        let $newItem = $container.clone(); // duplicate first
+        let container = $(this).parent().parent();
+        let newItem = container.clone(); // duplicate first
         $(this).removeClass("addClientInfoButtonFor1p bg-[#14548d]")
             .addClass("removeClientInfoButtonFor1p bg-[#a51a1a]")
             .children()
             .removeClass("fa-plus")
             .addClass("fa-minus");
-        $(".appendDuplicatesFor1p").append($newItem); // add to end
+        $(".appendDuplicatesFor1p").append(newItem); // add to end
     });
 
     $(document).on('click', '.removeClientInfoButtonFor1p', function() {
-        let $btn = $('.removeClientInfoButtonFor1p');
+        let btn = $('.removeClientInfoButtonFor1p');
         // disable button temporarily
-        $btn.prop('disabled', true);
+        btn.prop('disabled', true);
         $(this).parent().parent().remove();
 
         // enable button again after 1 second
         setTimeout(() => {
-            $btn.prop('disabled', false);
+            btn.prop('disabled', false);
         }, 500);
     });
 
     $(document).on('click', '.addClientInfoButtonForDefense', function() {
-        let $container = $(this).parent().parent();
-        let $newItem = $container.clone(); // duplicate first
+        let container = $(this).parent().parent();
+        let newItem = container.clone(); // duplicate first
         $(this).removeClass("addClientInfoButtonForDefense bg-[#14548d]")
             .addClass("removeClientInfoButtonForDefense bg-[#a51a1a]")
             .children()
             .removeClass("fa-plus")
             .addClass("fa-minus");
-        $(".appendDuplicatesForDefense").append($newItem); // add to end
+        $(".appendDuplicatesForDefense").append(newItem); // add to end
     });
 
     $(document).on('click', '.removeClientInfoButtonForDefense', function() {
-        let $btn = $('.removeClientInfoButtonForDefense');
+        let btn = $('.removeClientInfoButtonForDefense');
         // disable button temporarily
-        $btn.prop('disabled', true);
+        btn.prop('disabled', true);
         $(this).parent().parent().remove();
 
         // enable button again after 1 second
         setTimeout(() => {
-            $btn.prop('disabled', false);
+            btn.prop('disabled', false);
         }, 500);
     });
     // End Add Edit Buttons

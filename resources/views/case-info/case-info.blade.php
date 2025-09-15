@@ -1,11 +1,11 @@
 <section class="mt-1">
-    <h2 class="text-lg font-medium text-gray-900">
+    <h2   class="mb-1 text-md mt-1 text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
         {{ __('Case Info') }}
     </h2>
      <p class="mb-1 text-md text-gray-600">
         {{ __("1st Intake Convesation") }}
     </p>
-    <x-case-components.grid >
+    <x-case-components.grid   class="2xl:grid-cols-12">
         <div class="2xl:col-span-3 flex flex-col ">
             <div >
                 <x-input-label for="referralChiro" :value="__('Referral')" />
@@ -51,7 +51,7 @@
     </x-case-components.grid>
 
 
-    <x-case-components.grid class="mt-2">
+    <x-case-components.grid class="2xl:grid-cols-12 mt-2">
         <x-case-components.col class="2xl:col-span-4 ">
             <x-input-label for="policeReport" :value="__('Police Report')" />
             <x-text-input  name="policeReport" type="text" class="mt-1 " :value="old('policeReport')"  required autofocus autocomplete="Email" />
@@ -71,7 +71,7 @@
     </x-case-components.grid>
 
 
-    <x-case-components.grid class="mt-2">
+    <x-case-components.grid class="2xl:grid-cols-12 mt-2">
         <x-case-components.col class="2xl:col-span-12 ">
             <p class="mb-1 text-md text-gray-700 text-center border border-[#CCC] p-2">
                 {{ __("Part 2 (first 30 days)") }}

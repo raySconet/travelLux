@@ -4,14 +4,20 @@
         {{ __('Contact Info') }}
     </h2>
 
-    <x-case-components.grid>
+    <x-case-components.grid class="2xl:grid-cols-12">
         {{--Client Section  --}}
         <x-case-components.col class="2xl:col-span-12 ">
-            <p class="mb-1 text-md  text-gray-700 text-center border border-[#CCC] p-2">
+            <p  class="mb-1 text-md  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
                 {{ __("Client") }}
             </p>
             <div class="appendDuplicates">
-                <x-case-components.grid id="clientToDuplicate">
+                <x-case-components.grid class="2xl:grid-cols-14" id="clientToDuplicate">
+                    <x-case-components.col class="2xl:col-span-2">
+                        <x-input-label for="name" :value="__('Name')" />
+                        <x-text-input  name="name" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="name" />
+                        <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                    </x-case-components.col>
+
                     <x-case-components.col class="2xl:col-span-2">
                         <x-input-label for="tel" :value="__('Tel')" />
                         <x-text-input  name="tel" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="tel" />
@@ -55,13 +61,19 @@
     </x-case-components.grid>
 
 
-    <x-case-components.grid class="mt-2">
+    <x-case-components.grid  class="2xl:grid-cols-12 mt-2">
         <div class="2xl:col-span-12 flex flex-col ">
             <p class="mb-1 text-md text-gray-700 text-center border border-[#CCC] p-2">
                 {{ __("3P") }}
             </p>
             <div class="appendDuplicatesFor3p">
-                <x-case-components.grid id="clientToDuplicate">
+                <x-case-components.grid class="2xl:grid-cols-14 mt-2" id="clientToDuplicate">
+                    <x-case-components.col class="2xl:col-span-2">
+                        <x-input-label for="name" :value="__('Name')" />
+                        <x-text-input  name="name" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="name" />
+                        <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                    </x-case-components.col>
+
                     <x-case-components.col class="2xl:col-span-2">
                         <x-input-label for="tel" :value="__('Tel')" />
                         <x-text-input  name="tel" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="tel" />
@@ -104,13 +116,19 @@
     </x-case-components.grid>
 
 
-    <x-case-components.grid class="mt-2">
+    <x-case-components.grid  class="2xl:grid-cols-12 mt-2">
         <div class="2xl:col-span-12 flex flex-col ">
             <p class="mb-1 text-md text-gray-700  text-center border border-[#CCC] p-2">
                 {{ __("1P") }}
             </p>
            <div class="appendDuplicatesFor1p">
-                <x-case-components.grid id="clientToDuplicate">
+                <x-case-components.grid  class="2xl:grid-cols-14" id="clientToDuplicate">
+                    <x-case-components.col class="2xl:col-span-2">
+                        <x-input-label for="name" :value="__('Name')" />
+                        <x-text-input  name="name" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="name" />
+                        <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                    </x-case-components.col>
+
                     <x-case-components.col class="2xl:col-span-2">
                         <x-input-label for="tel" :value="__('Tel')" />
                         <x-text-input  name="tel" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="tel" />
@@ -152,13 +170,20 @@
         </div>
     </x-case-components.grid>
 
-    <x-case-components.grid class="mt-2">
+    <x-case-components.grid  class="2xl:grid-cols-12 mt-2">
         <div class="2xl:col-span-12 flex flex-col ">
             <p class="mb-1 text-md text-gray-700  text-center border border-[#CCC] p-2">
                 {{ __("Defense Counsel") }}
             </p>
             <div class="appendDuplicatesForDefense">
-                <x-case-components.grid id="clientToDuplicate">
+                <x-case-components.grid   class="2xl:grid-cols-14" id="clientToDuplicate">
+
+                    <x-case-components.col class="2xl:col-span-2">
+                        <x-input-label for="name" :value="__('Name')" />
+                        <x-text-input  name="name" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="name" />
+                        <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                    </x-case-components.col>
+
                     <x-case-components.col class="2xl:col-span-2">
                         <x-input-label for="tel" :value="__('Tel')" />
                         <x-text-input  name="tel" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="tel" />

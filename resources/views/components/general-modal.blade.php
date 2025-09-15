@@ -2,7 +2,7 @@
 
 <div
     {{ $attributes->merge([
-        'class' => 'fixed inset-0 flex items-center justify-center z-50 hidden ' . $class,
+        'class' => 'fixed inset-0 flex items-center justify-center z-50 hidden overflow-y-auto' . $class,
         'id' => $id
     ]) }}
 >

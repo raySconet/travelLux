@@ -24,8 +24,10 @@ class EventController extends Controller
             'type' => 'required|in:event',
             'fromDate' => ['required', 'date_format:m-d-Y H:i'],
             'toDate' => ['required', 'date_format:m-d-Y H:i', 'after:fromDate'],
-            'category' => 'required|exists:categories,id',
+            'category' => ['required','not_in:-1' , 'exists:categories,id'],
             // 'user' => 'required|exists:users,id',
+        ], [
+            'category.not_in' => 'The category field is required.',
         ]);
 
         // Convert to Carbon date for saving

@@ -93,8 +93,6 @@ option {
 }
 
 .option-disabled {
-    color: gray !important;
-}
-.option-reset {
-    color: # !important;
+    /* color: gray !important; */
+    display: none;
 }

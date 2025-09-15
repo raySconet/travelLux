@@ -25,9 +25,11 @@ class CourtCasesController extends Controller
             'type' => 'required|in:case',
             'fromDate' => ['required', 'date_format:m-d-Y'],
             'toDate' => ['required', 'date_format:m-d-Y', 'after_or_equal:fromDate'],
-            'category' => 'required|exists:categories,id',
+            'category' => ['required', 'not_in:-1', 'exists:categories,id'],
             'user' => ['required', 'array', 'min:1'],
             'user.*' => ['required', 'exists:users,id'],
+        ], [
+            'category.not_in' => 'The category field is required.',
         ]);
 
         // Convert to Carbon date for saving

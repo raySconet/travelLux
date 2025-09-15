@@ -243,7 +243,7 @@ $(document).ready(() => {
             success: function (users) {
                 // console.log(users);
                 $userSelect.empty();
-                $userSelect.append('<option value="-1">Select an user(s)</option>');
+                // $userSelect.append('<option value="-1">Select an user(s)</option>');
 
                 users.forEach(function (user) {
                     // console.log(user);
@@ -271,6 +271,8 @@ $(document).ready(() => {
     });
 
     $('input[name="type"]').on('change', function () {
+        $('input, select').removeClass('border-red-500');
+        $('.input-error-text').remove();
         updateUserSelectMode();
     });
 
@@ -285,7 +287,7 @@ $(document).ready(() => {
             return;
         }
 
-        $target.parent().parent('span').remove();
+        $target.parent().remove();
 
         selectedValues?.delete(userId);
 
@@ -362,7 +364,7 @@ $(document).ready(() => {
         console.log($form.serialize());
         console.log(actionUrl);
         $('.input-error-text').remove();
-        $('input, select').removeClass('border-red-500');
+        $('input, select, #selectedUsers').removeClass('border-red-500');
 
         $.ajax({
             type: 'POST',
@@ -390,6 +392,10 @@ $(document).ready(() => {
                         }
 
                         $input.addClass('border-red-500');
+
+                        if(field === "user") {
+                            $("#selectedUsers").addClass("border-red-500");
+                        }
 
                         if ($input.next('.input-error-text').length === 0) {
                             $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
@@ -1048,20 +1054,16 @@ function updateUserSelectMode() {
                         }
                     }
 
-                    const $tag = $('<span></span>')
-                        .addClass('block text-sm cursor-default select-none')
-                        .css({
-                            'min-width': '100px',
-                            'max-width': '150px',
-                        })
-                        .text(label)
-                        .append($(`<span class="ml-auto color-red-900">
+                    const $tag = $('<div class="text-sm cursor-default select-none w-full flex justify-between items-center px-2"></div>')
+                        .addClass('')
+                        .html(`<span>${label}</span>`)
+                        .append($(`
                             <i
                                 class="removeUserSelect fa-solid fa-xmark fa-lg text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
                                 title="Remove"
                                 data-user-id="${v}"
                             </i>
-                            </span>`).addClass('ml-1 text-blue-600'));
+                            `).addClass('ml-1 text-blue-600'));
 
                     $selectedUsers.append($tag);
                 }

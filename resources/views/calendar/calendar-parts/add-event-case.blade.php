@@ -146,7 +146,7 @@
                     :messages="$errors->get('user') ?: $errors->get('user.*')"
                 />
             </div>
-            <div id="selectedUsers" class="min-w-[120px] gap-2 border border-gray-300 rounded-md">dfdsfsdfs</div>
+            <div id="selectedUsers" class="min-w-[120px] h-[200px] gap-2 border border-gray-300 rounded-md overflow-y-auto"></div>
         </div>
     </div>
 </form>

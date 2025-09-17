@@ -38,6 +38,8 @@ Route::post('/categories', [CategoryController::class, 'store'])->name('categori
 
 Route::get('/getUsers', [UserController::class, 'index']);
 
+Route::post('/getEvents', [EventController::class, 'index']);
+
 Route::middleware('auth')->group(function () {
     Route::post('/events/store', [EventController::class, 'store'])->name('events.store');
     Route::post('/cases/store', [CourtCasesController::class, 'store'])->name('cases.store');

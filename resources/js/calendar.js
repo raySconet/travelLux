@@ -1,10 +1,15 @@
-let currentMonth, currentYear;
+let currentMonth, currentYear, eventsData = [];
 let checkedOrder = [];
 
 $(document).ready(() => {
     ({ month: currentMonth, year: currentYear } = parseMonthYear($('#calendarMonthYearSelected').text()));
 
-    generateCalendarDays();
+    initializeCheckedOrder();
+    getUsers();
+    getEvents(checkedOrder, () => {
+        generateCalendarDays();
+    });
+
 
     $('input[name="type"]').on('change', updateUserSelectMode());
 
@@ -54,6 +59,7 @@ $(document).ready(() => {
             currentYear = newYear;
             updateCalendarHeader(currentMonth, currentYear);
             buildMonthlyCalendarDays(currentMonth, currentYear);
+            getEvents(checkedOrder);
         }
 
         buildDailyView(window.selectedDate.getDate(), window.selectedDate.getMonth(), window.selectedDate.getFullYear());
@@ -75,6 +81,7 @@ $(document).ready(() => {
             currentYear = newYear;
             updateCalendarHeader(currentMonth, currentYear);
             buildMonthlyCalendarDays(currentMonth, currentYear);
+            getEvents(checkedOrder);
         }
 
         buildDailyView(window.selectedDate.getDate(), window.selectedDate.getMonth(), window.selectedDate.getFullYear());
@@ -100,6 +107,7 @@ $(document).ready(() => {
             $('.sidebar-day-btn-parent').removeClass('selected-day sidebarCalendarCurrentDay');
 
             highlightSelectedSidebarDay();  // <-- Call your function here
+            getEvents(checkedOrder);
         }
 
         buildWeeklyView(
@@ -128,6 +136,7 @@ $(document).ready(() => {
             $('.sidebar-day-btn-parent').removeClass('selected-day sidebarCalendarCurrentDay');
 
             highlightSelectedSidebarDay();  // <-- And here too
+            getEvents(checkedOrder);
         }
 
         buildWeeklyView(
@@ -142,12 +151,18 @@ $(document).ready(() => {
     $(document).on('click', '#calendarPrevMonth, #sidebarCalendarPrevMonth', function() {
         goToPreviousMonth();
         highlightSelectedSidebarDay();
+        getEvents(checkedOrder, () => {
+            buildMonthlyCalendarDays(currentMonth, currentYear);
+        });
         // $('.sidebar-day-btn').removeClass('selected-day');
     });
 
     $(document).on('click', '#calendarNextMonth, #sidebarCalendarNextMonth', function() {
         goToNextMonth();
         highlightSelectedSidebarDay();
+        getEvents(checkedOrder, () => {
+            buildMonthlyCalendarDays(currentMonth, currentYear);
+        });
         // $('.sidebar-day-btn').removeClass('selected-day');
     });
 
@@ -199,14 +214,34 @@ $(document).ready(() => {
                 }
             } else {
                 // Checkbox is being unchecked manually
-                checkedOrder = checkedOrder.filter(id => id !== userId);
+                // checkedOrder = checkedOrder.filter(id => id !== userId);
                 // console.log(`User ID manually unchecked: ${userId}`);
+
+                const numStillChecked = allCheckboxes.filter(function () {
+                    return this !== $this[0] && $(this).is(':checked');
+                }).length;
+
+                if (numStillChecked === 0) {
+                    // This was the last checked one — prevent unchecking
+                    $this.prop('checked', true);
+                    return;
+                }
+
+                // Remove from order if it's allowed to uncheck
+                checkedOrder = checkedOrder.filter(id => id !== userId);
             }
 
-            // Optional: Log current checked IDs
-            const currentChecked = checkedOrder;
-            // console.log('Currently selected user IDs:', currentChecked);
+            checkedOrder = checkedOrder.filter(id =>
+                $(`input[type="checkbox"][data-user-id="${id}"]`).is(':checked')
+            );
+
         }
+        // Optional: Log current checked IDs
+        const currentChecked = checkedOrder;
+        console.log('Currently selected user IDs:', currentChecked);
+        getEvents(currentChecked, () => {
+            buildMonthlyCalendarDays(currentMonth, currentYear);
+        });
     });
 
     $('#openAddEventCaseModal').on('click', function() {
@@ -240,7 +275,8 @@ $(document).ready(() => {
         $.ajax({
             url: '/getUsers',
             method: 'GET',
-            success: function (users) {
+            success: function (response) {
+                const users = response.users || [];
                 // console.log(users);
                 $userSelect.empty();
                 // $userSelect.append('<option value="-1">Select an user(s)</option>');
@@ -453,10 +489,17 @@ function updateDailyHeader(date) {
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     $('#calendarDaySelected').html(`${monthNames[month]} ${day}, ${year}`);
+    $('#currentDateData')
+        .attr('data-month', String(month + 1).padStart(2, '0'))
+        .attr('data-year', year);
 }
 
 function updateWeeklyHeader(date) {
     const startOfWeek = new Date(date);
+
+    const month = startOfWeek.getMonth();
+    const year = startOfWeek.getFullYear();
+
     startOfWeek.setDate(date.getDate() - date.getDay()); // Sunday
 
     const endOfWeek = new Date(startOfWeek);
@@ -484,6 +527,9 @@ function updateWeeklyHeader(date) {
     }
 
     $('#calendarWeekSelected').text(label);
+     $('#currentDateData')
+        .attr('data-month', String(month + 1).padStart(2, '0'))
+        .attr('data-year', year);
 }
 
 function showView(view) {
@@ -550,7 +596,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     const isoDate = toLocalDateString(selectedDate); // YYYY-MM-DD
     const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][selectedDate.getDay()];
 
-    const allUsers = getEventsForDate(); // Get full list of users with events
+    // const allUsers = getEventsForDate(); // Get full list of users with events
+    const allUsers = eventsData;
 
     // DOM references
     const dailyHeader = $('#dailyHeader');
@@ -694,7 +741,8 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     }
 
 
-    const allEventsData = getEventsForDate();
+    // const allEventsData = getEventsForDate();
+    const allEventsData = eventsData;
 
     const userRow1 = allEventsData[0] || null;
     const userRow2 = allEventsData[1] || null;
@@ -766,34 +814,93 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     // console.log("Weekly view rendered for:", startOfWeek.toDateString());
 }
 
+function getEventsForDate(eventsData) {
+    const transformedData = Object.values(eventsData.reduce((acc, event) => {
+        const {
+            user_id,
+            title,
+            date_from,
+            date_to,
+            categorie,
+            user
+        } = event;
 
-function getEventsForDate(date) {
-    // Stub: replace this with your actual fetch logic
-    return [
-        {
-            user: 'Simone Alexander',
-            events: [
-                { title: 'AAM - NEW REFERRAL', date: '2025-08-25', from: '09:00', to: '09:30' },
-                { title: 'Morning Briefing', date: '2025-08-26', from: '08:30', to: '09:00' },
-                { title: 'Client Meeting - Project Alpha', date: '2025-08-28', from: '11:00', to: '12:00' },
-                { title: 'Lunch with Team', date: '2025-08-29', from: '12:30', to: '13:30' },
-                { title: 'Quarterly Report Review', date: '2025-08-30', from: '15:00', to: '16:00' },
-                { title: 'Strategy Planning Session', date: '2025-09-01', from: '10:00', to: '12:00' },
-                { title: 'Follow-up Call with Partner', date: '2025-09-02', from: '14:00', to: '14:30' },
-                { title: 'Product Demo', date: '2025-09-04', from: '10:00', to: '11:00' },
-                { title: 'Team Building Activity', date: '2025-09-04', from: '13:00', to: '17:00' },
-                { title: 'End of Week Wrap-up', date: '2025-09-04', from: '17:00', to: '17:30' }
-            ]
-        },
-        {
-            user: 'John Doe',
-            events: [
-                { title: 'Team Sync - Project Phoenix', date: '2025-08-28', from: '10:00', to: '10:30' },
-                { title: 'Follow-up Call with Client', date: '2025-08-25', from: '15:00', to: '15:30' }
-            ]
+        // Skip dummy events without valid date_from or date_to
+        if (!date_from || !date_to) {
+            // Optional: You can still include users with no events if you want,
+            // but then events array will be empty (do nothing here).
+            if (!acc[user_id]) {
+                acc[user_id] = {
+                    user: user?.name || `User ${user_id}`,
+                    events: []
+                };
+            }
+            return acc; // skip adding an event object with no date
         }
-    ];
+
+        const date = date_from.split(" ")[0];
+        const from = date_from.split(" ")[1].slice(0, 5);
+        const to = date_to.split(" ")[1].slice(0, 5);
+        const color = categorie?.color || "#000000";
+        const userName = user?.name || `User ${user_id}`;
+
+        if (!acc[user_id]) {
+            acc[user_id] = {
+                user: userName,
+                events: []
+            };
+        }
+
+        acc[user_id].events.push({
+            title: title || "(No title)",
+            date,
+            from,
+            to,
+            color
+        });
+
+        return acc;
+    }, {}));
+
+    // Optional: Sort events by date/time for each user
+    transformedData.forEach(userGroup => {
+        userGroup.events.sort((a, b) => {
+            const dateA = new Date(`${a.date}T${a.from}:00`);
+            const dateB = new Date(`${b.date}T${b.from}:00`);
+            return dateA - dateB;
+        });
+    });
+
+    return transformedData;
 }
+
+// function getEventsForDate(date) {
+//     // Stub: replace this with your actual fetch logic
+//     return [
+//         {
+//             user: 'Simone Alexander',
+//             events: [
+//                 { title: 'AAM - NEW REFERRAL', date: '2025-08-25', from: '09:00', to: '09:30' },
+//                 { title: 'Morning Briefing', date: '2025-08-26', from: '08:30', to: '09:00' },
+//                 { title: 'Client Meeting - Project Alpha', date: '2025-08-28', from: '11:00', to: '12:00' },
+//                 { title: 'Lunch with Team', date: '2025-08-29', from: '12:30', to: '13:30' },
+//                 { title: 'Quarterly Report Review', date: '2025-08-30', from: '15:00', to: '16:00' },
+//                 { title: 'Strategy Planning Session', date: '2025-09-01', from: '10:00', to: '12:00' },
+//                 { title: 'Follow-up Call with Partner', date: '2025-09-02', from: '14:00', to: '14:30' },
+//                 { title: 'Product Demo', date: '2025-09-04', from: '10:00', to: '11:00' },
+//                 { title: 'Team Building Activity', date: '2025-09-04', from: '13:00', to: '17:00' },
+//                 { title: 'End of Week Wrap-up', date: '2025-09-04', from: '17:00', to: '17:30' }
+//             ]
+//         },
+//         {
+//             user: 'John Doe',
+//             events: [
+//                 { title: 'Team Sync - Project Phoenix', date: '2025-08-28', from: '10:00', to: '10:30' },
+//                 { title: 'Follow-up Call with Client', date: '2025-08-25', from: '15:00', to: '15:30' }
+//             ]
+//         }
+//     ];
+// }
 
 function toLocalDateString(date) {
     const yyyy = date.getFullYear();
@@ -819,7 +926,8 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
     const daysInPrevMonth = new Date(prevYear, prevMonth + 1, 0).getDate();
 
     // 🔹 Get events for this user
-    const userData = getEventsForDate(); // Only one user in your example
+    // const userData = getEventsForDate(); // Only one user in your example
+    const userData = eventsData;
     const userEvents = userData.length > 0 ? userData[0].events : [];
 
     ['#calendarBody', '#sidebarCalendarBody'].forEach((calendarId) => {
@@ -937,7 +1045,6 @@ function goToNextMonth() {
 
     updateCalendarHeader(currentMonth, currentYear);
     buildMonthlyCalendarDays(currentMonth, currentYear);
-
 }
 
 function goToPreviousMonth() {
@@ -963,6 +1070,9 @@ function updateCalendarHeader(month, year) {
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     $('#calendarMonthYearSelected').text(`${monthNames[month]} ${year}`);
     $('#sidebarCalendarMonthYearSelected').text(`${monthNames[month]} ${year}`);
+    $('#currentDateData')
+        .attr('data-month', String(month + 1).padStart(2, '0')) // 01-12 format
+        .attr('data-year', year);
 }
 
 function highlightSelectedSidebarDay() {
@@ -1088,24 +1198,96 @@ function updateUserSelectMode() {
     // }
 }
 
-function getUsers () {
+function getUsers() {
     $.ajax({
         url: '/getUsers',
         method: 'GET',
-        success: function (users) {
-            // console.log(users);
-            $userSelect.empty();
-            // $userSelect.append('<option value="-1">Select an user(s)</option>');
+        success: function (response) {
+            const users = response.users || [];
+            const authUserId = response.auth_user_id;
 
-            users.forEach(function (user) {
-                // console.log(user);
-                $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
+            // Move auth user to the top of the list
+            const authUserIndex = users.findIndex(user => user.id === authUserId);
+            if (authUserIndex > -1) {
+                const [authUser] = users.splice(authUserIndex, 1);
+                users.unshift(authUser);
+            }
+
+            const $lawyersList = $('#lawyersList');
+            $lawyersList.empty();
+
+            users.forEach(user => {
+                const isChecked = user.id === authUserId || user.isChecked;
+                const checked = isChecked ? 'checked' : '';
+
+                const lawyerHtml = `
+                    <li>
+                        <label class="lawyersCheckboxSection w-full p-3 bg-[#eaf1ff] rounded-lg shadow flex items-center justify-between hover:bg-[#dce9ff] transition duration-200 ease-in-out cursor-pointer">
+                            <span class="text-sm font-medium text-gray-900">${user.name}</span>
+                            <input type="checkbox" data-user-id="${user.id}" ${checked} />
+                        </label>
+                    </li>
+                `;
+                $lawyersList.append(lawyerHtml);
             });
-
-            updateUserSelectMode();
+            initializeCheckedOrder();
         },
         error: function () {
-            $userSelect.html('<option value="-1" disabled selected>Error loading users</option>');
+            $('#lawyersList').empty();
+            $('#lawyersList').append(`
+                <li>
+                    <label class="lawyersCheckboxSection w-full p-3 bg-[#eaf1ff] rounded-lg shadow flex items-center justify-between hover:bg-[#dce9ff] transition duration-200 ease-in-out cursor-pointer">
+                        <span class="text-sm font-medium text-gray-900">Error loading users</span>
+                    </label>
+                </li>
+            `);
         }
     });
 }
+
+function getEvents(ids, callback) {
+    const month = $('#currentDateData').attr('data-month');
+    const year = $('#currentDateData').attr('data-year');
+
+    $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        type: 'POST',
+        url: '/getEvents',
+        data: {
+            user_id: ids,
+            month: month,
+            year: year
+        },
+        dataType: 'json',
+        success: function (response) {
+            console.log('.........',response)
+            eventsData = getEventsForDate(response);
+            console.log("Events saved to global:", eventsData);
+
+            if (typeof callback === "function") {
+                callback(null, eventsData);
+            }
+        },
+        error: function (xhr) {
+            console.error("Error fetching events:", xhr);
+
+            if (typeof callback === "function") {
+                callback(xhr);
+            }
+        },
+        complete: function () {
+
+        }
+    });
+}
+
+function initializeCheckedOrder() {
+    checkedOrder = [];
+    $('input[type="checkbox"][data-user-id]:checked').each(function () {
+        checkedOrder.push($(this).data('user-id'));
+    });
+    console.log('Initialized checkedOrder:', checkedOrder);
+}
+

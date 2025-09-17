@@ -11,6 +11,9 @@ class UserController extends Controller
     public function index(): JsonResponse
     {
         $users = User::getActiveUsers();
-        return response()->json($users);
+        return response()->json([
+            'users' => $users,
+            'auth_user_id' => auth()->id(),
+        ]);
     }
 }

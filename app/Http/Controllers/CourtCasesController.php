@@ -44,15 +44,19 @@ class CourtCasesController extends Controller
             'dateTo' => $toDateCarbon->format('Y-m-d'),
         ]);
 
-        //Get selected users + add current user
-        $userIds = $request->input('user');
-        $userIds[] = auth()->id(); // Add creator's ID
+        $userIds = $request->input('user', []);
 
-        // Remove duplicates just in case
+        if (!is_array($userIds)) {
+            $userIds = [];
+        }
+
+        $userIds[] = auth()->id();
+
         $userIds = array_unique($userIds);
 
-        // Attach users to the case
-        $case->users()->attach($userIds);
+        if (!empty($userIds)) {
+            $case->users()->attach($userIds);
+        }
 
         return response()->json([
             'message' => 'Case created successfully!',

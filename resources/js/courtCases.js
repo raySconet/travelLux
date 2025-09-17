@@ -56,7 +56,7 @@ $(document).ready(() => {
 
         // enable button again after 1 second
         setTimeout(() => {
-            $btn.prop('disabled', false);
+            btn.prop('disabled', false);
         }, 500);
     });
 

@@ -2,6 +2,6 @@
 
 <div
     id="{{ $id }}"
-    {{ $attributes->merge(['class' => 'w-[13px] h-[26px] border ' . $class]) }}>
+    {{ $attributes->merge(['class' => 'w-[13px] h-[28px] border ' . $class]) }}>
     {{ $slot }}
 </div>

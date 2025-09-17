@@ -24,7 +24,7 @@ class EventFactory extends Factory
 
         return [
             'title' => $this->faker->sentence(3),
-            'user_id' => 25,
+            'user_id' => 2,
             'date_from' => $start,
             'date_to' => $end,
             'categoryId' => $category->id,
@@ -36,7 +36,7 @@ class EventFactory extends Factory
      */
     private function getUniqueTimeSlot(): \DateTime
     {
-        $days = ['2025-09-22', '2025-09-23', '2025-09-24', '2025-09-25', '2025-09-26'];
+        $days = ['2025-09-29', '2025-09-30', '2025-10-1', '2025-10-2', '2025-10-3'];
         $hours = range(8, 17); // Working hours: 08:00 to 17:00 (1-hour slots)
 
         do {

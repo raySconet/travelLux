@@ -1,4 +1,5 @@
 $(document).ready(() => {
+    getUsers();
     $('#openDrawer').on('click', function () {
         $('#sidebarDrawer').removeClass('-translate-x-full');
 
@@ -496,4 +497,51 @@ function darkenHexColor(hex, percent) {
     g = g.toString(16).padStart(2, '0');
     b = b.toString(16).padStart(2, '0');
     return `#${r}${g}${b}`;
+}
+
+function getUsers() {
+    $.ajax({
+        url: '/getUsers',
+        method: 'GET',
+        success: function (response) {
+            const users = response.users || [];
+            const authUserId = response.auth_user_id;
+
+            // Move auth user to the top of the list
+            const authUserIndex = users.findIndex(user => user.id === authUserId);
+            if (authUserIndex > -1) {
+                const [authUser] = users.splice(authUserIndex, 1);
+                users.unshift(authUser);
+            }
+
+            const $lawyersList = $('#lawyersList');
+            $lawyersList.empty();
+
+            users.forEach(user => {
+                const isChecked = user.id === authUserId || user.isChecked;
+                const checked = isChecked ? 'checked' : '';
+
+                const lawyerHtml = `
+                    <li>
+                        <label class="lawyersCheckboxSection w-full p-3 bg-[#eaf1ff] rounded-lg shadow flex items-center justify-between hover:bg-[#dce9ff] transition duration-200 ease-in-out cursor-pointer">
+                            <span class="text-sm font-medium text-gray-900">${user.name}</span>
+                            <input type="checkbox" data-user-id="${user.id}" ${checked} />
+                        </label>
+                    </li>
+                `;
+                $lawyersList.append(lawyerHtml);
+            });
+            initializeCheckedOrder();
+        },
+        error: function () {
+            $('#lawyersList').empty();
+            $('#lawyersList').append(`
+                <li>
+                    <label class="lawyersCheckboxSection w-full p-3 bg-[#eaf1ff] rounded-lg shadow flex items-center justify-between hover:bg-[#dce9ff] transition duration-200 ease-in-out cursor-pointer">
+                        <span class="text-sm font-medium text-gray-900">Error loading users</span>
+                    </label>
+                </li>
+            `);
+        }
+    });
 }

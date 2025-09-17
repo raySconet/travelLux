@@ -29,6 +29,11 @@
                         @include('case-info.contact-info')
                         @include('case-info.case-info')
                         @include('case-info.treating-chart')
+                        @include('case-info.negotiation-chart')
+                        @include('case-info.litigation-chart')
+                        @include('case-info.affidavit-chart')
+                        @include('case-info.facilitating-settlement-chart')
+                        @include('case-info.deposits-expenses-chart')
                     </form>
 
                 </div>

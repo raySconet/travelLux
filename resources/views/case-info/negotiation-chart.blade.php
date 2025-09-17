@@ -1,73 +1,94 @@
 <section class="mt-1">
-    <h2 class="font-semibold text-xl bg-[#eaf1ff] text-gray-800 leading-tight">
-
+    <h2   class="mb-1 mt-1 text-md  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
         {{ __('Negotiation Chart') }}
     </h2>
 
-    <div class="treatingAppendDuplicates">
-        <div class= "grid grid-cols-1 2xl:grid-cols-14 gap-2 w-full " id="treatingToDuplicate">
-            <x-case-components.col class="2xl:col-span-14 text-center">
+    <div class="negotiationAppendDuplicates">
+        <div class= "grid grid-cols-1 2xl:grid-cols-12 gap-2 w-full " id="negotiationToDuplicate">
+            <x-case-components.col class="2xl:col-span-12 text-center">
                 <p> Norma - Negotiation Chart </p>
             </x-case-components.col>
 
-            <x-case-components.col class="2xl:col-span-2">
+            <x-case-components.col class="2xl:col-span-4">
                 <div >
-                    <x-input-label for="ems" :value="__('EMS')" />
-                    <x-text-input id="ems" name="ems" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="ems" />
+                    <x-input-label for="medsTotal" :value="__('Meds Total')" />
+                    <x-text-input id="medsTotal" name="medsTotal" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="medsTotal" />
+                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                </div>
+                <div >
+                    <x-input-label for="medsPviTotal" :value="__('Meds Pvi Total')" />
+                    <x-text-input id="medsPviTotal" name="medsPviTotal" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="medsPviTotal" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
 
-            <x-case-components.col class="2xl:col-span-2">
+            <x-case-components.col class="2xl:col-span-4">
                 <div>
-                    <x-input-label for="hospital" :value="__('Hospital')" />
-                    <x-text-input id="hospital" name="hospital" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="hospital" />
+                    <x-input-label for="negotiationLastOffer" :value="__('Negotiation Last Offer')" />
+                    <x-text-input id="negotiationLastOffer" name="negotiationLastOffer" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="negotiationLastOffer" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
-            </x-case-components.col>
-
-            <x-case-components.col class="2xl:col-span-2">
-
-                <div >
-                    <x-input-label for="chiropractor" :value="__('Referral')" />
-                    <x-text-input id="chiropractor" name="chiropractor" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="chiropractor" />
-                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
-                </div>
-            </x-case-components.col>
-
-            <x-case-components.col class="2xl:col-span-2">
                 <div>
-                    <x-input-label for="pcpmd" :value="__('PCP/MD')" />
-                    <x-text-input id="pcpmd" name="pcpmd" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="pcpmd" />
+                    <x-input-label for="negotiationLastOfferDate" :value="__('Negotiation Last Offer Date')" />
+                    <x-text-input id="negotiationLastOfferDate" name="negotiationLastOfferDate" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="negotiationLastOfferDate" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
 
-            <x-case-components.col class="2xl:col-span-2">
-                <div >
-                    <x-input-label for="mriAndResults" :value="__('MRI & RESULTS')" />
-                    <x-text-input id="mriAndResults" name="mriAndResults" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="mriAndResults" />
-                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
-                </div>
-            </x-case-components.col>
+            <x-case-components.col class="2xl:col-span-4">
 
-            <x-case-components.col class="2xl:col-span-2">
                 <div>
-                    <x-input-label for="painManagement" :value="__('Pain Management')" />
-                    <x-text-input id="painManagement" name="painManagement" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="painManagement" />
+                    <x-input-label for="negotiationLastDemand" :value="__('Negotiation Last Demand')" />
+                    <x-text-input id="negotiationLastDemand" name="negotiationLastDemand" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="negotiationLastDemand" />
+                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                </div>
+                <div>
+                    <x-input-label for="negotiationLastDemandDate" :value="__('Negotiation Last Demand Date')" />
+                    <x-text-input id="negotiationLastDemandDate" name="negotiationLastDemandDate" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="negotiationLastDemandDate" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
-
-            <x-case-components.col class="2xl:col-span-2">
-                <div >
-                    <x-input-label for="orthoOrSurgery" :value="__('Ortho &/ Surgery')" />
-                    <x-text-input id="orthoOrSurgery" name="orthoOrSurgery" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="orthoOrSurgery" />
-                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
-                </div>
-            </x-case-components.col>
-
         </div>
+
+
+        <div class= "grid grid-cols-1 2xl:grid-cols-12 gap-2 w-full " id="">
+            <x-case-components.col class="2xl:col-span-12">
+
+                <div>
+                    <x-input-label for="physicalPainMentalAnguishText" :value="__('Physical Pain / Mental Anguish / Other Value Factors')" />
+                    <x-text-area id="physicalPainMentalAnguishText" name="physicalPainMentalAnguishText" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="physicalPainMentalAnguishText" />
+                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                </div>
+            </x-case-components.col>
+        </div>
+
+    <div class= "grid grid-cols-1 2xl:grid-cols-12 gap-2 w-full " id="negotiationToDuplicate">
+        <x-case-components.col class="2xl:col-span-4">
+            <div>
+                <x-input-label for="negotiationNameBottom" :value="__('Negotiation Name')" />
+                <x-text-input id="negotiationNameBottom" name="negotiationNameBottom" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="negotiationNameBottom" />
+                <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            </div>
+        </x-case-components.col>
+        <x-case-components.col class="2xl:col-span-4">
+            <div>
+                <x-input-label for="negotiationDateBottom" :value="__('Negotiation Date')" />
+                <x-text-input id="negotiationDateBottom" name="negotiationDateBottom" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="negotiationDateBottom" />
+                <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            </div>
+        </x-case-components.col>
+        <x-case-components.col class="2xl:col-span-3">
+            <div>
+                <x-input-label for="negotiationAmountBottom" :value="__('Negotiation Amount')" />
+                <x-text-input id="negotiationAmountBottom" name="negotiationAmountBottom" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="negotiationAmountBottom" />
+                <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            </div>
+        </x-case-components.col>
+        <x-case-components.col class="2xl:col-span-1  items-center justify-center">
+            <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButton" style="margin-top:20px;">
+                <i class="fa-solid fa-plus text-white text-md leading-none"></i>
+            </div>
+        </x-case-components.col>
     </div>
 
 </section>

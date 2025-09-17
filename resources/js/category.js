@@ -425,7 +425,7 @@ function renderEventCases(data) {
             >
                 <i class="fa-solid fa-chevron-right w-[15px] h-[15px]"></i>
                 <i class="fa-solid fa-chevron-down w-[15px] h-[15px]" style="display:none"></i>
-                <div class="w-[13px] h-[26px] border" ${borderStyle}></div>
+                <div class="w-[13px] h-[28px] border" ${borderStyle}></div>
                 <label>${category.label}: ${itemCount} item(s)</label>
 
                 <div class="ml-auto">
@@ -461,7 +461,7 @@ function renderEventCases(data) {
                 const $panel = $(`
                     <div class="grid grid-cols-12 gap-2 mb-1">
                         <div class="col-span-2 flex gap-2">
-                            <div class="w-[13px] h-[26px] border" style="background-color: ${baseColor}; border-color: ${darkerBorderColor};"></div>
+                            <div class="w-[13px] h-[28px] border" style="background-color: ${baseColor}; border-color: ${darkerBorderColor};"></div>
                             <label class="my-auto">${item.tag}</label>
                         </div>
                         <div class="col-span-6 my-auto">${item.description}</div>

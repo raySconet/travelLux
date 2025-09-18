@@ -10,45 +10,51 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class EventFactory extends Factory
 {
-    // Static variable to track used time slots
     protected static $usedSlots = [];
+
+    private $targetMonth;
+
+    public function forMonth(int $month): static
+    {
+        $this->targetMonth = $month;
+        return $this;
+    }
 
     public function definition(): array
     {
-        // Get an active category
         $category = Categorie::getActiveCategories()->random();
-
-        $start = $this->getUniqueTimeSlot();
-
-        $end = (clone $start)->modify('+1 hour'); // fixed 1 hour duration
+        $start = $this->getUniqueTimeSlot($this->targetMonth);
+        $end = (clone $start)->modify('+1 hour');
 
         return [
             'title' => $this->faker->sentence(3),
-            'user_id' => 2,
+            'user_id' => 23,
             'date_from' => $start,
             'date_to' => $end,
             'categoryId' => $category->id,
         ];
     }
 
-    /**
-     * Generate a unique start time slot
-     */
-    private function getUniqueTimeSlot(): \DateTime
+    private function getUniqueTimeSlot(int $month): \DateTime
     {
-        $days = ['2025-09-29', '2025-09-30', '2025-10-1', '2025-10-2', '2025-10-3'];
-        $hours = range(8, 17); // Working hours: 08:00 to 17:00 (1-hour slots)
+        // Predefined weeks per month (Mon–Fri)
+        $weeks = [
+            8 => ['2025-08-04', '2025-08-05', '2025-08-06', '2025-08-07', '2025-08-08'],
+            9 => ['2025-09-09', '2025-09-10', '2025-09-11', '2025-09-12', '2025-09-13'],
+            10 => ['2025-10-07', '2025-10-08', '2025-10-09', '2025-10-10', '2025-10-11'],
+        ];
+
+        $days = $weeks[$month];
+        $hours = range(8, 17); // 08:00 to 17:00
 
         do {
             $day = $this->faker->randomElement($days);
             $hour = $this->faker->randomElement($hours);
             $slotKey = "$day-$hour";
-
         } while (in_array($slotKey, self::$usedSlots));
 
-        // Mark this slot as used
         self::$usedSlots[] = $slotKey;
-
         return new \DateTime("$day $hour:00");
     }
 }
+

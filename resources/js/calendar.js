@@ -1,13 +1,13 @@
 let currentMonth, currentYear, eventsData = [];
 let checkedOrder = [];
 let currentView = 'Monthly'; // or whatever the default is on page load
-
+let dataType = 'events'; // or 'cases'
 
 $(document).ready(() => {
     ({ month: currentMonth, year: currentYear } = parseMonthYear($('#calendarMonthYearSelected').text()));
 
     getUsers(()=> {
-        getEvents(checkedOrder, () => {
+        getData(checkedOrder, () => {
             generateCalendarDays();
         });
     });
@@ -77,11 +77,11 @@ $(document).ready(() => {
             updateCalendarHeader(currentMonth, currentYear);
             buildMonthlyCalendarDays(currentMonth, currentYear);
 
-            getEvents(checkedOrder, () => {
+            getData(checkedOrder, () => {
                 doRender();
             });
         } else {
-            getEvents(checkedOrder, () => {
+            getData(checkedOrder, () => {
                 doRender();
             });
         }
@@ -111,11 +111,11 @@ $(document).ready(() => {
             updateCalendarHeader(currentMonth, currentYear);
             buildMonthlyCalendarDays(currentMonth, currentYear);
 
-            getEvents(checkedOrder, () => {
+            getData(checkedOrder, () => {
                 doRender();
             });
         } else {
-            getEvents(checkedOrder, () => {
+            getData(checkedOrder, () => {
                 doRender();
             });
         }
@@ -149,9 +149,9 @@ $(document).ready(() => {
 
             highlightSelectedSidebarDay();
 
-            getEvents(checkedOrder, renderWeek); // ✅ Wait for events
+            getData(checkedOrder, renderWeek); // ✅ Wait for events
         } else {
-            getEvents(checkedOrder, renderWeek); // ✅ Always wait for events
+            getData(checkedOrder, renderWeek); // ✅ Always wait for events
         }
     });
 
@@ -184,16 +184,16 @@ $(document).ready(() => {
 
             highlightSelectedSidebarDay();
 
-            getEvents(checkedOrder, renderWeek); // ✅ Wait
+            getData(checkedOrder, renderWeek); // ✅ Wait
         } else {
-            getEvents(checkedOrder, renderWeek); // ✅ Wait
+            getData(checkedOrder, renderWeek); // ✅ Wait
         }
     });
 
     $(document).on('click', '#calendarPrevMonth, #sidebarCalendarPrevMonth', function() {
         goToPreviousMonth();
         highlightSelectedSidebarDay();
-        getEvents(checkedOrder, () => {
+        getData(checkedOrder, () => {
             buildMonthlyCalendarDays(currentMonth, currentYear);
         });
         // $('.sidebar-day-btn').removeClass('selected-day');
@@ -202,7 +202,7 @@ $(document).ready(() => {
     $(document).on('click', '#calendarNextMonth, #sidebarCalendarNextMonth', function() {
         goToNextMonth();
         highlightSelectedSidebarDay();
-        getEvents(checkedOrder, () => {
+        getData(checkedOrder, () => {
             buildMonthlyCalendarDays(currentMonth, currentYear);
         });
         // $('.sidebar-day-btn').removeClass('selected-day');
@@ -241,7 +241,7 @@ $(document).ready(() => {
             // Optional: Log current checked IDs
             // const currentChecked = checkedOrder;
             console.log('Currently selected user IDs:', checkedOrder);
-            getEvents(checkedOrder, () => {
+            getData(checkedOrder, () => {
                 buildMonthlyCalendarDays(currentMonth, currentYear);
             });
             // console.log('id::', checkedOrder);
@@ -290,7 +290,7 @@ $(document).ready(() => {
         }
 
         if (view === 'Week View') {
-            getEvents(checkedOrder, () => {
+            getData(checkedOrder, () => {
                 if (window.selectedDate) {
                     buildWeeklyView(
                         window.selectedDate.getDate(),
@@ -302,7 +302,7 @@ $(document).ready(() => {
                 }
             });
         } else if (view === 'Day View') {
-            getEvents(checkedOrder, () => {
+            getData(checkedOrder, () => {
                 if (window.selectedDate) {
                     buildDailyView(
                         window.selectedDate.getDate(),
@@ -490,6 +490,7 @@ $(document).ready(() => {
                 $('#addEventCaseModal').addClass('hidden');
                 $('#modalSuccessContent').html(response.message);
                 $('#successModal').removeClass('hidden');
+                refreshCalendar();
             },
             error: function (xhr) {
                 if (xhr.status) {
@@ -521,6 +522,32 @@ $(document).ready(() => {
                 $button.prop('disabled', false).text('Add E/C');
             }
         });
+    });
+
+    $(document).on('click', '.refreshCalendar', function() {
+        const $icon = $('#refreshCalendarIcon');
+
+        $icon.addClass('fa-spin');
+
+        setTimeout(() => {
+            $icon.removeClass('fa-spin');
+        }, 2000);
+
+        refreshCalendar();
+    });
+
+    $('#calendarEventTypeFilter').on('click', function() {
+        dataType = 'events';
+        $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
+        $(this).addClass('activeEventsCases');
+        refreshCalendar();
+    });
+
+    $('#calendarCases').on('click', function() {
+        dataType = 'cases';
+        $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
+        $(this).addClass('activeEventsCases');
+        refreshCalendar();
     });
 });
 
@@ -727,7 +754,7 @@ function showView(view) {
         }
         // console.log('2: ', checkedOrder);
         // ✅ Always rebuild month view with current checkedOrder
-        getEvents(checkedOrder, () => {
+        getData(checkedOrder, () => {
             buildMonthlyCalendarDays(currentMonth, currentYear);
         });
     }
@@ -790,10 +817,11 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             `);
         } else {
             eventsToday.forEach(event => {
+                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 dailyBody.append(`
                     <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true">
                         <span>${event.title}</span>
-                        <span>~${event.from} - ${event.to}</span>
+                        ${timeRange}
                     </div>
                 `);
             });
@@ -823,10 +851,11 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             `);
         } else {
             eventsUser1.forEach(event => {
+                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 dailyBody.append(`
-                    <div class="text-gray-900 dailyEventInfo bg-[#00CED1]" draggable="true">
+                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true">
                         <span>${event.title}</span>
-                        <span>~${event.from} - ${event.to}</span>
+                        ${timeRange}
                     </div>
                 `);
             });
@@ -840,10 +869,11 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             `);
         } else {
             eventsUser2.forEach(event => {
+                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 bodyHidden.append(`
-                    <div class="text-gray-900 dailyEventInfo bg-[#00CED1]" draggable="true">
+                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true">
                         <span>${event.title}</span>
-                        <span>~${event.from} - ${event.to}</span>
+                        ${timeRange}
                     </div>
                 `);
             });
@@ -945,7 +975,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 weeklyEventInfo bg-[#00CED1] my-1 p-1 rounded cursor-pointer" draggable="true">
+                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true">
                             <span>${event.title}</span>
                         </div>
                     `);
@@ -963,32 +993,29 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 }
 
 function getEventsForDate(eventsData) {
-    const transformedData = Object.values(eventsData.reduce((acc, event) => {
-        const {
-            user_id,
-            title,
-            date_from,
-            date_to,
-            categorie,
-            user
-        } = event;
+    const transformedData = Object.values(eventsData.reduce((acc, item) => {
+        const isCase = !!item.case;
+        const user_id = item.user_id;
+        const user = item.user;
+        const data = isCase ? item.case : item;
 
-        // Skip dummy events without valid date_from or date_to
-        if (!date_from || !date_to) {
-            // Optional: You can still include users with no events if you want,
-            // but then events array will be empty (do nothing here).
+        const title = isCase ? data.caseTitle : item.title;
+        const dateFrom = isCase ? data.dateFrom : item.date_from;
+        const dateTo = isCase ? data.dateTo : item.date_to;
+        const categorie = data.categorie;
+
+        if (!dateFrom || !dateTo) {
             if (!acc[user_id]) {
                 acc[user_id] = {
                     user: user?.name || `User ${user_id}`,
                     events: []
                 };
             }
-            return acc; // skip adding an event object with no date
+            return acc;
         }
 
-        const date = date_from.split(" ")[0];
-        const from = date_from.split(" ")[1].slice(0, 5);
-        const to = date_to.split(" ")[1].slice(0, 5);
+        const fromTime = (dateFrom.split(" ")[1] || "").slice(0, 5);
+        const toTime = (dateTo.split(" ")[1] || "").slice(0, 5);
         const color = categorie?.color || "#000000";
         const userName = user?.name || `User ${user_id}`;
 
@@ -999,18 +1026,31 @@ function getEventsForDate(eventsData) {
             };
         }
 
-        acc[user_id].events.push({
-            title: title || "(No title)",
-            date,
-            from,
-            to,
-            color
-        });
+        // Multi-day logic: push an event for each date in the range
+        const current = new Date(dateFrom.split(" ")[0]);
+        const end = new Date(dateTo.split(" ")[0]);
+
+        while (current <= end) {
+            const yyyy = current.getFullYear();
+            const mm = String(current.getMonth() + 1).padStart(2, '0');
+            const dd = String(current.getDate()).padStart(2, '0');
+            const dateStr = `${yyyy}-${mm}-${dd}`;
+
+            acc[user_id].events.push({
+                title: title || "(No title)",
+                date: dateStr,
+                from: fromTime,
+                to: toTime,
+                color
+            });
+
+            current.setDate(current.getDate() + 1);
+        }
 
         return acc;
     }, {}));
 
-    // Optional: Sort events by date/time for each user
+    // Optional: sort events by datetime
     transformedData.forEach(userGroup => {
         userGroup.events.sort((a, b) => {
             const dateA = new Date(`${a.date}T${a.from}:00`);
@@ -1021,6 +1061,67 @@ function getEventsForDate(eventsData) {
 
     return transformedData;
 }
+
+
+// function getEventsForDate(eventsData) {
+//     const transformedData = Object.values(eventsData.reduce((acc, event) => {
+//         const {
+//             user_id,
+//             title,
+//             date_from,
+//             date_to,
+//             categorie,
+//             user
+//         } = event;
+
+//         // Skip dummy events without valid date_from or date_to
+//         if (!date_from || !date_to) {
+//             // Optional: You can still include users with no events if you want,
+//             // but then events array will be empty (do nothing here).
+//             if (!acc[user_id]) {
+//                 acc[user_id] = {
+//                     user: user?.name || `User ${user_id}`,
+//                     events: []
+//                 };
+//             }
+//             return acc; // skip adding an event object with no date
+//         }
+
+//         const date = date_from.split(" ")[0];
+//         const from = date_from.split(" ")[1].slice(0, 5);
+//         const to = date_to.split(" ")[1].slice(0, 5);
+//         const color = categorie?.color || "#000000";
+//         const userName = user?.name || `User ${user_id}`;
+
+//         if (!acc[user_id]) {
+//             acc[user_id] = {
+//                 user: userName,
+//                 events: []
+//             };
+//         }
+
+//         acc[user_id].events.push({
+//             title: title || "(No title)",
+//             date,
+//             from,
+//             to,
+//             color
+//         });
+
+//         return acc;
+//     }, {}));
+
+//     // Optional: Sort events by date/time for each user
+//     transformedData.forEach(userGroup => {
+//         userGroup.events.sort((a, b) => {
+//             const dateA = new Date(`${a.date}T${a.from}:00`);
+//             const dateB = new Date(`${b.date}T${b.from}:00`);
+//             return dateA - dateB;
+//         });
+//     });
+
+//     return transformedData;
+// }
 
 // function getEventsForDate(date) {
 //     // Stub: replace this with your actual fetch logic
@@ -1113,17 +1214,37 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                 eventsForDay.forEach(event => {
                     // console.log(event.color);
                     const eventDiv = $(`
-                        <div class="text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true" title="${event.title}">
-                            <span>${event.title}</span>
+                        <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true">
+                            <span>${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
+                            <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10">
+                                <div class="relative bg-[#14548d] text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+                                ${event.title}
+
+                                <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#14548d]"></div>
+                                </div>
+                            </div>
                         </div>
                     `);
                     $td.append(eventDiv);
                 });
             }
 
-            if (!window.selectedDate && isCurrentMonth && day === today.getDate()) {
-                $td.addClass(currentDayClass);
+            // if (!window.selectedDate && isCurrentMonth && day === today.getDate()) {
+            //     $td.addClass(currentDayClass);
+            // }
+
+            if (!window.selectedDate) {
+                if (isCurrentMonth && day === today.getDate()) {
+                    $td.addClass(currentDayClass);
+                }
+                // else no highlight for other months
+            } else {
+                const selectedDateStr = toLocalDateString(window.selectedDate);
+                if (dateStr === selectedDateStr) {
+                    $td.addClass(currentDayClass);
+                }
             }
+
 
             day++;
             tdIndex++;
@@ -1395,16 +1516,18 @@ function getUsers(callback) {
     });
 }
 
-function getEvents(ids, callback) {
+function getData(ids, callback) {
     const month = $('#currentDateData').attr('data-month');
     const year = $('#currentDateData').attr('data-year');
+
+    const endpoint = dataType === 'cases' ? '/getCases' : '/getEvents';
 
     $.ajax({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         type: 'POST',
-        url: '/getEvents',
+        url: endpoint,
         data: {
             user_id: ids,
             month: month,
@@ -1412,23 +1535,19 @@ function getEvents(ids, callback) {
         },
         dataType: 'json',
         success: function (response) {
-            // console.log('.........',response);
-            eventsData = getEventsForDate(response);
-            // console.log("Events saved to global:", eventsData);
+            eventsData = getEventsForDate(response); // You may rename this for generality
+            console.log(`${dataType} saved to global:`, eventsData);
 
             if (typeof callback === "function") {
                 callback(null, eventsData);
             }
         },
         error: function (xhr) {
-            console.error("Error fetching events:", xhr);
+            console.error(`Error fetching ${dataType}:`, xhr);
 
             if (typeof callback === "function") {
                 callback(xhr);
             }
-        },
-        complete: function () {
-
         }
     });
 }
@@ -1441,3 +1560,38 @@ function initializeCheckedOrder() {
     // console.log('Initialized checkedOrder:', checkedOrder);
 }
 
+function refreshCalendar() {
+    getData(checkedOrder, () => {
+        const view = $('#selectedDayWeekMonthOption').text().trim();
+
+        if (view === 'Month View') {
+            buildMonthlyCalendarDays(currentMonth, currentYear);
+        } else if (view === 'Week View') {
+            if (window.selectedDate) {
+                buildWeeklyView(
+                    window.selectedDate.getDate(),
+                    window.selectedDate.getMonth(),
+                    window.selectedDate.getFullYear()
+                );
+            } else {
+                buildWeeklyView();
+            }
+        } else if (view === 'Day View') {
+            if (window.selectedDate) {
+                buildDailyView(
+                    window.selectedDate.getDate(),
+                    window.selectedDate.getMonth(),
+                    window.selectedDate.getFullYear()
+                );
+            } else {
+                buildDailyView();
+            }
+
+            if (checkedOrder.length === 2) {
+                $('#dailyViewTable').removeClass('max-w-[750px] mx-auto xl:col-span-12').addClass('xl:col-span-6');
+            } else {
+                $('#dailyViewTable').addClass('max-w-[750px] mx-auto xl:col-span-12').removeClass('xl:col-span-6');
+            }
+        }
+    });
+}

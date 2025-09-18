@@ -42,4 +42,13 @@
             </x-primary-btn>
         </x-slot>
     </x-general-modal>
+
+    <div class="refreshCalendar fixed right-3 bottom-2 flex items-center gap-2 p-2 bg-white rounded-md shadow-sm border border-gray-200 w-fit hover:bg-gray-50 cursor-pointer group">
+        <label class="text-sm font-semibold text-gray-700 group-hover:text-[#14548d] cursor-pointer">
+            Refresh Calendar
+        </label>
+        <i class="fa-solid fa-arrows-rotate fa-lg text-gray-500 transition-transform duration-300 group-hover:text-[#14548d]"
+        id="refreshCalendarIcon"
+        title="Refresh Calendar"></i>
+    </div>
 </x-app-layout>

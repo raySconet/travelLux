@@ -64,7 +64,6 @@ class EventController extends Controller
         return response()->json($allEvents);
     }
 
-
     public function store(Request $request) {
         $fromDateRaw = str_replace('+', ' ', $request->input('fromDate'));
         $toDateRaw = str_replace('+', ' ', $request->input('toDate'));

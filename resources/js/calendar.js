@@ -233,7 +233,6 @@ $(document).ready(() => {
         // console.log('User ID (changed):', userId);
 
         if (view === 'Month View') {
-            console.log('id::', checkedOrder);
             allCheckboxes.prop('checked', false);
             $this.prop('checked', true);
 
@@ -245,6 +244,7 @@ $(document).ready(() => {
             getEvents(checkedOrder, () => {
                 buildMonthlyCalendarDays(currentMonth, currentYear);
             });
+            // console.log('id::', checkedOrder);
 
             return;
         } else {
@@ -286,6 +286,7 @@ $(document).ready(() => {
             checkedOrder = checkedOrder.filter(id =>
                 $(`input[type="checkbox"][data-user-id="${id}"]`).is(':checked')
             );
+            // console.log('id::', checkedOrder);
         }
 
         if (view === 'Week View') {
@@ -712,8 +713,9 @@ function showView(view) {
         }
 
     } else if (view === 'Monthly') {
+        // console.log('1: ', checkedOrder);
         // ✅ Keep only last selected user in Month View
-        if (checkedOrder.length > 1) {
+        if (checkedOrder.length >= 1) {
             const lastUserId = checkedOrder[checkedOrder.length - 1];
             checkedOrder = [lastUserId];
 
@@ -723,7 +725,7 @@ function showView(view) {
                 $(this).prop('checked', isLast);
             });
         }
-
+        // console.log('2: ', checkedOrder);
         // ✅ Always rebuild month view with current checkedOrder
         getEvents(checkedOrder, () => {
             buildMonthlyCalendarDays(currentMonth, currentYear);
@@ -789,7 +791,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             eventsToday.forEach(event => {
                 dailyBody.append(`
-                    <div class="text-gray-900 dailyEventInfo bg-[#00CED1]" draggable="true">
+                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true">
                         <span>${event.title}</span>
                         <span>~${event.from} - ${event.to}</span>
                     </div>
@@ -924,7 +926,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 weeklyEventInfo bg-[#00CED1] my-1 p-1 rounded cursor-pointer" draggable="true">
+                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true">
                             <span>${event.title}</span>
                         </div>
                     `);
@@ -1109,8 +1111,9 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                 // 🔹 Inject events for the day
                 const eventsForDay = userEvents.filter(event => event.date === dateStr);
                 eventsForDay.forEach(event => {
+                    // console.log(event.color);
                     const eventDiv = $(`
-                        <div class="text-gray-900 yearlyEventInfo bg-[#00CED1] my-1 p-1 rounded cursor-pointer" draggable="true" title="${event.title}">
+                        <div class="text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true" title="${event.title}">
                             <span>${event.title}</span>
                         </div>
                     `);
@@ -1409,9 +1412,9 @@ function getEvents(ids, callback) {
         },
         dataType: 'json',
         success: function (response) {
-            console.log('.........',response)
+            // console.log('.........',response);
             eventsData = getEventsForDate(response);
-            console.log("Events saved to global:", eventsData);
+            // console.log("Events saved to global:", eventsData);
 
             if (typeof callback === "function") {
                 callback(null, eventsData);
@@ -1435,6 +1438,6 @@ function initializeCheckedOrder() {
     $('input[type="checkbox"][data-user-id]:checked').each(function () {
         checkedOrder.push($(this).data('user-id'));
     });
-    console.log('Initialized checkedOrder:', checkedOrder);
+    // console.log('Initialized checkedOrder:', checkedOrder);
 }
 

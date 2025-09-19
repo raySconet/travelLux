@@ -118,7 +118,7 @@ class CourtCasesController extends Controller
 
         return response()->json([
             'message' => 'Case created successfully!',
-            'event' => $case,
+            'case' => $case,
         ]);
     }
 }

@@ -1,6 +1,6 @@
 let currentMonth, currentYear, eventsData = [];
 let checkedOrder = [];
-let currentView = 'Monthly'; // or whatever the default is on page load
+let currentView = 'Month View'; // global value
 let dataType = 'events'; // or 'cases'
 
 $(document).ready(() => {
@@ -220,6 +220,7 @@ $(document).ready(() => {
         const view = viewMap[id];
         const el = $('#viewOptionsDropdown [popover]')[0];
         el?.hidePopover?.();
+
         showView(view);
     });
 
@@ -233,18 +234,37 @@ $(document).ready(() => {
         // console.log('User ID (changed):', userId);
 
         if (view === 'Month View') {
-            allCheckboxes.prop('checked', false);
-            $this.prop('checked', true);
+            if (dataType === 'events') {
+                // Only one user allowed
+                allCheckboxes.prop('checked', false);
+                $this.prop('checked', true);
+                checkedOrder = [userId];
+            } else {
+                // Allow multiple for 'cases'
+                if ($this.is(':checked')) {
+                    if (!checkedOrder.includes(userId)) {
+                        checkedOrder.push(userId);
+                    }
+                } else {
+                    checkedOrder = checkedOrder.filter(id => id !== userId);
+                }
 
-            checkedOrder = [$this.data('user-id')];
+                // Keep only the currently checked ones
+                checkedOrder = checkedOrder.filter(id =>
+                    $(`input[type="checkbox"][data-user-id="${id}"]`).is(':checked')
+                );
 
-            // Optional: Log current checked IDs
-            // const currentChecked = checkedOrder;
+                // Don't allow no user checked
+                if (checkedOrder.length === 0) {
+                    $this.prop('checked', true);
+                    checkedOrder = [userId];
+                }
+            }
+
             console.log('Currently selected user IDs:', checkedOrder);
             getData(checkedOrder, () => {
                 buildMonthlyCalendarDays(currentMonth, currentYear);
             });
-            // console.log('id::', checkedOrder);
 
             return;
         } else {
@@ -258,7 +278,7 @@ $(document).ready(() => {
                 );
 
 
-                if (checkedOrder.length > 2) {
+                if (checkedOrder.length > 2 && dataType === 'events') {
                     // Too many checked, remove the first one (oldest)
                     const firstCheckedId = checkedOrder.shift();
                     $(`input[type="checkbox"][data-user-id="${firstCheckedId}"]`).prop('checked', false);
@@ -556,10 +576,11 @@ function toggleHeaderForView(view) {
         $('#monthToggleSection').removeClass('hidden');
         $('#weekToggleSection').addClass('hidden');
         $('#dayToggleSection').addClass('hidden');
-
-        const checkboxes = $('input[type="checkbox"][data-user-id]');
-        checkboxes.prop('checked', false);
-        checkboxes.first().prop('checked', true);
+        if(dataType === 'events') {
+            const checkboxes = $('input[type="checkbox"][data-user-id]');
+            checkboxes.prop('checked', false);
+            checkboxes.first().prop('checked', true);
+        }
     } else if(view === 'Daily') {
         $('#monthToggleSection').addClass('hidden');
         $('#weekToggleSection').addClass('hidden');
@@ -694,7 +715,9 @@ function showView(view) {
     $('#viewMonthly, #viewWeekly, #viewDaily').addClass('hidden');
     $('#view' + view).removeClass('hidden');
 
-    toggleHeaderForView(view);
+    // if(dataType === 'events') {
+        toggleHeaderForView(view);
+    // }
 
     if (view === 'Daily') {
         if (window.selectedDate) {
@@ -742,7 +765,7 @@ function showView(view) {
     } else if (view === 'Monthly') {
         // console.log('1: ', checkedOrder);
         // ✅ Keep only last selected user in Month View
-        if (checkedOrder.length >= 1) {
+        if (checkedOrder.length >= 1 && dataType === 'events') {
             const lastUserId = checkedOrder[checkedOrder.length - 1];
             checkedOrder = [lastUserId];
 
@@ -831,7 +854,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     }
 
     // === If 2 users (always show both) ===
-    if (allUsers.length >= 2) {
+    if (allUsers.length === 2) { // was >= 2
         const user1 = allUsers[0];
         const user2 = allUsers[1];
 
@@ -880,6 +903,48 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         }
     }
 
+    // === Fallback for 3 or more users (render only 1st user in single view style) ===
+    if (allUsers.length >= 3) {
+        console.log("✅ Rendering simplified view for 3+ users");
+
+        // Flat list of all events on the selected date from all users
+        const eventsToday = allUsers
+            .flatMap(user => user.events)
+            .filter(event => event.date === isoDate);
+
+        // UI Setup
+        $('#dailyViewTable').removeClass('hidden xl:col-span-6').addClass('max-w-[750px] xl:col-span-12 mx-auto');
+        $('#dailyViewTableHidden').addClass('hidden');
+        $('#dailyBox3').removeClass('xl:col-span-6').addClass('w-[750px] xl:col-span-12 mx-auto');
+
+        // Only the date in the header
+        dailyHeader.html(`${dayName} ${day}`);
+
+        // Clear any leftover content
+        dailyBody.empty();
+
+        if (eventsToday.length === 0) {
+            dailyBody.append(`
+                <div class="text-gray-400 italic dailyEventInfo">No events</div>
+            `);
+        } else {
+            eventsToday.forEach(event => {
+                if (event.isDuplicate) {
+                    return;
+                }
+
+                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                dailyBody.append(`
+                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true">
+                        <span>${event.title}</span>
+                        ${timeRange}
+                    </div>
+                `);
+            });
+        }
+    }
+
+
     // console.log("Daily view rendered for:", selectedDate.toDateString());
 }
 
@@ -922,16 +987,18 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     // const allEventsData = getEventsForDate();
     const allEventsData = eventsData;
 
+    const showTwoUserLayout = allEventsData.length === 2;
+
     const userRow1 = allEventsData[0] || null;
-    const userRow2 = allEventsData[1] || null;
+    const userRow2 = showTwoUserLayout ? allEventsData[1] : null;
 
     if (userRow1) {
         $('#userHeader').html(`<div class="border border-[#fff] p-2">${userRow1.user}</div>`);
     } else {
-        $('#userHeader').html(`<div class="border border-[#fff] p-2">"No user"</div>`);
+        $('#userHeader').html(`<div class="border border-[#fff] p-2">No user</div>`);
     }
 
-    if (userRow2) {
+    if (showTwoUserLayout) {
         $('#userHeaderHidden').html(`<div class="border border-[#fff] p-2">${userRow2.user}</div>`);
         $('#weeklyViewTableHidden').removeClass('hidden');
         $('#viewWeekly').removeClass('grid-rows-1').addClass('2xl:grid-rows-[40%_60%]');
@@ -939,6 +1006,25 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         $('#weeklyViewTableHidden').addClass('hidden');
         $('#viewWeekly').removeClass('2xl:grid-rows-[40%_60%]').addClass('grid-rows-1');
     }
+
+
+    // const userRow1 = allEventsData[0] || null;
+    // const userRow2 = allEventsData[1] || null;
+
+    // if (userRow1) {
+    //     $('#userHeader').html(`<div class="border border-[#fff] p-2">${userRow1.user}</div>`);
+    // } else {
+    //     $('#userHeader').html(`<div class="border border-[#fff] p-2">"No user"</div>`);
+    // }
+
+    // if (userRow2) {
+    //     $('#userHeaderHidden').html(`<div class="border border-[#fff] p-2">${userRow2.user}</div>`);
+    //     $('#weeklyViewTableHidden').removeClass('hidden');
+    //     $('#viewWeekly').removeClass('grid-rows-1').addClass('2xl:grid-rows-[40%_60%]');
+    // } else {
+    //     $('#weeklyViewTableHidden').addClass('hidden');
+    //     $('#viewWeekly').removeClass('2xl:grid-rows-[40%_60%]').addClass('grid-rows-1');
+    // }
 
     for (let i = 0; i < 7; i++) {
         const currentDate = new Date(startOfWeek);
@@ -970,7 +1056,8 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         }
 
         // User 2 events or no events placeholder
-        if (userRow2) {
+        // if (userRow2) {
+        if (showTwoUserLayout && userRow2) {
             const eventsForDate = userRow2.events.filter(e => e.date === isoDate);
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
@@ -992,31 +1079,22 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     // console.log("Weekly view rendered for:", startOfWeek.toDateString());
 }
 
+
 function getEventsForDate(eventsData) {
+    const seenCaseIds = new Set();
+
     const transformedData = Object.values(eventsData.reduce((acc, item) => {
         const isCase = !!item.case;
         const user_id = item.user_id;
         const user = item.user;
         const data = isCase ? item.case : item;
 
+        const caseId = isCase ? data.id : null;
         const title = isCase ? data.caseTitle : item.title;
         const dateFrom = isCase ? data.dateFrom : item.date_from;
         const dateTo = isCase ? data.dateTo : item.date_to;
         const categorie = data.categorie;
 
-        if (!dateFrom || !dateTo) {
-            if (!acc[user_id]) {
-                acc[user_id] = {
-                    user: user?.name || `User ${user_id}`,
-                    events: []
-                };
-            }
-            return acc;
-        }
-
-        const fromTime = (dateFrom.split(" ")[1] || "").slice(0, 5);
-        const toTime = (dateTo.split(" ")[1] || "").slice(0, 5);
-        const color = categorie?.color || "#000000";
         const userName = user?.name || `User ${user_id}`;
 
         if (!acc[user_id]) {
@@ -1025,6 +1103,36 @@ function getEventsForDate(eventsData) {
                 events: []
             };
         }
+
+        // If no valid date range, skip event
+        if (!dateFrom || !dateTo) {
+            return acc;
+        }
+
+        // // 🔴 Skip already-seen case IDs (for "cases" only)
+        // if (isCase && seenCaseIds.has(caseId) && currentView === 'Month View') {
+        //     return acc;
+        // }
+
+        // // ✅ Track seen case IDs
+        // if (isCase && caseId !== null) {
+        //     seenCaseIds.add(caseId);
+        // }
+
+        if (isCase && caseId !== null) {
+            if (seenCaseIds.has(caseId)) {
+                // ✅ Mark as duplicate
+                item.isDuplicate = true;
+            } else {
+                seenCaseIds.add(caseId);
+                item.isDuplicate = false;
+            }
+        }
+
+
+        const fromTime = (dateFrom.split(" ")[1] || "").slice(0, 5);
+        const toTime = (dateTo.split(" ")[1] || "").slice(0, 5);
+        const color = categorie?.color || "#000000";
 
         // Multi-day logic: push an event for each date in the range
         const current = new Date(dateFrom.split(" ")[0]);
@@ -1036,12 +1144,25 @@ function getEventsForDate(eventsData) {
             const dd = String(current.getDate()).padStart(2, '0');
             const dateStr = `${yyyy}-${mm}-${dd}`;
 
+            // acc[user_id].events.push({
+            //     title: title || "(No title)",
+            //     date: dateStr,
+            //     from: fromTime,
+            //     to: toTime,
+            //     color,
+            //     user: userName,
+            //     caseId: caseId // Optional: useful if needed later
+            // });
+
             acc[user_id].events.push({
                 title: title || "(No title)",
                 date: dateStr,
                 from: fromTime,
                 to: toTime,
-                color
+                color,
+                user: userName,
+                caseId: caseId,
+                isDuplicate: item.isDuplicate || false  // ⬅️ Keep this flag
             });
 
             current.setDate(current.getDate() + 1);
@@ -1050,7 +1171,7 @@ function getEventsForDate(eventsData) {
         return acc;
     }, {}));
 
-    // Optional: sort events by datetime
+    // Optional: sort each user's events by date
     transformedData.forEach(userGroup => {
         userGroup.events.sort((a, b) => {
             const dateA = new Date(`${a.date}T${a.from}:00`);
@@ -1063,33 +1184,32 @@ function getEventsForDate(eventsData) {
 }
 
 
-// function getEventsForDate(eventsData) {
-//     const transformedData = Object.values(eventsData.reduce((acc, event) => {
-//         const {
-//             user_id,
-//             title,
-//             date_from,
-//             date_to,
-//             categorie,
-//             user
-//         } = event;
 
-//         // Skip dummy events without valid date_from or date_to
-//         if (!date_from || !date_to) {
-//             // Optional: You can still include users with no events if you want,
-//             // but then events array will be empty (do nothing here).
+
+// function getEventsForDate(eventsData) {
+//     const transformedData = Object.values(eventsData.reduce((acc, item) => {
+//         const isCase = !!item.case;
+//         const user_id = item.user_id;
+//         const user = item.user;
+//         const data = isCase ? item.case : item;
+
+//         const title = isCase ? data.caseTitle : item.title;
+//         const dateFrom = isCase ? data.dateFrom : item.date_from;
+//         const dateTo = isCase ? data.dateTo : item.date_to;
+//         const categorie = data.categorie;
+
+//         if (!dateFrom || !dateTo) {
 //             if (!acc[user_id]) {
 //                 acc[user_id] = {
 //                     user: user?.name || `User ${user_id}`,
 //                     events: []
 //                 };
 //             }
-//             return acc; // skip adding an event object with no date
+//             return acc;
 //         }
 
-//         const date = date_from.split(" ")[0];
-//         const from = date_from.split(" ")[1].slice(0, 5);
-//         const to = date_to.split(" ")[1].slice(0, 5);
+//         const fromTime = (dateFrom.split(" ")[1] || "").slice(0, 5);
+//         const toTime = (dateTo.split(" ")[1] || "").slice(0, 5);
 //         const color = categorie?.color || "#000000";
 //         const userName = user?.name || `User ${user_id}`;
 
@@ -1100,18 +1220,31 @@ function getEventsForDate(eventsData) {
 //             };
 //         }
 
-//         acc[user_id].events.push({
-//             title: title || "(No title)",
-//             date,
-//             from,
-//             to,
-//             color
-//         });
+//         // Multi-day logic: push an event for each date in the range
+//         const current = new Date(dateFrom.split(" ")[0]);
+//         const end = new Date(dateTo.split(" ")[0]);
+
+//         while (current <= end) {
+//             const yyyy = current.getFullYear();
+//             const mm = String(current.getMonth() + 1).padStart(2, '0');
+//             const dd = String(current.getDate()).padStart(2, '0');
+//             const dateStr = `${yyyy}-${mm}-${dd}`;
+
+//             acc[user_id].events.push({
+//                 title: title || "(No title)",
+//                 date: dateStr,
+//                 from: fromTime,
+//                 to: toTime,
+//                 color
+//             });
+
+//             current.setDate(current.getDate() + 1);
+//         }
 
 //         return acc;
 //     }, {}));
 
-//     // Optional: Sort events by date/time for each user
+//     // Optional: sort events by datetime
 //     transformedData.forEach(userGroup => {
 //         userGroup.events.sort((a, b) => {
 //             const dateA = new Date(`${a.date}T${a.from}:00`);
@@ -1121,34 +1254,6 @@ function getEventsForDate(eventsData) {
 //     });
 
 //     return transformedData;
-// }
-
-// function getEventsForDate(date) {
-//     // Stub: replace this with your actual fetch logic
-//     return [
-//         {
-//             user: 'Simone Alexander',
-//             events: [
-//                 { title: 'AAM - NEW REFERRAL', date: '2025-08-25', from: '09:00', to: '09:30' },
-//                 { title: 'Morning Briefing', date: '2025-08-26', from: '08:30', to: '09:00' },
-//                 { title: 'Client Meeting - Project Alpha', date: '2025-08-28', from: '11:00', to: '12:00' },
-//                 { title: 'Lunch with Team', date: '2025-08-29', from: '12:30', to: '13:30' },
-//                 { title: 'Quarterly Report Review', date: '2025-08-30', from: '15:00', to: '16:00' },
-//                 { title: 'Strategy Planning Session', date: '2025-09-01', from: '10:00', to: '12:00' },
-//                 { title: 'Follow-up Call with Partner', date: '2025-09-02', from: '14:00', to: '14:30' },
-//                 { title: 'Product Demo', date: '2025-09-04', from: '10:00', to: '11:00' },
-//                 { title: 'Team Building Activity', date: '2025-09-04', from: '13:00', to: '17:00' },
-//                 { title: 'End of Week Wrap-up', date: '2025-09-04', from: '17:00', to: '17:30' }
-//             ]
-//         },
-//         {
-//             user: 'John Doe',
-//             events: [
-//                 { title: 'Team Sync - Project Phoenix', date: '2025-08-28', from: '10:00', to: '10:30' },
-//                 { title: 'Follow-up Call with Client', date: '2025-08-25', from: '15:00', to: '15:30' }
-//             ]
-//         }
-//     ];
 // }
 
 function toLocalDateString(date) {
@@ -1177,7 +1282,10 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
     // 🔹 Get events for this user
     // const userData = getEventsForDate(); // Only one user in your example
     const userData = eventsData;
-    const userEvents = userData.length > 0 ? userData[0].events : [];
+    // const userEvents = userData.length > 0 ? userData[0].events : [];
+    // Merge all users' events into one flat array
+    const userEvents = userData.flatMap(user => user.events || []);
+    console.log("Events for month:", userEvents);
 
     ['#calendarBody', '#sidebarCalendarBody'].forEach((calendarId) => {
         const $tds = $(`${calendarId} td`);
@@ -1212,6 +1320,9 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                 // 🔹 Inject events for the day
                 const eventsForDay = userEvents.filter(event => event.date === dateStr);
                 eventsForDay.forEach(event => {
+                    if (event.isDuplicate) {
+                        return; // ❌ Skip in UI, but kept in data
+                    }
                     // console.log(event.color);
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true">
@@ -1535,6 +1646,7 @@ function getData(ids, callback) {
         },
         dataType: 'json',
         success: function (response) {
+            console.log(response);
             eventsData = getEventsForDate(response); // You may rename this for generality
             console.log(`${dataType} saved to global:`, eventsData);
 
@@ -1561,21 +1673,40 @@ function initializeCheckedOrder() {
 }
 
 function refreshCalendar() {
-    getData(checkedOrder, () => {
-        const view = $('#selectedDayWeekMonthOption').text().trim();
+    const view = $('#selectedDayWeekMonthOption').text().trim();
+    currentView = view;
+    if (dataType === 'events' && view === 'Month View' && checkedOrder.length > 1) {
+        const lastUserId = checkedOrder[checkedOrder.length - 1];
+        checkedOrder = [lastUserId];
 
+        // Uncheck all checkboxes, check only the last selected one
+        $('input[type="checkbox"][data-user-id]').each(function () {
+            const isLast = $(this).data('user-id') === lastUserId;
+            $(this).prop('checked', isLast);
+        });
+    } else if (dataType === 'events' && (view === 'Week View' || view === 'Day View') && checkedOrder.length > 2) {
+        const frstUserId = checkedOrder[checkedOrder.length - 1];
+        const scndUserId = checkedOrder[checkedOrder.length - 2];
+
+        $('input[type="checkbox"][data-user-id]').each(function () {
+            const isFirst = $(this).data('user-id') === frstUserId;
+            const isSecond = $(this).data('user-id') === scndUserId;
+            $(this).prop('checked', isFirst || isSecond);
+        });
+    }
+
+    getData(checkedOrder, () => {
         if (view === 'Month View') {
             buildMonthlyCalendarDays(currentMonth, currentYear);
         } else if (view === 'Week View') {
-            if (window.selectedDate) {
-                buildWeeklyView(
-                    window.selectedDate.getDate(),
-                    window.selectedDate.getMonth(),
-                    window.selectedDate.getFullYear()
-                );
-            } else {
-                buildWeeklyView();
-            }
+            let dateToUse = window.viewedWeekDate || window.selectedDate || new Date();
+
+            buildWeeklyView(
+                dateToUse.getDate(),
+                dateToUse.getMonth(),
+                dateToUse.getFullYear()
+            );
+
         } else if (view === 'Day View') {
             if (window.selectedDate) {
                 buildDailyView(
@@ -1583,7 +1714,8 @@ function refreshCalendar() {
                     window.selectedDate.getMonth(),
                     window.selectedDate.getFullYear()
                 );
-            } else {
+            }
+            else {
                 buildDailyView();
             }
 

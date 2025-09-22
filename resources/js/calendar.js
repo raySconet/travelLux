@@ -51,7 +51,6 @@ $(document).ready(() => {
         // showView('Monthly');
     });
 
-
     $(document).on('click', '#calendarPrevDay', function() {
         if (!window.selectedDate) window.selectedDate = new Date();
 
@@ -125,7 +124,9 @@ $(document).ready(() => {
         if (!window.selectedDate) window.selectedDate = new Date();
         if (!window.viewedWeekDate) window.viewedWeekDate = new Date(window.selectedDate.getTime());
 
+        console.log('Current viewedWeekDate111111:', window.viewedWeekDate);
         window.viewedWeekDate.setDate(window.viewedWeekDate.getDate() - 7);
+        console.log('Current viewedWeekDate222222:', window.viewedWeekDate);
 
         const newMonth = window.viewedWeekDate.getMonth();
         const newYear = window.viewedWeekDate.getFullYear();
@@ -153,14 +154,16 @@ $(document).ready(() => {
         } else {
             getData(checkedOrder, renderWeek); // ✅ Always wait for events
         }
+        // window.selectedDate = new Date(window.viewedWeekDate);
     });
-
 
     $(document).on('click', '#calendarNextWeek', function() {
         if (!window.selectedDate) window.selectedDate = new Date();
         if (!window.viewedWeekDate) window.viewedWeekDate = new Date(window.selectedDate.getTime());
 
+        console.log('Current viewedWeekDate111111:', window.viewedWeekDate);
         window.viewedWeekDate.setDate(window.viewedWeekDate.getDate() + 7);
+        console.log('Current viewedWeekDate222222:', window.viewedWeekDate);
 
         const newMonth = window.viewedWeekDate.getMonth();
         const newYear = window.viewedWeekDate.getFullYear();
@@ -188,6 +191,7 @@ $(document).ready(() => {
         } else {
             getData(checkedOrder, renderWeek); // ✅ Wait
         }
+        // window.selectedDate = new Date(window.viewedWeekDate);
     });
 
     $(document).on('click', '#calendarPrevMonth, #sidebarCalendarPrevMonth', function() {
@@ -220,7 +224,7 @@ $(document).ready(() => {
         const view = viewMap[id];
         const el = $('#viewOptionsDropdown [popover]')[0];
         el?.hidePopover?.();
-
+        console.log('Current viewedWeekDate33333333:', window.viewedWeekDate);
         showView(view);
     });
 
@@ -230,7 +234,7 @@ $(document).ready(() => {
         const $this = $(this);
         const userId = $this.data('user-id');
 
-        console.log('View:', view);
+        // console.log('View:', view);
         // console.log('User ID (changed):', userId);
 
         if (view === 'Month View') {
@@ -261,7 +265,7 @@ $(document).ready(() => {
                 }
             }
 
-            console.log('Currently selected user IDs:', checkedOrder);
+            // console.log('Currently selected user IDs:', checkedOrder);
             getData(checkedOrder, () => {
                 buildMonthlyCalendarDays(currentMonth, currentYear);
             });
@@ -495,8 +499,8 @@ $(document).ready(() => {
         $('#errorModal').addClass('hidden');
 
         $button.prop('disabled', true).text('Saving...');
-        console.log($form.serialize());
-        console.log(actionUrl);
+        // console.log($form.serialize());
+        // console.log(actionUrl);
         $('.input-error-text').remove();
         $('input, select').removeClass('border-red-500');
 
@@ -742,27 +746,32 @@ function showView(view) {
         highlightSelectedSidebarDay();
 
     } else if (view === 'Weekly') {
-        if (window.selectedDate) {
-            const newMonth = window.selectedDate.getMonth();
-            const newYear = window.selectedDate.getFullYear();
+        window.viewedWeekDate = new Date(window.selectedDate.getTime());
+        getData(checkedOrder, () => {
+            if (window.selectedDate) {
+                const newMonth = window.selectedDate.getMonth();
+                const newYear = window.selectedDate.getFullYear();
 
-            if (newMonth !== currentMonth || newYear !== currentYear) {
-                currentMonth = newMonth;
-                currentYear = newYear;
-                updateCalendarHeader(currentMonth, currentYear);
-                buildMonthlyCalendarDays(currentMonth, currentYear);
+                if (newMonth !== currentMonth || newYear !== currentYear) {
+                    currentMonth = newMonth;
+                    currentYear = newYear;
+                    updateCalendarHeader(currentMonth, currentYear);
+                    buildMonthlyCalendarDays(currentMonth, currentYear);
+                }
+
+                buildWeeklyView(
+                    window.selectedDate.getDate(),
+                    window.selectedDate.getMonth(),
+                    window.selectedDate.getFullYear()
+                );
+            } else {
+                buildWeeklyView();
             }
+        }); // Preload data for week view
 
-            buildWeeklyView(
-                window.selectedDate.getDate(),
-                window.selectedDate.getMonth(),
-                window.selectedDate.getFullYear()
-            );
-        } else {
-            buildWeeklyView();
-        }
 
     } else if (view === 'Monthly') {
+        // console.log(window.selectedDate);
         // console.log('1: ', checkedOrder);
         // ✅ Keep only last selected user in Month View
         if (checkedOrder.length >= 1 && dataType === 'events') {
@@ -905,7 +914,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
     // === Fallback for 3 or more users (render only 1st user in single view style) ===
     if (allUsers.length >= 3) {
-        console.log("✅ Rendering simplified view for 3+ users");
+        // console.log("✅ Rendering simplified view for 3+ users");
 
         // Flat list of all events on the selected date from all users
         const eventsToday = allUsers
@@ -1285,7 +1294,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
     // const userEvents = userData.length > 0 ? userData[0].events : [];
     // Merge all users' events into one flat array
     const userEvents = userData.flatMap(user => user.events || []);
-    console.log("Events for month:", userEvents);
+    // console.log("Events for month:", userEvents);
 
     ['#calendarBody', '#sidebarCalendarBody'].forEach((calendarId) => {
         const $tds = $(`${calendarId} td`);
@@ -1646,9 +1655,9 @@ function getData(ids, callback) {
         },
         dataType: 'json',
         success: function (response) {
-            console.log(response);
+            // console.log(response);
             eventsData = getEventsForDate(response); // You may rename this for generality
-            console.log(`${dataType} saved to global:`, eventsData);
+            // console.log(`${dataType} saved to global:`, eventsData);
 
             if (typeof callback === "function") {
                 callback(null, eventsData);

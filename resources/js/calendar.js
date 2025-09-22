@@ -315,15 +315,13 @@ $(document).ready(() => {
 
         if (view === 'Week View') {
             getData(checkedOrder, () => {
-                if (window.selectedDate) {
-                    buildWeeklyView(
-                        window.selectedDate.getDate(),
-                        window.selectedDate.getMonth(),
-                        window.selectedDate.getFullYear()
-                    );
-                } else {
-                    buildWeeklyView();
-                }
+                const dateToUse = window.viewedWeekDate || new Date(); // fallback to today if null
+
+                buildWeeklyView(
+                    dateToUse.getDate(),
+                    dateToUse.getMonth(),
+                    dateToUse.getFullYear()
+                );
             });
         } else if (view === 'Day View') {
             getData(checkedOrder, () => {

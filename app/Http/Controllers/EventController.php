@@ -12,6 +12,8 @@ class EventController extends Controller
 {
     public function index(Request $request) {
         $userIds = $request->input('user_id');
+        $startDateInput = $request->input('start_date');
+        $endDateInput = $request->input('end_date');
 
         if(!$userIds) {
             $userIds = [auth()->id()];
@@ -19,13 +21,12 @@ class EventController extends Controller
             $userIds = [(int) $userIds];
         }
 
-        $month = $request->input('month', Carbon::now()->month);
-        $year = $request->input('year', Carbon::now()->year);
-
-        // $startDate = Carbon::create($year, $month, 1)->startOfMonth();
-        // $endDate = Carbon::create($year, $month, 1)->endOfMonth();
-        $startDate = Carbon::create($year, $month, 1)->startOfMonth()->subDays(7);
-        $endDate = Carbon::create($year, $month, 1)->endOfMonth()->addDays(7);
+        try {
+            $startDate = Carbon::parse($startDateInput)->startOfDay();
+            $endDate = Carbon::parse($endDateInput)->endOfDay();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid date format'], 400);
+        }
 
         $events = Event::with(['categorie:id,categoryName,color', 'user:id,name'])
             ->select(['id', 'title', 'user_id', 'categoryId', 'date_from', 'date_to'])

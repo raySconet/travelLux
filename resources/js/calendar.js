@@ -1639,12 +1639,12 @@ function getUsers(callback) {
 function getData(ids, callback) {
     const month = $('#currentDateData').attr('data-month');
     const year = $('#currentDateData').attr('data-year');
-
+console.log("Fetching data for:", ids, month, year);
     const { visibleStartDate, visibleEndDate } = getMonthWeekBoundaries(year, month);
-
+console.log("Visible range:", visibleStartDate, "to", visibleEndDate);
     const startDateStr = visibleStartDate.toISOString().split('T')[0];
     const endDateStr = visibleEndDate.toISOString().split('T')[0];
-
+console.log("Fetching data from", startDateStr, "to", endDateStr);
     const endpoint = dataType === 'cases' ? '/getCases' : '/getEvents';
 
     $.ajax({
@@ -1660,7 +1660,7 @@ function getData(ids, callback) {
         },
         dataType: 'json',
         success: function (response) {
-            // console.log(response);
+            console.log(response);
             eventsData = getEventsForDate(response); // You may rename this for generality
             // console.log(`${dataType} saved to global:`, eventsData);
 

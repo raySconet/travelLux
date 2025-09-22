@@ -24,8 +24,10 @@ class CourtCasesController extends Controller
         $month = $request->input('month', Carbon::now()->month);
         $year = $request->input('year', Carbon::now()->year);
 
-        $startDate = Carbon::create($year, $month, 1)->startOfMonth();
-        $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+        // $startDate = Carbon::create($year, $month, 1)->startOfMonth();
+        // $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+        $startDate = Carbon::create($year, $month, 1)->startOfMonth()->subDays(7);
+        $endDate = Carbon::create($year, $month, 1)->endOfMonth()->addDays(7);
 
         // Fetch from user_cases table with related case and user
         $userCases = UserCase::with([

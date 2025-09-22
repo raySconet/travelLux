@@ -1640,6 +1640,11 @@ function getData(ids, callback) {
     const month = $('#currentDateData').attr('data-month');
     const year = $('#currentDateData').attr('data-year');
 
+    const { visibleStartDate, visibleEndDate } = getMonthWeekBoundaries(year, month);
+
+    const startDateStr = visibleStartDate.toISOString().split('T')[0];
+    const endDateStr = visibleEndDate.toISOString().split('T')[0];
+
     const endpoint = dataType === 'cases' ? '/getCases' : '/getEvents';
 
     $.ajax({
@@ -1650,8 +1655,8 @@ function getData(ids, callback) {
         url: endpoint,
         data: {
             user_id: ids,
-            month: month,
-            year: year
+            start_date: startDateStr,
+            end_date: endDateStr
         },
         dataType: 'json',
         success: function (response) {
@@ -1735,4 +1740,20 @@ function refreshCalendar() {
             }
         }
     });
+}
+
+function getMonthWeekBoundaries(year, month) {
+    const firstOfMonth = new Date(year, month - 1, 1); // JS months are 0-indexed
+    const lastOfMonth = new Date(year, month, 0);      // Last day of month
+
+    const startOfFirstWeek = new Date(firstOfMonth);
+    startOfFirstWeek.setDate(firstOfMonth.getDate() - firstOfMonth.getDay());
+
+    const endOfLastWeek = new Date(lastOfMonth);
+    endOfLastWeek.setDate(lastOfMonth.getDate() + (6 - lastOfMonth.getDay()));
+
+    return {
+        visibleStartDate: startOfFirstWeek,
+        visibleEndDate: endOfLastWeek
+    };
 }

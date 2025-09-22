@@ -1090,7 +1090,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 function getEventsForDate(eventsData) {
     const seenCaseIds = new Set();
 
-    const transformedData = Object.values(eventsData.reduce((acc, item) => {
+    const transformedData = Object.values((eventsData || []).reduce((acc, item) => {
         const isCase = !!item.case;
         const user_id = item.user_id;
         const user = item.user;
@@ -1288,7 +1288,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
 
     // 🔹 Get events for this user
     // const userData = getEventsForDate(); // Only one user in your example
-    const userData = eventsData;
+    const userData = eventsData || []; // All users' events
     // const userEvents = userData.length > 0 ? userData[0].events : [];
     // Merge all users' events into one flat array
     const userEvents = userData.flatMap(user => user.events || []);
@@ -1659,7 +1659,7 @@ console.log("Fetching data from", startDateStr, "to", endDateStr);
         dataType: 'json',
         success: function (response) {
             console.log(response);
-            eventsData = getEventsForDate(response); // You may rename this for generality
+            eventsData = getEventsForDate(response || []); // You may rename this for generality
             // console.log(`${dataType} saved to global:`, eventsData);
 
             if (typeof callback === "function") {

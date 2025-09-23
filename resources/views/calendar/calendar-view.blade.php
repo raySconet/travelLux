@@ -3,7 +3,18 @@
         <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <div class="pb-4 border-b flex items-center justify-between">
-                    <h2 id="sidebarCalendarMonthYearSelected" class="text-lg font-semibold">{{ date('F Y') }}</h2>
+                    <div class="relative inline-block">
+                        <h2 id="sidebarCalendarMonthYearSelected" class="text-lg font-semibold cursor-pointer">{{ date('F Y') }}</h2>
+                        <div id="calendarMonthYearDropdown"
+                            class="absolute z-10 mt-2 bg-white border-0 rounded shadow p-2 hidden
+                            px-3 py-2 text-sm font-semibold text-gray-900  inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 cursor-pointer
+                        ">
+                            <div class="flex">
+                                <select id="monthSelect" class="border-0 p-1 mr-2"></select>
+                                <select id="yearSelect" class="border-0 p-1"></select>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-x-2">
                         <button id="sidebarCalendarPrevMonth" class="text-gray-600 hover:text-black cursor-pointer pl-2">&larr;</button>
                         <button id ="sidebarCalendarNextMonth" class="text-gray-600 hover:text-black cursor-pointer pr-2">&rarr;</button>

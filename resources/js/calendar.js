@@ -12,6 +12,7 @@ $(document).ready(() => {
         });
     });
 
+    populateMonthYearDropdown();
 
     $('input[name="type"]').on('change', updateUserSelectMode());
 
@@ -34,6 +35,34 @@ $(document).ready(() => {
         showView('Daily');
 
         highlightSelectedSidebarDay();
+    });
+
+    $(document).on('click', '#sidebarCalendarMonthYearSelected', function() {
+        if ($('#calendarMonthYearDropdown').is(':visible')) {
+            $('#calendarMonthYearDropdown').hide();
+        } else {
+            populateMonthYearDropdown();
+            $('#calendarMonthYearDropdown').show();
+        }
+    });
+
+    $('#monthSelect').add($('#yearSelect')).on('change', function () {
+        currentMonth = parseInt($('#monthSelect').val());
+        currentYear = parseInt($('#yearSelect').val());
+
+        updateCalendarHeader(currentMonth, currentYear);
+        highlightSelectedSidebarDay();
+        getData(checkedOrder, () => {
+            buildMonthlyCalendarDays(currentMonth, currentYear);
+        });
+
+        $('#calendarMonthYearDropdown').hide();
+    });
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('#sidebarCalendarMonthYearSelected, #calendarMonthYearDropdown').length) {
+            $('#calendarMonthYearDropdown').hide();
+        }
     });
 
     $(document).on('click', '#calendarDayViewOption', function() {
@@ -1190,9 +1219,6 @@ function getEventsForDate(eventsData) {
     return transformedData;
 }
 
-
-
-
 // function getEventsForDate(eventsData) {
 //     const transformedData = Object.values(eventsData.reduce((acc, item) => {
 //         const isCase = !!item.case;
@@ -1637,12 +1663,12 @@ function getUsers(callback) {
 function getData(ids, callback) {
     const month = $('#currentDateData').attr('data-month');
     const year = $('#currentDateData').attr('data-year');
-console.log("Fetching data for:", ids, month, year);
+    // console.log("Fetching data for:", ids, month, year);
     const { visibleStartDate, visibleEndDate } = getMonthWeekBoundaries(year, month);
-console.log("Visible range:", visibleStartDate, "to", visibleEndDate);
+    // console.log("Visible range:", visibleStartDate, "to", visibleEndDate);
     const startDateStr = visibleStartDate.toISOString().split('T')[0];
     const endDateStr = visibleEndDate.toISOString().split('T')[0];
-console.log("Fetching data from", startDateStr, "to", endDateStr);
+    // console.log("Fetching data from", startDateStr, "to", endDateStr);
     const endpoint = dataType === 'cases' ? '/getCases' : '/getEvents';
 
     $.ajax({
@@ -1754,4 +1780,26 @@ function getMonthWeekBoundaries(year, month) {
         visibleStartDate: startOfFirstWeek,
         visibleEndDate: endOfLastWeek
     };
+}
+
+function populateMonthYearDropdown() {
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    $('#monthSelect').empty();
+
+    monthNames.forEach((month, index) => {
+        $('#monthSelect').append(new Option(month, index));
+    });
+
+    const thisYear = new Date().getFullYear();
+    $('#yearSelect').empty();
+    for (let year = thisYear - 20; year <= thisYear + 20; year++) {
+        $('#yearSelect').append(new Option(year, year));
+    }
+
+    $('#monthSelect').val(currentMonth);
+    $('#yearSelect').val(currentYear);
 }

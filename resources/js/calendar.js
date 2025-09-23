@@ -903,9 +903,10 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             `);
         } else {
             eventsToday.forEach(event => {
+                console.log('event::', event);
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 dailyBody.append(`
-                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true">
+                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
                         <span>${event.title}</span>
                         ${timeRange}
                     </div>
@@ -939,7 +940,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             eventsUser1.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 dailyBody.append(`
-                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true">
+                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
                         <span>${event.title}</span>
                         ${timeRange}
                     </div>
@@ -957,7 +958,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             eventsUser2.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 bodyHidden.append(`
-                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true">
+                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
                         <span>${event.title}</span>
                         ${timeRange}
                     </div>
@@ -966,10 +967,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         }
     }
 
-    // === Fallback for 3 or more users (render only 1st user in single view style) ===
     if (allUsers.length >= 3) {
-        // console.log("✅ Rendering simplified view for 3+ users");
-
         // Flat list of all events on the selected date from all users
         const eventsToday = allUsers
             .flatMap(user => user.events)
@@ -1009,7 +1007,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 dailyBody.append(`
-                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true">
+                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
                         <span>${event.title}</span>
                         ${timeRange}
                     </div>
@@ -1123,7 +1121,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             if (eventsForDay.length) {
                 eventsForDay.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true">
+                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
                             <span>${event.title}</span>
                         </div>
                     `);
@@ -1174,7 +1172,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true">
+                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
                             <span>${event.title}</span>
                         </div>
                     `);
@@ -1194,7 +1192,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
                     const eventDiv = $(`
-                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true">
+                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
                             <span>${event.title}</span>
                         </div>
                     `);
@@ -1220,7 +1218,8 @@ function getEventsForDate(eventsData) {
         const user = item.user;
         const data = isCase ? item.case : item;
 
-        const caseId = isCase ? data.id : null;
+        // const caseId = isCase ? data.id : null;
+        const id = isCase ? data.id : (item.id || null);
         const title = isCase ? data.caseTitle : item.title;
         const dateFrom = isCase ? data.dateFrom : item.date_from;
         const dateTo = isCase ? data.dateTo : item.date_to;
@@ -1250,12 +1249,12 @@ function getEventsForDate(eventsData) {
         //     seenCaseIds.add(caseId);
         // }
 
-        if (isCase && caseId !== null) {
-            if (seenCaseIds.has(caseId)) {
+        if (isCase && id !== null) {
+            if (seenCaseIds.has(id)) {
                 // ✅ Mark as duplicate
                 item.isDuplicate = true;
             } else {
-                seenCaseIds.add(caseId);
+                seenCaseIds.add(id);
                 item.isDuplicate = false;
             }
         }
@@ -1286,13 +1285,14 @@ function getEventsForDate(eventsData) {
             // });
 
             acc[user_id].events.push({
+                id: id,
                 title: title || "(No title)",
                 date: dateStr,
                 from: fromTime,
                 to: toTime,
                 color,
                 user: userName,
-                caseId: caseId,
+                // caseId: caseId,
                 isDuplicate: item.isDuplicate || false  // ⬅️ Keep this flag
             });
 
@@ -1404,7 +1404,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     }
                     // console.log(event.color);
                     const eventDiv = $(`
-                        <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true">
+                        <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
                             <span>${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
                             <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10">
                                 <div class="relative bg-[#14548d] text-white text-xs p-2 rounded shadow-lg whitespace-nowrap">

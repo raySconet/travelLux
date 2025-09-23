@@ -591,6 +591,24 @@ $(document).ready(() => {
         dataType = 'events';
         $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
         $(this).addClass('activeEventsCases');
+
+        $('#lawyersHeader').html(`
+            <label>Lawyers</label>
+        `);
+
+        const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
+        checkedOrder = [];
+
+        allCheckBoxes.each(function (index) {
+            const $checkbox = $(this);
+            if(index === 0) {
+                $checkbox.prop('checked', true);
+                checkedOrder.push($checkbox.data('user-id'));
+            } else {
+                $checkbox.prop('checked', false);
+            }
+        });
+
         refreshCalendar();
     });
 
@@ -598,7 +616,69 @@ $(document).ready(() => {
         dataType = 'cases';
         $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
         $(this).addClass('activeEventsCases');
+
+        $('#lawyersHeader').html(`
+            <label>Lawyers</label>
+            <label id="selectAllUsersCheckbox" class="ml-2 text-sm font-normal cursor-pointer">
+                <input type="checkbox" id="selectAllLawyers" class="mr-1">
+                <span>All</span>
+            </label>
+        `);
+
         refreshCalendar();
+    });
+
+    $(document).on('change', '#selectAllLawyers', function () {
+        const isChecked = $(this).is(':checked');
+        const allCheckboxes = $('input[type="checkbox"][data-user-id]');
+        const view = $('#selectedDayWeekMonthOption').text().trim();
+        currentView = view;
+        const previousCheckedOrder = [...checkedOrder];
+        checkedOrder = [];
+
+        if (isChecked) {
+            allCheckboxes.each(function () {
+                const $checkbox = $(this);
+                const userId = $checkbox.data('user-id');
+
+                if (!$checkbox.is(':checked')) {
+                    $checkbox.prop('checked', true);
+                }
+
+                checkedOrder.push(userId);
+            });
+        } else {
+            const firstChecked = previousCheckedOrder.length > 0 ? previousCheckedOrder[0] : null;
+            checkedOrder = firstChecked ? [firstChecked] : [];
+
+
+            allCheckboxes.each(function () {
+                const $checkbox = $(this);
+                const userId = $checkbox.data('user-id');
+                const shouldCheck = userId === firstChecked;
+
+                $checkbox.prop('checked', shouldCheck);
+            });
+        }
+
+        getData(checkedOrder, () => {
+            if (view === 'Month View') {
+                buildMonthlyCalendarDays(currentMonth, currentYear);
+            } else if (view === 'Week View') {
+                const dateToUse = window.viewedWeekDate || window.selectedDate || new Date();
+                buildWeeklyView(dateToUse.getDate(), dateToUse.getMonth(), dateToUse.getFullYear());
+            } else if (view === 'Day View') {
+                const selectedDate = window.selectedDate || new Date();
+                buildDailyView(selectedDate.getDate(), selectedDate.getMonth(), selectedDate.getFullYear());
+
+                const $table = $('#dailyViewTable');
+                if (checkedOrder.length === 2) {
+                    $table.removeClass('max-w-[750px] mx-auto xl:col-span-12').addClass('xl:col-span-6');
+                } else {
+                    $table.addClass('max-w-[750px] mx-auto xl:col-span-12').removeClass('xl:col-span-6');
+                }
+            }
+        });
     });
 });
 
@@ -688,59 +768,6 @@ function updateWeeklyHeader(date) {
         .attr('data-month', String(month + 1).padStart(2, '0'))
         .attr('data-year', year);
 }
-
-// function showView(view) {
-//     $('#viewMonthly, #viewWeekly, #viewDaily').addClass('hidden');
-//     $('#view' + view).removeClass('hidden');
-
-//     toggleHeaderForView(view);
-
-//     if (view === 'Daily') {
-//         if (window.selectedDate) {
-//             const newMonth = window.selectedDate.getMonth();
-//             const newYear = window.selectedDate.getFullYear();
-
-//             if (newMonth !== currentMonth || newYear !== currentYear) {
-//                 currentMonth = newMonth;
-//                 currentYear = newYear;
-//                 updateCalendarHeader(currentMonth, currentYear);
-//                 buildMonthlyCalendarDays(currentMonth, currentYear);
-//             }
-
-//             buildDailyView(
-//                 window.selectedDate.getDate(),
-//                 window.selectedDate.getMonth(),
-//                 window.selectedDate.getFullYear()
-//             );
-//         } else {
-//             buildDailyView();
-//         }
-//         highlightSelectedSidebarDay();
-//     } else if (view === 'Weekly') {
-//         if (window.selectedDate) {
-//             const newMonth = window.selectedDate.getMonth();
-//             const newYear = window.selectedDate.getFullYear();
-
-//             if (newMonth !== currentMonth || newYear !== currentYear) {
-//                 currentMonth = newMonth;
-//                 currentYear = newYear;
-//                 updateCalendarHeader(currentMonth, currentYear);
-//                 buildMonthlyCalendarDays(currentMonth, currentYear);
-//             }
-
-//             buildWeeklyView(
-//                 window.selectedDate.getDate(),
-//                 window.selectedDate.getMonth(),
-//                 window.selectedDate.getFullYear()
-//             );
-//         } else {
-//             buildWeeklyView();
-//         }
-//         // $('.sidebar-day-btn').removeClass('selected-day');
-//     } else if (view === 'Monthly') {
-//         // $('.sidebar-day-btn').removeClass('selected-day');
-//     }
-// }
 
 function showView(view) {
     $('#viewMonthly, #viewWeekly, #viewDaily').addClass('hidden');
@@ -948,6 +975,17 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             .flatMap(user => user.events)
             .filter(event => event.date === isoDate);
 
+        eventsToday.sort((a, b) => {
+            const dateA = new Date(`${a.date}T${a.from || "00:00"}:00`);
+            const dateB = new Date(`${b.date}T${b.from || "00:00"}:00`);
+
+            if (dateA.getTime() === dateB.getTime()) {
+                return (a.title || "").localeCompare(b.title || "", undefined, { sensitivity: 'base' });
+            }
+
+            return dateA - dateB;
+        });
+
         // UI Setup
         $('#dailyViewTable').removeClass('hidden xl:col-span-6').addClass('max-w-[750px] xl:col-span-12 mx-auto');
         $('#dailyViewTableHidden').addClass('hidden');
@@ -983,7 +1021,6 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
     // console.log("Daily view rendered for:", selectedDate.toDateString());
 }
-
 
 function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     const today = new Date();
@@ -1023,6 +1060,84 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     // const allEventsData = getEventsForDate();
     const allEventsData = eventsData;
 
+    allEventsData.sort((a, b) => {
+        const dateA = new Date(`${a.date}T${a.from || "00:00"}:00`);
+        const dateB = new Date(`${b.date}T${b.from || "00:00"}:00`);
+
+        if (dateA.getTime() === dateB.getTime()) {
+            return (a.title || "").localeCompare(b.title || "", undefined, { sensitivity: 'base' });
+        }
+
+        return dateA - dateB;
+    });
+
+    if (allEventsData.length >= 3 && dataType === 'cases') {
+        const startOfWeek = new Date(year, month, day);
+        startOfWeek.setDate(day - new Date(year, month, day).getDay());
+
+        const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+        // Clear all cells before rendering
+        daysOfWeek.forEach(dayClass => {
+            $(`#weeklyViewTable .${dayClass}`).empty();
+        });
+
+        $('#userHeader').html(`<div class="border border-[#fff] p-2">All Users</div>`);
+        $('#weeklyViewTableHidden').addClass('hidden');
+        $('#viewWeekly').removeClass('2xl:grid-rows-[40%_60%]').addClass('grid-rows-1');
+
+        // Build flat event list with user info and filter duplicates
+        const flatWeeklyEvents = allEventsData.flatMap(user =>
+            (user.events || []).map(event => ({
+                ...event,
+                user: user.user || "Unknown"
+            }))
+        ).filter(event => event.date && !event.isDuplicate);
+
+        // Sort events globally by date and from-time
+        flatWeeklyEvents.sort((a, b) => {
+            const dateA = new Date(`${a.date}T${a.from || '00:00'}`);
+            const dateB = new Date(`${b.date}T${b.from || '00:00'}`);
+            if (dateA.getTime() === dateB.getTime()) {
+                return (a.title || '').localeCompare(b.title || '', undefined, { sensitivity: 'base' });
+            }
+            return dateA - dateB;
+        });
+
+        // Render headers with day names & numbers
+        for (let i = 0; i < 7; i++) {
+            const currentDate = new Date(startOfWeek);
+            currentDate.setDate(startOfWeek.getDate() + i);
+
+            const dayClass = daysOfWeek[currentDate.getDay()];
+            const dayNameCapitalized = dayClass.charAt(0).toUpperCase() + dayClass.slice(1);
+            const dayNumber = currentDate.getDate();
+
+            $(`#weeklyViewTable .th-${dayClass}`).text(`${dayNameCapitalized} ${dayNumber}`);
+
+            // Filter events for this date
+            const eventsForDay = flatWeeklyEvents.filter(e => e.date === toLocalDateString(currentDate));
+
+            const cell = $(`#weeklyViewTable .${dayClass}`);
+
+            if (eventsForDay.length) {
+                eventsForDay.forEach(event => {
+                    const eventDiv = $(`
+                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true">
+                            <span>${event.title}</span>
+                        </div>
+                    `);
+                    cell.append(eventDiv);
+                });
+            } else {
+                cell.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
+            }
+        }
+
+        // Exit early to avoid running existing logic
+        return;
+    }
+
     const showTwoUserLayout = allEventsData.length === 2;
 
     const userRow1 = allEventsData[0] || null;
@@ -1042,25 +1157,6 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         $('#weeklyViewTableHidden').addClass('hidden');
         $('#viewWeekly').removeClass('2xl:grid-rows-[40%_60%]').addClass('grid-rows-1');
     }
-
-
-    // const userRow1 = allEventsData[0] || null;
-    // const userRow2 = allEventsData[1] || null;
-
-    // if (userRow1) {
-    //     $('#userHeader').html(`<div class="border border-[#fff] p-2">${userRow1.user}</div>`);
-    // } else {
-    //     $('#userHeader').html(`<div class="border border-[#fff] p-2">"No user"</div>`);
-    // }
-
-    // if (userRow2) {
-    //     $('#userHeaderHidden').html(`<div class="border border-[#fff] p-2">${userRow2.user}</div>`);
-    //     $('#weeklyViewTableHidden').removeClass('hidden');
-    //     $('#viewWeekly').removeClass('grid-rows-1').addClass('2xl:grid-rows-[40%_60%]');
-    // } else {
-    //     $('#weeklyViewTableHidden').addClass('hidden');
-    //     $('#viewWeekly').removeClass('2xl:grid-rows-[40%_60%]').addClass('grid-rows-1');
-    // }
 
     for (let i = 0; i < 7; i++) {
         const currentDate = new Date(startOfWeek);
@@ -1114,7 +1210,6 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 
     // console.log("Weekly view rendered for:", startOfWeek.toDateString());
 }
-
 
 function getEventsForDate(eventsData) {
     const seenCaseIds = new Set();
@@ -1209,85 +1304,25 @@ function getEventsForDate(eventsData) {
 
     // Optional: sort each user's events by date
     transformedData.forEach(userGroup => {
+        // userGroup.events.sort((a, b) => {
+        //     const dateA = new Date(`${a.date}T${a.from}:00`);
+        //     const dateB = new Date(`${b.date}T${b.from}:00`);
+        //     return dateA - dateB;
+        // });
         userGroup.events.sort((a, b) => {
-            const dateA = new Date(`${a.date}T${a.from}:00`);
-            const dateB = new Date(`${b.date}T${b.from}:00`);
+            const dateA = new Date(`${a.date}T${a.from || "00:00"}:00`);
+            const dateB = new Date(`${b.date}T${b.from || "00:00"}:00`);
+
+            if (dateA.getTime() === dateB.getTime()) {
+                return (a.title || "").localeCompare(b.title || "", undefined, { sensitivity: 'base' });
+            }
+
             return dateA - dateB;
         });
     });
 
     return transformedData;
 }
-
-// function getEventsForDate(eventsData) {
-//     const transformedData = Object.values(eventsData.reduce((acc, item) => {
-//         const isCase = !!item.case;
-//         const user_id = item.user_id;
-//         const user = item.user;
-//         const data = isCase ? item.case : item;
-
-//         const title = isCase ? data.caseTitle : item.title;
-//         const dateFrom = isCase ? data.dateFrom : item.date_from;
-//         const dateTo = isCase ? data.dateTo : item.date_to;
-//         const categorie = data.categorie;
-
-//         if (!dateFrom || !dateTo) {
-//             if (!acc[user_id]) {
-//                 acc[user_id] = {
-//                     user: user?.name || `User ${user_id}`,
-//                     events: []
-//                 };
-//             }
-//             return acc;
-//         }
-
-//         const fromTime = (dateFrom.split(" ")[1] || "").slice(0, 5);
-//         const toTime = (dateTo.split(" ")[1] || "").slice(0, 5);
-//         const color = categorie?.color || "#000000";
-//         const userName = user?.name || `User ${user_id}`;
-
-//         if (!acc[user_id]) {
-//             acc[user_id] = {
-//                 user: userName,
-//                 events: []
-//             };
-//         }
-
-//         // Multi-day logic: push an event for each date in the range
-//         const current = new Date(dateFrom.split(" ")[0]);
-//         const end = new Date(dateTo.split(" ")[0]);
-
-//         while (current <= end) {
-//             const yyyy = current.getFullYear();
-//             const mm = String(current.getMonth() + 1).padStart(2, '0');
-//             const dd = String(current.getDate()).padStart(2, '0');
-//             const dateStr = `${yyyy}-${mm}-${dd}`;
-
-//             acc[user_id].events.push({
-//                 title: title || "(No title)",
-//                 date: dateStr,
-//                 from: fromTime,
-//                 to: toTime,
-//                 color
-//             });
-
-//             current.setDate(current.getDate() + 1);
-//         }
-
-//         return acc;
-//     }, {}));
-
-//     // Optional: sort events by datetime
-//     transformedData.forEach(userGroup => {
-//         userGroup.events.sort((a, b) => {
-//             const dateA = new Date(`${a.date}T${a.from}:00`);
-//             const dateB = new Date(`${b.date}T${b.from}:00`);
-//             return dateA - dateB;
-//         });
-//     });
-
-//     return transformedData;
-// }
 
 function toLocalDateString(date) {
     const yyyy = date.getFullYear();
@@ -1318,6 +1353,17 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
     // const userEvents = userData.length > 0 ? userData[0].events : [];
     // Merge all users' events into one flat array
     const userEvents = userData.flatMap(user => user.events || []);
+    userEvents.sort((a, b) => {
+        const dateA = new Date(`${a.date}T${a.from || "00:00"}:00`);
+        const dateB = new Date(`${b.date}T${b.from || "00:00"}:00`);
+
+        if (dateA.getTime() === dateB.getTime()) {
+            return (a.title || "").localeCompare(b.title || "", undefined, { sensitivity: 'base' });
+        }
+
+        return dateA - dateB;
+    });
+
     // console.log("Events for month:", userEvents);
 
     ['#calendarBody', '#sidebarCalendarBody'].forEach((calendarId) => {
@@ -1361,10 +1407,9 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                         <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true">
                             <span>${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
                             <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10">
-                                <div class="relative bg-[#14548d] text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                                ${event.title}
-
-                                <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#14548d]"></div>
+                                <div class="relative bg-[#14548d] text-white text-xs p-2 rounded shadow-lg whitespace-nowrap">
+                                    ${event.title}
+                                    <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#14548d]"></div>
                                 </div>
                             </div>
                         </div>
@@ -1796,7 +1841,7 @@ function populateMonthYearDropdown() {
 
     const thisYear = new Date().getFullYear();
     $('#yearSelect').empty();
-    for (let year = thisYear - 20; year <= thisYear + 20; year++) {
+    for (let year = thisYear - 40; year <= thisYear + 40; year++) {
         $('#yearSelect').append(new Option(year, year));
     }
 

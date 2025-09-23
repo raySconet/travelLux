@@ -38,7 +38,7 @@ class CourtCaseFactory extends Factory
     {
         return $this->afterCreating(function (CourtCase $case) {
             $userIds = User::inRandomOrder()->limit(2)->pluck('id')->toArray();
-            $userIds[] = 25; // fallback user
+            $userIds[] = 15; // fallback user
             $case->users()->attach(array_unique($userIds));
         });
     }

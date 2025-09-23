@@ -3,11 +3,70 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 class EventController extends Controller
 {
+    public function index(Request $request) {
+        $userIds = $request->input('user_id');
+        $startDateInput = $request->input('start_date');
+        $endDateInput = $request->input('end_date');
+
+        if(!$userIds) {
+            $userIds = [auth()->id()];
+        } elseif (!is_array($userIds)) {
+            $userIds = [(int) $userIds];
+        }
+
+        try {
+            $startDate = Carbon::parse($startDateInput)->startOfDay();
+            $endDate = Carbon::parse($endDateInput)->endOfDay();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid date format'], 400);
+        }
+
+        $events = Event::with(['categorie:id,categoryName,color', 'user:id,name'])
+            ->select(['id', 'title', 'user_id', 'categoryId', 'date_from', 'date_to'])
+            ->whereIn('user_id', $userIds)
+            ->where('isDeleted', 0)
+            ->whereBetween('date_from', [$startDate, $endDate])
+            ->get();
+
+        // Find user_ids present in events
+        $userIdsWithEvents = $events->pluck('user_id')->unique()->toArray();
+
+        // Find missing user_ids (users with no events)
+        $missingUserIds = array_diff($userIds, $userIdsWithEvents);
+
+        // Get missing users info
+        $missingUsers = User::whereIn('id', $missingUserIds)->select('id', 'name')->get();
+
+        // Create dummy event objects with only user info for missing users
+        $missingUserEvents = $missingUsers->map(function ($user) {
+            return (object)[
+                'id' => null,
+                'title' => null,
+                'user_id' => $user->id,
+                'categoryId' => null,
+                'date_from' => null,
+                'date_to' => null,
+                'categorie' => null,
+                'user' => (object)[
+                    'id' => $user->id,
+                    'name' => $user->name,
+                ],
+            ];
+        });
+
+        // Merge actual events with dummy events
+        $allEvents = $events->concat($missingUserEvents);
+
+        return response()->json($allEvents);
+    }
+
     public function store(Request $request) {
         $fromDateRaw = str_replace('+', ' ', $request->input('fromDate'));
         $toDateRaw = str_replace('+', ' ', $request->input('toDate'));

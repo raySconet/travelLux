@@ -1,5 +1,7 @@
 <div class="calendarHeader">
     <div class="flex justify-between items-center">
+        <div id="currentDateData" data-month="{{ date('m') }}" data-year="{{ date('Y') }}" style="display:none;"></div>
+
         <x-calendar-components.section id="dayToggleSection" class="space-x-2 hidden">
             <x-secondary-btn id="calendarPrevDay">
                 <i class="fa-solid fa-chevron-left"></i>

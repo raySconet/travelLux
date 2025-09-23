@@ -13,7 +13,7 @@
                 </x-category-components.category-btn>
             </div>
 
-            <div class="px-4 pb-4">
+            <div class="px-4">
                 @include('calendar.calendar-parts.lawyers-sidebar')
             </div>
         </div>

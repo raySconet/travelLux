@@ -12,4 +12,14 @@ class UserCase extends Model
         'user_id',
         'case_id'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function case()
+    {
+        return $this->belongsTo(CourtCase::class, 'case_id');
+    }
 }

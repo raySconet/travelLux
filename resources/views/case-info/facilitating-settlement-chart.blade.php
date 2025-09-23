@@ -3,8 +3,8 @@
         {{ __(' Facilitating Settlement Chart ') }}
     </h2>
 
-    <div class="treatingAppendDuplicates">
-        <div class= "grid grid-cols-1 2xl:grid-cols-14 gap-2 w-full " id="treatingToDuplicate">
+    <div class="facilitatingAppendDuplicates">
+        <div class= "grid grid-cols-1 2xl:grid-cols-14 gap-2 w-full " id="facilitatingToDuplicate">
             <x-case-components.col class="2xl:col-span-2">
                 <div >
                     <x-input-label for="ems" :value="__('EMS')" />

@@ -48,8 +48,8 @@
                         <x-input-error class="mt-2" :messages="$errors->get('name')" />
                     </x-case-components.col>
 
-                    <x-case-components.col class="2xl:col-span-1 items-center justify-center ">
-                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButton" style="margin-top:20px;">
+                    <x-case-components.col class="2xl:col-span-1 items-center  ">
+                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButton" style="margin-top:22px; width:26px; height:26px;">
                             <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                         </div>
                     </x-case-components.col>
@@ -63,7 +63,7 @@
 
     <x-case-components.grid  class="2xl:grid-cols-12 mt-2">
         <div class="2xl:col-span-12 flex flex-col ">
-            <p class="mb-1 text-md text-gray-700 text-center border border-[#CCC] p-2">
+            <p class="mb-1 text-md mt-1 text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
                 {{ __("3P") }}
             </p>
             <div class="appendDuplicatesFor3p">
@@ -104,8 +104,8 @@
                         <x-input-error class="mt-2" :messages="$errors->get('name')" />
                     </x-case-components.col>
 
-                    <x-case-components.col class="2xl:col-span-1 items-center justify-center ">
-                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonFor3p" style="margin-top:20px;">
+                    <x-case-components.col class="2xl:col-span-1 items-center  ">
+                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonFor3p" style="margin-top:22px; width:26px; height:26px;">
                             <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                         </div>
                     </x-case-components.col>
@@ -118,7 +118,7 @@
 
     <x-case-components.grid  class="2xl:grid-cols-12 mt-2">
         <div class="2xl:col-span-12 flex flex-col ">
-            <p class="mb-1 text-md text-gray-700  text-center border border-[#CCC] p-2">
+            <p class="mb-1 text-md mt-1 text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
                 {{ __("1P") }}
             </p>
            <div class="appendDuplicatesFor1p">
@@ -159,8 +159,8 @@
                         <x-input-error class="mt-2" :messages="$errors->get('name')" />
                     </x-case-components.col>
 
-                    <x-case-components.col class="2xl:col-span-1 items-center justify-center ">
-                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonFor1p" style="margin-top:20px;">
+                    <x-case-components.col class="2xl:col-span-1 items-center  ">
+                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonFor1p" style="margin-top:22px; width:26px; height:26px;">
                             <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                         </div>
                     </x-case-components.col>
@@ -214,8 +214,8 @@
                         <x-input-error class="mt-2" :messages="$errors->get('name')" />
                     </x-case-components.col>
 
-                    <x-case-components.col class="2xl:col-span-1 items-center justify-center ">
-                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonForDefense" style="margin-top:20px;">
+                    <x-case-components.col class="2xl:col-span-1 items-center">
+                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonForDefense" style="margin-top:22px; width:26px; height:26px;">
                             <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                         </div>
                     </x-case-components.col>

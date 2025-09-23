@@ -423,7 +423,6 @@ $(document).ready(() => {
         });
     });
 
-    // Close modal
     $('#closeAddEventCaseModal').on('click', function() {
         $('#addEventCaseModal').addClass('hidden');
     });

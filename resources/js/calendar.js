@@ -374,53 +374,17 @@ $(document).ready(() => {
     });
 
     $('#openAddEventCaseModal').on('click', function() {
+        $('#eventCaseType').removeClass('hidden');
+        $('#headerIcon').removeClass('fa-solid fa-pencil').addClass('fa-solid fa-calendar-plus');
+        $('.addEventCaseModalTitle').text(`Add Event or Case`);
         $('#addEventCaseModal').removeClass('hidden');
+        $('#modalFooterAction').empty().append(`
+            <button type="submit" id="submitAddEventCaseBtn" class="self-end bg-[#14548d] text-white font-semibold py-2 px-4 rounded cursor-pointer">
+                Add E/C
+            </button>
+        `);
 
-        const $categorySelect = $('#categorySelect');
-        const $userSelect = $('#userSelect');
-
-        $categorySelect.html('<option value="-1" disabled selected>Loading...</option>')
-        $userSelect.html('<option value="-1" disabled selected>Loading...</option>')
-
-        $.ajax({
-            url: '/getCategories',
-            method: 'GET',
-            success: function (categories) {
-                // console.log(categories);
-                $categorySelect.empty();
-                $categorySelect.append('<option value="-1">Select a category</option>');
-
-                categories.forEach(function (category) {
-                    $categorySelect.append(`<option value="${category.id}">${category.categoryName}</option>`);
-                });
-
-                updateUserSelectMode();
-            },
-            error: function () {
-                $categorySelect.html('<option value="-1" disabled selected>Error loading categories</option>');
-            }
-        });
-
-        $.ajax({
-            url: '/getUsers',
-            method: 'GET',
-            success: function (response) {
-                const users = response.users || [];
-                // console.log(users);
-                $userSelect.empty();
-                // $userSelect.append('<option value="-1">Select an user(s)</option>');
-
-                users.forEach(function (user) {
-                    // console.log(user);
-                    $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
-                });
-
-                updateUserSelectMode();
-            },
-            error: function () {
-                $userSelect.html('<option value="-1" disabled selected>Error loading users</option>');
-            }
-        });
+        getUsersCategoriesAddEditCasesEvents();
     });
 
     $('#closeAddEventCaseModal').on('click', function() {
@@ -488,12 +452,12 @@ $(document).ready(() => {
     // add event/case steps
 
     // step 1
-    $('#submitAddEventCaseBtn').on('click', function () {
+    $(document).on('click', '#submitAddEventCaseBtn', function () {
         $('#addEventCaseForm').submit();
     });
 
     // step 2
-    $('#addEventCaseForm').on('submit', function (e) {
+    $(document).on('submit', '#addEventCaseForm', function (e) {
         e.preventDefault();
 
         const type = $('input[name="type"]:checked').val();
@@ -678,6 +642,65 @@ $(document).ready(() => {
                 }
             }
         });
+    });
+
+    $(document).on('dblclick', '.eventCase', function () {
+        const eventId = $(this).data('id');
+        const eventType = $(this).data('type');
+        console.log('Clicked event/case ID:', eventId, 'Type:', eventType);
+    });
+
+    $(document).on('click', '.iconPencil', function (event) {
+        event.stopPropagation();  // Prevents bubbling to .eventCase
+        const eventId = $(this).data('id');
+        const eventType = $(this).data('type');
+        const arrowPlane = '<i class="fa-solid fa-paper-plane"></i>';
+
+        $('#eventCaseType').addClass('hidden');
+        console.log($('input[name="type"]:checked').val());
+        $('#headerIcon').removeClass('fa-solid fa-calendar-plus').addClass('fa-solid fa-pencil');
+        getUsersCategoriesAddEditCasesEvents(function () {
+            if (eventType === 'event') {
+                $('input[name="type"][value="event"]').prop('checked', true);
+            } else if (eventType === 'case') {
+                $('input[name="type"][value="case"]').prop('checked', true);
+            }
+            updateUserSelectMode();
+        });
+
+        $('.addEventCaseModalTitle').text(`Edit ${eventType === 'event' ? 'Event' : 'Case'}`);
+        $('#modalFooterAction').empty().append(`
+            <div class="flex flex-wrap justify-end gap-2">
+                <div class="border border-gray-500 text-gray-700 hover:bg-gray-500 hover:text-white font-semibold py-1 px-2 rounded transition cursor-pointer" id="submitEditEventCaseBtn" data-id="${eventId}">
+                    <i class="fa-solid fa-ban"></i>
+                    <span class="ml-1">
+                        Clear
+                    </span>
+                </div>
+                <div class="border border-red-600 text-red-600 hover:bg-red-600 hover:text-white font-semibold py-1 px-2 rounded transition justify-self-end cursor-pointer" id="submitEditEventCaseBtn" data-id="${eventId}">
+                    <i class="fa-solid fa-trash"></i>
+                    <span class="ml-1">
+                        Delete
+                    </span>
+                </div>
+                <div class="border border-[#14548d] text-[#14548d] hover:bg-[#14548d] hover:text-white font-semibold py-1 px-2 rounded transition justify-self-end cursor-pointer" id="submitEditEventCaseBtn" data-id="${eventId}">
+                    ${arrowPlane}
+                    <span class="ml-1">
+                        Save
+                    </span>
+                </div>
+                <div class="border border-[#14548d] text-[#14548d] hover:bg-[#14548d] hover:text-white font-semibold py-1 px-2 rounded transition justify-self-end cursor-pointer" id="submitEditEventCaseBtnAndClose" data-id="${eventId}">
+                    ${arrowPlane}
+                    <span class="ml-1">
+                        Save & Close
+                    </span>
+                </div>
+            </div>
+        `);
+
+        $('#addEventCaseModal').removeClass('hidden');
+        $('#addEventCaseModal form')[0].reset();
+        console.log('Clicked case ID:', eventId);
     });
 });
 
@@ -904,10 +927,16 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             eventsToday.forEach(event => {
                 console.log('event::', event);
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const iconPencil = `
+                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                        <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                    </div>
+                `;
                 dailyBody.append(`
-                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
-                        <span>${event.title}</span>
-                        ${timeRange}
+                    <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
+                            <span>${event.title}</span>
+                            ${timeRange}
+                            ${iconPencil}
                     </div>
                 `);
             });
@@ -938,10 +967,16 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             eventsUser1.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const iconPencil = `
+                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                        <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                    </div>
+                `;
                 dailyBody.append(`
-                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
+                    <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                         <span>${event.title}</span>
                         ${timeRange}
+                        ${iconPencil}
                     </div>
                 `);
             });
@@ -956,10 +991,16 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             eventsUser2.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const iconPencil = `
+                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                        <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                    </div>
+                `;
                 bodyHidden.append(`
-                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
+                    <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                         <span>${event.title}</span>
                         ${timeRange}
+                        ${iconPencil}
                     </div>
                 `);
             });
@@ -1005,10 +1046,16 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 }
 
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const iconPencil = `
+                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                        <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                    </div>
+                `;
                 dailyBody.append(`
-                    <div class="text-gray-900 font-semibold dailyEventInfo" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
+                    <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                         <span>${event.title}</span>
                         ${timeRange}
+                        ${iconPencil}
                     </div>
                 `);
             });
@@ -1119,9 +1166,15 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 
             if (eventsForDay.length) {
                 eventsForDay.forEach(event => {
+                    const iconPencil = `
+                        <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                            <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                        </div>
+                    `;
                     const eventDiv = $(`
-                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
+                        <div class="relative text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <span>${event.title}</span>
+                            ${iconPencil}
                         </div>
                     `);
                     cell.append(eventDiv);
@@ -1170,9 +1223,15 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             const eventsForDate = userRow1.events.filter(e => e.date === isoDate);
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
+                    const iconPencil = `
+                        <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                            <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                        </div>
+                    `;
                     const eventDiv = $(`
-                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
+                        <div class="relative text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <span>${event.title}</span>
+                            ${iconPencil}
                         </div>
                     `);
                     cellMain.append(eventDiv);
@@ -1190,9 +1249,15 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             const eventsForDate = userRow2.events.filter(e => e.date === isoDate);
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
+                    const iconPencil = `
+                        <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                            <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                        </div>
+                    `;
                     const eventDiv = $(`
-                        <div class="text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
+                        <div class="relative text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <span>${event.title}</span>
+                            ${iconPencil}
                         </div>
                     `);
                     cellHidden.append(eventDiv);
@@ -1291,6 +1356,7 @@ function getEventsForDate(eventsData) {
                 to: toTime,
                 color,
                 user: userName,
+                type: isCase ? 'case' : 'event',
                 // caseId: caseId,
                 isDuplicate: item.isDuplicate || false  // ⬅️ Keep this flag
             });
@@ -1402,9 +1468,17 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                         return; // ❌ Skip in UI, but kept in data
                     }
                     // console.log(event.color);
+                    const iconPencil = `
+                        <div class="iconPencil absolute right-1 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                            <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                        </div>
+                    `;
                     const eventDiv = $(`
-                        <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${dataType}">
-                            <span>${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
+                        <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
+                            <div class="relative">
+                                <span>${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
+                                ${iconPencil}
+                            </div>
                             <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10">
                                 <div class="relative bg-[#14548d] text-white text-xs p-2 rounded shadow-lg whitespace-nowrap">
                                     ${event.title}
@@ -1567,6 +1641,8 @@ function updateUserSelectMode() {
     const $userSelect = $('#userSelect');
     const $selectedUsers = $('#selectedUsers');
     const $userFieldsContainer = $('#userFieldsContainer');
+
+    console.log("Selected type:", selectedType);
 
     // for (let i = 0; i < $userSelect[0].options.length; i++) {
     //     const option = $userSelect[0].options[i];
@@ -1846,4 +1922,58 @@ function populateMonthYearDropdown() {
 
     $('#monthSelect').val(currentMonth);
     $('#yearSelect').val(currentYear);
+}
+
+function getUsersCategoriesAddEditCasesEvents(callback) {
+    const $categorySelect = $('#categorySelect');
+    const $userSelect = $('#userSelect');
+
+    $categorySelect.html('<option value="-1" disabled selected>Loading...</option>')
+    $userSelect.html('<option value="-1" disabled selected>Loading...</option>')
+
+    const categoriesAjax = $.ajax({
+        url: '/getCategories',
+        method: 'GET',
+        success: function (categories) {
+            // console.log(categories);
+            $categorySelect.empty();
+            $categorySelect.append('<option value="-1">Select a category</option>');
+
+            categories.forEach(function (category) {
+                $categorySelect.append(`<option value="${category.id}">${category.categoryName}</option>`);
+            });
+
+            updateUserSelectMode();
+        },
+        error: function () {
+            $categorySelect.html('<option value="-1" disabled selected>Error loading categories</option>');
+        }
+    });
+
+    const usersAjax = $.ajax({
+        url: '/getUsers',
+        method: 'GET',
+        success: function (response) {
+            const users = response.users || [];
+            // console.log(users);
+            $userSelect.empty();
+            // $userSelect.append('<option value="-1">Select an user(s)</option>');
+
+            users.forEach(function (user) {
+                // console.log(user);
+                $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
+            });
+
+            updateUserSelectMode();
+        },
+        error: function () {
+            $userSelect.html('<option value="-1" disabled selected>Error loading users</option>');
+        }
+    });
+
+    $.when(categoriesAjax, usersAjax).done(function () {
+        if (typeof callback === 'function') {
+            callback();
+        }
+    });
 }

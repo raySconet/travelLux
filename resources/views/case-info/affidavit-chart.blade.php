@@ -30,40 +30,49 @@
     </p>
 
     <div class="affidavitAppendDuplicates mt-2">
-        <div class= "grid grid-cols-1 2xl:grid-cols-14 gap-2 w-full " id="affidavitToDuplicate">
-            <x-case-components.col class="2xl:col-span-14 text-center">
+        <div class= "grid grid-cols-1 2xl:grid-cols-13 gap-2 w-full " id="affidavitToDuplicate">
+            <x-case-components.col class="2xl:col-span-13 text-center">
                 <p>Norma - Affidavit Chart </p>
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-2">
                 <div >
-                    <x-input-label for="ems" :value="__('EMS')" />
-                    <x-text-input id="ems" name="ems" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="ems" />
+                    <x-input-label for="providerName" :value="__('Provider Name')" />
+                    <x-text-input id="providerName" name="providerName" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="providerName" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-2">
                 <div>
-                    <x-input-label for="hospital" :value="__('Hospital')" />
-                    <x-text-input id="hospital" name="hospital" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="hospital" />
+                    <x-input-label for="dateOrdered" :value="__('Date Ordered')" />
+                    <x-text-input id="dateOrdered" name="dateOrdered" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="dateOrdered" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-2">
-
                 <div >
-                    <x-input-label for="chiropractor" :value="__('Referral')" />
-                    <x-text-input id="chiropractor" name="chiropractor" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="chiropractor" />
+                    <x-input-label for="dateReceivedMr" :value="__('Date Received Mr')" />
+                    <x-text-input id="dateReceivedMr" name="dateReceivedMr" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="dateReceivedMr" />
+                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                </div>
+                <div >
+                    <x-input-label for="dateReceivedBr" :value="__('Date Received Br')" />
+                    <x-text-input id="dateReceivedBr" name="dateReceivedBr" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="dateReceivedBr" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-2">
                 <div>
-                    <x-input-label for="pcpmd" :value="__('PCP/MD')" />
-                    <x-text-input id="pcpmd" name="pcpmd" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="pcpmd" />
+                    <x-input-label for="affidavitDateServed" :value="__('Date Served')" />
+                    <x-text-input id="affidavitDateServed" name="affidavitDateServed" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="affidavitDateServed" />
+                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                </div>
+                <div>
+                    <x-input-label for="affidavitNoticeFiled" :value="__('Notice Filled')" />
+                    <x-text-input id="affidavitNoticeFiled" name="affidavitNoticeFiled" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="affidavitNoticeFiled" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
@@ -84,14 +93,11 @@
                 </div>
             </x-case-components.col>
 
-            <x-case-components.col class="2xl:col-span-2">
-                <div >
-                    <x-input-label for="orthoOrSurgery" :value="__('Ortho &/ Surgery')" />
-                    <x-text-input id="orthoOrSurgery" name="orthoOrSurgery" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="orthoOrSurgery" />
-                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            <x-case-components.col class="2xl:col-span-1 items-center">
+                <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addAffidavitButton" style="margin-top:22px; width:26px; height:26px;">
+                    <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                 </div>
             </x-case-components.col>
-
         </div>
     </div>
 

@@ -7,16 +7,16 @@
         <div class= "grid grid-cols-1 2xl:grid-cols-14 gap-2 w-full " id="facilitatingToDuplicate">
             <x-case-components.col class="2xl:col-span-2">
                 <div >
-                    <x-input-label for="ems" :value="__('EMS')" />
-                    <x-text-input id="ems" name="ems" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="ems" />
+                    <x-input-label for="firstpPermissionToRelease" :value="__('1P Permission To Release')" />
+                    <x-text-input id="firstpPermissionToRelease" name="firstpPermissionToRelease" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="firstpPermissionToRelease" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-2">
                 <div>
-                    <x-input-label for="hospital" :value="__('Hospital')" />
-                    <x-text-input id="hospital" name="hospital" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="hospital" />
+                    <x-input-label for="thirdpRelease" :value="__('3P Release')" />
+                    <x-text-input id="thirdpRelease" name="thirdpRelease" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="thirdpRelease" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
@@ -24,44 +24,53 @@
             <x-case-components.col class="2xl:col-span-2">
 
                 <div >
-                    <x-input-label for="chiropractor" :value="__('Referral')" />
-                    <x-text-input id="chiropractor" name="chiropractor" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="chiropractor" />
+                    <x-input-label for="firstpRelease" :value="__('1P Release')" />
+                    <x-text-input id="firstpRelease" name="firstpRelease" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="firstpRelease" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-2">
                 <div>
-                    <x-input-label for="pcpmd" :value="__('PCP/MD')" />
-                    <x-text-input id="pcpmd" name="pcpmd" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="pcpmd" />
+                    <x-input-label for="pip" :value="__('PIP')" />
+                    <x-text-input id="pip" name="pip" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="pip" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-2">
                 <div >
-                    <x-input-label for="mriAndResults" :value="__('MRI & RESULTS')" />
-                    <x-text-input id="mriAndResults" name="mriAndResults" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="mriAndResults" />
+                    <x-input-label for="statutoryLiens" :value="__('Statutory Liens')" />
+                    <x-text-input id="statutoryLiens" name="statutoryLiens" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="statutoryLiens" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-2">
                 <div>
-                    <x-input-label for="painManagement" :value="__('Pain Management')" />
-                    <x-text-input id="painManagement" name="painManagement" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="painManagement" />
+                    <x-input-label for="otherLiensSubrogationInterests" :value="__('Other Liens / Subrogation Interests')" />
+                    <x-text-input id="otherLiensSubrogationInterests" name="otherLiensSubrogationInterests" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="otherLiensSubrogationInterests" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-2">
                 <div >
-                    <x-input-label for="orthoOrSurgery" :value="__('Ortho &/ Surgery')" />
-                    <x-text-input id="orthoOrSurgery" name="orthoOrSurgery" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="orthoOrSurgery" />
+                    <x-input-label for="disbursal" :value="__('Disbursal')" />
+                    <x-text-input id="disbursal" name="disbursal" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="disbursal" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
+        </div>
 
+        <div class= "grid grid-cols-1 2xl:grid-cols-14 gap-2 w-full " id="facilitatingToDuplicate">
+            <x-case-components.col class="2xl:col-span-14">
+                <div >
+                    <x-input-label for="checks" :value="__('Check(s)')" />
+                    <x-text-area id="checks" name="checks" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="checks" />
+                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                </div>
+            </x-case-components.col>
         </div>
     </div>
 

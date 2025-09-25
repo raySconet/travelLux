@@ -172,7 +172,7 @@
 
     <x-case-components.grid  class="2xl:grid-cols-12 mt-2">
         <div class="2xl:col-span-12 flex flex-col ">
-            <p class="mb-1 text-md text-gray-700  text-center border border-[#CCC] p-2">
+            <p class="mb-1 text-md  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
                 {{ __("Defense Counsel") }}
             </p>
             <div class="appendDuplicatesForDefense">

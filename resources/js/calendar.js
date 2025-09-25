@@ -2,6 +2,7 @@ let currentMonth, currentYear, eventsData = [];
 let checkedOrder = [];
 let currentView = 'Month View'; // global value
 let dataType = 'events'; // or 'cases'
+let eventCaseEditData = [];
 
 $(document).ready(() => {
     ({ month: currentMonth, year: currentYear } = parseMonthYear($('#calendarMonthYearSelected').text()));
@@ -374,6 +375,7 @@ $(document).ready(() => {
     });
 
     $('#openAddEventCaseModal').on('click', function() {
+        $('#addEventCaseModal form')[0].reset();
         $('#eventCaseType').removeClass('hidden');
         $('#headerIcon').removeClass('fa-solid fa-pencil').addClass('fa-solid fa-calendar-plus');
         $('.addEventCaseModalTitle').text(`Add Event or Case`);
@@ -652,7 +654,7 @@ $(document).ready(() => {
 
     $(document).on('click', '.iconPencil', function (event) {
         event.stopPropagation();  // Prevents bubbling to .eventCase
-        const eventId = $(this).data('id');
+        const eventCaseId = $(this).data('id');
         const eventType = $(this).data('type');
         const arrowPlane = '<i class="fa-solid fa-paper-plane"></i>';
 
@@ -671,36 +673,82 @@ $(document).ready(() => {
         $('.addEventCaseModalTitle').text(`Edit ${eventType === 'event' ? 'Event' : 'Case'}`);
         $('#modalFooterAction').empty().append(`
             <div class="flex flex-wrap justify-end gap-2">
-                <div class="border border-gray-500 text-gray-700 hover:bg-gray-500 hover:text-white font-semibold py-1 px-2 rounded transition cursor-pointer" id="submitEditEventCaseBtn" data-id="${eventId}">
+                <div class="border border-gray-500 text-gray-700 hover:bg-gray-500 hover:text-white font-semibold py-1 px-2 rounded transition cursor-pointer" id="clearEditEventCaseBtn" data-id="${eventCaseId}">
                     <i class="fa-solid fa-ban"></i>
                     <span class="ml-1">
                         Clear
                     </span>
                 </div>
-                <div class="border border-red-600 text-red-600 hover:bg-red-600 hover:text-white font-semibold py-1 px-2 rounded transition justify-self-end cursor-pointer" id="submitEditEventCaseBtn" data-id="${eventId}">
+                <div class="border border-red-600 text-red-600 hover:bg-red-600 hover:text-white font-semibold py-1 px-2 rounded transition justify-self-end cursor-pointer" id="deleteEditEventCaseBtn" data-id="${eventCaseId}">
                     <i class="fa-solid fa-trash"></i>
                     <span class="ml-1">
                         Delete
                     </span>
                 </div>
-                <div class="border border-[#14548d] text-[#14548d] hover:bg-[#14548d] hover:text-white font-semibold py-1 px-2 rounded transition justify-self-end cursor-pointer" id="submitEditEventCaseBtn" data-id="${eventId}">
+                <div class="border border-[#14548d] text-[#14548d] hover:bg-[#14548d] hover:text-white font-semibold py-1 px-2 rounded transition justify-self-end cursor-pointer" id="submitEditEventCaseBtn" data-id="${eventCaseId}">
                     ${arrowPlane}
                     <span class="ml-1">
                         Save
                     </span>
                 </div>
-                <div class="border border-[#14548d] text-[#14548d] hover:bg-[#14548d] hover:text-white font-semibold py-1 px-2 rounded transition justify-self-end cursor-pointer" id="submitEditEventCaseBtnAndClose" data-id="${eventId}">
-                    ${arrowPlane}
-                    <span class="ml-1">
-                        Save & Close
-                    </span>
-                </div>
             </div>
         `);
 
+        getData(null, function () {
+            const dateFrom = `${formatDateToMMDDYYYY(eventCaseEditData.date_from)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_from) : ''}`;
+            const dateTo = `${formatDateToMMDDYYYY(eventCaseEditData.date_to)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_to) : ''}`;
+
+            $('input[name="title"]').val(eventCaseEditData.title);
+            $('input[name="fromDate"]').val(dateFrom);
+            $('input[name="toDate"]').val(dateTo);
+            $('select[name="category"]').val(eventCaseEditData.categoryId);
+            if(eventType === 'case') {
+                const userIds = (eventCaseEditData.users || []).map(u => u.id.toString());
+                $('#userSelect').val(userIds).trigger('change');
+            }
+            console.log($('#addEventCaseForm').serialize());
+        }, eventCaseId);
+
         $('#addEventCaseModal').removeClass('hidden');
+        console.log('Clicked case ID:', eventCaseId);
+    });
+
+    $(document).on('click', '#clearEditEventCaseBtn', function() {
+        const eventType = $('input[name="type"]:checked').val();
+        console.log('hiiiiii', eventType);
         $('#addEventCaseModal form')[0].reset();
-        console.log('Clicked case ID:', eventId);
+        if (eventType === 'case') {
+            $('input[name="type"][value="case"]').prop('checked', true);
+            updateUserSelectMode();
+        }
+        console.log($('#addEventCaseForm').serialize());
+    });
+
+    $(document).on('click', '#submitEditEventCaseBtn', function(e) {
+        e.preventDefault();
+
+        const type = $('input[name="type"]:checked').val();
+        const id = $(this).data('id');
+
+        const routes = {
+            eventsUpdate: (id) => `events/${id}`,
+            casesUpdate: (id) => `cases/${id}`
+        };
+
+        let actionUrl = '';
+        let method = 'PUT';
+
+        if(type === 'event') {
+            actionUrl = routes.eventsUpdate(id);
+        } else if (type === 'case') {
+            const selectedUserIds = Array.from($('#selectedUsers i[data-user-id')).map(el => el.dataset.userId);
+            $('#userSelect option').each(function () {
+                $(this).prop('selected', selectedUserIds.includes(this.value));
+            });
+            actionUrl = routes.casesUpdate(id);
+        }
+
+        submitEditEventCase(actionUrl, method);
     });
 });
 
@@ -1780,7 +1828,7 @@ function getUsers(callback) {
     });
 }
 
-function getData(ids, callback) {
+function getData(ids, callback, eventCaseId = null) {
     const month = $('#currentDateData').attr('data-month');
     const year = $('#currentDateData').attr('data-year');
     // console.log("Fetching data for:", ids, month, year);
@@ -1791,21 +1839,29 @@ function getData(ids, callback) {
     // console.log("Fetching data from", startDateStr, "to", endDateStr);
     const endpoint = dataType === 'cases' ? '/getCases' : '/getEvents';
 
+    const requestData = eventCaseId
+        ? { event_case_id: eventCaseId }
+        : {
+            user_id: ids,
+            start_date: startDateStr,
+            end_date: endDateStr
+        };
+
     $.ajax({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         type: 'POST',
         url: endpoint,
-        data: {
-            user_id: ids,
-            start_date: startDateStr,
-            end_date: endDateStr
-        },
+        data: requestData,
         dataType: 'json',
         success: function (response) {
             console.log(response);
-            eventsData = getEventsForDate(response || []); // You may rename this for generality
+            if(ids) {
+                eventsData = getEventsForDate(response || []); // You may rename this for generality
+            } else {
+                eventCaseEditData = response;
+            }
             // console.log(`${dataType} saved to global:`, eventsData);
 
             if (typeof callback === "function") {
@@ -1974,6 +2030,99 @@ function getUsersCategoriesAddEditCasesEvents(callback) {
     $.when(categoriesAjax, usersAjax).done(function () {
         if (typeof callback === 'function') {
             callback();
+        }
+    });
+}
+
+function formatDateToMMDDYYYY(datetimeStr) {
+    const date = new Date(datetimeStr);
+
+    if (isNaN(date.getTime())) {
+        console.warn('Invalid date:', datetimeStr);
+        return '';
+    }
+
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day   = String(date.getDate()).padStart(2, '0');
+    const year  = date.getFullYear();
+
+    return `${month}-${day}-${year}`;
+}
+
+function formatTimeHHMM(datetimeStr) {
+    const date = new Date(datetimeStr);
+
+    if (isNaN(date.getTime())) {
+        console.warn('Invalid date:', datetimeStr);
+        return '';
+    }
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const mins  = String(date.getMinutes()).padStart(2, '0');
+
+    return `${hours}:${mins}`;
+}
+
+function submitEditEventCase(actionUrl, method) {
+    const $form = $('#addEventCaseForm');
+    const $button = $('#submitEditEventCaseBtn');
+
+    $('#modalErrorContent').empty();
+    $('#errorModal').addClass('hidden');
+
+    $button.prop('disabled', true).html(`
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span class="ml-1">Saving...</span>
+    `);
+
+    $('.input-error-text').remove();
+    $('input, select').removeClass('border-red-500');
+
+    $.ajax({
+        type: method,
+        url: actionUrl,
+        data: $form.serialize(),
+        dataType: 'json',
+        success: function (response) {
+            $form[0].reset();
+            $('#addEventCaseModal').addClass('hidden');
+            $('#modalSuccessContent').html(response.message);
+            $('#successModal').removeClass('hidden');
+            refreshCalendar();
+        },
+        error: function (xhr) {
+            if (xhr.status) {
+                const errors = xhr.responseJSON.errors;
+
+                // Loop over errors and display inline
+                $.each(errors, function (field, messages) {
+                    let $input = $form.find(`[name="${field}"]`);
+
+                    if ($input.length === 0) {
+                        // Handle array-like error field names like user.0, user.1
+                        const baseField = field.split('.')[0];
+                        $input = $form.find(`[name="${baseField}[]"], [name="${baseField}"]`);
+                    }
+
+                    $input.addClass('border-red-500');
+
+                    // if(field === "user") {
+                    //     $("#selectedUsers").addClass("border-red-500");
+                    // }
+
+                    if ($input.next('.input-error-text').length === 0) {
+                        $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
+                    }
+                });
+            }
+        },
+        complete: function () {
+            $button.prop('disabled', false).html(`
+                <i class="fa-solid fa-paper-plane"></i>
+                <span class="ml-1">
+                    Save
+                </span>
+            `);
         }
     });
 }

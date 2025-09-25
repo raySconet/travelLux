@@ -55,20 +55,13 @@ class CourtCasesController extends Controller
         $userIds = $request->input('user_id');
         $startDateInput = $request->input('start_date');
         $endDateInput = $request->input('end_date');
+        $viewMode = $request->input('view_mode');
 
         if (!$userIds) {
             $userIds = [auth()->id()];
         } elseif (!is_array($userIds)) {
             $userIds = [(int) $userIds];
         }
-
-        // $month = $request->input('month', Carbon::now()->month);
-        // $year = $request->input('year', Carbon::now()->year);
-
-        // // $startDate = Carbon::create($year, $month, 1)->startOfMonth();
-        // // $endDate = Carbon::create($year, $month, 1)->endOfMonth();
-        // $startDate = Carbon::create($year, $month, 1)->startOfMonth()->subDays(7);
-        // $endDate = Carbon::create($year, $month, 1)->endOfMonth()->addDays(7);
 
         try {
             $startDate = Carbon::parse($startDateInput)->startOfDay();
@@ -78,17 +71,31 @@ class CourtCasesController extends Controller
         }
 
         // Fetch from user_cases table with related case and user
-        $userCases = UserCase::with([
-            'user:id,name',
-            'case.categorie:id,categoryName,color'
-        ])
-            ->whereIn('user_id', $userIds)
-            ->whereHas('case', function ($query) use ($startDate, $endDate) {
-                $query->where('isDeleted', 0)
-                    ->whereBetween('dateFrom', [$startDate, $endDate]);
-            })
-            ->get();
-
+        $userCount = count($userIds);
+        if ($viewMode === 'Month View' || ($viewMode === 'Day View' && $userCount !== 2) || ($viewMode === 'Week View' && $userCount !== 2)) {
+            $userCases = UserCase::with([
+                'user:id,name',
+                'case.categorie:id,categoryName,color'
+            ])
+                ->whereIn('user_id', $userIds)
+                ->whereHas('case', function ($query) use ($startDate, $endDate) {
+                    $query->where('isDeleted', 0)
+                        ->whereBetween('dateFrom', [$startDate, $endDate]);
+                })
+                ->distinct()
+                ->get();
+        } else {
+            $userCases = UserCase::with([
+                'user:id,name',
+                'case.categorie:id,categoryName,color'
+            ])
+                ->whereIn('user_id', $userIds)
+                ->whereHas('case', function ($query) use ($startDate, $endDate) {
+                    $query->where('isDeleted', 0)
+                        ->whereBetween('dateFrom', [$startDate, $endDate]);
+                })
+                ->get();
+        }
         // Users who had at least one case
         $userIdsWithCases = $userCases->pluck('user_id')->unique()->toArray();
 

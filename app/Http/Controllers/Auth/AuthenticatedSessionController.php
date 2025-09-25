@@ -27,6 +27,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        $user = auth()->user();
         $request->session()->put([
             'userId' => $user->id,
             'userPermission' => $user->userPermission, // column from users table

@@ -69,7 +69,7 @@
         </div>
     </div>
 
-    <div>
+    <div id="eventCaseType">
         <x-input-label
             :value="__('Type')"
             class="block mb-2"

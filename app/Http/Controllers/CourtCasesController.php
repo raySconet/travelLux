@@ -13,7 +13,48 @@ class CourtCasesController extends Controller
 {
     public function index(Request $request)
     {
+        $caseId = $request->input('event_case_id');
+
+        if ($caseId) {
+            $userCases = UserCase::with([
+                'user:id,name',
+                'case.categorie:id,categoryName,color'
+            ])
+            ->where('case_id', $caseId)
+            ->get();
+
+            if ($userCases->isEmpty()) {
+                return response()->json(['error' => 'Case not found or has no users assigned'], 404);
+            }
+
+            // Get the case info from the first item
+            $case = $userCases->first()->case;
+
+            $transformed = [
+                'id' => $case->id,
+                'title' => $case->caseTitle ?? '',
+                'categoryId' => $case->categoryId,
+                'date_from' => $case->dateFrom,
+                'date_to' => $case->dateTo,
+                'categorie' => $case->categorie ? [
+                    'id' => $case->categorie->id,
+                    'categoryName' => $case->categorie->categoryName,
+                    'color' => $case->categorie->color,
+                ] : null,
+                'users' => $userCases->map(function ($userCase) {
+                    return [
+                        'id' => $userCase->user->id,
+                        'name' => $userCase->user->name,
+                    ];
+                })->values(),
+            ];
+
+            return response()->json($transformed);
+        }
+
         $userIds = $request->input('user_id');
+        $startDateInput = $request->input('start_date');
+        $endDateInput = $request->input('end_date');
 
         if (!$userIds) {
             $userIds = [auth()->id()];
@@ -21,13 +62,20 @@ class CourtCasesController extends Controller
             $userIds = [(int) $userIds];
         }
 
-        $month = $request->input('month', Carbon::now()->month);
-        $year = $request->input('year', Carbon::now()->year);
+        // $month = $request->input('month', Carbon::now()->month);
+        // $year = $request->input('year', Carbon::now()->year);
 
-        // $startDate = Carbon::create($year, $month, 1)->startOfMonth();
-        // $endDate = Carbon::create($year, $month, 1)->endOfMonth();
-        $startDate = Carbon::create($year, $month, 1)->startOfMonth()->subDays(7);
-        $endDate = Carbon::create($year, $month, 1)->endOfMonth()->addDays(7);
+        // // $startDate = Carbon::create($year, $month, 1)->startOfMonth();
+        // // $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+        // $startDate = Carbon::create($year, $month, 1)->startOfMonth()->subDays(7);
+        // $endDate = Carbon::create($year, $month, 1)->endOfMonth()->addDays(7);
+
+        try {
+            $startDate = Carbon::parse($startDateInput)->startOfDay();
+            $endDate = Carbon::parse($endDateInput)->endOfDay();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid date format'], 400);
+        }
 
         // Fetch from user_cases table with related case and user
         $userCases = UserCase::with([

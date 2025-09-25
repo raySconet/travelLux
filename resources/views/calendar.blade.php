@@ -20,8 +20,8 @@
     <x-general-modal id="addEventCaseModal">
         <x-slot name="header">
             <div class="grid grid-cols-[auto_1fr] items-center gap-2">
-                <i class="fa-solid fa-calendar-plus fa-xl primary-color" style="color: #14548d;"></i>
-                <h2 class="text-xl font-semibold text-gray-800">
+                <i class="fa-solid fa-calendar-plus fa-xl primary-color" id="headerIcon" style="color: #14548d;"></i>
+                <h2 class="addEventCaseModalTitle text-xl font-semibold text-gray-800">
                     {{ __('Add Event or Case') }}
                 </h2>
             </div>
@@ -37,9 +37,11 @@
         @include('calendar.calendar-parts.add-event-case')
 
         <x-slot name="footer">
-            <x-primary-btn class="justify-self-end" id="submitAddEventCaseBtn">
-                {{ __('Add E/C') }}
-            </x-primary-btn>
+            <div id="modalFooterAction" class="flex flex-col gap-2">
+                <x-primary-btn class="self-end" id="submitAddEventCaseBtn">
+                    {{ __('Add E/C') }}
+                </x-primary-btn>
+            </div>
         </x-slot>
     </x-general-modal>
 

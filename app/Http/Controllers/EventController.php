@@ -11,6 +11,28 @@ use Illuminate\Validation\ValidationException;
 class EventController extends Controller
 {
     public function index(Request $request) {
+        $eventId = $request->input('event_case_id');
+
+        if ($eventId) {
+            $event = Event::with(['categorie:id,categoryName,color', 'user:id,name'])
+                ->select(['id', 'title', 'user_id', 'categoryId', 'date_from', 'date_to'])
+                ->where('id', $eventId)
+                ->where('isDeleted', 0)
+                ->first();
+
+            if (!$event) {
+                return response()->json(['error' => 'Event not found'], 404);
+            }
+
+            $currentUser = auth()->user();
+
+            if ($event->user_id !== $currentUser->id && $currentUser->userPermission !== 'admin') {
+                return response()->json(['error' => 'Unauthorized access'], 403);
+            }
+
+            return response()->json($event);
+        }
+
         $userIds = $request->input('user_id');
         $startDateInput = $request->input('start_date');
         $endDateInput = $request->input('end_date');
@@ -111,6 +133,53 @@ class EventController extends Controller
 
         return response()->json([
             'message' => 'Event created successfully!',
+            'event' => $event,
+        ]);
+    }
+
+    public function update(Request $request, Event $event) {
+        if ($event->user_id !== auth()->id() && auth()->user()->userPermission !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $fromDateRaw = str_replace('+', '', $request->input('fromDate'));
+        $toDateRaw = str_replace('+', '', $request->input('toDate'));
+
+        $request->merge([
+            'fromDate' => $fromDateRaw,
+            'toDate' => $toDateRaw,
+        ]);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'type' => 'required|in:event',
+            'fromDate' => ['required', 'date_format:m-d-Y H:i'],
+            'toDate' => ['required', 'date_format:m-d-Y H:i', 'after:fromDate'],
+            'category' => ['required','not_in:-1' , 'exists:categories,id'],
+        ], [
+            'category.not_in' => 'The category field is required.',
+        ]);
+
+        $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'));
+        $toDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('toDate'));
+
+        // Conflict check
+        if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon)) {
+            throw ValidationException::withMessages([
+                'fromDate' => ['You already have an event during this time.'],
+                'toDate' => ['You already have an event during this time.'],
+            ]);
+        }
+
+        $event->update([
+            'title' => $request->input('title'),
+            'categoryId' => $request->input('category'),
+            'date_from' => $fromDateCarbon->format('Y-m-d H:i:s'),
+            'date_to' => $toDateCarbon->format('Y-m-d H:i:s'),
+        ]);
+
+        return response()->json([
+            'message' => 'Event updated successfully!',
             'event' => $event,
         ]);
     }

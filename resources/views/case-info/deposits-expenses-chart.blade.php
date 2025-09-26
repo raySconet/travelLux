@@ -9,8 +9,8 @@
             <p  class="mb-1 text-md  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
                 {{ __("Deposits") }}
             </p>
-            <div class="appendDuplicates">
-                <x-case-components.grid class="2xl:grid-cols-13" id="clientToDuplicate">
+            <div class="appendDuplicatesForDeposits">
+                <x-case-components.grid class="2xl:grid-cols-13" id="DepositsToDuplicate">
                     <x-case-components.col class="2xl:col-span-3">
                         <x-input-label for="depositsAmount" :value="__('Amount')" />
                         <x-text-input  name="depositsAmount" type="text" class="mt-1" :value="old('depositsAmount')"  required autofocus autocomplete="depositsAmount" />
@@ -37,7 +37,7 @@
 
 
                     <x-case-components.col class="2xl:col-span-1 items-center  ">
-                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButton" style="margin-top:22px; width:26px; height:26px;">
+                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addButtonForDeposits" style="margin-top:22px; width:26px; height:26px;">
                             <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                         </div>
                     </x-case-components.col>
@@ -54,8 +54,8 @@
             <p class="mb-1 text-md mt-1 text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
                 {{ __("Expenses") }}
             </p>
-            <div class="appendDuplicatesFor3p">
-                <x-case-components.grid class="2xl:grid-cols-13 mt-2" id="clientToDuplicate">
+            <div class="appendDuplicatesForExpenses">
+                <x-case-components.grid class="2xl:grid-cols-13 mt-2" id="expensesToDuplicate">
                     <x-case-components.col class="2xl:col-span-3">
                         <x-input-label for="expensesMethod" :value="__('Method')" />
                         <x-text-input  name="expensesMethod" type="text" class="mt-1" :value="old('expensesMethod')"  required autofocus autocomplete="expensesMethod" />
@@ -81,7 +81,7 @@
                     </x-case-components.col>
 
                     <x-case-components.col class="2xl:col-span-1 items-center  ">
-                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonFor3p" style="margin-top:22px; width:26px; height:26px;">
+                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addButtonForExpenses" style="margin-top:22px; width:26px; height:26px;">
                             <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                         </div>
                     </x-case-components.col>
@@ -97,8 +97,8 @@
             <p class="mb-1 text-md mt-1 text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
                 {{ __("Advances") }}
             </p>
-           <div class="appendDuplicatesFor1p">
-                <x-case-components.grid  class="2xl:grid-cols-13" id="clientToDuplicate">
+           <div class="appendDuplicatesForAdvances">
+                <x-case-components.grid  class="2xl:grid-cols-13" id="advancesToDuplicate">
                     <x-case-components.col class="2xl:col-span-3">
                         <x-input-label for="advancesAmount" :value="__('Amount')" />
                         <x-text-input  name="advancesAmount" type="text" class="mt-1" :value="old('advancesAmount')"  required autofocus autocomplete="advancesAmount" />
@@ -124,7 +124,7 @@
                     </x-case-components.col>
 
                     <x-case-components.col class="2xl:col-span-1 items-center  ">
-                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonFor1p" style="margin-top:22px; width:26px; height:26px;">
+                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addButtonForAdvances" style="margin-top:22px; width:26px; height:26px;">
                             <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                         </div>
                     </x-case-components.col>
@@ -135,3 +135,4 @@
     </x-case-components.grid>
 
 </section>
+

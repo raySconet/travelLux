@@ -377,7 +377,7 @@ $(document).ready(() => {
     $('#openAddEventCaseModal').on('click', function() {
         $('#addEventCaseModal form')[0].reset();
         $('#eventCaseType').removeClass('hidden');
-        $('#headerIcon').removeClass('fa-solid fa-pencil').addClass('fa-solid fa-calendar-plus');
+        $('#headerIcon').removeClass('fa-solid fa-pen-to-square').addClass('fa-solid fa-calendar-plus');
         $('.addEventCaseModalTitle').text(`Add Event or Case`);
         $('#addEventCaseModal').removeClass('hidden');
         $('#modalFooterAction').empty().append(`
@@ -660,7 +660,7 @@ $(document).ready(() => {
 
         $('#eventCaseType').addClass('hidden');
         console.log($('input[name="type"]:checked').val());
-        $('#headerIcon').removeClass('fa-solid fa-calendar-plus').addClass('fa-solid fa-pencil');
+        $('#headerIcon').removeClass('fa-solid fa-calendar-plus').addClass('fa-solid fa-pen-to-square');
         getUsersCategoriesAddEditCasesEvents(function () {
             if (eventType === 'event') {
                 $('input[name="type"][value="event"]').prop('checked', true);
@@ -977,7 +977,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
-                        <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                        <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
                 `;
                 dailyBody.append(`
@@ -1017,7 +1017,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
-                        <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                        <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
                 `;
                 dailyBody.append(`
@@ -1041,7 +1041,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
-                        <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                        <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
                 `;
                 bodyHidden.append(`
@@ -1096,7 +1096,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
-                        <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                        <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
                 `;
                 dailyBody.append(`
@@ -1216,7 +1216,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                 eventsForDay.forEach(event => {
                     const iconPencil = `
                         <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
-                            <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                            <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                         </div>
                     `;
                     const eventDiv = $(`
@@ -1273,7 +1273,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                 eventsForDate.forEach(event => {
                     const iconPencil = `
                         <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
-                            <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                            <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                         </div>
                     `;
                     const eventDiv = $(`
@@ -1299,7 +1299,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                 eventsForDate.forEach(event => {
                     const iconPencil = `
                         <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
-                            <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                            <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                         </div>
                     `;
                     const eventDiv = $(`
@@ -1330,7 +1330,6 @@ function getEventsForDate(eventsData) {
         const user = item.user;
         const data = isCase ? item.case : item;
 
-        // const caseId = isCase ? data.id : null;
         const id = isCase ? data.id : (item.id || null);
         const title = isCase ? data.caseTitle : item.title;
         const dateFrom = isCase ? data.dateFrom : item.date_from;
@@ -1346,20 +1345,9 @@ function getEventsForDate(eventsData) {
             };
         }
 
-        // If no valid date range, skip event
         if (!dateFrom || !dateTo) {
             return acc;
         }
-
-        // // 🔴 Skip already-seen case IDs (for "cases" only)
-        // if (isCase && seenCaseIds.has(caseId) && currentView === 'Month View') {
-        //     return acc;
-        // }
-
-        // // ✅ Track seen case IDs
-        // if (isCase && caseId !== null) {
-        //     seenCaseIds.add(caseId);
-        // }
 
         if (isCase && id !== null) {
             if (seenCaseIds.has(id)) {
@@ -1386,16 +1374,6 @@ function getEventsForDate(eventsData) {
             const dd = String(current.getDate()).padStart(2, '0');
             const dateStr = `${yyyy}-${mm}-${dd}`;
 
-            // acc[user_id].events.push({
-            //     title: title || "(No title)",
-            //     date: dateStr,
-            //     from: fromTime,
-            //     to: toTime,
-            //     color,
-            //     user: userName,
-            //     caseId: caseId // Optional: useful if needed later
-            // });
-
             acc[user_id].events.push({
                 id: id,
                 title: title || "(No title)",
@@ -1417,11 +1395,6 @@ function getEventsForDate(eventsData) {
 
     // Optional: sort each user's events by date
     transformedData.forEach(userGroup => {
-        // userGroup.events.sort((a, b) => {
-        //     const dateA = new Date(`${a.date}T${a.from}:00`);
-        //     const dateB = new Date(`${b.date}T${b.from}:00`);
-        //     return dateA - dateB;
-        // });
         userGroup.events.sort((a, b) => {
             const dateA = new Date(`${a.date}T${a.from || "00:00"}:00`);
             const dateB = new Date(`${b.date}T${b.from || "00:00"}:00`);
@@ -1518,7 +1491,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     // console.log(event.color);
                     const iconPencil = `
                         <div class="iconPencil absolute right-1 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
-                            <i class="fa-solid fa-pencil shadow-lg" style="color: #eaeef2;"></i>
+                            <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                         </div>
                     `;
                     const eventDiv = $(`
@@ -1832,6 +1805,7 @@ function getData(ids, callback, eventCaseId = null) {
     const month = $('#currentDateData').attr('data-month');
     const year = $('#currentDateData').attr('data-year');
     // console.log("Fetching data for:", ids, month, year);
+    const viewMode = $('#selectedDayWeekMonthOption').text().trim();
     const { visibleStartDate, visibleEndDate } = getMonthWeekBoundaries(year, month);
     // console.log("Visible range:", visibleStartDate, "to", visibleEndDate);
     const startDateStr = visibleStartDate.toISOString().split('T')[0];
@@ -1844,7 +1818,8 @@ function getData(ids, callback, eventCaseId = null) {
         : {
             user_id: ids,
             start_date: startDateStr,
-            end_date: endDateStr
+            end_date: endDateStr,
+            view_mode: viewMode
         };
 
     $.ajax({

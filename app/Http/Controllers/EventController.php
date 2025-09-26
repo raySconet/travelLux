@@ -164,7 +164,7 @@ class EventController extends Controller
         $toDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('toDate'));
 
         // Conflict check
-        if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon)) {
+        if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon, $event->id)) {
             throw ValidationException::withMessages([
                 'fromDate' => ['You already have an event during this time.'],
                 'toDate' => ['You already have an event during this time.'],
@@ -184,14 +184,31 @@ class EventController extends Controller
         ]);
     }
 
-    private function hasTimeConflict($userId, $from, $to): bool
-    {
-        return Event::where('user_id', $userId)
-            ->where(function ($query) use ($from, $to) {
-                $query->where('date_from', '<', $to)
-                    ->where('date_to', '>', $from);
-            })
-            ->exists();
+    // private function hasTimeConflict($userId, $from, $to): bool
+    // {
+    //     return Event::where('user_id', $userId)
+    //         ->where(function ($query) use ($from, $to) {
+    //             $query->where('date_from', '<', $to)
+    //                 ->where('date_to', '>', $from);
+    //         })
+    //         ->exists();
+    // }
+    protected function hasTimeConflict($userId, $fromDate, $toDate, $excludeEventId = null) {
+        $query = Event::where('user_id', $userId)
+            ->where(function($q) use ($fromDate, $toDate) {
+                $q->whereBetween('date_from', [$fromDate, $toDate])
+                ->orWhereBetween('date_to', [$fromDate, $toDate])
+                ->orWhere(function($q2) use ($fromDate, $toDate) {
+                    $q2->where('date_from', '<=', $fromDate)
+                        ->where('date_to', '>=', $toDate);
+                });
+            });
+
+        if ($excludeEventId) {
+            $query->where('id', '!=', $excludeEventId);
+        }
+
+        return $query->exists();
     }
 }
 

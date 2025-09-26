@@ -105,6 +105,129 @@ $(document).ready(() => {
             btn.prop('disabled', false);
         }, 500);
     });
+
+
+
+
+    $(document).on('click', '.addButtonForNegotiation', function() {
+        let container = $(this).parent().parent();
+        let newItem = container.clone(); // duplicate first
+        $(this).removeClass("addButtonForNegotiation bg-[#14548d]")
+            .addClass("removeClientInfoButtonForNegotiation bg-[#a51a1a]")
+            .children()
+            .removeClass("fa-plus")
+            .addClass("fa-minus");
+        $(this).parent().parent().parent().append(newItem); // add to end
+    });
+
+    $(document).on('click', '.removeClientInfoButtonForNegotiation', function() {
+        let btn = $('.removeClientInfoButtonForNegotiation');
+        // disable button temporarily
+        btn.prop('disabled', true);
+        $(this).parent().parent().remove();
+
+        // enable button again after 1 second
+        setTimeout(() => {
+            btn.prop('disabled', false);
+        }, 500);
+    });
+
+
+
+    $(document).on('click', '.addAffidavitButton', function() {
+        let container = $(this).parent().parent();
+        let newItem = container.clone(); // duplicate first
+        $(this).removeClass("addAffidavitButton bg-[#14548d]")
+            .addClass("removeClientInfoButtonForAffidavit bg-[#a51a1a]")
+            .children()
+            .removeClass("fa-plus")
+            .addClass("fa-minus");
+        $(this).parent().parent().parent().append(newItem); // add to end
+    });
+
+    $(document).on('click', '.removeClientInfoButtonForAffidavit', function() {
+        let btn = $('.removeClientInfoButtonForAffidavit');
+        // disable button temporarily
+        btn.prop('disabled', true);
+        $(this).parent().parent().remove();
+
+        // enable button again after 1 second
+        setTimeout(() => {
+            btn.prop('disabled', false);
+        }, 500);
+    });
+
+
+    $(document).on('click', '.addButtonForDeposits', function() {
+        let container = $(this).parent().parent();
+        let newItem = container.clone(); // duplicate first
+        $(this).removeClass("addButtonForDeposits bg-[#14548d]")
+            .addClass("removeClientInfoButtonForDeposits bg-[#a51a1a]")
+            .children()
+            .removeClass("fa-plus")
+            .addClass("fa-minus");
+        $(this).parent().parent().parent().append(newItem); // add to end
+    });
+
+    $(document).on('click', '.removeClientInfoButtonForDeposits', function() {
+        let btn = $('.removeClientInfoButtonForDeposits');
+        // disable button temporarily
+        btn.prop('disabled', true);
+        $(this).parent().parent().remove();
+
+        // enable button again after 1 second
+        setTimeout(() => {
+            btn.prop('disabled', false);
+        }, 500);
+    });
+
+
+    $(document).on('click', '.addButtonForExpenses', function() {
+        let container = $(this).parent().parent();
+        let newItem = container.clone(); // duplicate first
+        $(this).removeClass("addButtonForExpenses bg-[#14548d]")
+            .addClass("removeClientInfoButtonForExpenses bg-[#a51a1a]")
+            .children()
+            .removeClass("fa-plus")
+            .addClass("fa-minus");
+        $(this).parent().parent().parent().append(newItem); // add to end
+    });
+
+    $(document).on('click', '.removeClientInfoButtonForExpenses', function() {
+        let btn = $('.removeClientInfoButtonForExpenses');
+        // disable button temporarily
+        btn.prop('disabled', true);
+        $(this).parent().parent().remove();
+
+        // enable button again after 1 second
+        setTimeout(() => {
+            btn.prop('disabled', false);
+        }, 500);
+    });
+
+
+    $(document).on('click', '.addButtonForAdvances', function() {
+        let container = $(this).parent().parent();
+        let newItem = container.clone(); // duplicate first
+        $(this).removeClass("addButtonForAdvances bg-[#14548d]")
+            .addClass("removeClientInfoButtonForAdvances bg-[#a51a1a]")
+            .children()
+            .removeClass("fa-plus")
+            .addClass("fa-minus");
+        $(this).parent().parent().parent().append(newItem); // add to end
+    });
+
+    $(document).on('click', '.removeClientInfoButtonForAdvances', function() {
+        let btn = $('.removeClientInfoButtonForAdvances');
+        // disable button temporarily
+        btn.prop('disabled', true);
+        $(this).parent().parent().remove();
+
+        // enable button again after 1 second
+        setTimeout(() => {
+            btn.prop('disabled', false);
+        }, 500);
+    });
     // End Add Edit Buttons
 
 

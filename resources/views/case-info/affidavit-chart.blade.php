@@ -30,10 +30,13 @@
     </p>
 
     <div class="affidavitAppendDuplicates mt-2">
-        <div class= "grid grid-cols-1 2xl:grid-cols-13 gap-2 w-full " id="affidavitToDuplicate">
+        <div class= "grid grid-cols-1 2xl:grid-cols-13 gap-2 w-full ">
             <x-case-components.col class="2xl:col-span-13 text-center">
-                <p>Norma - Affidavit Chart </p>
+                    <p>Norma - Affidavit Chart </p>
             </x-case-components.col>
+        </div>
+        <div class= "grid grid-cols-1 2xl:grid-cols-13 gap-2 w-full " id="affidavitToDuplicate">
+
 
             <x-case-components.col class="2xl:col-span-2">
                 <div >

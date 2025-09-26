@@ -17,6 +17,7 @@ class Event extends Model
         'categoryId',
         'date_from',
         'date_to',
+        'isDeleted',
     ];
 
     public function user()

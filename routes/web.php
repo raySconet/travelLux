@@ -40,7 +40,8 @@ Route::post('/categories', [CategoryController::class, 'store'])->name('categori
 Route::get('/getUsers', [UserController::class, 'index']);
 
 Route::post('/getEvents', [EventController::class, 'index']);
-Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
+Route::put('/eventUpdate/{event}', [EventController::class, 'update'])->name('event.update');
+Route::put('/eventDelete/{event}', [EventController::class, 'delete'])->name('event.delete');
 
 Route::post('/getCases', [CourtCasesController::class, 'index']);
 

@@ -13,6 +13,8 @@ class EventController extends Controller
     public function index(Request $request) {
         $eventId = $request->input('event_case_id');
 
+        $currentUser = auth()->user();
+
         if ($eventId) {
             $event = Event::with(['categorie:id,categoryName,color', 'user:id,name'])
                 ->select(['id', 'title', 'user_id', 'categoryId', 'date_from', 'date_to'])
@@ -23,8 +25,6 @@ class EventController extends Controller
             if (!$event) {
                 return response()->json(['error' => 'Event not found'], 404);
             }
-
-            $currentUser = auth()->user();
 
             if ($event->user_id !== $currentUser->id && $currentUser->userPermission !== 'admin') {
                 return response()->json(['error' => 'Unauthorized access'], 403);
@@ -56,6 +56,11 @@ class EventController extends Controller
             ->where('isDeleted', 0)
             ->whereBetween('date_from', [$startDate, $endDate])
             ->get();
+
+        $events->transform(function ($event) use ($currentUser) {
+            $event->editable = ($currentUser->userPermission === 'admin' || $event->user_id === $currentUser->id);
+            return $event;
+        });
 
         // Find user_ids present in events
         $userIdsWithEvents = $events->pluck('user_id')->unique()->toArray();
@@ -139,7 +144,7 @@ class EventController extends Controller
 
     public function update(Request $request, Event $event) {
         if ($event->user_id !== auth()->id() && auth()->user()->userPermission !== 'admin') {
-            abort(403, 'Unauthorized');
+            return response()->json(['error' => 'Unauthorized access'], 403);
         }
 
         $fromDateRaw = str_replace('+', '', $request->input('fromDate'));
@@ -181,6 +186,24 @@ class EventController extends Controller
         return response()->json([
             'message' => 'Event updated successfully!',
             'event' => $event,
+        ]);
+    }
+
+    public function delete(Request $request, Event $event) {
+        if ($event->user_id !== auth()->id() && auth()->user()->userPermission !== 'admin') {
+            return response()->json(['error' => 'Unauthorized access'], 403);
+        }
+
+        $updated = $event->update([
+            'isDeleted' => 1,
+        ]);
+
+        if (!$updated) {
+            return response()->json(['error' => 'Failed to delete the event'], 500);
+        }
+
+        return response()->json([
+            'message' => 'Event has been deleted!',
         ]);
     }
 

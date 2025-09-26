@@ -393,6 +393,12 @@ $(document).ready(() => {
         $('#addEventCaseModal').addClass('hidden');
     });
 
+    $('#addEventCaseModal').on('hidden.bs.modal', function () {
+        $('#addEventCaseForm')[0].reset();
+        $('#userSelect').val([]).trigger('change');
+        eventCaseEditData = [];
+    });
+
     // Optional: Close when clicking outside modal content
     $('#addEventCaseModal').on('click', function(e) {
         if ($(e.target).is('#addEventCaseModal')) {
@@ -449,6 +455,10 @@ $(document).ready(() => {
 
     $('#closeSuccessModal').on('click', function() {
         $('#successModal').addClass('hidden');
+    });
+
+    $('#closeDeleteConfirmModal, #cancelDeleteBtn').on('click', function () {
+        $('#deleteConfirmModal').addClass('hidden');
     });
 
     // add event/case steps
@@ -654,13 +664,14 @@ $(document).ready(() => {
 
     $(document).on('click', '.iconPencil', function (event) {
         event.stopPropagation();  // Prevents bubbling to .eventCase
+
         const eventCaseId = $(this).data('id');
         const eventType = $(this).data('type');
         const arrowPlane = '<i class="fa-solid fa-paper-plane"></i>';
 
         $('#eventCaseType').addClass('hidden');
-        console.log($('input[name="type"]:checked').val());
         $('#headerIcon').removeClass('fa-solid fa-calendar-plus').addClass('fa-solid fa-pen-to-square');
+
         getUsersCategoriesAddEditCasesEvents(function () {
             if (eventType === 'event') {
                 $('input[name="type"][value="event"]').prop('checked', true);
@@ -694,7 +705,13 @@ $(document).ready(() => {
             </div>
         `);
 
-        getData(null, function () {
+        getData(null, function (err, data) {
+            if (err) {
+                $('#modalErrorContent').text(err.error);
+                $('#errorModal').removeClass('hidden');
+                return;
+            }
+
             const dateFrom = `${formatDateToMMDDYYYY(eventCaseEditData.date_from)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_from) : ''}`;
             const dateTo = `${formatDateToMMDDYYYY(eventCaseEditData.date_to)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_to) : ''}`;
 
@@ -702,14 +719,15 @@ $(document).ready(() => {
             $('input[name="fromDate"]').val(dateFrom);
             $('input[name="toDate"]').val(dateTo);
             $('select[name="category"]').val(eventCaseEditData.categoryId);
+
             if(eventType === 'case') {
                 const userIds = (eventCaseEditData.users || []).map(u => u.id.toString());
                 $('#userSelect').val(userIds).trigger('change');
             }
-            console.log($('#addEventCaseForm').serialize());
+            // console.log($('#addEventCaseForm').serialize());
+            $('#addEventCaseModal').removeClass('hidden');
         }, eventCaseId);
 
-        $('#addEventCaseModal').removeClass('hidden');
         console.log('Clicked case ID:', eventCaseId);
     });
 
@@ -724,6 +742,41 @@ $(document).ready(() => {
         console.log($('#addEventCaseForm').serialize());
     });
 
+    $(document).on('click', '#deleteEditEventCaseBtn', function(e) {
+        e.preventDefault();
+
+        const type = $('input[name="type"]:checked').val();
+        const id = $(this).data('id');
+
+        const routes = {
+            eventDelete: (id) => `eventDelete/${id}`,
+            caseDelete: (id) => `caseDelete/${id}`
+        };
+
+        let actionUrl = '';
+        let method = 'PUT';
+
+        if(type === 'event') {
+            actionUrl = routes.eventDelete(id);
+        } else if (type === 'case') {
+            actionUrl = routes.caseDelete(id);
+        }
+
+        $('#confirmDeleteBtn')
+        .data('action-url', actionUrl)
+        .data('method', method);
+
+        $('#addEventCaseModal').addClass('hidden');
+        $('#deleteConfirmModal').removeClass('hidden');
+    });
+
+    $(document).on('click', '#confirmDeleteBtn', function(e) {
+        const actionUrl = $(this).data('action-url');
+        const method = $(this).data('method');
+
+        deleteEditEventCase(actionUrl, method);
+    });
+
     $(document).on('click', '#submitEditEventCaseBtn', function(e) {
         e.preventDefault();
 
@@ -731,21 +784,21 @@ $(document).ready(() => {
         const id = $(this).data('id');
 
         const routes = {
-            eventsUpdate: (id) => `events/${id}`,
-            casesUpdate: (id) => `cases/${id}`
+            eventUpdate: (id) => `eventUpdate/${id}`,
+            caseUpdate: (id) => `caseUpdate/${id}`
         };
 
         let actionUrl = '';
         let method = 'PUT';
 
         if(type === 'event') {
-            actionUrl = routes.eventsUpdate(id);
+            actionUrl = routes.eventUpdate(id);
         } else if (type === 'case') {
             const selectedUserIds = Array.from($('#selectedUsers i[data-user-id')).map(el => el.dataset.userId);
             $('#userSelect option').each(function () {
                 $(this).prop('selected', selectedUserIds.includes(this.value));
             });
-            actionUrl = routes.casesUpdate(id);
+            actionUrl = routes.caseUpdate(id);
         }
 
         submitEditEventCase(actionUrl, method);
@@ -975,11 +1028,11 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             eventsToday.forEach(event => {
                 console.log('event::', event);
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
-                const iconPencil = `
+                const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
-                `;
+                ` : '';
                 dailyBody.append(`
                     <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <span>${event.title}</span>
@@ -1015,11 +1068,11 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             eventsUser1.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
-                const iconPencil = `
+                const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
-                `;
+                ` : '';
                 dailyBody.append(`
                     <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                         <span>${event.title}</span>
@@ -1039,11 +1092,11 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             eventsUser2.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
-                const iconPencil = `
+                const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
-                `;
+                ` : '';
                 bodyHidden.append(`
                     <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                         <span>${event.title}</span>
@@ -1094,11 +1147,11 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 }
 
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
-                const iconPencil = `
+                const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
-                `;
+                ` : '';
                 dailyBody.append(`
                     <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                         <span>${event.title}</span>
@@ -1214,11 +1267,11 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 
             if (eventsForDay.length) {
                 eventsForDay.forEach(event => {
-                    const iconPencil = `
+                    const iconPencil = event.editable ? `
                         <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                             <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                         </div>
-                    `;
+                    ` : '';
                     const eventDiv = $(`
                         <div class="relative text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <span>${event.title}</span>
@@ -1271,11 +1324,11 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             const eventsForDate = userRow1.events.filter(e => e.date === isoDate);
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
-                    const iconPencil = `
+                    const iconPencil =  event.editable ? `
                         <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                             <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                         </div>
-                    `;
+                    ` : '';
                     const eventDiv = $(`
                         <div class="relative text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <span>${event.title}</span>
@@ -1297,11 +1350,11 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             const eventsForDate = userRow2.events.filter(e => e.date === isoDate);
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
-                    const iconPencil = `
+                    const iconPencil = event.editable ? `
                         <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                             <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                         </div>
-                    `;
+                    ` : '';
                     const eventDiv = $(`
                         <div class="relative text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <span>${event.title}</span>
@@ -1383,6 +1436,7 @@ function getEventsForDate(eventsData) {
                 color,
                 user: userName,
                 type: isCase ? 'case' : 'event',
+                editable: item.editable,
                 // caseId: caseId,
                 isDuplicate: item.isDuplicate || false  // ⬅️ Keep this flag
             });
@@ -1488,12 +1542,12 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     if (event.isDuplicate) {
                         return; // ❌ Skip in UI, but kept in data
                     }
-                    // console.log(event.color);
-                    const iconPencil = `
-                        <div class="iconPencil absolute right-1 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                    // console.log(event);
+                    const iconPencil = event.editable ? `
+                        <div class="iconPencil absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                             <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                         </div>
-                    `;
+                    ` : '';
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <div class="relative">
@@ -1846,8 +1900,23 @@ function getData(ids, callback, eventCaseId = null) {
         error: function (xhr) {
             console.error(`Error fetching ${dataType}:`, xhr);
 
+            let errorMsg = 'Unknown error occurred';
+
+            // Try to parse error message from JSON response
+            try {
+                const response = JSON.parse(xhr.responseText);
+                if (response && response.error) {
+                    errorMsg = response.error;
+                }
+            } catch (e) {
+                // parsing failed, keep default errorMsg
+            }
+
+            // if (typeof callback === "function") {
+            //     callback(xhr);
+            // }
             if (typeof callback === "function") {
-                callback(xhr);
+                callback({ error: errorMsg }, null);
             }
         }
     });
@@ -2096,6 +2165,70 @@ function submitEditEventCase(actionUrl, method) {
                 <i class="fa-solid fa-paper-plane"></i>
                 <span class="ml-1">
                     Save
+                </span>
+            `);
+        }
+    });
+}
+
+function deleteEditEventCase(actionUrl, method) {
+    const $form = $('#addEventCaseForm');
+    const $button = $('#confirmDeleteBtn');
+
+    $('#modalErrorContent').empty();
+    $('#errorModal').addClass('hidden');
+
+    $button.prop('disabled', true).html(`
+        <span class="ml-1">
+            Deleting...
+        </span>
+    `);
+
+    $('.input-error-text').remove();
+    $('input, select').removeClass('border-red-500');
+
+    $.ajax({
+        type: method,
+        url: actionUrl,
+        data: $form.serialize(),
+        dataType: 'json',
+        success: function (response) {
+            $form[0].reset();
+            $('#deleteConfirmModal').addClass('hidden');
+            $('#modalSuccessContent').html(response.message);
+            $('#successModal').removeClass('hidden');
+            refreshCalendar();
+        },
+        error: function (xhr) {
+            if (xhr.status) {
+                const errors = xhr.responseJSON.errors;
+
+                // Loop over errors and display inline
+                $.each(errors, function (field, messages) {
+                    let $input = $form.find(`[name="${field}"]`);
+
+                    if ($input.length === 0) {
+                        // Handle array-like error field names like user.0, user.1
+                        const baseField = field.split('.')[0];
+                        $input = $form.find(`[name="${baseField}[]"], [name="${baseField}"]`);
+                    }
+
+                    $input.addClass('border-red-500');
+
+                    // if(field === "user") {
+                    //     $("#selectedUsers").addClass("border-red-500");
+                    // }
+
+                    if ($input.next('.input-error-text').length === 0) {
+                        $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
+                    }
+                });
+            }
+        },
+        complete: function () {
+            $button.prop('disabled', false).html(`
+                <span class="ml-1">
+                    YES, DELETE
                 </span>
             `);
         }

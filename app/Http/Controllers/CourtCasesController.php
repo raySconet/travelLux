@@ -14,6 +14,7 @@ class CourtCasesController extends Controller
     public function index(Request $request)
     {
         $caseId = $request->input('event_case_id');
+        $currentUser = auth()->user();
 
         if ($caseId) {
             $userCases = UserCase::with([
@@ -27,8 +28,13 @@ class CourtCasesController extends Controller
                 return response()->json(['error' => 'Case not found or has no users assigned'], 404);
             }
 
-            // Get the case info from the first item
             $case = $userCases->first()->case;
+
+            $assignedUserIds = $userCases->pluck('user_id')->toArray();
+
+            if (!in_array($currentUser->id, $assignedUserIds) && $currentUser->userPermission !== 'admin') {
+                return response()->json(['error' => 'Unauthorized access'], 403);
+            }
 
             $transformed = [
                 'id' => $case->id,
@@ -96,6 +102,26 @@ class CourtCasesController extends Controller
                 })
                 ->get();
         }
+
+        $userCases->transform(function ($event) use ($currentUser) {
+            if (!$event->case) {
+                $event->editable = false;
+                return $event;
+            }
+
+            // Get all assigned user IDs for this case (via loaded relationship)
+            $assignedUserIds = $event->case->users->pluck('id')->toArray();  // assuming case->users relationship
+
+            $isAdmin = $currentUser->userPermission === 'admin';
+            $isAssigned = in_array($currentUser->id, $assignedUserIds);
+
+            // Optionally, check if creator if you track it
+            $isCreator = $event->case->created_by === $currentUser->id;
+
+            $event->editable = $isAdmin || $isAssigned || $isCreator;
+            return $event;
+        });
+
         // Users who had at least one case
         $userIdsWithCases = $userCases->pluck('user_id')->unique()->toArray();
 

@@ -16,6 +16,7 @@ class CourtCase extends Model
         'categoryId',
         'dateFrom',
         'dateTo',
+        'isDeleted'
     ];
 
     public function todoSection()

@@ -1558,7 +1558,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <div class="relative">
-                                <span>${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
+                                <span class="inline-block max-w-[200px] truncate align-middle">${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
                                 ${iconPencil}
                             </div>
                             <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10">

@@ -1,5 +1,11 @@
 $(document).ready(() => {
-    getUsers();
+    getUsers(function () {
+        getEventsCases(function(data) {
+            console.log("Received data:", data);
+            renderEventCases(data);
+        });
+    });
+
     $('#openDrawer').on('click', function () {
         $('#sidebarDrawer').removeClass('-translate-x-full');
 
@@ -62,6 +68,10 @@ $(document).ready(() => {
 
         // Check the clicked one
         $(this).prop('checked', true);
+        getEventsCases(function(data) {
+            console.log("Received data:", data);
+            renderEventCases(data);
+        });
 
         console.log('Selected User ID:', $(this).data('user-id'));
     });
@@ -202,7 +212,7 @@ $(document).ready(() => {
     // renderEventCases(data);
 });
 
-function getEventsCases() {
+function getEventsCases(callback) {
     const checkedBox = $('.lawyersCheckboxSection input[type="checkbox"]:checked');
     const userId = checkedBox.data('user-id');
 
@@ -217,16 +227,15 @@ function getEventsCases() {
         data: { user_id: userId },
         method: 'GET',
         success: function (response) {
+            console.log("error");
             if (typeof callback === 'function') {
                 callback(response);
             }
         },
-        error: function () {
-            if (err) {
-                $('#modalErrorContent').text(err.error || 'Error loading data');
-                $('#errorModal').removeClass('hidden');
-                return;
-            }
+        error: function (xhr) {
+            const errorMsg = xhr.responseJSON?.error || 'Error loading data';
+            $('#modalErrorContent').text(errorMsg);
+            $('#errorModal').removeClass('hidden');
         }
     });
 }
@@ -324,7 +333,7 @@ function darkenHexColor(hex, percent) {
     return `#${r}${g}${b}`;
 }
 
-function getUsers() {
+function getUsers(callback) {
     $.ajax({
         url: '/getUsers',
         method: 'GET',
@@ -366,6 +375,11 @@ function getUsers() {
                     </label>
                 </li>
             `);
+        },
+        complete: function () {
+            if (typeof callback === 'function') {
+                callback();
+            }
         }
     });
 }

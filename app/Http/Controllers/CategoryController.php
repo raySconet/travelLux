@@ -53,9 +53,9 @@ class CategoryController extends Controller
 
         $targetUserId = $requestUserId ?? $authUser->id;
 
-        if($authUser->userPermission !== 'admin' && $authUser->id != $targetUserId) {
-            return response()->json(['error' => 'Unauthorized access'], 403);
-        }
+        // if($authUser->userPermission !== 'admin' && $authUser->id != $targetUserId) {
+        //     return response()->json(['error' => 'Unauthorized access'], 403);
+        // }
 
         $categories = Categorie::getActiveCategories();
 

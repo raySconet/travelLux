@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categorie;
 use App\Models\Event;
 use App\Models\User;
 use Carbon\Carbon;
@@ -16,7 +17,25 @@ class EventController extends Controller
         $currentUser = auth()->user();
 
         if ($eventId) {
-            $event = Event::with(['categorie:id,categoryName,color', 'user:id,name'])
+            // $event = Event::with(['categorie:id,categoryName,color', 'user:id,name'])
+            //     ->select(['id', 'title', 'user_id', 'categoryId', 'date_from', 'date_to'])
+            //     ->where('id', $eventId)
+            //     ->where('isDeleted', 0)
+            //     ->first();
+
+            // if (!$event) {
+            //     return response()->json(['error' => 'Event not found'], 404);
+            // }
+
+            // if ($event->user_id !== $currentUser->id && $currentUser->userPermission !== 'admin') {
+            //     return response()->json(['error' => 'Unauthorized access'], 403);
+            // }
+
+            // return response()->json($event);
+            $event = Event::with([
+                'categorie:id,categoryName,color',
+                'user:id,name'
+            ])
                 ->select(['id', 'title', 'user_id', 'categoryId', 'date_from', 'date_to'])
                 ->where('id', $eventId)
                 ->where('isDeleted', 0)
@@ -30,7 +49,16 @@ class EventController extends Controller
                 return response()->json(['error' => 'Unauthorized access'], 403);
             }
 
-            return response()->json($event);
+            // Get all users and categories
+            $users = User::getActiveUsers(); // You already have this
+            $categories = Categorie::getActiveCategories(); // You already have this
+
+            return response()->json([
+                'eventCase' => $event,
+                'users' => $users,
+                'categories' => $categories,
+                'auth_user_id' => $currentUser->id,
+            ]);
         }
 
         $userIds = $request->input('user_id');

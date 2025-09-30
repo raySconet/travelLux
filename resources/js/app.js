@@ -12,3 +12,11 @@ flatpickr(".datetimepicker", {
     time_24hr: true,
     // defaultDate: new Date(),
 });
+
+$(document).ajaxStart(function () {
+    $('#ajaxLoader').removeClass('hidden');
+});
+
+$(document).ajaxStop(function () {
+    $('#ajaxLoader').addClass('hidden');
+});

@@ -674,14 +674,14 @@ $(document).ready(() => {
         $('.input-error-text').remove();
         $('input, select').removeClass('border-red-500');
 
-        getUsersCategoriesAddEditCasesEvents(function () {
-            if (eventType === 'event') {
-                $('input[name="type"][value="event"]').prop('checked', true);
-            } else if (eventType === 'case') {
-                $('input[name="type"][value="case"]').prop('checked', true);
-            }
-            updateUserSelectMode();
-        });
+        // getUsersCategoriesAddEditCasesEvents(function () {
+        if (eventType === 'event') {
+            $('input[name="type"][value="event"]').prop('checked', true);
+        } else if (eventType === 'case') {
+            $('input[name="type"][value="case"]').prop('checked', true);
+        }
+        updateUserSelectMode();
+        // });
 
         const type = eventType === 'event' ? 'Event' : 'Case';
         $('.addEventCaseModalTitle').text(`Edit ${type}`);
@@ -708,26 +708,78 @@ $(document).ready(() => {
             </div>
         `);
 
+        // getData(null, function (err, data) {
+            //     if (err) {
+            //         $('#modalErrorContent').text(err.error);
+            //         $('#errorModal').removeClass('hidden');
+            //         return;
+            //     }
+
+            //     const dateFrom = `${formatDateToMMDDYYYY(eventCaseEditData.date_from)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_from) : ''}`;
+            //     const dateTo = `${formatDateToMMDDYYYY(eventCaseEditData.date_to)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_to) : ''}`;
+
+            //     $('input[name="title"]').val(eventCaseEditData.title);
+            //     $('input[name="fromDate"]').val(dateFrom);
+            //     $('input[name="toDate"]').val(dateTo);
+            //     $('select[name="category"]').val(eventCaseEditData.categoryId);
+
+            //     if(eventType === 'case') {
+            //         const userIds = (eventCaseEditData.users || []).map(u => u.id.toString());
+            //         $('#userSelect').val(userIds).trigger('change');
+            //     }
+            //     // console.log($('#addEventCaseForm').serialize());
+            //     $('#addEventCaseModal').removeClass('hidden');
+        // }, eventCaseId);
+
         getData(null, function (err, data) {
             if (err) {
-                $('#modalErrorContent').text(err.error);
+                $('#modalErrorContent').text(err.error || 'Error loading data');
                 $('#errorModal').removeClass('hidden');
                 return;
             }
 
+            console.log("heloo",data);
+            const eventCaseEditData = data.eventCase; console.log(eventCaseEditData);
+            const users = data.users || [];
+            const categories = data.categories || [];
+
+            // ✅ Populate categories dropdown
+            const $categorySelect = $('#categorySelect');
+            $categorySelect.empty().append('<option value="-1">Select a category</option>');
+            categories.forEach(category => {
+                $categorySelect.append(`<option value="${category.id}">${category.categoryName}</option>`);
+            });
+
+            // ✅ Populate users dropdown
+            const $userSelect = $('#userSelect');
+            $userSelect.empty();
+            users.forEach(user => {
+                $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
+            });
+
+            // ✅ Select correct type
+            if (eventType === 'event') {
+                $('input[name="type"][value="event"]').prop('checked', true);
+            } else {
+                $('input[name="type"][value="case"]').prop('checked', true);
+            }
+
+            updateUserSelectMode();
+
+            // ✅ Fill form with existing data
             const dateFrom = `${formatDateToMMDDYYYY(eventCaseEditData.date_from)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_from) : ''}`;
             const dateTo = `${formatDateToMMDDYYYY(eventCaseEditData.date_to)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_to) : ''}`;
 
             $('input[name="title"]').val(eventCaseEditData.title);
             $('input[name="fromDate"]').val(dateFrom);
             $('input[name="toDate"]').val(dateTo);
-            $('select[name="category"]').val(eventCaseEditData.categoryId);
+            $categorySelect.val(eventCaseEditData.categoryId);
 
-            if(eventType === 'case') {
+            if (eventType === 'case') {
                 const userIds = (eventCaseEditData.users || []).map(u => u.id.toString());
-                $('#userSelect').val(userIds).trigger('change');
+                $userSelect.val(userIds).trigger('change');
             }
-            // console.log($('#addEventCaseForm').serialize());
+
             $('#addEventCaseModal').removeClass('hidden');
         }, eventCaseId);
 
@@ -1032,12 +1084,12 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 console.log('event::', event);
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
-                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
                 ` : '';
                 dailyBody.append(`
-                    <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
+                    <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <span>${event.title}</span>
                             ${timeRange}
                             ${iconPencil}
@@ -1073,12 +1125,12 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             eventsUser1.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
-                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
                 ` : '';
                 dailyBody.append(`
-                    <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
+                    <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                         <span>${event.title}</span>
                         ${timeRange}
                         ${iconPencil}
@@ -1097,12 +1149,12 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             eventsUser2.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
-                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
                 ` : '';
                 bodyHidden.append(`
-                    <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
+                    <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                         <span>${event.title}</span>
                         ${timeRange}
                         ${iconPencil}
@@ -1155,12 +1207,12 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
-                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                    <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                     </div>
                 ` : '';
                 dailyBody.append(`
-                    <div class="relative text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
+                    <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                         <span>${event.title}</span>
                         ${timeRange}
                         ${iconPencil}
@@ -1275,12 +1327,12 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             if (eventsForDay.length) {
                 eventsForDay.forEach(event => {
                     const iconPencil = event.editable ? `
-                        <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                        <div class="iconPencil absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                             <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                         </div>
                     ` : '';
                     const eventDiv = $(`
-                        <div class="relative text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
+                        <div class="relative group text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <span>${event.title}</span>
                             ${iconPencil}
                         </div>
@@ -1331,13 +1383,14 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             const eventsForDate = userRow1.events.filter(e => e.date === isoDate);
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
+                    console.log(event.editable);
                     const iconPencil =  event.editable ? `
-                        <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                        <div class="iconPencil absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                             <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                         </div>
                     ` : '';
                     const eventDiv = $(`
-                        <div class="relative text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
+                        <div class="relative group text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <span>${event.title}</span>
                             ${iconPencil}
                         </div>
@@ -1358,12 +1411,12 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             if (eventsForDate.length) {
                 eventsForDate.forEach(event => {
                     const iconPencil = event.editable ? `
-                        <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
+                        <div class="iconPencil absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                             <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
                         </div>
                     ` : '';
                     const eventDiv = $(`
-                        <div class="relative text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
+                        <div class="relative group text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <span>${event.title}</span>
                             ${iconPencil}
                         </div>
@@ -1558,7 +1611,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <div class="relative">
-                                <span class="inline-block max-w-[200px] truncate align-middle">${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
+                                <span>${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
                                 ${iconPencil}
                             </div>
                             <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10">
@@ -1892,16 +1945,26 @@ function getData(ids, callback, eventCaseId = null) {
         data: requestData,
         dataType: 'json',
         success: function (response) {
-            console.log(response);
-            if(ids) {
-                eventsData = getEventsForDate(response || []); // You may rename this for generality
-            } else {
-                eventCaseEditData = response;
-            }
-            // console.log(`${dataType} saved to global:`, eventsData);
+            // console.log(response);
+            // if(ids) {
+            //     eventsData = getEventsForDate(response || []); // You may rename this for generality
+            // } else {
+            //     eventCaseEditData = response;
+            // }
+            // // console.log(`${dataType} saved to global:`, eventsData);
 
+            // if (typeof callback === "function") {
+            //     callback(null, eventsData);
+            // }
             if (typeof callback === "function") {
-                callback(null, eventsData);
+                if (eventCaseId) {
+                    // ✅ Return full response object for single event/case
+                    callback(null, response);
+                } else {
+                    // ✅ Process and return list
+                    eventsData = getEventsForDate(response || []);
+                    callback(null, eventsData);
+                }
             }
         },
         error: function (xhr) {
@@ -2038,51 +2101,83 @@ function getUsersCategoriesAddEditCasesEvents(callback) {
     $categorySelect.html('<option value="-1" disabled selected>Loading...</option>')
     $userSelect.html('<option value="-1" disabled selected>Loading...</option>')
 
-    const categoriesAjax = $.ajax({
-        url: '/getCategories',
-        method: 'GET',
-        success: function (categories) {
-            // console.log(categories);
-            $categorySelect.empty();
-            $categorySelect.append('<option value="-1">Select a category</option>');
+    // const categoriesAjax = $.ajax({
+    //     url: '/getCategories',
+    //     method: 'GET',
+    //     success: function (categories) {
+    //         // console.log(categories);
+    //         $categorySelect.empty();
+    //         $categorySelect.append('<option value="-1">Select a category</option>');
 
+    //         categories.forEach(function (category) {
+    //             $categorySelect.append(`<option value="${category.id}">${category.categoryName}</option>`);
+    //         });
+
+    //         updateUserSelectMode();
+    //     },
+    //     error: function () {
+    //         $categorySelect.html('<option value="-1" disabled selected>Error loading categories</option>');
+    //     }
+    // });
+
+    // const usersAjax = $.ajax({
+    //     url: '/getUsers',
+    //     method: 'GET',
+    //     success: function (response) {
+    //         const users = response.users || [];
+    //         // console.log(users);
+    //         $userSelect.empty();
+    //         // $userSelect.append('<option value="-1">Select an user(s)</option>');
+
+    //         users.forEach(function (user) {
+    //             // console.log(user);
+    //             $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
+    //         });
+
+    //         updateUserSelectMode();
+    //     },
+    //     error: function () {
+    //         $userSelect.html('<option value="-1" disabled selected>Error loading users</option>');
+    //     }
+    // });
+
+    $.ajax({
+        url: '/getUsersCategories',
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            const categories = response.categories || [];
+            const users = response.users || [];
+
+            // ✅ Populate categories
+            $categorySelect.empty().append('<option value="-1">Select a category</option>');
             categories.forEach(function (category) {
                 $categorySelect.append(`<option value="${category.id}">${category.categoryName}</option>`);
             });
 
-            updateUserSelectMode();
-        },
-        error: function () {
-            $categorySelect.html('<option value="-1" disabled selected>Error loading categories</option>');
-        }
-    });
-
-    const usersAjax = $.ajax({
-        url: '/getUsers',
-        method: 'GET',
-        success: function (response) {
-            const users = response.users || [];
-            // console.log(users);
+            // ✅ Populate users
             $userSelect.empty();
-            // $userSelect.append('<option value="-1">Select an user(s)</option>');
-
             users.forEach(function (user) {
-                // console.log(user);
                 $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
             });
 
             updateUserSelectMode();
+
+            if (typeof callback === 'function') {
+                callback();
+            }
         },
         error: function () {
+            $categorySelect.html('<option value="-1" disabled selected>Error loading categories</option>');
             $userSelect.html('<option value="-1" disabled selected>Error loading users</option>');
         }
     });
 
-    $.when(categoriesAjax, usersAjax).done(function () {
-        if (typeof callback === 'function') {
-            callback();
-        }
-    });
+    // $.when(categoriesAjax, usersAjax).done(function () {
+    //     if (typeof callback === 'function') {
+    //         callback();
+    //     }
+    // });
 }
 
 function formatDateToMMDDYYYY(datetimeStr) {

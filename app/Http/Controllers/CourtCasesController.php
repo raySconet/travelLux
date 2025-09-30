@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categorie;
 use App\Models\CourtCase;
 use App\Models\User;
 use App\Models\UserCase;
@@ -56,7 +57,17 @@ class CourtCasesController extends Controller
                 })->values(),
             ];
 
-            return response()->json($transformed);
+            $users = User::getActiveUsers(); // You already have this
+            $categories = Categorie::getActiveCategories(); // You already have this
+
+            return response()->json([
+                'eventCase' => $transformed,
+                'users' => $users,
+                'categories' => $categories,
+                'auth_user_id' => $currentUser->id,
+            ]);
+
+            // return response()->json($transformed);
         }
 
         $userIds = $request->input('user_id');

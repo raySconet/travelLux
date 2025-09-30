@@ -84,4 +84,9 @@
         id="refreshCalendarIcon"
         title="Refresh Calendar"></i>
     </div>
+
+    <div id="ajaxLoader" class="fixed top-0 left-0 w-full h-full z-50 flex items-center justify-center hidden"
+        style="background-color: rgba(0, 0, 0, 0.2);">
+        <div class="loader h-12 w-12 border-4 border-t-[#14548d] border-gray-200 rounded-full animate-spin"></div>
+    </div>
 </x-app-layout>

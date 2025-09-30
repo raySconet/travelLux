@@ -293,6 +293,8 @@ function renderEventCases(data) {
             $categoryContent.append($noItemsPanel);
         } else {
             category.items.forEach(item => {
+                const fromFormatted = formatCustomDate(item.from);
+                const toFormatted = formatCustomDate(item.to);
                 const $panel = $(`
                     <div class="grid grid-cols-12 gap-2 mb-1">
                         <div class="col-span-2 flex gap-2">
@@ -300,8 +302,8 @@ function renderEventCases(data) {
                             <label class="my-auto">${item.tag}</label>
                         </div>
                         <div class="col-span-6 my-auto">${item.description}</div>
-                        <div class="col-span-2 my-auto">${item.from}</div>
-                        <div class="col-span-2 my-auto">${item.to}</div>
+                        <div class="col-span-2 my-auto">${fromFormatted}</div>
+                        <div class="col-span-2 my-auto">${toFormatted}</div>
                     </div>
                 `);
                 $categoryContent.append($panel);
@@ -382,4 +384,47 @@ function getUsers(callback) {
             }
         }
     });
+}
+
+function formatCustomDate(dateStr) {
+    if (!dateStr) return '';
+
+    const hasTime = dateStr.includes('T') || dateStr.includes(' ');
+    let date;
+
+    if (hasTime) {
+        date = new Date(dateStr);
+    } else {
+        // Create a date in local timezone at 12:00 AM
+        const parts = dateStr.split('-');
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // Month is 0-based
+        const day = parseInt(parts[2], 10);
+        date = new Date(year, month, day, 0, 0, 0);
+    }
+
+    if (isNaN(date)) return dateStr;
+
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const day = days[date.getDay()];
+
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const yyyy = date.getFullYear();
+
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let ampm = 'AM';
+
+    if (hours >= 12) {
+        ampm = 'PM';
+        if (hours > 12) hours -= 12;
+    } else if (hours === 0) {
+        hours = 12;
+    }
+
+    const hh = String(hours).padStart(2, '0');
+    const min = String(minutes).padStart(2, '0');
+
+    return `${day} ${mm}/${dd}/${yyyy} ${hh}:${min}${ampm}`;
 }

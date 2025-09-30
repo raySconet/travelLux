@@ -90,7 +90,6 @@
         @if(request()->is('calendar') || request()->is('calendar/*')) {{-- added by rony the king  --}}
             @vite('resources/css/calendar.css')
             @vite('resources/js/calendar.js')
-
         @endif
 
         @if(request()->is('category') || request()->is('category/*')) {{-- added by rony --}}

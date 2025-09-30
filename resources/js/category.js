@@ -198,212 +198,37 @@ $(document).ready(() => {
         });
     });
 
-    const data = getEventsCases();
-    renderEventCases(data);
+    // const data = getEventsCases();
+    // renderEventCases(data);
 });
 
 function getEventsCases() {
-    const categories = [
-        {
-            id: "1",
-            panelId: "panel1",
-            label: "Discharged",
-            colorClass: "#aa2c41",
-            items: [
-                {
-                    tag: "DISCHARGED",
-                    description: "NA - DISCHARGED - MICHAEL THOMAS + JANE THOMAS (11 yrs)",
-                    from: "Mon 8/18/2025 08:00 AM",
-                    to: "Mon 8/18/2025 10:00 AM"
-                },
-                {
-                    tag: "DISCHARGED",
-                    description: "HRM - DISCHARGED - CLARA LOPEZ *VOLUNTARY RELEASE*",
-                    from: "Thu 8/21/2025 01:30 PM",
-                    to: "Thu 8/21/2025 02:00 PM"
-                }
-            ]
-        },
-        {
-            id: "2",
-            panelId: "panel2",
-            label: "FS",
-            colorClass: "#22c55e",  // green-500
-            items: [
-                {
-                    tag: "FS",
-                    description: "HRM - FS - KIMBERLY JOHNSON + jeremiah johnson (9 yrs) *COMMERCIAL*",
-                    from: "Thu 8/7/2025 12:00 AM",
-                    to: "Fri 8/8/2025 12:00 AM"
-                },
-                {
-                    tag: "FS",
-                    description: "HRM - LIT - BRANDYE BEST *COMMERCIAL*",
-                    from: "Fri 8/1/2025 12:00 AM",
-                    to: "Sat 8/2/2025 12:00 AM"
-                },
-                {
-                    tag: "FS",
-                    description: "NA - FS - CESAR BORUNDA cesar + cesar alexander borunda (12 yrs) $50K",
-                    from: "Mon 7/28/2025 12:00 AM",
-                    to: "Tue 7/29/2025 12:00 AM"
-                },
-                {
-                    tag: "FS",
-                    description: "SB*** - FS - JOSE SOLORZANO $100K",
-                    from: "Thu 7/24/2025 12:00 AM",
-                    to: "Fri 7/25/2025 12:00 AM"
-                },
-                {
-                    tag: "FS",
-                    description: "SB*** - FS - ALMA GOMEZ $60K",
-                    from: "Thu 7/24/2025 12:00 AM",
-                    to: "Fri 7/25/2025 12:00 AM"
-                }
-            ]
-        },
-        {
-            id: "3",
-            panelId: "panel3",
-            label: "Meeting",
-            colorClass: "#3b82f6",  // blue-500
-            items: [
-                {
-                    tag: "MTG",
-                    description: "HRM - MTG - TEAM STRATEGY SESSION - JOHN DOE + SARAH LEE",
-                    from: "Mon 9/8/2025 09:00 AM",
-                    to: "Mon 9/8/2025 10:30 AM"
-                },
-                {
-                    tag: "MTG",
-                    description: "NA - MTG - CLIENT KICKOFF - LISA KIM + PRODUCT TEAM *INTERNAL*",
-                    from: "Wed 9/10/2025 13:00 PM",
-                    to: "Wed 9/10/2025 14:00 PM"
-                },
-                {
-                    tag: "MTG",
-                    description: "SB - MTG - VENDOR REVIEW - JAMES NGUYEN + PROCUREMENT",
-                    from: "Fri 9/12/2025 15:00 PM",
-                    to: "Fri 9/12/2025 16:30 PM"
-                }
-            ]
-        },
-        {
-            id: "4",
-            panelId: "panel4",
-            label: "Released",
-            colorClass: "#eab308",  // yellow-500
-            items: [
-                {
-                    tag: "RELEASED",
-                    description: "HRM - RELEASE - EMILY CARTER *FINALIZED CONTRACT*",
-                    from: "Tue 8/5/2025 10:00 AM",
-                    to: "Tue 8/5/2025 10:15 AM"
-                }
-            ]
-        },
-        {
-            id: "5",
-            panelId: "panel5",
-            label: "Pending",
-            colorClass: "#ec4899",  // pink-500
-            items: []
-        },
-        {
-            id: "6",
-            panelId: "panel6",
-            label: "Cancelled",
-            colorClass: "#6b7280",  // gray-500
-            items: []
-        },
-        {
-            id: "7",
-            panelId: "panel7",
-            label: "Hearings",
-            colorClass: "#6366f1",  // indigo-500
-            items: []
-        },
-        {
-            id: "8",
-            panelId: "panel8",
-            label: "Depos",
-            colorClass: "#8b5cf6",  // purple-500
-            items: []
-        },
-        {
-            id: "9",
-            panelId: "panel9",
-            label: "Mediation",
-            colorClass: "#14b8a6",  // teal-500
-            items: []
-        },
-        {
-            id: "10",
-            panelId: "panel10",
-            label: "Docket Call",
-            colorClass: "#f97316",  // orange-500
-            items: []
-        },
-        {
-            id: "11",
-            panelId: "panel11",
-            label: "Lit",
-            colorClass: "#f43f5e",  // rose-500
-            items: []
-        },
-        {
-            id: "12",
-            panelId: "panel12",
-            label: "Lit Deadlines",
-            colorClass: "#f59e0b",  // amber-500
-            items: []
-        },
-        {
-            id: "13",
-            panelId: "panel13",
-            label: "Negotiating",
-            colorClass: "#10b981",  // emerald-500
-            items: []
-        },
-        {
-            id: "14",
-            panelId: "panel14",
-            label: "New Referral",
-            colorClass: "#06b6d4",  // cyan-500
-            items: []
-        },
-        {
-            id: "15",
-            panelId: "panel15",
-            label: "Other",
-            colorClass: "#71717a",  // zinc-500
-            items: []
-        },
-        {
-            id: "16",
-            panelId: "panel16",
-            label: "SOL",
-            colorClass: "#84cc16",  // lime-500
-            items: []
-        },
-        {
-            id: "17",
-            panelId: "panel17",
-            label: "To Do",
-            colorClass: "#d946ef",  // fuchsia-500
-            items: []
-        },
-        {
-            id: "18",
-            panelId: "panel18",
-            label: "Treating",
-            colorClass: "#0ea5e9",  // sky-500
-            items: []
-        },
-    ];
+    const checkedBox = $('.lawyersCheckboxSection input[type="checkbox"]:checked');
+    const userId = checkedBox.data('user-id');
 
+    if (!userId) {
+        $('#modalErrorContent').text('Please select a user first.');
+        $('#errorModal').removeClass('hidden');
+        return;
+    }
 
-    return categories;
+    $.ajax({
+        url: '/getEventsCases',
+        data: { user_id: userId },
+        method: 'GET',
+        success: function (response) {
+            if (typeof callback === 'function') {
+                callback(response);
+            }
+        },
+        error: function () {
+            if (err) {
+                $('#modalErrorContent').text(err.error || 'Error loading data');
+                $('#errorModal').removeClass('hidden');
+                return;
+            }
+        }
+    });
 }
 
 function renderEventCases(data) {
@@ -531,7 +356,6 @@ function getUsers() {
                 `;
                 $lawyersList.append(lawyerHtml);
             });
-            initializeCheckedOrder();
         },
         error: function () {
             $('#lawyersList').empty();

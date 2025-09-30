@@ -29,6 +29,11 @@ class CourtCase extends Model
         return $this->belongsToMany(User::class, 'user_case', 'case_id', 'user_id')->withTimestamps();
     }
 
+    public function userCases()
+    {
+        return $this->hasMany(UserCase::class, 'case_id', 'id');
+    }
+
     // Belongs to a category
     public function categorie()
     {

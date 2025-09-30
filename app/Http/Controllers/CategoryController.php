@@ -57,21 +57,21 @@ class CategoryController extends Controller
             return response()->json(['error' => 'Unauthorized access'], 403);
         }
 
-        $cases = CourtCase::where('isDeleted', 0)
-                ->whereHas('userCases', function ($query) use ($targetUserId) {
-                    $query->where('user_id', $targetUserId)
-                            ->where('isDeleted', 0);
-                })
-                ->get()
-                ->map(function ($case) {
-                    return [
-                        'id' => $case->id,
-                        'type' => 'case',
-                        'title' => $case->caseTitle,
-                        'date' => $case->dateFrom,
-                        'raw' => $case,
-                    ];
-                });
+       $cases = CourtCase::where('isDeleted', 0)
+    ->whereHas('userCases', function ($query) use ($targetUserId) {
+        $query->where('user_id', $targetUserId)
+              ->where('isDeleted', 0);
+    })
+    ->get()
+    ->map(function ($case) {
+        return [
+            'id' => $case->id,
+            'type' => 'case',
+            'title' => $case->caseTitle,
+            'date' => $case->dateFrom,
+            'raw' => $case,
+        ];
+    });
 
         $events = Event::where('isDeleted', 0)
                 ->where('user_id', $targetUserId)

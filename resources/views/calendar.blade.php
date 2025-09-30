@@ -1,4 +1,3 @@
-@vite('resources/css/calendar.css')
 
 <x-app-layout>
     <x-slot name="header">

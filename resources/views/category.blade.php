@@ -1,4 +1,3 @@
-@vite('resources/css/category.css')
 
 <x-app-layout>
     <x-slot name="header">

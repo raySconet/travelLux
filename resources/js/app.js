@@ -14,9 +14,9 @@ flatpickr(".datetimepicker", {
 });
 
 $(document).ajaxStart(function () {
-    $('#ajaxLoader').removeClass('hidden');
+    $('#ajaxLoader').fadeIn();
 });
 
 $(document).ajaxStop(function () {
-    $('#ajaxLoader').addClass('hidden');
+    $('#ajaxLoader').fadeOut(300);
 });

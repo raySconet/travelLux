@@ -22,6 +22,7 @@ class CourtCasesController extends Controller
                 'case.categorie:id,categoryName,color'
             ])
             ->where('case_id', $caseId)
+            ->where('isdeleted', 0)
             ->get();
 
             if ($userCases->isEmpty()) {
@@ -100,6 +101,7 @@ class CourtCasesController extends Controller
                     $query->where('isDeleted', 0)
                         ->whereBetween('dateFrom', [$startDate, $endDate]);
                 })
+                // ->where('isdeleted', 0)
                 ->get();
         }
 
@@ -202,6 +204,126 @@ class CourtCasesController extends Controller
         return response()->json([
             'message' => 'Case created successfully!',
             'case' => $case,
+        ]);
+    }
+
+    public function update(Request $request, CourtCase $case)
+    {
+        $user = auth()->user();
+
+        $isAssigned = UserCase::where('case_id', $case->id)
+            ->where('user_id', $user->id)
+            ->where('isDeleted', 0)
+            ->exists();
+
+        if (!$isAssigned && $user->userPermission !== 'admin') {
+            return response()->json(['error' => 'Unauthorized access'], 403);
+        }
+
+        // Step 1: Prepare and validate
+        $request->merge([
+            'fromDate' => $request->input('fromDate'),
+            'toDate' => $request->input('toDate'),
+        ]);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'type' => 'required|in:case',
+            'fromDate' => ['required', 'date_format:m-d-Y'],
+            'toDate' => ['required', 'date_format:m-d-Y', 'after_or_equal:fromDate'],
+            'category' => ['required', 'not_in:-1', 'exists:categories,id'],
+            'user.*' => ['required', 'exists:users,id'],
+        ], [
+            'category.not_in' => 'The category field is required.',
+        ]);
+
+        // Step 2: Parse and update case
+        $fromDate = \Carbon\Carbon::createFromFormat('m-d-Y', $request->input('fromDate'))->format('Y-m-d');
+        $toDate = \Carbon\Carbon::createFromFormat('m-d-Y', $request->input('toDate'))->format('Y-m-d');
+
+        $case->update([
+            'caseTitle' => $request['title'],
+            'categoryId' => $request['category'],
+            'dateFrom' => $fromDate,
+            'dateTo' => $toDate,
+        ]);
+
+        // Step 3: Prepare users
+        $newUserIds = $request->input('user', []);
+        $newUserIds[] = auth()->id(); // always include auth user
+        $newUserIds = array_unique($newUserIds);
+
+        // Step 4: Get current user-case assignments
+        $existingUserCases = UserCase::where('case_id', $case->id)->get()->keyBy('user_id');
+
+        $existingUserIds = $existingUserCases->keys()->toArray();
+
+        // Step 5: Determine changes
+        $toSoftDelete = array_diff($existingUserIds, $newUserIds);
+        $toReEnable   = array_intersect($existingUserIds, $newUserIds);
+        $toInsert     = array_diff($newUserIds, $existingUserIds);
+
+        // Step 6: Perform updates (batch)
+        if (!empty($toSoftDelete)) {
+            UserCase::where('case_id', $case->id)
+                ->whereIn('user_id', $toSoftDelete)
+                ->update(['isDeleted' => 1]);
+        }
+
+        if (!empty($toReEnable)) {
+            UserCase::where('case_id', $case->id)
+                ->whereIn('user_id', $toReEnable)
+                ->update(['isDeleted' => 0]);
+        }
+
+        // Step 7: Bulk insert new rows
+        if (!empty($toInsert)) {
+            $insertData = [];
+            $timestamp = now();
+
+            foreach ($toInsert as $userId) {
+                $insertData[] = [
+                    'case_id' => $case->id,
+                    'user_id' => $userId,
+                    'isDeleted' => 0,
+                    'created_at' => $timestamp,
+                    'updated_at' => $timestamp,
+                ];
+            }
+
+            UserCase::insert($insertData);
+        }
+
+        return response()->json([
+            'message' => 'Case updated successfully!'
+        ]);
+    }
+
+    public function delete(Request $request, CourtCase $case)
+    {
+        $user = auth()->user();
+
+        $isAssigned = UserCase::where('case_id', $case->id)
+            ->where('user_id', $user->id)
+            ->where('isDeleted', 0)
+            ->exists();
+
+        if (!$isAssigned && $user->userPermission !== 'admin') {
+            return response()->json(['error' => 'Unauthorized access'], 403);
+        }
+
+        UserCase::where('case_id', $case->id)->update(['isDeleted' => 1]);
+
+        $updated = $case->update([
+            'isDeleted' => 1,
+        ]);
+
+        if (!$updated) {
+            return response()->json(['error' => 'Failed to delete the case'], 500);
+        }
+
+        return response()->json([
+            'message' => 'Case has been deleted!',
         ]);
     }
 }

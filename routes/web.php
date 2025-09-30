@@ -44,6 +44,10 @@ Route::put('/eventUpdate/{event}', [EventController::class, 'update'])->name('ev
 Route::put('/eventDelete/{event}', [EventController::class, 'delete'])->name('event.delete');
 
 Route::post('/getCases', [CourtCasesController::class, 'index']);
+Route::put('/caseUpdate/{case}', [CourtCasesController::class, 'update'])->name('case.update');
+Route::put('/caseDelete/{case}', [CourtCasesController::class, 'delete'])->name('case.delete');
+
+Route::get('/getEventsCases', [CategoryController::class, 'getEventsAndCases']);
 
 Route::middleware('auth')->group(function () {
     Route::post('/events/store', [EventController::class, 'store'])->name('events.store');

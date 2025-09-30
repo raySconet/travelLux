@@ -671,6 +671,8 @@ $(document).ready(() => {
 
         $('#eventCaseType').addClass('hidden');
         $('#headerIcon').removeClass('fa-solid fa-calendar-plus').addClass('fa-solid fa-pen-to-square');
+        $('.input-error-text').remove();
+        $('input, select').removeClass('border-red-500');
 
         getUsersCategoriesAddEditCasesEvents(function () {
             if (eventType === 'event') {
@@ -681,7 +683,8 @@ $(document).ready(() => {
             updateUserSelectMode();
         });
 
-        $('.addEventCaseModalTitle').text(`Edit ${eventType === 'event' ? 'Event' : 'Case'}`);
+        const type = eventType === 'event' ? 'Event' : 'Case';
+        $('.addEventCaseModalTitle').text(`Edit ${type}`);
         $('#modalFooterAction').empty().append(`
             <div class="flex flex-wrap justify-end gap-2">
                 <div class="border border-gray-500 text-gray-700 hover:bg-gray-500 hover:text-white font-semibold py-1 px-2 rounded transition cursor-pointer" id="clearEditEventCaseBtn" data-id="${eventCaseId}">
@@ -1054,7 +1057,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         const eventsUser1 = user1.events.filter(event => event.date === isoDate);
         const eventsUser2 = user2.events.filter(event => event.date === isoDate);
 
-        $('#dailyViewTable').removeClass('hidden');
+        // $('#dailyViewTable').removeClass('hidden');
+        $('#dailyViewTable').removeClass('hidden max-w-[750px] mx-auto xl:col-span-12').addClass('xl:col-span-6');
         $('#dailyViewTableHidden').removeClass('hidden');
         $('#dailyBox3').addClass('xl:col-span-6').removeClass('w-[750px] xl:col-span-12 mx-auto');
         $('#dailyBox4')?.removeClass('hidden');
@@ -1131,7 +1135,10 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         $('#dailyBox3').removeClass('xl:col-span-6').addClass('w-[750px] xl:col-span-12 mx-auto');
 
         // Only the date in the header
-        dailyHeader.html(`${dayName} ${day}`);
+        dailyHeader.html(`
+            <span>${dayName} ${day}</span>
+            <span>All Users</span>
+        `);
 
         // Clear any leftover content
         dailyBody.empty();
@@ -1551,7 +1558,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <div class="relative">
-                                <span>${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
+                                <span class="inline-block max-w-[200px] truncate align-middle">${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
                                 ${iconPencil}
                             </div>
                             <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10">
@@ -2122,6 +2129,7 @@ function submitEditEventCase(actionUrl, method) {
     $('.input-error-text').remove();
     $('input, select').removeClass('border-red-500');
 
+    console.log($form.serialize());
     $.ajax({
         type: method,
         url: actionUrl,
@@ -2179,6 +2187,7 @@ function deleteEditEventCase(actionUrl, method) {
     $('#errorModal').addClass('hidden');
 
     $button.prop('disabled', true).html(`
+        <i class="fa-solid fa-spinner fa-spin"></i>
         <span class="ml-1">
             Deleting...
         </span>

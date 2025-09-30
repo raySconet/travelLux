@@ -10,7 +10,8 @@ class UserCase extends Model
 
     protected $fillable = [
         'user_id',
-        'case_id'
+        'case_id',
+        'isDeleted'
     ];
 
     public function user()

@@ -133,7 +133,6 @@ $(document).ready(() => {
     });
 
 
-
     $(document).on('click', '.addAffidavitButton', function() {
         let container = $(this).parent().parent();
         let newItem = container.clone(); // duplicate first

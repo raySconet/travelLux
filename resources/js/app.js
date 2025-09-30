@@ -6,17 +6,19 @@ window.Alpine = Alpine;
 
 Alpine.start();
 
-flatpickr(".datetimepicker", {
-    enableTime: true,
-    dateFormat: "m-d-Y H:i",
-    time_24hr: true,
-    // defaultDate: new Date(),
-});
+$(document).ready(() => {
+    flatpickr(".datetimepicker", {
+        enableTime: true,
+        dateFormat: "m-d-Y H:i",
+        time_24hr: true,
+        // defaultDate: new Date(),
+    });
 
-$(document).ajaxStart(function () {
-    $('#ajaxLoader').removeClass('hidden');
-});
+    $(document).ajaxStart(function () {
+        $('#ajaxLoader').fadeIn();
+    });
 
-$(document).ajaxStop(function () {
-    $('#ajaxLoader').addClass('hidden');
+    $(document).ajaxStop(function () {
+        $('#ajaxLoader').fadeOut(300);
+    });
 });

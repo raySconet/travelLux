@@ -1,7 +1,7 @@
 $(document).ready(() => {
     getUsers(function () {
         getEventsCases(function(data) {
-            console.log("Received data:", data);
+            // console.log("Received data:", data);
             renderEventCases(data);
         });
     });
@@ -69,11 +69,11 @@ $(document).ready(() => {
         // Check the clicked one
         $(this).prop('checked', true);
         getEventsCases(function(data) {
-            console.log("Received data:", data);
+            // console.log("Received data:", data);
             renderEventCases(data);
         });
 
-        console.log('Selected User ID:', $(this).data('user-id'));
+        // console.log('Selected User ID:', $(this).data('user-id'));
     });
 
     $('#openAddCategoryModal').on('click', function() {

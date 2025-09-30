@@ -25,6 +25,13 @@
         @else
 
         @endif
+           @if(request()->is('calendar') || request()->is('calendar/*')) {{-- added by rony the king  --}}
+            @vite('resources/css/calendar.css')
+
+        @endif
+        @if(request()->is('category') || request()->is('category/*')) {{-- added by rony --}}
+            @vite('resources/css/category.css')
+        @endif
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
@@ -88,12 +95,10 @@
         <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> {{-- added by rony --}}
 
         @if(request()->is('calendar') || request()->is('calendar/*')) {{-- added by rony the king  --}}
-            @vite('resources/css/calendar.css')
             @vite('resources/js/calendar.js')
         @endif
 
         @if(request()->is('category') || request()->is('category/*')) {{-- added by rony --}}
-            @vite('resources/css/category.css')
             @vite('resources/js/category.js')
         @endif
 

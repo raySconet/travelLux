@@ -13,7 +13,7 @@
             <x-calendar-components.th class="th-saturday">Saturday</x-calendar-components.th>
         </tr>
     </thead>
-    <tbody class="grid grid-rows-1 h-full">
+    <tbody class=" h-full">
         <tr class="grid grid-cols-7 h-full calendarRowData min-h-[200px]" data-week="" dataId="">
             <x-calendar-components.td class="sunday" />
             <x-calendar-components.td class="monday" />
@@ -41,7 +41,7 @@
             <x-calendar-components.th class="th-saturday">Saturday</x-calendar-components.th>
         </tr>
     </thead>
-    <tbody class="grid grid-rows-1 h-full">
+    <tbody class=" h-full">
         <tr class="grid grid-cols-7 h-full calendarRowData min-h-[200px]" data-week="" dataId="">
             <x-calendar-components.td class="sunday" />
             <x-calendar-components.td class="monday" />

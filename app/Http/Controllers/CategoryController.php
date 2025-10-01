@@ -11,8 +11,18 @@ use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        $categoryId = $request->input('category_id');
+
+        if($categoryId) {
+            $categories = Categorie::where('isDeleted', 0)
+                        ->where('id', $categoryId)
+                        ->get();
+
+            return response()->json($categories);
+        }
+
         $categories = Categorie::getActiveCategories();
         return response()->json($categories);
     }
@@ -20,8 +30,10 @@ class CategoryController extends Controller
     public function store(Request $request) {
         try {
             $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => ['required', 'string', 'max:255', 'regex:/^[^\d]+$/'],
                 'color' => ['nullable', 'regex:/^#([A-Fa-f0-9]{6})$/'],
+            ], [
+                'name.regex' => 'The name field must not contain numbers.',
             ]);
 
             $category = Categorie::create([

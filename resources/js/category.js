@@ -77,12 +77,18 @@ $(document).ready(() => {
     });
 
     $('#openAddCategoryModal').on('click', function() {
+        $('.input-error-text').remove();
+        $('input, select').removeClass('border-red-500');
         $('#addCategoryModal').removeClass('hidden');
     });
 
     // Close modal
     $('#closeAddCategoryModal').on('click', function() {
         $('#addCategoryModal').addClass('hidden');
+    });
+
+     $('#closeEditCategoryModal').on('click', function() {
+        $('#editCategoryModal').addClass('hidden');
     });
 
     $('#closeErrorModal').on('click', function() {
@@ -101,8 +107,8 @@ $(document).ready(() => {
     });
 
     // Initialize Spectrum on the square (div)
-    $('#colorBox').css('background-color', '#14548d');
-    $('#colorBox').spectrum({
+    $('.colorBox').css('background-color', '#14548d');
+    $('.colorBox').spectrum({
         color: "#14548d",
         showPalette: true,
         showInput: true,
@@ -127,13 +133,13 @@ $(document).ready(() => {
         // Make it act like an input
         change: function(color) {
         const hex = color.toHexString();
-        $('#colorBox').css('background-color', hex);     // Update square visually
+        $('.colorBox').css('background-color', hex);     // Update square visually
         $('#colorInput').val(hex);                       // Store value (optional)
         console.log("Selected color:", hex);
         },
         move: function(color) {
         // Live update while dragging
-        $('#colorBox').css('background-color', color.toHexString());
+        $('.colorBox').css('background-color', color.toHexString());
         },
         showButtons: false,
         show: function () {
@@ -142,14 +148,14 @@ $(document).ready(() => {
     });
 
     // Open picker on click
-    $('#colorBox').on('click', function () {
+    $('.colorBox').on('click', function () {
         $(this).spectrum('show');
     });
 
     // Optional: hide picker when clicking outside
     $(document).on('click', function(e) {
-        if (!$(e.target).closest('#colorBox, .sp-container').length) {
-        $('#colorBox').spectrum('hide');
+        if (!$(e.target).closest('.colorBox, .sp-container').length) {
+        $('.colorBox').spectrum('hide');
         }
     });
 
@@ -180,7 +186,7 @@ $(document).ready(() => {
             dataType: 'json',
             success: function (response) {
                 $form[0].reset();
-                $('#colorBox').css('background-color', '#14548d;');
+                $('.colorBox').css('background-color', '#14548d;');
                 $('#addCategoryModal').addClass('hidden');
                 $('#modalSuccessContent').html(response.message);
                 $('#successModal').removeClass('hidden');
@@ -189,14 +195,31 @@ $(document).ready(() => {
                 if (xhr.status === 422) {
                     const errors = xhr.responseJSON.errors || {};
 
-                    if (errors.name) {
-                        let errorHtml = '<ul class="text-sm text-red-600 space-y-1">';
-                        errors.name.forEach(function (error) {
-                            errorHtml += `<li>${error}</li>`;
-                        });
-                        errorHtml += '</ul>';
-                        $('#errorCategoryName').html(errorHtml);
-                    }
+                    $('.input-error-text').remove();
+                    $form.find('input, select, textarea').removeClass('border-red-500');
+
+                    // if (errors.name) {
+                    //     let errorHtml = '<ul class="text-sm text-red-600 space-y-1">';
+                    //     errors.name.forEach(function (error) {
+                    //         errorHtml += `<li>${error}</li>`;
+                    //     });
+                    //     errorHtml += '</ul>';
+                    //     $('#errorCategoryName').html(errorHtml);
+                    // }
+                    $.each(errors, function (field, messages) {
+                        let $input = $form.find(`[name="${field}"]`);
+
+                        if ($input.length === 0) {
+                            const baseField = field.split('.')[0];
+                            $input = $form.find(`[name="${baseField}[]"], [name="${baseField}"]`);
+                        }
+
+                        $input.addClass('border-red-500');
+
+                        if ($input.next('.input-error-text').length === 0) {
+                            $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
+                        }
+                    });
                 } else {
                     $('#modalErrorContent').html('An unexpected error occurred. Please try again.');
                     $('#errorModal').removeClass('hidden');
@@ -207,6 +230,54 @@ $(document).ready(() => {
             }
         });
     });
+
+    $(document).on('click', '.editCategoryBtn', function(e) {
+        e.stopPropagation();
+
+        const categoryId = $(this).data('id');
+        console.log(categoryId);
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'GET',
+            url: '/getCategories',
+            data: {
+                category_id: categoryId,
+            },
+            dataType: 'json',
+            success: function (response) {
+                console.log(response); // still useful for debugging
+
+                const category = response[0]; // Get the first (and presumably only) category
+
+                if (category) {
+                    $('input[name="name"]').val(category.categoryName);
+                    $('#colorInput').val(category.color);
+                    $('.colorBox').css('background-color', category.color);
+                }
+            },
+            error: function (xhr) {
+                console.error(`Error fetching category name:`, xhr);
+
+                let errorMsg = 'Unknown error occurred';
+
+                // Try to parse error message from JSON response
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response && response.error) {
+                        errorMsg = response.error;
+                    }
+                } catch (e) {
+                    // parsing failed, keep default errorMsg
+                }
+            }
+        });
+
+        $('#editCategoryModal').removeClass('hidden');
+    });
+    // $('#deletedCategoryBtn')
 
     // const data = getEventsCases();
     // renderEventCases(data);
@@ -264,12 +335,12 @@ function renderEventCases(data) {
                 <label>${category.label}: ${itemCount} item(s)</label>
 
                 <div class="ml-auto">
-                    <button title="Edit" class="text-green-600 hover:text-green-800 cursor-pointer">
-                        <i class="fa-solid fa-pen"></i>
+                    <button title="Edit" class="editCategoryBtn text-[limegreen] hover:text-green-800 cursor-pointer" data-id="${category.id}">
+                        <i class="fa-solid fa-pen-to-square shadow-lg fa-lg"></i>
                     </button>
 
-                    <button title="Delete" class="text-red-600 hover:text-red-800 ml-2 cursor-pointer">
-                        <i class="fa-solid fa-trash"></i>
+                    <button title="Delete" class="deletedCategoryBtn text-red-600 hover:text-red-800 ml-2 cursor-pointer" data-id="${category.id}">
+                        <i class="fa-solid fa-trash fa-lg"></i>
                     </button>
                 </div>
             </div>

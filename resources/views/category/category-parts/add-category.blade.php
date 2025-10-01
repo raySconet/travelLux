@@ -27,7 +27,7 @@
 
         <div class="col-span-12 sm:col-span-6">
             <x-input-label for="colorPicker" class="mb-1">Choose a color:</x-input-label>
-            <div id="colorBox" class="cursor-pointer w-[23px] h-[23px] rounded shadow-sm"></div>
+            <div class="colorBox cursor-pointer w-[23px] h-[23px] rounded shadow-sm"></div>
             <input type="text" id="colorInput" value="#14548d" name="color" hidden />
         </div>
     </div>

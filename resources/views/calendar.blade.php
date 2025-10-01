@@ -1,4 +1,3 @@
-
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between">
@@ -83,6 +82,4 @@
         id="refreshCalendarIcon"
         title="Refresh Calendar"></i>
     </div>
-
-
 </x-app-layout>

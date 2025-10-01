@@ -29,14 +29,14 @@
             </div>
         </div>
     </div>
-    <div class="2xl:col-span-9 flex flex-col h-full overflow-x-auto">
-        <div class="min-w-[1075px] flex flex-col h-full">
+    <div class="2xl:col-span-9 flex flex-col h-full overflow-x-auto"> {{-- overflow-x-auto --}}
+        <div class="min-w-[1300px] flex flex-col h-full"> {{-- min-w-[1075px] --}}
             <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
                 <div class="p-6">
                     @include('calendar.calendar-parts.calendar-header') {{-- Include the calendar header component --}}
                 </div>
             </div>
-            <div class="mt-2 flex-1 flex flex-col bg-white xl:overflow-visible overflow-hidden shadow-xs sm:rounded-lg">
+            <div class="mt-2 flex-1 flex flex-col bg-white overflow-hidden shadow-xs sm:rounded-lg"> {{-- xl:overflow-visible --}}
                 <div id="viewMonthly" class="p-6">
                     @include('calendar.calendar-parts.monthly') {{-- Include the calendar drawing component --}}
                 </div>

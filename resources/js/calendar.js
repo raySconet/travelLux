@@ -1289,6 +1289,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         $('#userHeader').html(`<div class="border border-[#fff] p-2">All Users</div>`);
         $('#weeklyViewTableHidden').addClass('hidden');
         $('#viewWeekly').removeClass('2xl:grid-rows-[40%_60%]').addClass('grid-rows-1');
+        $('#weeklyViewTable > tbody').removeClass('2xl:h-[85%]').addClass('2xl:h-[94%]');
 
         // Build flat event list with user info and filter duplicates
         const flatWeeklyEvents = allEventsData.flatMap(user =>

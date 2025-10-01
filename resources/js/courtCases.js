@@ -228,7 +228,19 @@ $(document).ready(() => {
         }, 500);
     });
     // End Add Edit Buttons
+    $('#openManageSectionModal').on('click', function() {
+        $('#addCategoryModal').removeClass('hidden');
+    });
 
+    $('#closeSuccessModal').on('click', function() {
+        $('#addCategoryModal').addClass('hidden');
+    });
 
+    // Optional: Close when clicking outside modal content
+    $('#addCategoryModal').on('click', function(e) {
+        if ($(e.target).is(this)) {
+            $(this).addClass('hidden');
+        }
+    });
 
 })

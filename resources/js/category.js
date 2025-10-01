@@ -76,7 +76,7 @@ $(document).ready(() => {
         console.log('Selected User ID:', $(this).data('user-id'));
     });
 
-    $('#openAddCategoryModal').on('click', function() {
+    $('#openManageSectionModal').on('click', function() {
         $('#addCategoryModal').removeClass('hidden');
     });
 

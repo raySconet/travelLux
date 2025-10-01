@@ -1363,9 +1363,11 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         $('#userHeaderHidden').html(`<div class="border border-[#fff] p-2">${userRow2.user}</div>`);
         $('#weeklyViewTableHidden').removeClass('hidden');
         $('#viewWeekly').removeClass('grid-rows-1').addClass('2xl:grid-rows-[40%_60%]');
+        $('#weeklyViewTable > tbody').removeClass('2xl:h-[94%]').addClass('2xl:h-[85%]');
     } else {
         $('#weeklyViewTableHidden').addClass('hidden');
         $('#viewWeekly').removeClass('2xl:grid-rows-[40%_60%]').addClass('grid-rows-1');
+        $('#weeklyViewTable > tbody').removeClass('2xl:h-[85%]').addClass('2xl:h-[94%]');
     }
 
     for (let i = 0; i < 7; i++) {

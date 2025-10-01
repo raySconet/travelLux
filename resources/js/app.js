@@ -7,12 +7,12 @@ window.Alpine = Alpine;
 Alpine.start();
 $(document).ready(() => {
 
-    flatpickr(".datetimepicker", {
-        enableTime: true,
-        dateFormat: "m-d-Y H:i",
-        time_24hr: true,
-        // defaultDate: new Date(),
-    });
+    // flatpickr(".datetimepicker", {
+    //     enableTime: true,
+    //     dateFormat: "m-d-Y H:i",
+    //     time_24hr: true,
+    //     // defaultDate: new Date(),
+    // });
 
     $(document).ajaxStart(function () {
         $('#ajaxLoader').fadeIn();

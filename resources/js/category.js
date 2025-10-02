@@ -369,6 +369,13 @@ $(document).ready(() => {
 
         submitEditCategory(actionUrl);
     });
+
+    $(document).on('click', '.deletedCategoryBtn', function(e) {
+        e.stopPropagation();
+
+        const categoryId = $(this).data('id');
+        console.log(categoryId);
+    });
     // $('#deletedCategoryBtn')
 
     // const data = getEventsCases();

@@ -111,6 +111,33 @@ class CategoryController extends Controller
         }
     }
 
+    public function delete(Request $request)
+    {
+        $categoryId = $request->input('category_id');
+
+        $categorie = Categorie::find($categoryId);
+
+        if(!$categorie) {
+            return response()->json([
+                'message' => 'Category not found.',
+            ], 404);
+        }
+
+        if ($categorie->hasCasesOrEvents()) {
+            return response()->json([
+                'message' => 'Category cannot be deleted because it has associated items!',
+            ], 409);
+        }
+
+        $category = $categorie->update(['isDeleted' => 1]);
+
+        return response()->json([
+            'message' => 'Category deleted successfully!',
+            'category' => $category,
+        ]);
+
+    }
+
     public function getEventsAndCases(Request $request)
     {
         $requestUserId = $request->input('user_id');

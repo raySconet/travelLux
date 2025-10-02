@@ -139,6 +139,10 @@ $(document).ready(() => {
         $('#successModal').addClass('hidden');
     });
 
+    $('#closeCategoryDeleteConfirmModal, #cancelCategoryDeleteBtn').on('click', function() {
+        $('#deleteCategoryConfirmModal').addClass('hidden');
+    });
+
     // Optional: Close when clicking outside modal content
     $('#addCategoryModal, #errorModal, #successModal').on('click', function(e) {
         if ($(e.target).is(this)) {
@@ -375,6 +379,23 @@ $(document).ready(() => {
 
         const categoryId = $(this).data('id');
         console.log(categoryId);
+
+        let actionUrl = '/category/delete';
+        let method = 'POST';
+
+        $('#confirmCategoryDeleteBtn')
+        .data('action-url', actionUrl)
+        .data('method', method)
+        .data('category-id', categoryId);
+
+        $('#deleteCategoryConfirmModal').removeClass('hidden');
+    });
+
+    $(document).on('click', '#confirmCategoryDeleteBtn', function() {
+        const actionUrl = $(this).data('action-url');
+        const categoryId = $(this).data('category-id');
+
+        deleteCategory(actionUrl, categoryId);
     });
     // $('#deletedCategoryBtn')
 
@@ -604,8 +625,8 @@ function submitEditCategory(actionUrl) {
     const $button = $('#submitEditCategoryBtn');
 
     // console.log($form.serialize());
-    console.log('Name sent:', $form.find('input[name="nameEditCategory"]').val());
-console.log('Color sent:', $form.find('input[name="color"]').val());
+    // console.log('Name sent:', $form.find('input[name="nameEditCategory"]').val());
+    // console.log('Color sent:', $form.find('input[name="color"]').val());
 
 
     $('#modalErrorContent').empty();
@@ -663,6 +684,77 @@ console.log('Color sent:', $form.find('input[name="color"]').val());
                 <i class="fa-solid fa-paper-plane"></i>
                 <span class="ml-1">
                     Save
+                </span>
+            `);
+        }
+    });
+}
+
+function deleteCategory(actionUrl, categoryId) {
+    const $button = $('#confirmCategoryDeleteBtn');
+
+    $('#deleteCategoryConfirmModal').addClass('hidden');
+    $('#modalErrorContent').empty();
+    $('#errorModal').addClass('hidden');
+
+    $button.prop('disabled', true).html(`
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span class="ml-1">
+            Deleting...
+        </span>
+    `);
+
+    $.ajax({
+        type: 'POST',
+        url: actionUrl,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            category_id: categoryId,
+        },
+        dataType: 'json',
+        success: function (response) {
+            $('#modalSuccessContent').html(response.message);
+            $('#successModal').removeClass('hidden');
+            getEventsCases(function(data) {
+                renderEventCases(data);
+            });
+        },
+        error: function (xhr) {
+            let jsonResponse = xhr.responseJSON;
+
+            if (xhr.status === 422 && jsonResponse.errors) {
+                const errors = jsonResponse.errors;
+
+                // Loop over validation errors and display them
+                $.each(errors, function (field, messages) {
+                    let $input = $(`[name="${field}"]`);
+                    if ($input.length === 0) {
+                        const baseField = field.split('.')[0];
+                        $input = $(`[name="${baseField}[]"], [name="${baseField}"]`);
+                    }
+
+                    $input.addClass('border-red-500');
+
+                    if ($input.next('.input-error-text').length === 0) {
+                        $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
+                    }
+                });
+            } else if (jsonResponse && jsonResponse.message) {
+                // Show backend message returned on other error statuses (like 404 or your custom logic)
+                $('#modalErrorContent').html(jsonResponse.message);
+                $('#errorModal').removeClass('hidden');
+            } else {
+                // Generic fallback
+                $('#modalErrorContent').html("An error occurred while deleting the category.");
+                $('#errorModal').removeClass('hidden');
+            }
+        },
+        complete: function () {
+            $button.prop('disabled', false).html(`
+                <span class="ml-1">
+                    YES, DELETE
                 </span>
             `);
         }

@@ -462,16 +462,7 @@ $(document).ready(() => {
     });
 
     // add event/case steps
-
-    // step 1
     $(document).on('click', '#submitAddEventCaseBtn', function () {
-        $('#addEventCaseForm').submit();
-    });
-
-    // step 2
-    $(document).on('submit', '#addEventCaseForm', function (e) {
-        e.preventDefault();
-
         const type = $('input[name="type"]:checked').val();
         const routes = {
             eventsStore: "events/store",
@@ -480,7 +471,6 @@ $(document).ready(() => {
 
         let actionUrl;
 
-        // Then in your code:
         if (type === 'event') {
             actionUrl = routes.eventsStore;
         } else if (type === 'case') {
@@ -493,16 +483,13 @@ $(document).ready(() => {
             });
         }
 
-        const $form = $(this);
+        const $form = $('#addEventCaseForm');
         const $button = $('#submitAddEventCaseBtn');
 
-        // Clear previous inline errors & modal errors
         $('#modalErrorContent').empty();
         $('#errorModal').addClass('hidden');
 
         $button.prop('disabled', true).text('Saving...');
-        // console.log($form.serialize());
-        // console.log(actionUrl);
         $('.input-error-text').remove();
         $('input, select').removeClass('border-red-500');
 
@@ -533,10 +520,6 @@ $(document).ready(() => {
                         }
 
                         $input.addClass('border-red-500');
-
-                        // if(field === "user") {
-                        //     $("#selectedUsers").addClass("border-red-500");
-                        // }
 
                         if ($input.next('.input-error-text').length === 0) {
                             $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
@@ -797,9 +780,7 @@ $(document).ready(() => {
         console.log($('#addEventCaseForm').serialize());
     });
 
-    $(document).on('click', '#deleteEditEventCaseBtn', function(e) {
-        e.preventDefault();
-
+    $(document).on('click', '#deleteEditEventCaseBtn', function() {
         const type = $('input[name="type"]:checked').val();
         const id = $(this).data('id');
 
@@ -825,16 +806,14 @@ $(document).ready(() => {
         $('#deleteConfirmModal').removeClass('hidden');
     });
 
-    $(document).on('click', '#confirmDeleteBtn', function(e) {
+    $(document).on('click', '#confirmDeleteBtn', function() {
         const actionUrl = $(this).data('action-url');
         const method = $(this).data('method');
 
         deleteEditEventCase(actionUrl, method);
     });
 
-    $(document).on('click', '#submitEditEventCaseBtn', function(e) {
-        e.preventDefault();
-
+    $(document).on('click', '#submitEditEventCaseBtn', function() {
         const type = $('input[name="type"]:checked').val();
         const id = $(this).data('id');
 

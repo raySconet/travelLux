@@ -76,13 +76,63 @@ $(document).ready(() => {
         // console.log('Selected User ID:', $(this).data('user-id'));
     });
 
+<<<<<<< HEAD
     $('#openManageSectionModal').on('click', function() {
+=======
+    $('#openAddCategoryModal').on('click', function() {
+        $('.input-error-text').remove();
+        $('input, select').removeClass('border-red-500');
+        $('.colorBox').removeClass('border border-red-500');
+        $('.colorBox').css('background-color', '#14548d');
+        $('.colorBox').spectrum({
+            color: "#14548d",
+            showPalette: true,
+            showInput: true,
+            allowEmpty: false,
+            preferredFormat: "hex",
+            showInitial: true,
+            palette: [
+                ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'],
+                ['#000000', '#FFFFFF', '#808080', '#C0C0C0', '#800000', '#808000'],
+                ['#3490dc', '#f97316', '#10b981', '#8b5cf6', '#f43f5e', '#eab308'],
+                ['#1abc9c', '#2ecc71', '#9b59b6', '#34495e', '#16a085', '#27ae60'],
+                ['#e67e22', '#e74c3c', '#f39c12', '#d35400', '#c0392b', '#f1c40f'],
+                ['#2980b9', '#3498db', '#5dade2', '#85c1e9', '#aed6f1', '#d6eaf8'],
+                ['#a0522d', '#cd853f', '#deb887', '#f5deb3', '#ffe4b5', '#faf0e6'],
+                ['#ffb6c1', '#ffcccb', '#ffe4e1', '#e0ffff', '#d8bfd8', '#e6e6fa'],
+                ['#39ff14', '#ccff00', '#ff073a', '#fe019a', '#ff6ec7', '#dfff00'],
+                ['#6c757d', '#adb5bd', '#ced4da', '#dee2e6', '#e9ecef', '#f8f9fa'],
+                ['#2e8b57', '#3cb371', '#6b8e23', '#556b2f', '#228b22', '#66cdaa'],
+                ['#007bff', '#6610f2', '#6f42c1', '#e83e8c', '#fd7e14', '#20c997']
+            ],
+
+            // Make it act like an input
+            change: function(color) {
+            const hex = color.toHexString();
+            $('.colorBox').css('background-color', hex);     // Update square visually
+            $('.colorInput').val(hex);                       // Store value (optional)
+            console.log("Selected color:", hex);
+            },
+            move: function(color) {
+            // Live update while dragging
+            $('.colorBox').css('background-color', color.toHexString());
+            },
+            showButtons: false,
+            show: function () {
+                $('.sp-container').addClass('z-50'); // Optional: bring to front if overlapping UI
+            }
+        });
+>>>>>>> 89208f3295260c29ee360ad3af98decd0293c64c
         $('#addCategoryModal').removeClass('hidden');
     });
 
     // Close modal
     $('#closeAddCategoryModal').on('click', function() {
         $('#addCategoryModal').addClass('hidden');
+    });
+
+     $('#closeEditCategoryModal').on('click', function() {
+        $('#editCategoryModal').addClass('hidden');
     });
 
     $('#closeErrorModal').on('click', function() {
@@ -101,8 +151,8 @@ $(document).ready(() => {
     });
 
     // Initialize Spectrum on the square (div)
-    $('#colorBox').css('background-color', '#14548d');
-    $('#colorBox').spectrum({
+    $('.colorBox').css('background-color', '#14548d');
+    $('.colorBox').spectrum({
         color: "#14548d",
         showPalette: true,
         showInput: true,
@@ -127,13 +177,13 @@ $(document).ready(() => {
         // Make it act like an input
         change: function(color) {
         const hex = color.toHexString();
-        $('#colorBox').css('background-color', hex);     // Update square visually
-        $('#colorInput').val(hex);                       // Store value (optional)
+        $('.colorBox').css('background-color', hex);     // Update square visually
+        $('.colorInput').val(hex);                       // Store value (optional)
         console.log("Selected color:", hex);
         },
         move: function(color) {
         // Live update while dragging
-        $('#colorBox').css('background-color', color.toHexString());
+        $('.colorBox').css('background-color', color.toHexString());
         },
         showButtons: false,
         show: function () {
@@ -142,29 +192,21 @@ $(document).ready(() => {
     });
 
     // Open picker on click
-    $('#colorBox').on('click', function () {
+    $('.colorBox').on('click', function () {
         $(this).spectrum('show');
     });
 
     // Optional: hide picker when clicking outside
     $(document).on('click', function(e) {
-        if (!$(e.target).closest('#colorBox, .sp-container').length) {
-        $('#colorBox').spectrum('hide');
+        if (!$(e.target).closest('.colorBox, .sp-container').length) {
+        $('.colorBox').spectrum('hide');
         }
     });
 
     // add category steps
 
-    // step 1
     $('#submitCategoryBtn').on('click', function () {
-        $('#addCategoryForm').submit();
-    });
-
-    // step 2
-    $('#addCategoryForm').on('submit', function (e) {
-        e.preventDefault();
-
-        const $form = $(this);
+        const $form = $('#addCategoryForm');
         const $button = $('#submitCategoryBtn');
 
         // Clear previous inline errors & modal errors
@@ -180,33 +222,158 @@ $(document).ready(() => {
             dataType: 'json',
             success: function (response) {
                 $form[0].reset();
-                $('#colorBox').css('background-color', '#14548d;');
+                $('.colorBox').css('background-color', '#14548d;');
                 $('#addCategoryModal').addClass('hidden');
                 $('#modalSuccessContent').html(response.message);
                 $('#successModal').removeClass('hidden');
+                getEventsCases(function(data) {
+                    renderEventCases(data);
+                });
             },
             error: function (xhr) {
                 if (xhr.status === 422) {
                     const errors = xhr.responseJSON.errors || {};
 
-                    if (errors.name) {
-                        let errorHtml = '<ul class="text-sm text-red-600 space-y-1">';
-                        errors.name.forEach(function (error) {
-                            errorHtml += `<li>${error}</li>`;
-                        });
-                        errorHtml += '</ul>';
-                        $('#errorCategoryName').html(errorHtml);
-                    }
+                    $('.input-error-text').remove();
+                    $form.find('input, select, textarea').removeClass('border-red-500');
+
+                    // if (errors.name) {
+                    //     let errorHtml = '<ul class="text-sm text-red-600 space-y-1">';
+                    //     errors.name.forEach(function (error) {
+                    //         errorHtml += `<li>${error}</li>`;
+                    //     });
+                    //     errorHtml += '</ul>';
+                    //     $('#errorCategoryName').html(errorHtml);
+                    // }
+                    $.each(errors, function (field, messages) {
+                        let $input = $form.find(`[name="${field}"]`);
+
+                        if ($input.length === 0) {
+                            const baseField = field.split('.')[0];
+                            $input = $form.find(`[name="${baseField}[]"], [name="${baseField}"]`);
+                        }
+
+                        $input.addClass('border-red-500');
+
+                        if ($input.next('.input-error-text').length === 0) {
+                            $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
+                        }
+
+                        if ($input.attr('name') === 'color') {
+                            $('.colorBox').addClass('border border-red-500');
+                        }
+                    });
                 } else {
                     $('#modalErrorContent').html('An unexpected error occurred. Please try again.');
                     $('#errorModal').removeClass('hidden');
                 }
             },
-            complete: function (response) {
+            complete: function () {
                 $button.prop('disabled', false).text('Add Category');
             }
         });
     });
+
+    $(document).on('click', '.editCategoryBtn', function(e) {
+        e.stopPropagation();
+
+        const categoryId = $(this).data('id');
+        console.log(categoryId);
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'GET',
+            url: '/getCategories',
+            data: {
+                category_id: categoryId,
+            },
+            dataType: 'json',
+            success: function (response) {
+                console.log(response); // still useful for debugging
+
+                const category = response[0]; // Get the first (and presumably only) category
+
+                if (category) {
+                    $('input[name="nameEditCategory"]').val(category.categoryName);
+                    // $('#name').val(category.categoryName);
+                    $('.colorInput').val(category.color);
+                    $('.colorBox').css('background-color', category.color);
+                    $('.colorBox').spectrum({
+                        color: category.color,
+                        showPalette: true,
+                        showInput: true,
+                        allowEmpty: false,
+                        preferredFormat: "hex",
+                        showInitial: true,
+                        palette: [
+                            ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'],
+                            ['#000000', '#FFFFFF', '#808080', '#C0C0C0', '#800000', '#808000'],
+                            ['#3490dc', '#f97316', '#10b981', '#8b5cf6', '#f43f5e', '#eab308'],
+                            ['#1abc9c', '#2ecc71', '#9b59b6', '#34495e', '#16a085', '#27ae60'],
+                            ['#e67e22', '#e74c3c', '#f39c12', '#d35400', '#c0392b', '#f1c40f'],
+                            ['#2980b9', '#3498db', '#5dade2', '#85c1e9', '#aed6f1', '#d6eaf8'],
+                            ['#a0522d', '#cd853f', '#deb887', '#f5deb3', '#ffe4b5', '#faf0e6'],
+                            ['#ffb6c1', '#ffcccb', '#ffe4e1', '#e0ffff', '#d8bfd8', '#e6e6fa'],
+                            ['#39ff14', '#ccff00', '#ff073a', '#fe019a', '#ff6ec7', '#dfff00'],
+                            ['#6c757d', '#adb5bd', '#ced4da', '#dee2e6', '#e9ecef', '#f8f9fa'],
+                            ['#2e8b57', '#3cb371', '#6b8e23', '#556b2f', '#228b22', '#66cdaa'],
+                            ['#007bff', '#6610f2', '#6f42c1', '#e83e8c', '#fd7e14', '#20c997']
+                        ],
+
+                        // Make it act like an input
+                        change: function(color) {
+                        const hex = color.toHexString();
+                        $('.colorBox').css('background-color', hex);     // Update square visually
+                        $('.colorInput').val(hex);                       // Store value (optional)
+                        console.log("Selected color:", hex);
+                        },
+                        move: function(color) {
+                        // Live update while dragging
+                        $('.colorBox').css('background-color', color.toHexString());
+                        },
+                        showButtons: false,
+                        show: function () {
+                            $('.sp-container').addClass('z-50'); // Optional: bring to front if overlapping UI
+                        }
+                    });
+                }
+
+                $('#submitEditCategoryBtn').attr('data-id', category.id);
+            },
+            error: function (xhr) {
+                console.error(`Error fetching category name:`, xhr);
+
+                let errorMsg = 'Unknown error occurred';
+
+                // Try to parse error message from JSON response
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response && response.error) {
+                        errorMsg = response.error;
+                    }
+                } catch (e) {
+                    // parsing failed, keep default errorMsg
+                }
+            }
+        });
+
+        $('#editCategoryModal').removeClass('hidden');
+    });
+
+    $(document).on('click', '#submitEditCategoryBtn', function() {
+        const id = $(this).data('id');
+
+        const routes = {
+            CategoryUpdate: (id) => `categoryUpdate/${id}`,
+        };
+
+        let actionUrl = routes.CategoryUpdate(id);
+
+        submitEditCategory(actionUrl);
+    });
+    // $('#deletedCategoryBtn')
 
     // const data = getEventsCases();
     // renderEventCases(data);
@@ -227,7 +394,7 @@ function getEventsCases(callback) {
         data: { user_id: userId },
         method: 'GET',
         success: function (response) {
-            console.log("error");
+            // console.log("error");
             if (typeof callback === 'function') {
                 callback(response);
             }
@@ -264,12 +431,12 @@ function renderEventCases(data) {
                 <label>${category.label}: ${itemCount} item(s)</label>
 
                 <div class="ml-auto">
-                    <button title="Edit" class="text-green-600 hover:text-green-800 cursor-pointer">
-                        <i class="fa-solid fa-pen"></i>
+                    <button title="Edit" class="editCategoryBtn text-[limegreen] hover:text-green-800 cursor-pointer" data-id="${category.id}">
+                        <i class="fa-solid fa-pen-to-square shadow-lg fa-lg"></i>
                     </button>
 
-                    <button title="Delete" class="text-red-600 hover:text-red-800 ml-2 cursor-pointer">
-                        <i class="fa-solid fa-trash"></i>
+                    <button title="Delete" class="deletedCategoryBtn text-red-600 hover:text-red-800 ml-2 cursor-pointer" data-id="${category.id}">
+                        <i class="fa-solid fa-trash fa-lg"></i>
                     </button>
                 </div>
             </div>
@@ -427,4 +594,74 @@ function formatCustomDate(dateStr) {
     const min = String(minutes).padStart(2, '0');
 
     return `${day} ${mm}/${dd}/${yyyy} ${hh}:${min}${ampm}`;
+}
+
+function submitEditCategory(actionUrl) {
+    const $form = $('#editCategoryForm');
+    const $button = $('#submitEditCategoryBtn');
+
+    // console.log($form.serialize());
+    console.log('Name sent:', $form.find('input[name="nameEditCategory"]').val());
+console.log('Color sent:', $form.find('input[name="color"]').val());
+
+
+    $('#modalErrorContent').empty();
+    $('#errorModal').addClass('hidden');
+
+    $button.prop('disabled', true).html(`
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span class="ml-1">Saving...</span>
+    `);
+
+    $('.input-error-text').remove();
+    $('input, select').removeClass('border-red-500');
+
+    $.ajax({
+        type: 'POST',
+        url: actionUrl,
+        data: $form.serialize(),
+        dataType: 'json',
+        success: function (response) {
+            $form[0].reset();
+            $('#editCategoryModal').addClass('hidden');
+            $('#modalSuccessContent').html(response.message);
+            $('#successModal').removeClass('hidden');
+            getEventsCases(function(data) {
+                renderEventCases(data);
+            });
+        },
+        error: function (xhr) {
+            if (xhr.status) {
+                const errors = xhr.responseJSON.errors;
+
+                // Loop over errors and display inline
+                $.each(errors, function (field, messages) {
+                    let $input = $form.find(`[name="${field}"]`);
+
+                    if ($input.length === 0) {
+                        const baseField = field.split('.')[0];
+                        $input = $form.find(`[name="${baseField}[]"], [name="${baseField}"]`);
+                    }
+
+                    $input.addClass('border-red-500');
+
+                    if ($input.next('.input-error-text').length === 0) {
+                        $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
+                    }
+
+                    if ($input.attr('name') === 'color') {
+                        $('.colorBox').addClass('border border-red-500');
+                    }
+                });
+            }
+        },
+        complete: function () {
+            $button.prop('disabled', false).html(`
+                <i class="fa-solid fa-paper-plane"></i>
+                <span class="ml-1">
+                    Save
+                </span>
+            `);
+        }
+    });
 }

@@ -1,22 +1,22 @@
-<form method="POST" action="{{ route('categories.store') }}" class="space-y-6" id="addCategoryForm">
+<form method="POST" class="space-y-6" id="editCategoryForm">
     @csrf
 
     <div class="grid grid-cols-12 gap-8">
         <div class="col-span-12 sm:col-span-6">
             <x-input-label
-                for="name"
+                for="nameEditCategory"
                 :value="__('Name')"
                 class="mb-1"
             />
             <x-text-input
-                id="name"
-                name="name"
+                id="nameEditCategory"
+                name="nameEditCategory"
                 type="text"
                 class="block w-full"
-                :value="old('name')"
+                :value="old('nameEditCategory')"
                 placeholder="Enter a category name"
                 required
-                autocomplete="name"
+                autocomplete="nameEditCategory"
             />
             {{-- <x-input-error
                 id="errorCategoryName"

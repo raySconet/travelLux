@@ -38,6 +38,7 @@ Route::get('/caseInfo', function(){
 
 Route::get('/getCategories', [CategoryController::class, 'index']);
 Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+Route::post('/categoryUpdate/{categorie}', [CategoryController::class, 'update'])->name('categorie.update');
 
 Route::get('/getUsers', [UserController::class, 'index']);
 

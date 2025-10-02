@@ -57,7 +57,7 @@
             </i>
         </x-slot>
 
-        @include('category.category-parts.add-category')
+        @include('category.category-parts.edit-category')
 
         <x-slot name="footer">
             <x-primary-btn class="ml-auto" id="submitEditCategoryBtn">

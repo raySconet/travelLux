@@ -7,6 +7,7 @@ use App\Models\CourtCase;
 use App\Models\Event;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
@@ -30,10 +31,12 @@ class CategoryController extends Controller
     public function store(Request $request) {
         try {
             $request->validate([
-                'name' => ['required', 'string', 'max:255', 'regex:/^[^\d]+$/'],
-                'color' => ['nullable', 'regex:/^#([A-Fa-f0-9]{6})$/'],
+                'name' => ['required', 'string', 'max:255', 'regex:/^[^\d]+$/', 'unique:categories,categoryName',],
+                'color' => ['nullable', 'regex:/^#([A-Fa-f0-9]{6})$/', 'unique:categories,color',],
             ], [
                 'name.regex' => 'The name field must not contain numbers.',
+                'name.unique' => 'The name has already been taken.',
+                'color.unique' => 'The color has already been taken.',
             ]);
 
             $category = Categorie::create([
@@ -44,6 +47,56 @@ class CategoryController extends Controller
 
             return response()->json([
                 'message' => 'Category created successfully!',
+                'category' => $category,
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, Categorie $categorie) {
+        try {
+            $rules = [
+                'nameEditCategory' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    'regex:/^[^\d]+$/',
+                ],
+                'color' => [
+                    'nullable',
+                    'regex:/^#([A-Fa-f0-9]{6})$/',
+                ],
+            ];
+
+            if (trim($request->name) !== trim($categorie->categoryName)) {
+                $rules['nameEditCategory'][] = Rule::unique('categories', 'categoryName')->ignore($categorie->id);
+            }
+
+            if (trim($request->color) !== trim($categorie->color)) {
+                $rules['color'][] = Rule::unique('categories', 'color')->ignore($categorie->id);
+            }
+
+            $validated = $request->validate($rules, [
+                'nameEditCategory.regex' => 'The name field must not contain numbers.',
+                'nameEditCategory.unique' => 'The name has already been taken.',
+                'color.unique' => 'The color has already been taken.',
+            ]);
+
+            $category = $categorie->update([
+                'categoryName' => $validated['nameEditCategory'],
+                'color' => $validated['color'] ?? null,
+            ]);
+
+            return response()->json([
+                'message' => 'Category edited successfully!',
                 'category' => $category,
             ]);
         } catch (ValidationException $e) {

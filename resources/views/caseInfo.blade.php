@@ -65,16 +65,16 @@
     <div style="height: 20px;">
     </div>
 </x-app-layout>
-<x-general-modal id="addCategoryModal">
+<x-general-modal id="addManageSectionsModal">
     <x-slot name="header">
         <div class="grid grid-cols-[auto_1fr] items-center gap-2">
             <i class="fas fa-list fa-xl primary-color" style="color: #14548d;"></i>
             <h2 class="text-xl font-semibold text-gray-800">
-                {{ __('Add Category') }}
+                {{ __('Manage Sections') }}
             </h2>
         </div>
         <i
-            id="closeAddCategoryModal"
+            id="closeAddManageSectionsModal"
             class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
             role="button"
             data-bs-dismiss="modal"
@@ -82,11 +82,11 @@
         </i>
     </x-slot>
 
-    @include('category.category-parts.add-category')
+    @include('case-info.case-info-parts.add-section')
 
     <x-slot name="footer">
-        <x-primary-btn class="ml-auto" id="submitCategoryBtn">
-            {{ __('Add Category') }}
+        <x-primary-btn class="ml-auto" id="submitManageSectionBtn">
+            {{ __('Save Section') }}
         </x-primary-btn>
     </x-slot>
 </x-general-modal>

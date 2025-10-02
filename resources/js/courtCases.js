@@ -229,18 +229,60 @@ $(document).ready(() => {
     });
     // End Add Edit Buttons
     $('#openManageSectionModal').on('click', function() {
-        $('#addCategoryModal').removeClass('hidden');
+        $('#addManageSectionsModal').removeClass('hidden');
     });
 
-    $('#closeSuccessModal').on('click', function() {
-        $('#addCategoryModal').addClass('hidden');
+    $('#closeAddManageSectionsModal').on('click', function() {
+        $('#addManageSectionsModal').addClass('hidden');
     });
 
     // Optional: Close when clicking outside modal content
-    $('#addCategoryModal').on('click', function(e) {
+    $('#addManageSectionsModal').on('click', function(e) {
         if ($(e.target).is(this)) {
             $(this).addClass('hidden');
         }
     });
 
+    $(document).on('click', '#submitManageSectionBtn', function () {
+        $.ajax({
+            type: 'POST',
+            url: "sections/store",
+            data: $('#addManageSectionForm').serialize(),
+            dataType: 'json',
+            success: function (response) {
+                $form[0].reset();
+                $('#addManageSectionsModal').addClass('hidden');
+                // $('#modalSuccessContent').html(response.message);
+                // $('#successModal').removeClass('hidden');
+            },
+            error: function (xhr) {
+                if (xhr.status) {
+                    const errors = xhr.responseJSON.errors;
+
+                    // Loop over errors and display inline
+                    $.each(errors, function (field, messages) {
+                        let $input = $form.find(`[name="${field}"]`);
+
+                        if ($input.length === 0) {
+                            // Handle array-like error field names like user.0, user.1
+                            const baseField = field.split('.')[0];
+                            $input = $form.find(`[name="${baseField}[]"], [name="${baseField}"]`);
+                        }
+
+                        $input.addClass('border-red-500');
+
+                        // if(field === "user") {
+                        //     $("#selectedUsers").addClass("border-red-500");
+                        // }
+
+                        if ($input.next('.input-error-text').length === 0) {
+                            $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
+                        }
+                    });
+                }
+            },
+            complete: function () {
+            }
+        });
+    });
 })

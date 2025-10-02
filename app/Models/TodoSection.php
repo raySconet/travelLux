@@ -6,18 +6,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class TodoSection extends Model
 {
-    protected $table = 'todos';
+    protected $table = 'todo_sections';
 
     protected $fillable = [
         'title',
         'description',
         'completeDate',
-        'toDoStatus',
-        'case_id',
+        'sectionOrder',
+        'caseId',
     ];
 
       public function todos()
     {
         return $this->hasMany(Todo::class);
+    }
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($section) {
+            if (is_null($section->sectionOrder)) {
+                $maxOrder = self::where('caseId', $section->caseId)->max('sectionOrder');
+                $section->sectionOrder = $maxOrder ? $maxOrder + 1 : 1;
+            }
+        });
     }
 }

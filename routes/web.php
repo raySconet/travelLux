@@ -8,6 +8,7 @@ use App\Http\Controllers\UserCategoryController;
 use App\Http\Controllers\UserController;
 use App\Models\CourtCase;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SectionController;
 
 Route::get('/', function () {
     return view('auth/login');
@@ -55,6 +56,10 @@ Route::get('/getEventsCases', [CategoryController::class, 'getEventsAndCases']);
 Route::middleware('auth')->group(function () {
     Route::post('/events/store', [EventController::class, 'store'])->name('events.store');
     Route::post('/cases/store', [CourtCasesController::class, 'store'])->name('cases.store');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/sections/store', [SectionController::class, 'store'])->name('sections.store');
 });
 
 require __DIR__.'/auth.php';

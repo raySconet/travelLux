@@ -38,6 +38,127 @@ $(document).ready(() => {
         highlightSelectedSidebarDay();
     });
 
+    // $(document).on('click', '.view-all-events-btn', function() {
+    //     const dateStr = $(this).data('date');
+    //     const [year, month, day] = dateStr.split('-').map(Number);
+
+    //     const selected = new Date(year, month - 1, day);
+    //     window.selectedDate = selected;
+
+    //     currentMonth = selected.getMonth();
+    //     currentYear = selected.getFullYear();
+
+    //     updateCalendarHeader(currentMonth, currentYear);
+    //     buildMonthlyCalendarDays(currentMonth, currentYear);
+    //     buildDailyView(day, currentMonth, currentYear);
+    //     updateDailyHeader(selected);
+
+    //     $('#selectedDayWeekMonthOption').text('Day View');
+    //     showView('Daily');
+
+    //     highlightSelectedSidebarDay();
+    // });
+
+    $(document).on('click', '#closeDailyModalBtn, #closeDailyEventsModal', function () {
+        $('#dailyEventsModal').addClass('hidden');
+    });
+
+    $(document).on('click', '.view-all-events-btn', function () {
+        const dateStr = $(this).data('date');
+        const [year, month, day] = dateStr.split('-');
+        const formattedDate = new Date(dateStr).toLocaleDateString(undefined, {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Get events for this date
+        const eventsForDay = (eventsData || [])
+            .flatMap(user => user.events || [])
+            .filter(event => event.date === dateStr && !event.isDuplicate);
+
+        eventsForDay.sort((a, b) => {
+            const dateA = new Date(`${a.date}T${a.from || "00:00"}:00`);
+            const dateB = new Date(`${b.date}T${b.from || "00:00"}:00`);
+
+            if (dateA.getTime() === dateB.getTime()) {
+                return (a.title || "").localeCompare(b.title || "", undefined, { sensitivity: 'base' });
+            }
+
+            return dateA - dateB;
+        });
+
+        // Determine which types exist
+        const hasEvents = eventsForDay.some(e => e.type === 'event');
+        const hasCases = eventsForDay.some(e => e.type === 'case');
+
+        let labelText = '';
+        if (hasEvents && hasCases) {
+            labelText = 'Events & Cases';
+        } else if (hasEvents) {
+            labelText = 'Events';
+        } else if (hasCases) {
+            labelText = 'Cases';
+        } else {
+            labelText = 'Items';
+        }
+
+        // Set modal header
+        $('#dailyEventsModalDate').text(`${labelText} for ${formattedDate}`);
+
+        const $modalBody = $('#dailyEventsModalBody');
+        $modalBody.empty();
+
+        if (eventsForDay.length === 0) {
+            $modalBody.append('<p class="text-gray-500">No ${labelText} for this day.</p>');
+        } else {
+            eventsForDay.forEach(event => {
+                // console.log(event); // border border-gray-300 #eaeef2
+                // const verticalType = event.type.toUpperCase().split('').join('<br>');
+                let bgColor;
+                if(event.type === "event") {
+                    bgColor = "bg-blue-100";
+                } else {
+                    bgColor = "bg-[#eaeef2]";
+                }
+                const verticalType = event.type.charAt(0).toUpperCase() + event.type.slice(1).toLowerCase();;
+
+                const eventHTML = `
+                    <div class="rounded bg-gray-50 shadow-sm flex flex-column">
+                        <div class="w-[32px] h-[64px] ${bgColor} text-gray-800 font-semibold text-xs flex items-center justify-center">
+                            <span class="transform -rotate-90 origin-center leading-tight tracking-widest">
+                               ${verticalType}
+                            </span>
+                        </div>
+
+                        <div class="w-full p-3 overflow-hidden">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-semibold text-gray-800 flex items-center gap-1 w-[95%]">
+                                    <span class="inline-block min-w-3 min-h-3 rounded-full" style="background-color: ${event.color};"></span>
+                                    <span class="truncate whitespace-nowrap overflow-hidden block max-w-[500px]">
+                                        ${event.title}
+                                    </span>
+                                </h3>
+
+                                ${event.editable ? `
+                                    <i class="fa-solid fa-pen-to-square text-gray-500 hover:text-gray-800 cursor-pointer iconPencil" title="Edit Event" data-id="${event.id}" data-type="${event.type}"></i>
+                                ` : ''}
+                            </div>
+                            <p class="text-sm text-gray-600">${event.from || 'All Day'} ${event.to ? `– ${event.to}` : ''}</p>
+                        </div>
+                    </div>
+                `;
+                $modalBody.append(eventHTML);
+            });
+        }
+
+        // Show the modal (remove `hidden` class)
+        $('#dailyEventsModalBody').parent().removeClass('p-6');
+        $('#dailyEventsModal').removeClass('hidden');
+    });
+
+
     $(document).on('click', '#sidebarCalendarMonthYearSelected', function() {
         if ($('#calendarMonthYearDropdown').is(':visible')) {
             $('#calendarMonthYearDropdown').hide();
@@ -652,6 +773,7 @@ $(document).ready(() => {
         const eventType = $(this).data('type');
         const arrowPlane = '<i class="fa-solid fa-paper-plane"></i>';
 
+        $('#dailyEventsModal').addClass('hidden');
         $('#eventCaseType').addClass('hidden');
         $('#headerIcon').removeClass('fa-solid fa-calendar-plus').addClass('fa-solid fa-pen-to-square');
         $('.input-error-text').remove();
@@ -757,6 +879,17 @@ $(document).ready(() => {
             $('input[name="fromDate"]').val(dateFrom);
             $('input[name="toDate"]').val(dateTo);
             $categorySelect.val(eventCaseEditData.categoryId);
+
+            const fromFlatpickr = $('input[name="fromDate"]')[0]._flatpickr; // added
+            const toFlatpickr = $('input[name="toDate"]')[0]._flatpickr; // added
+
+            if (fromFlatpickr) {
+                fromFlatpickr.setDate(dateFrom, false);
+            }
+
+            if (toFlatpickr) {
+                toFlatpickr.setDate(dateTo, false);
+            }
 
             if (eventType === 'case') {
                 const userIds = (eventCaseEditData.users || []).map(u => u.id.toString());
@@ -935,27 +1068,28 @@ function showView(view) {
     // }
 
     if (view === 'Daily') {
-        if (window.selectedDate) {
-            const newMonth = window.selectedDate.getMonth();
-            const newYear = window.selectedDate.getFullYear();
+        getData(checkedOrder, () => { // added on 10/03/2025
+            if (window.selectedDate) {
+                const newMonth = window.selectedDate.getMonth();
+                const newYear = window.selectedDate.getFullYear();
 
-            if (newMonth !== currentMonth || newYear !== currentYear) {
-                currentMonth = newMonth;
-                currentYear = newYear;
-                updateCalendarHeader(currentMonth, currentYear);
-                buildMonthlyCalendarDays(currentMonth, currentYear);
+                if (newMonth !== currentMonth || newYear !== currentYear) {
+                    currentMonth = newMonth;
+                    currentYear = newYear;
+                    updateCalendarHeader(currentMonth, currentYear);
+                    buildMonthlyCalendarDays(currentMonth, currentYear);
+                }
+
+                buildDailyView(
+                    window.selectedDate.getDate(),
+                    window.selectedDate.getMonth(),
+                    window.selectedDate.getFullYear()
+                );
+            } else {
+                buildDailyView();
             }
-
-            buildDailyView(
-                window.selectedDate.getDate(),
-                window.selectedDate.getMonth(),
-                window.selectedDate.getFullYear()
-            );
-        } else {
-            buildDailyView();
-        }
-        highlightSelectedSidebarDay();
-
+            highlightSelectedSidebarDay();
+        });
     } else if (view === 'Weekly') {
         window.viewedWeekDate = new Date(window.selectedDate.getTime());
         getData(checkedOrder, () => {
@@ -1578,9 +1712,14 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
             } else {
                 $td.html('<span class="font-bold cursor-pointer">' + day + '</span>');
 
-                // 🔹 Inject events for the day
+                // 🔹 Inject events for the day 123
                 const eventsForDay = userEvents.filter(event => event.date === dateStr);
-                eventsForDay.forEach(event => {
+
+                const maxEventsToShow = 6;
+                const uniqueEventsForDay = eventsForDay.filter(event => !event.isDuplicate);
+                const eventsToShow = uniqueEventsForDay.slice(0, maxEventsToShow);
+
+                eventsToShow.forEach(event => {
                     if (event.isDuplicate) {
                         return; // ❌ Skip in UI, but kept in data
                     }
@@ -1592,8 +1731,8 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     ` : '';
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                            <div class="relative">
-                                <span>${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
+                            <div class="relative w-[185px] truncate">
+                                <span class="truncate w-[100%]">${event.title}</span>
                                 ${iconPencil}
                             </div>
                             <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10">
@@ -1606,6 +1745,27 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     `);
                     $td.append(eventDiv);
                 });
+
+                if (uniqueEventsForDay.length > maxEventsToShow) {
+                    const moreBtn = $(`
+                        <button
+                            class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-date="${dateStr}"
+                            title="View all events for this day"
+                        >
+                            +${uniqueEventsForDay.length - maxEventsToShow} more
+                        </button>
+                    `);
+
+                    $td.css('position', 'relative'); // Ensure parent is relative positioned
+                    $td.append(moreBtn);
+
+                    moreBtn.on('click', function() {
+                        const date = $(this).data('date');
+                        console.log('Go to daily view for:', date);
+                        // window.location.href = `/daily?date=${date}`;
+                    });
+                }
             }
 
             // if (!window.selectedDate && isCurrentMonth && day === today.getDate()) {

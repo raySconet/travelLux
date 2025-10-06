@@ -8,7 +8,7 @@
 >
     <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl relative border border-gray-300">
         @isset($header)
-            <div class="modal-title grid grid-cols-2 items-center p-4">
+            <div class="modal-title flex justify-between items-center p-4">
                 {{ $header }}
             </div>
         @endisset

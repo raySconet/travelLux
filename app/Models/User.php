@@ -63,4 +63,39 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(CourtCase::class, 'user_case', 'user_id', 'case_id')->withTimestamps();
     }
+
+    public function isSuperAdmin()
+    {
+        return $this->userPermission === 'super_admin';
+    }
+
+    public function isAdmin()
+    {
+        return $this->userPermission === 'admin';
+    }
+
+    public function isRegularUser()
+    {
+        return $this->userPermission === 'user';
+    }
+
+    public function canEditEvent(Event $event)
+    {
+        return $this->isSuperAdmin() || ($this->isAdmin() && $event->user_id === $this->id);
+    }
+
+    public function canDeleteEvent(Event $event)
+    {
+        return $this->canEditEvent($event); // same logic for now
+    }
+
+    public function canViewEvent(Event $event)
+    {
+        return $this->isSuperAdmin() || $this->isAdmin() || ($event->user_id === $this->id);
+    }
+
+    public function canCreateEvent()
+    {
+        return $this->isSuperAdmin() || $this->isAdmin();
+    }
 }

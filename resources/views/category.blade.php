@@ -73,7 +73,7 @@
         <x-slot name="header">
             <div class="grid grid-cols-[auto_1fr] items-center gap-2">
                 <i class="fa-solid fa-triangle-exclamation fa-xl text-red-600"></i>
-                <h2 class="text-xl font-semibold text-red-700">Confirm Deletion</h2>
+                <h2 class="text-xl font-semibold text-gray-800">Confirm Deletion</h2>
             </div>
             <i
                 id="closeCategoryDeleteConfirmModal"
@@ -85,7 +85,7 @@
 
         {{-- Body content --}}
         <div class="text-sm text-gray-700 space-y-4">
-            <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+            <p>Are you sure you want to delete this category? This action cannot be undone.</p>
         </div>
 
         <x-slot name="footer">

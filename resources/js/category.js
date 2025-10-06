@@ -144,7 +144,7 @@ $(document).ready(() => {
     });
 
     // Optional: Close when clicking outside modal content
-    $('#addCategoryModal, #errorModal, #successModal').on('click', function(e) {
+    $('#addCategoryModal, #errorModal, #successModal, #editCategoryModal, #deleteCategoryConfirmModal').on('click', function(e) {
         if ($(e.target).is(this)) {
             $(this).addClass('hidden');
         }
@@ -276,6 +276,10 @@ $(document).ready(() => {
 
     $(document).on('click', '.editCategoryBtn', function(e) {
         e.stopPropagation();
+
+        $('.input-error-text').remove();
+        $('input').removeClass('border-red-500');
+        $('.colorBox').removeClass('border border-red-500');
 
         const categoryId = $(this).data('id');
         console.log(categoryId);

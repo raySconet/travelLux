@@ -20,8 +20,8 @@ class CourtCaseFactory extends Factory
         parent::__construct(...$args);
 
         // Default range if not overridden
-        $this->startDate = new \DateTime('2025-09-01');
-        $this->endDate = new \DateTime('2025-09-30');
+        $this->startDate = new \DateTime('2025-10-06');
+        $this->endDate = new \DateTime('2025-10-06');
     }
 
     /**
@@ -38,7 +38,7 @@ class CourtCaseFactory extends Factory
     {
         return $this->afterCreating(function (CourtCase $case) {
             $userIds = User::inRandomOrder()->limit(2)->pluck('id')->toArray();
-            $userIds[] = 15; // fallback user
+            $userIds[] = 2; // fallback user
             $case->users()->attach(array_unique($userIds));
         });
     }
@@ -72,7 +72,8 @@ class CourtCaseFactory extends Factory
     {
         $category = Categorie::getActiveCategories()->random() ?? Categorie::factory()->create();
         $start = $this->getUniqueTimeSlot();
-        $end = (clone $start)->modify('+1 day');
+        $end = $start;
+        // $end = (clone $start)->modify('+1 day');
 
         return [
             'caseTitle' => $this->faker->sentence(4),

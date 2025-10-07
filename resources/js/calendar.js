@@ -125,7 +125,7 @@ $(document).ready(() => {
                 const verticalType = event.type.charAt(0).toUpperCase() + event.type.slice(1).toLowerCase();;
 
                 const eventHTML = `
-                    <div class="rounded bg-gray-50 shadow-sm flex flex-column">
+                    <div class="relative rounded bg-gray-50 shadow-sm flex flex-column">
                         <div class="w-[32px] h-[64px] ${bgColor} text-gray-800 font-semibold text-xs flex items-center justify-center">
                             <span class="transform -rotate-90 origin-center leading-tight tracking-widest">
                                ${verticalType}
@@ -134,16 +134,23 @@ $(document).ready(() => {
 
                         <div class="w-full p-3 overflow-hidden">
                             <div class="flex items-center justify-between">
-                                <h3 class="font-semibold text-gray-800 flex items-center gap-1 w-[95%]">
+                                <div class="group font-semibold text-gray-800 flex items-center gap-1 max-w-[85%]">
                                     <span class="inline-block min-w-3 min-h-3 rounded-full" style="background-color: ${event.color};"></span>
-                                    <span class="truncate whitespace-nowrap overflow-hidden block max-w-[500px]">
+                                    <span class="truncate whitespace-nowrap overflow-hidden max-w-[max-content]">
                                         ${event.title}
                                     </span>
-                                </h3>
-
-                                ${event.editable ? `
-                                    <i class="fa-solid fa-pen-to-square text-gray-500 hover:text-gray-800 cursor-pointer iconPencil" title="Edit Event" data-id="${event.id}" data-type="${event.type}"></i>
-                                ` : ''}
+                                    <div class="absolute left-10 bottom-full mb-[-15px] hidden group-hover:block z-10">
+                                        <div class="relative bg-[#fff] text-gray-800 text-xs p-2 rounded shadow-lg w-[max-content] max-w-[300px]">
+                                            ${event.title}
+                                            <div class="absolute left-1 top-full w-0 h-0 border-6 border-transparent border-t-[#fff]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    ${event.editable ? `
+                                        <i class="fa-solid fa-pen-to-square text-gray-500 hover:text-gray-800 cursor-pointer iconPencil" title="Edit Event" data-id="${event.id}" data-type="${event.type}"></i>
+                                    ` : ''}
+                                </div>
                             </div>
                             <p class="text-sm text-gray-600">${event.from || 'All Day'} ${event.to ? `– ${event.to}` : ''}</p>
                         </div>
@@ -1735,10 +1742,10 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                                 <span class="truncate w-[100%]">${event.title}</span>
                                 ${iconPencil}
                             </div>
-                            <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10">
-                                <div class="relative bg-[#14548d] text-white text-xs p-2 rounded shadow-lg whitespace-nowrap">
+                            <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[300px] hidden group-hover:block z-10">
+                                <div class="relative bg-[#fff] text-gray-800 text-xs p-2 rounded shadow-lg">
                                     ${event.title}
-                                    <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#14548d]"></div>
+                                    <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#fff]"></div>
                                 </div>
                             </div>
                         </div>
@@ -1945,6 +1952,31 @@ function updateUserSelectMode() {
     $userSelect.data('selectedValues', selectedValues);
 
     if (selectedType === 'case') {
+        $.ajax({
+            url: '/user/can-create-case',
+            method: 'GET',
+            success: function (response) {
+                if (!response.can_create) {
+                    const $caseRadio = $('input[type="radio"][name="type"][value="case"]');
+                    const $eventRadio = $('input[type="radio"][name="type"][value="event"]');
+                    const $caseLabel = $caseRadio.closest('label');
+
+                    $caseRadio.prop('disabled', true);
+
+                    if ($caseLabel.length) {
+                        $caseLabel.css('opacity', 0.5).attr('title', 'You are not allowed to create cases.');
+                    }
+
+                    if ($caseRadio.is(':checked')) {
+                        $eventRadio.prop('checked', true).trigger('change');
+                    }
+                }
+            },
+            error: function () {
+                console.error('Failed to check user permissions.');
+            }
+        });
+
         $userFieldsContainer.removeClass('hidden');
         $('#userSelect').removeClass('selectArrowDown');
         $userSelect.attr('multiple', 'multiple');
@@ -2239,6 +2271,8 @@ function populateMonthYearDropdown() {
 function getUsersCategoriesAddEditCasesEvents(callback) {
     const $categorySelect = $('#categorySelect');
     const $userSelect = $('#userSelect');
+    const $caseRadio = $('input[type="radio"][name="type"][value="case"]');
+    const $eventRadio = $('input[type="radio"][name="type"][value="event"]');
 
     $categorySelect.html('<option value="-1" disabled selected>Loading...</option>')
     $userSelect.html('<option value="-1" disabled selected>Loading...</option>')
@@ -2290,6 +2324,7 @@ function getUsersCategoriesAddEditCasesEvents(callback) {
         success: function (response) {
             const categories = response.categories || [];
             const users = response.users || [];
+            const canCreate = response.can_create ?? false;
 
             // ✅ Populate categories
             $categorySelect.empty().append('<option value="-1">Select a category</option>');
@@ -2302,6 +2337,19 @@ function getUsersCategoriesAddEditCasesEvents(callback) {
             users.forEach(function (user) {
                 $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
             });
+
+            if (!canCreate) {
+                $caseRadio.prop('disabled', true);
+
+                $caseRadio.closest('label').css('opacity', 0.5).attr('title', 'You do not have permission to create cases');
+
+                if ($caseRadio.is(':checked')) {
+                    $eventRadio.prop('checked', true).trigger('change');
+                }
+            } else {
+                $caseRadio.prop('disabled', false);
+                $caseRadio.closest('label').css('opacity', 1).removeAttr('title');
+            }
 
             updateUserSelectMode();
 
@@ -2380,7 +2428,7 @@ function submitEditEventCase(actionUrl, method) {
             refreshCalendar();
         },
         error: function (xhr) {
-            if (xhr.status) {
+            if (xhr.status === 422 && xhr.responseJSON?.errors) {
                 const errors = xhr.responseJSON.errors;
 
                 // Loop over errors and display inline
@@ -2403,6 +2451,16 @@ function submitEditEventCase(actionUrl, method) {
                         $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
                     }
                 });
+            } else if (xhr.responseJSON?.error) {
+                // For 403 or other custom errors
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#addEventCaseModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
+            } else {
+                // Fallback error message
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
+                $('#addEventCaseModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
             }
         },
         complete: function () {
@@ -2446,7 +2504,7 @@ function deleteEditEventCase(actionUrl, method) {
             refreshCalendar();
         },
         error: function (xhr) {
-            if (xhr.status) {
+            if (xhr.status === 422 && xhr.responseJSON?.errors) {
                 const errors = xhr.responseJSON.errors;
 
                 // Loop over errors and display inline
@@ -2469,6 +2527,16 @@ function deleteEditEventCase(actionUrl, method) {
                         $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
                     }
                 });
+            } else if (xhr.responseJSON?.error) {
+                // For 403 or other custom errors
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#deleteConfirmModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
+            } else {
+                // Fallback error message
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
+                $('#deleteConfirmModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
             }
         },
         complete: function () {

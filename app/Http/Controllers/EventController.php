@@ -38,21 +38,6 @@ class EventController extends Controller
         }
 
         if ($eventId) {
-            // $event = Event::with(['categorie:id,categoryName,color', 'user:id,name'])
-            //     ->select(['id', 'title', 'user_id', 'categoryId', 'date_from', 'date_to'])
-            //     ->where('id', $eventId)
-            //     ->where('isDeleted', 0)
-            //     ->first();
-
-            // if (!$event) {
-            //     return response()->json(['error' => 'Event not found'], 404);
-            // }
-
-            // if ($event->user_id !== $currentUser->id && $currentUser->userPermission !== 'admin') {
-            //     return response()->json(['error' => 'Unauthorized access'], 403);
-            // }
-
-            // return response()->json($event);
             $event = Event::with([
                 'categorie:id,categoryName,color',
                 'user:id,name'
@@ -70,7 +55,7 @@ class EventController extends Controller
             //     return response()->json(['error' => 'Unauthorized access'], 403);
             // }
 
-            if (!$currentUser->canViewEvent($event)) {
+            if (!$currentUser->canEditEvent($event)) {
                 return response()->json(['error' => 'Unauthorized access'], 403);
             }
 
@@ -113,8 +98,13 @@ class EventController extends Controller
             ->whereBetween('date_from', [$startDate, $endDate])
             ->get();
 
+        // $events->transform(function ($event) use ($currentUser) {
+        //     $event->editable = ($currentUser->userPermission === 'admin' || $event->user_id === $currentUser->id);
+        //     return $event;
+        // });
+
         $events->transform(function ($event) use ($currentUser) {
-            $event->editable = ($currentUser->userPermission === 'admin' || $event->user_id === $currentUser->id);
+            $event->editable = $currentUser->canEditEvent($event);
             return $event;
         });
 
@@ -199,9 +189,15 @@ class EventController extends Controller
     }
 
     public function update(Request $request, Event $event) {
-        if ($event->user_id !== auth()->id() && auth()->user()->userPermission !== 'admin') {
+        $currentUser = auth()->user();
+
+        if (!$currentUser->canEditEvent($event)) {
             return response()->json(['error' => 'Unauthorized access'], 403);
         }
+
+        // if ($event->user_id !== auth()->id() && auth()->user()->userPermission !== 'admin') {
+        //     return response()->json(['error' => 'Unauthorized access'], 403);
+        // }
 
         $fromDateRaw = str_replace('+', '', $request->input('fromDate'));
         $toDateRaw = str_replace('+', '', $request->input('toDate'));
@@ -260,7 +256,13 @@ class EventController extends Controller
     }
 
     public function delete(Request $request, Event $event) {
-        if ($event->user_id !== auth()->id() && auth()->user()->userPermission !== 'admin') {
+        // if ($event->user_id !== auth()->id() && auth()->user()->userPermission !== 'admin') {
+        //     return response()->json(['error' => 'Unauthorized access'], 403);
+        // }
+
+        $currentUser = auth()->user();
+
+        if (!$currentUser->canDeleteEvent($event)) {
             return response()->json(['error' => 'Unauthorized access'], 403);
         }
 
@@ -288,6 +290,7 @@ class EventController extends Controller
     // }
     protected function hasTimeConflict($userId, $fromDate, $toDate, $excludeEventId = null) {
         $query = Event::where('user_id', $userId)
+            ->where('isDeleted', 0)
             ->where(function($q) use ($fromDate, $toDate) {
                 $q->whereBetween('date_from', [$fromDate, $toDate])
                 ->orWhereBetween('date_to', [$fromDate, $toDate])

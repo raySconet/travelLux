@@ -17,6 +17,28 @@ class CourtCasesController extends Controller
         $caseId = $request->input('event_case_id');
         $currentUser = auth()->user();
 
+        if ($request->has('user_id')) {
+            $requestedUserIds = $request->input('user_id');
+
+            // Normalize to array
+            if (!is_array($requestedUserIds)) {
+                $requestedUserIds = [(int) $requestedUserIds];
+            } else {
+                $requestedUserIds = array_map('intval', $requestedUserIds);
+            }
+
+            if ($currentUser->isRegularUser()) {
+                if (!in_array($currentUser->id, $requestedUserIds)) {
+                    return response()->json([]);
+                }
+                $userIds = [$currentUser->id];
+            } else {
+                $userIds = $requestedUserIds;
+            }
+        } else {
+            $userIds = [$currentUser->id];
+        }
+
         if ($caseId) {
             $userCases = UserCase::with([
                 'user:id,name',
@@ -32,9 +54,13 @@ class CourtCasesController extends Controller
 
             $case = $userCases->first()->case;
 
-            $assignedUserIds = $userCases->pluck('user_id')->toArray();
+            // $assignedUserIds = $userCases->pluck('user_id')->toArray();
 
-            if (!in_array($currentUser->id, $assignedUserIds) && $currentUser->userPermission !== 'admin') {
+            // if (!in_array($currentUser->id, $assignedUserIds) && $currentUser->userPermission !== 'admin') {
+            //     return response()->json(['error' => 'Unauthorized access'], 403);
+            // }
+
+            if (!$currentUser->canEditCase($case)) {
                 return response()->json(['error' => 'Unauthorized access'], 403);
             }
 
@@ -70,16 +96,16 @@ class CourtCasesController extends Controller
             // return response()->json($transformed);
         }
 
-        $userIds = $request->input('user_id');
+        // $userIds = $request->input('user_id');
         $startDateInput = $request->input('start_date');
         $endDateInput = $request->input('end_date');
         $viewMode = $request->input('view_mode');
 
-        if (!$userIds) {
-            $userIds = [auth()->id()];
-        } elseif (!is_array($userIds)) {
-            $userIds = [(int) $userIds];
-        }
+        // if (!$userIds) {
+        //     $userIds = [auth()->id()];
+        // } elseif (!is_array($userIds)) {
+        //     $userIds = [(int) $userIds];
+        // }
 
         try {
             $startDate = Carbon::parse($startDateInput)->startOfDay();
@@ -122,16 +148,13 @@ class CourtCasesController extends Controller
                 return $event;
             }
 
-            // Get all assigned user IDs for this case (via loaded relationship)
-            $assignedUserIds = $event->case->users->pluck('id')->toArray();  // assuming case->users relationship
+            // $assignedUserIds = $event->case->users->pluck('id')->toArray();
+            // $isAdmin = $currentUser->userPermission === 'admin';
+            // $isAssigned = in_array($currentUser->id, $assignedUserIds);
+            // $isCreator = $event->case->created_by === $currentUser->id;
+            // $event->editable = $isAdmin || $isAssigned || $isCreator;
+            $event->editable = $currentUser->canEditCase($event->case);
 
-            $isAdmin = $currentUser->userPermission === 'admin';
-            $isAssigned = in_array($currentUser->id, $assignedUserIds);
-
-            // Optionally, check if creator if you track it
-            $isCreator = $event->case->created_by === $currentUser->id;
-
-            $event->editable = $isAdmin || $isAssigned || $isCreator;
             return $event;
         });
 
@@ -164,6 +187,12 @@ class CourtCasesController extends Controller
     }
 
     public function store(Request $request) {
+        $currentUser = auth()->user();
+
+        if (!$currentUser->canCreateCase()) {
+            return response()->json(['error' => 'Unauthorized access'], 403);
+        }
+
         $fromDateRaw = $request->input('fromDate');
         $toDateRaw = $request->input('toDate');
 
@@ -222,14 +251,18 @@ class CourtCasesController extends Controller
     {
         $user = auth()->user();
 
-        $isAssigned = UserCase::where('case_id', $case->id)
-            ->where('user_id', $user->id)
-            ->where('isDeleted', 0)
-            ->exists();
-
-        if (!$isAssigned && $user->userPermission !== 'admin') {
+        if (!$user->canEditCase($case)) {
             return response()->json(['error' => 'Unauthorized access'], 403);
         }
+
+        // $isAssigned = UserCase::where('case_id', $case->id)
+        //     ->where('user_id', $user->id)
+        //     ->where('isDeleted', 0)
+        //     ->exists();
+
+        // if (!$isAssigned && $user->userPermission !== 'admin') {
+        //     return response()->json(['error' => 'Unauthorized access'], 403);
+        // }
 
         // Step 1: Prepare and validate
         $request->merge([
@@ -314,14 +347,18 @@ class CourtCasesController extends Controller
     {
         $user = auth()->user();
 
-        $isAssigned = UserCase::where('case_id', $case->id)
-            ->where('user_id', $user->id)
-            ->where('isDeleted', 0)
-            ->exists();
-
-        if (!$isAssigned && $user->userPermission !== 'admin') {
+        if (!$user->canDeleteCase($case)) {
             return response()->json(['error' => 'Unauthorized access'], 403);
         }
+
+        // $isAssigned = UserCase::where('case_id', $case->id)
+        //     ->where('user_id', $user->id)
+        //     ->where('isDeleted', 0)
+        //     ->exists();
+
+        // if (!$isAssigned && $user->userPermission !== 'admin') {
+        //     return response()->json(['error' => 'Unauthorized access'], 403);
+        // }
 
         UserCase::where('case_id', $case->id)->update(['isDeleted' => 1]);
 
@@ -335,6 +372,15 @@ class CourtCasesController extends Controller
 
         return response()->json([
             'message' => 'Case has been deleted!',
+        ]);
+    }
+
+    public function canCreateCase()
+    {
+        $user = auth()->user();
+
+        return response()->json([
+            'can_create' => $user->canCreateCase(),
         ]);
     }
 }

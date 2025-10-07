@@ -59,4 +59,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/cases/store', [CourtCasesController::class, 'store'])->name('cases.store');
 });
 
+Route::get('/user/can-create-case', [CourtCasesController::class, 'canCreateCase']);
+
 require __DIR__.'/auth.php';

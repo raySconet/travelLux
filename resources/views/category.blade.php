@@ -1,3 +1,6 @@
+@php
+    $user = auth()->user();
+@endphp
 
 <x-app-layout>
     <x-slot name="header">
@@ -5,10 +8,12 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Category') }}
             </h2>
-            <x-primary-btn id="openAddCategoryModal">
-                <i class="fas fa-layer-group"></i>
-                <span class="ml-2">{{ __('Add Category') }}</span>
-            </x-primary-btn>
+            @if ($user && $user->canAddCategory())
+                <x-primary-btn id="openAddCategoryModal">
+                    <i class="fas fa-layer-group"></i>
+                    <span class="ml-2">{{ __('Add Category') }}</span>
+                </x-primary-btn>
+            @endif
         </div>
     </x-slot>
 

@@ -30,6 +30,12 @@ class CategoryController extends Controller
 
     public function store(Request $request) {
         try {
+            $authUser = auth()->user();
+
+            if (!$authUser->canAddCategory()) {
+                return response()->json(['error' => 'Unauthorized.'], 403);
+            }
+
             $request->validate([
                 'name' => ['required', 'string', 'max:255', 'regex:/^[^\d]+$/', 'unique:categories,categoryName',],
                 'color' => ['nullable', 'regex:/^#([A-Fa-f0-9]{6})$/', 'unique:categories,color',],
@@ -63,6 +69,12 @@ class CategoryController extends Controller
 
     public function update(Request $request, Categorie $categorie) {
         try {
+            $authUser = auth()->user();
+
+            if (!$authUser->canEditCategory()) {
+                return response()->json(['error' => 'Unauthorized.'], 403);
+            }
+
             $rules = [
                 'nameEditCategory' => [
                     'required',
@@ -113,6 +125,12 @@ class CategoryController extends Controller
 
     public function delete(Request $request)
     {
+        $authUser = auth()->user();
+
+        if (!$authUser->canDeleteCategory()) {
+            return response()->json(['error' => 'Unauthorized.'], 403);
+        }
+
         $categoryId = $request->input('category_id');
 
         $categorie = Categorie::find($categoryId);
@@ -140,14 +158,47 @@ class CategoryController extends Controller
 
     public function getEventsAndCases(Request $request)
     {
-        $requestUserId = $request->input('user_id');
+        // $requestUserId = $request->input('user_id');
         $authUser = auth()->user();
 
-        $targetUserId = $requestUserId ?? $authUser->id;
+        // $targetUserId = $requestUserId ?? $authUser->id;
 
         // if($authUser->userPermission !== 'admin' && $authUser->id != $targetUserId) {
         //     return response()->json(['error' => 'Unauthorized access'], 403);
         // }
+
+        $targetUserId = $request->input('user_id');
+        if (!$targetUserId) {
+            $targetUserId = [$authUser->id];
+        } elseif (!is_array($targetUserId)) {
+            $targetUserId = [(int)$targetUserId];
+        } else {
+            $targetUserId = array_map('intval', $targetUserId);
+        }
+
+        if ($authUser->isRegularUser()) {
+            if (count($targetUserId) !== 1 || $targetUserId[0] !== $authUser->id) {
+                $categories = Categorie::getActiveCategories();
+                $result = $categories->map(function ($category) {
+                    return [
+                        'id' => (string)$category->id,
+                        'panelId' => 'panel' . $category->id,
+                        'label' => $category->categoryName,
+                        'colorClass' => $category->color ?? '#fff',
+                        'items' => [],
+                    ];
+                });
+
+                // return response()->json($result);
+                return response()->json([
+                    'categories' => $result,
+                    'permissions' => [
+                        'can_edit' => $authUser->canEditCategory(),
+                        'can_delete' => $authUser->canDeleteCategory(),
+                    ],
+                ]);
+            }
+        }
 
         $categories = Categorie::getActiveCategories();
 
@@ -198,7 +249,14 @@ class CategoryController extends Controller
             }
         }
 
-        return response()->json(collect($categoryIndex)->values());
+        // return response()->json(collect($categoryIndex)->values());
+        return response()->json([
+            'categories' => collect($categoryIndex)->values(),
+            'permissions' => [
+                'can_edit' => $authUser->canEditCategory(),
+                'can_delete' => $authUser->canDeleteCategory(),
+            ],
+        ]);
     }
 }
 ?>

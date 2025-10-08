@@ -1,8 +1,8 @@
 $(document).ready(() => {
     getUsers(function () {
-        getEventsCases(function(data) {
+        getEventsCases(function(categories, permissions) {
             // console.log("Received data:", data);
-            renderEventCases(data);
+            renderEventCases(categories, permissions);
         });
     });
 
@@ -68,9 +68,9 @@ $(document).ready(() => {
 
         // Check the clicked one
         $(this).prop('checked', true);
-        getEventsCases(function(data) {
+        getEventsCases(function(categories, permissions) {
             // console.log("Received data:", data);
-            renderEventCases(data);
+            renderEventCases(categories, permissions);
         });
 
         // console.log('Selected User ID:', $(this).data('user-id'));
@@ -226,8 +226,8 @@ $(document).ready(() => {
                 $('#addCategoryModal').addClass('hidden');
                 $('#modalSuccessContent').html(response.message);
                 $('#successModal').removeClass('hidden');
-                getEventsCases(function(data) {
-                    renderEventCases(data);
+                getEventsCases(function(categories, permissions) {
+                    renderEventCases(categories, permissions);
                 });
             },
             error: function (xhr) {
@@ -424,7 +424,7 @@ function getEventsCases(callback) {
         success: function (response) {
             // console.log("error");
             if (typeof callback === 'function') {
-                callback(response);
+                callback(response.categories, response.permissions);
             }
         },
         error: function (xhr) {
@@ -435,17 +435,29 @@ function getEventsCases(callback) {
     });
 }
 
-function renderEventCases(data) {
+function renderEventCases(categories, permissions) {
     const container = $("#categoryLayoutContent");
     container.empty();
 
-    data.forEach(category => {
+    categories.forEach(category => {
         const itemCount = category.items.length;
 
         const baseColor = category.colorClass;
         const darkerBorderColor = darkenHexColor(baseColor, 20);
 
         const borderStyle = `style="border-color: ${darkerBorderColor}; background-color: ${baseColor};"`;
+
+        const editButtonHtml = permissions.can_edit ? `
+            <button title="Edit" class="editCategoryBtn text-[limegreen] hover:text-green-800 cursor-pointer" data-id="${category.id}">
+                <i class="fa-solid fa-pen-to-square shadow-lg fa-lg"></i>
+            </button>
+        ` : '';
+
+        const deleteButtonHtml = permissions.can_delete ? `
+            <button title="Delete" class="deletedCategoryBtn text-red-600 hover:text-red-800 ml-2 cursor-pointer" data-id="${category.id}">
+                <i class="fa-solid fa-trash fa-lg"></i>
+            </button>
+        ` : '';
 
         const $categoryTitle = $(`
             <div
@@ -459,13 +471,8 @@ function renderEventCases(data) {
                 <label>${category.label}: ${itemCount} item(s)</label>
 
                 <div class="ml-auto">
-                    <button title="Edit" class="editCategoryBtn text-[limegreen] hover:text-green-800 cursor-pointer" data-id="${category.id}">
-                        <i class="fa-solid fa-pen-to-square shadow-lg fa-lg"></i>
-                    </button>
-
-                    <button title="Delete" class="deletedCategoryBtn text-red-600 hover:text-red-800 ml-2 cursor-pointer" data-id="${category.id}">
-                        <i class="fa-solid fa-trash fa-lg"></i>
-                    </button>
+                    ${editButtonHtml}
+                    ${deleteButtonHtml}
                 </div>
             </div>
         `);
@@ -654,12 +661,12 @@ function submitEditCategory(actionUrl) {
             $('#editCategoryModal').addClass('hidden');
             $('#modalSuccessContent').html(response.message);
             $('#successModal').removeClass('hidden');
-            getEventsCases(function(data) {
-                renderEventCases(data);
+            getEventsCases(function(categories, permissions) {
+                renderEventCases(categories, permissions);
             });
         },
         error: function (xhr) {
-            if (xhr.status) {
+            if (xhr.status === 422 && xhr.responseJSON?.errors) {
                 const errors = xhr.responseJSON.errors;
 
                 // Loop over errors and display inline
@@ -681,6 +688,16 @@ function submitEditCategory(actionUrl) {
                         $('.colorBox').addClass('border border-red-500');
                     }
                 });
+            } else if (xhr.responseJSON?.error) {
+                // For 403 or other custom errors
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#editCategoryModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
+            } else {
+                // Fallback error message
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
+                $('#editCategoryModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
             }
         },
         complete: function () {
@@ -748,6 +765,10 @@ function deleteCategory(actionUrl, categoryId) {
             } else if (jsonResponse && jsonResponse.message) {
                 // Show backend message returned on other error statuses (like 404 or your custom logic)
                 $('#modalErrorContent').html(jsonResponse.message);
+                $('#errorModal').removeClass('hidden');
+            } else if (xhr.responseJSON?.error) {
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#editCategoryModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
             } else {
                 // Generic fallback

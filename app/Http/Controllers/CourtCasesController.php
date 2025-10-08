@@ -384,5 +384,4 @@ class CourtCasesController extends Controller
         ]);
     }
 }
-
 ?>

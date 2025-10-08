@@ -118,4 +118,28 @@ class User extends Authenticatable
     {
         return $this->isSuperAdmin() || $this->isAdmin();
     }
+
+    public function canViewEventsAndCasesForUser($targetUserId)
+    {
+        if ($this->isSuperAdmin() || $this->isAdmin()) {
+            return true;
+        }
+
+        return $this->id === $targetUserId;
+    }
+
+    public function canAddCategory()
+    {
+        return $this->isSuperAdmin();
+    }
+
+    public function canEditCategory()
+    {
+        return $this->isSuperAdmin();
+    }
+
+    public function canDeleteCategory()
+    {
+        return $this->isSuperAdmin();
+    }
 }

@@ -977,6 +977,172 @@ $(document).ready(() => {
 
         submitEditEventCase(actionUrl, method);
     });
+
+
+    // Make sure you set these on dragstart somewhere:
+    // let draggedEvent = null;
+    // let sourceTable = null;
+
+    // $(document).on('dragstart', '.eventCase', function (e) {
+    //     draggedEvent = $(this);
+    //     sourceTable = draggedEvent.closest('table').attr('id');
+    //     e.originalEvent.dataTransfer.effectAllowed = 'move';
+    // });
+
+    // $('#dailyViewTable td, #dailyViewTableHidden td, #dailyBox3, #dailyBox4').on('dragover', function (e) {
+    //     e.preventDefault(); // Necessary to allow drop
+    //     e.originalEvent.dataTransfer.dropEffect = 'move';
+    // });
+
+    // $('#dailyViewTable td, #dailyViewTableHidden td, #dailyBox3, #dailyBox4').on('drop', function (e) {
+    //     e.preventDefault();
+
+    //     if (!draggedEvent) return;
+
+    //     const $dropTarget = $(this);
+    //     let targetTableId;
+
+    //     if ($dropTarget.is('#dailyBox4')) {
+    //         // Drop happened on dailyBox4, so target is the hidden table
+    //         targetTableId = 'dailyViewTableHidden';
+    //     } else if ($dropTarget.is('#dailyBox3')) {
+    //         // Drop on dailyBox3, target is normal table
+    //         targetTableId = 'dailyViewTable';
+    //     } else {
+    //         // Drop on a table cell: get closest table's id
+    //         targetTableId = $dropTarget.closest('table').attr('id');
+    //     }
+
+    //     // Prevent dropping on same user/table
+    //     if (sourceTable === targetTableId) {
+    //         alert("Cannot drop to same user");
+    //         return;
+    //     }
+    //     console.log(targetTableId);
+
+    //     const groupId = draggedEvent.data('group-id');
+
+    //     if (groupId) {
+    //         // Move all events in the group to the target table's cell
+    //         $(`.eventCase[data-group-id='${groupId}']`).appendTo(
+    //             targetTableId === 'dailyViewTable' || targetTableId === 'dailyViewTableHidden'
+    //                 ? $(`#${targetTableId} td`).first() // Append to first cell or customize as needed
+    //                 : $dropTarget
+    //         );
+    //     } else {
+    //         // Move just the dragged event
+    //         draggedEvent.appendTo(
+    //             targetTableId === 'dailyViewTable' || targetTableId === 'dailyViewTableHidden'
+    //                 ? $(`#${targetTableId} td`).first() // Append to first cell or customize as needed
+    //                 : $dropTarget
+    //         );
+    //     }
+
+    //     // Reset dragged event references
+    //     draggedEvent = null;
+    //     sourceTable = null;
+
+    //     // Refresh your calendar or UI after drop
+    //     // refreshCalendar();
+
+    //     // TODO: call your backend here to update event ownership for groupId or single event
+    // });
+
+    let draggedEvent = null;
+let sourceTable = null;
+let sourceDate = null;
+
+$(document).on('dragstart', '.eventCase', function (e) {
+    draggedEvent = $(this);
+    sourceTable = draggedEvent.closest('table').attr('id');
+
+    const sourceTd = draggedEvent.closest('td');
+    sourceDate = sourceTd.data('date') || null;
+
+    e.originalEvent.dataTransfer.effectAllowed = 'move';
+});
+
+const allDropTargets = `
+    #dailyViewTable td, #dailyViewTableHidden td, #dailyBox3, #dailyBox4,
+    #weeklyViewTable td, #weeklyViewTableHidden td
+`;
+
+$(document).on('dragover', allDropTargets, function (e) {
+    e.preventDefault();
+    e.originalEvent.dataTransfer.dropEffect = 'move';
+});
+
+$(document).on('drop', allDropTargets, function (e) {
+    e.preventDefault();
+
+    if (!draggedEvent) return;
+
+    const $dropTarget = $(this);
+    const targetTableId = $dropTarget.closest('table').attr('id');
+
+    // Handle drop to daily boxes (box3/box4)
+    if ($dropTarget.is('#dailyBox3')) return moveToFirstCell('dailyViewTable');
+    if ($dropTarget.is('#dailyBox4')) return moveToFirstCell('dailyViewTableHidden');
+
+    // Prevent drop to same table (same user)
+    if (sourceTable === targetTableId) {
+        alert("Cannot drop to same user");
+        return;
+    }
+
+    const targetTd = $dropTarget.closest('td');
+    const targetDate = targetTd.data('date') || null;
+
+    // Weekly view: Enforce same-date restriction
+    const isWeekly = targetTableId === 'weeklyViewTable' || targetTableId === 'weeklyViewTableHidden';
+
+    if (isWeekly) {
+        if (!sourceDate || !targetDate) {
+            alert("Cannot determine date. Drop not allowed.");
+            return;
+        }
+
+        if (sourceDate !== targetDate) {
+            alert("Can only drop to same date in weekly view.");
+            return;
+        }
+    }
+
+    // Move group or single event
+    const groupId = draggedEvent.data('group-id');
+    const appendTarget = targetTd.length ? targetTd : $dropTarget;
+
+    if (groupId) {
+        $(`.eventCase[data-group-id='${groupId}']`).appendTo(appendTarget);
+    } else {
+        draggedEvent.appendTo(appendTarget);
+    }
+
+    // Cleanup
+    draggedEvent = null;
+    sourceTable = null;
+    sourceDate = null;
+});
+
+function moveToFirstCell(targetTableId) {
+    const firstCell = $(`#${targetTableId} td`).first();
+    if (!firstCell.length) return;
+
+    const groupId = draggedEvent.data('group-id');
+    if (groupId) {
+        $(`.eventCase[data-group-id='${groupId}']`).appendTo(firstCell);
+    } else {
+        draggedEvent.appendTo(firstCell);
+    }
+
+    // Cleanup
+    draggedEvent = null;
+    sourceTable = null;
+    sourceDate = null;
+}
+
+
+
 });
 
 function toggleHeaderForView(view) {
@@ -1178,9 +1344,9 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     if (allUsers.length === 0) {
         $('#dailyViewTable').removeClass('hidden');
         dailyHeader.html(`${dayName} ${day} <div class="text-gray-400 italic">No users</div>`);
-        dailyBody.append(`
-            <div class="text-gray-400 italic dailyEventInfo">No events</div>
-        `);
+        // dailyBody.append(`
+        //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
+        // `);
         return;
     }
 
@@ -1196,9 +1362,9 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         dailyHeader.html(`${dayName} ${day} <div>${user.user}</div>`);
 
         if (eventsToday.length === 0) {
-            dailyBody.append(`
-                <div class="text-gray-400 italic dailyEventInfo">No events</div>
-            `);
+            // dailyBody.append(`
+            //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
+            // `);
         } else {
             eventsToday.forEach(event => {
                 console.log('event::', event);
@@ -1238,9 +1404,9 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         // Fill user 1
         dailyHeader.html(`${dayName} ${day} <div>${user1.user}</div>`);
         if (eventsUser1.length === 0) {
-            dailyBody.append(`
-               <div class="dailyEventInfo text-gray-400 italic">No events</div>
-            `);
+            // dailyBody.append(`
+            //    <div class="dailyEventInfo text-gray-400 italic">No events</div>
+            // `);
         } else {
             eventsUser1.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
@@ -1262,9 +1428,9 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         // Fill user 2
         headerHidden.html(`${dayName} ${day} <div>${user2.user}</div>`);
         if (eventsUser2.length === 0) {
-            bodyHidden.append(`
-                <div class="text-gray-400 italic dailyEventInfo">No events</div>
-            `);
+            // bodyHidden.append(`
+            //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
+            // `);
         } else {
             eventsUser2.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
@@ -1316,9 +1482,9 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         dailyBody.empty();
 
         if (eventsToday.length === 0) {
-            dailyBody.append(`
-                <div class="text-gray-400 italic dailyEventInfo">No events</div>
-            `);
+            // dailyBody.append(`
+            //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
+            // `);
         } else {
             eventsToday.forEach(event => {
                 if (event.isDuplicate) {
@@ -1461,7 +1627,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                     cell.append(eventDiv);
                 });
             } else {
-                cell.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
+                // cell.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
             }
         }
 
@@ -1500,6 +1666,8 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 
         const cellMain = $(`#weeklyViewTable .${dayClass}`);
         const cellHidden = $(`#weeklyViewTableHidden .${dayClass}`);
+        cellMain.attr('data-date', isoDate);
+        cellHidden.attr('data-date', isoDate);
 
         // User 1 events or no events placeholder
         if (userRow1) {
@@ -1521,7 +1689,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                     cellMain.append(eventDiv);
                 });
             } else {
-                cellMain.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
+                // cellMain.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
             }
         } else {
             cellMain.append('<div class="text-gray-400 italic weeklyEventInfo">No user</div>');
@@ -1547,7 +1715,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                     cellHidden.append(eventDiv);
                 });
             } else {
-                cellHidden.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
+                // cellHidden.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
             }
         } else {
             cellHidden.append('<div class="text-gray-400 italic weeklyEventInfo">No user</div>');

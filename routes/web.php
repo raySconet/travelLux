@@ -60,14 +60,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/cases/store', [CourtCasesController::class, 'store'])->name('cases.store');
 });
 
-<<<<<<< HEAD
 Route::middleware('auth')->group(function () {
     Route::post('/sections/store', [SectionController::class, 'store'])->name('sections.store');
 });
-=======
+
 Route::get('/user/can-create-case', [CourtCasesController::class, 'canCreateCase']);
 Route::post('/update-event-user', [EventController::class, 'updateEventUser']);
 Route::post('/update-case-user', [CourtCasesController::class, 'updateCaseUser']);
->>>>>>> 06936bd70be141e7e5147d7c8a2557194dbb9156
 
 require __DIR__.'/auth.php';

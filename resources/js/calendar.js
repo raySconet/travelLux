@@ -8,7 +8,8 @@ let sourceTable = null;
 let sourceDate = null;
 let sourceUserId = null;
 let targetUserId = null;
-let eventId = null;
+let itemId = null;
+let itemType = null;
 
 $(document).ready(() => {
     ({ month: currentMonth, year: currentYear } = parseMonthYear($('#calendarMonthYearSelected').text()));
@@ -991,10 +992,11 @@ $(document).ready(() => {
         const sourceTd = draggedEvent.closest('td');
         sourceDate = sourceTd.data('date') || null;
 
-        eventId = draggedEvent.data('id');
+        itemId = draggedEvent.data('id');
+        itemType = draggedEvent.data('type');
         sourceUserId = draggedEvent.closest('table').find('thead tr th div[data-user-id]').first().data('user-id');
 
-        console.log('Dragging event:', eventId);
+        console.log('Dragging event:', itemId);
         console.log('From user:', sourceUserId);
 
         e.originalEvent.dataTransfer.effectAllowed = 'move';
@@ -1018,8 +1020,6 @@ $(document).ready(() => {
         const $dropTarget = $(this);
         const targetTableId = $dropTarget.closest('table').attr('id');
 
-        let targetUserId;
-
         if ($dropTarget.is('#dailyBox3')) {
             targetUserId = $('#dailyViewTable thead tr th div[data-user-id]').first().data('user-id');
         } else if ($dropTarget.is('#dailyBox4')) {
@@ -1037,13 +1037,13 @@ $(document).ready(() => {
 
         // Handle drop to daily boxes (box3/box4)
         if ($dropTarget.is('#dailyBox3')) {
-            const targetUserId = $('#dailyViewTable thead tr th div[data-user-id]').first().data('user-id');
-            return moveToFirstCell('dailyViewTable', draggedEvent, eventId, targetUserId);
+            // const targetUserId = $('#dailyViewTable thead tr th div[data-user-id]').first().data('user-id');
+            return moveToFirstCell('dailyViewTable', draggedEvent, itemId, itemType, sourceUserId, targetUserId);
         }
 
         if ($dropTarget.is('#dailyBox4')) {
-            const targetUserId = $('#dailyViewTableHidden thead tr th div[data-user-id]').first().data('user-id');
-            return moveToFirstCell('dailyViewTableHidden', draggedEvent, eventId, targetUserId);
+            // const targetUserId = $('#dailyViewTableHidden thead tr th div[data-user-id]').first().data('user-id');
+            return moveToFirstCell('dailyViewTableHidden', draggedEvent, itemId, itemType, sourceUserId, targetUserId);
         }
 
         const targetTd = $dropTarget.closest('td');
@@ -1060,7 +1060,8 @@ $(document).ready(() => {
             }
 
             if (sourceDate !== targetDate) {
-                alert("Can only drop to same date in weekly view.");
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Can only drop to same date in weekly view.</p>`);
+                $('#errorModal').removeClass('hidden');
                 return;
             }
         }
@@ -1069,50 +1070,41 @@ $(document).ready(() => {
         const groupId = draggedEvent.data('group-id');
         const appendTarget = targetTd.length ? targetTd : $dropTarget;
 
-        if (groupId) {
-            $(`.eventCase[data-group-id='${groupId}']`).appendTo(appendTarget);
-        } else {
-            draggedEvent.appendTo(appendTarget);
-        }
-
         targetUserId = $dropTarget.closest('table').find('thead tr th div[data-user-id]').first().data('user-id');
 
-        console.log('Dropped event:', eventId);
+        console.log('Dropped item:', itemId, '| Type:', itemType);
         console.log('From user:', sourceUserId);
         console.log('To user:', targetUserId);
 
-        updateEventUser(eventId, targetUserId);
-
-        // Cleanup
-        draggedEvent = null;
-        sourceTable = null;
-        sourceDate = null;
-        sourceUserId = null;
-        targetUserId = null;
-        eventId = null;
+        updateItemUser(itemType, itemId, sourceUserId, targetUserId, function() {
+            if (groupId) {
+                $(`.eventCase[data-group-id='${groupId}']`).appendTo(appendTarget);
+            } else {
+                draggedEvent.appendTo(appendTarget);
+            }
+            // Cleanup
+            draggedEvent = null;
+            sourceTable = null;
+            sourceDate = null;
+            sourceUserId = null;
+            targetUserId = null;
+            itemId = null;
+        });
     });
 });
 
-function moveToFirstCell(targetTableId, dragged, eventId, targetUserId) {
+function moveToFirstCell(targetTableId, dragged, itemId, itemType, sourceUserId, targetUserId) {
     const firstCell = $(`#${targetTableId} td`).first();
     if (!firstCell.length) return;
 
-    const groupId = dragged.data('group-id');
-    if (groupId) {
-        $(`.eventCase[data-group-id='${groupId}']`).appendTo(firstCell);
-    } else {
-        dragged.appendTo(firstCell);
-    }
-
-    updateEventUser(eventId, targetUserId);
-
-    // Cleanup
-    draggedEvent = null;
-    sourceTable = null;
-    sourceDate = null;
-    sourceUserId = null;
-    targetUserId = null;
-    eventId = null;
+    updateItemUser(itemType, itemId, sourceUserId, targetUserId, function() {
+        const groupId = dragged.data('group-id');
+        if (groupId) {
+            $(`.eventCase[data-group-id='${groupId}']`).appendTo(firstCell);
+        } else {
+            dragged.appendTo(firstCell);
+        }
+    });
 }
 
 function toggleHeaderForView(view) {
@@ -2688,21 +2680,44 @@ function deleteEditEventCase(actionUrl, method) {
     });
 }
 
-function updateEventUser(eventId, newUserId) {
+function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess) {
+    let url = '';
+    let data = {};
+
+    if (itemType === 'event') {
+        url = '/update-event-user';
+        data = {
+            event_id: itemId,
+            new_user_id: newUserId
+        };
+    } else if (itemType === 'case') {
+        url = '/update-case-user';
+        data = {
+            case_id: itemId,
+            current_user_id: currentUserId,
+            new_user_id: newUserId
+        };
+    } else {
+        console.error('Unsupported item type:', itemType);
+        return;
+    }
+
     $.ajax({
-        url: '/update-event-user',
+        url: url,
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         method: 'POST',
-        data: {
-            event_id: eventId,
-            new_user_id: newUserId,
-        },
+        data: data,
         success: function(response) {
-            console.log('User reassigned successfully:', response);
+            // console.log('User reassigned successfully:', response);
+            if (typeof onSuccess === 'function') {
+                onSuccess();
+            }
+
+            refreshCalendar();
         },
-        error: function (xhr, status, error) {
+        error: function (xhr) {
             if (xhr.status === 403 && xhr.responseJSON?.error) {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
                 $('#errorModal').removeClass('hidden');
@@ -2716,5 +2731,5 @@ function updateEventUser(eventId, newUserId) {
                 $('#errorModal').removeClass('hidden');
             }
         }
-    })
+    });
 }

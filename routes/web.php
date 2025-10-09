@@ -61,5 +61,6 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/user/can-create-case', [CourtCasesController::class, 'canCreateCase']);
 Route::post('/update-event-user', [EventController::class, 'updateEventUser']);
+Route::post('/update-case-user', [CourtCasesController::class, 'updateCaseUser']);
 
 require __DIR__.'/auth.php';

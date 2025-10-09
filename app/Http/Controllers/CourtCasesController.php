@@ -375,6 +375,48 @@ class CourtCasesController extends Controller
         ]);
     }
 
+    public function updateCaseUser(Request $request)
+    {
+        $currentUser = auth()->user();
+
+        if (!$currentUser->isSuperAdmin()) {
+            return response()->json(['error' => 'Unauthorized access'], 403);
+        }
+
+        $caseId = $request->input('case_id');
+        $currentUserId = $request->input('current_user_id');
+        $newUserId = $request->input('new_user_id');
+
+        $request->validate([
+            'case_id' => 'required|integer|exists:court_cases,id',
+            'new_user_id' => 'required|integer|exists:users,id',
+        ]);
+
+        $case = UserCase::where('user_id', $currentUserId)
+                ->where('case_id', $caseId)
+                ->first();
+
+        if (!$case) {
+            return response()->json(['error' => 'Case not found or not assigned to current user'], 404);
+        }
+
+        $alreadyAssigned = UserCase::where('user_id', $newUserId)
+            ->where('case_id', $caseId)
+            ->exists();
+
+        if ($alreadyAssigned) {
+            return response()->json(['error' => 'Case is already assigned to the target user'], 422);
+        }
+
+        $case->user_id = $newUserId;
+        $case->save();
+
+        return response()->json([
+            'message' => 'Case reassigned successfully.',
+            'event' => $case,
+        ]);
+    }
+
     public function canCreateCase()
     {
         $user = auth()->user();

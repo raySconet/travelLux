@@ -329,11 +329,23 @@ class EventController extends Controller
         $query = Event::where('user_id', $userId)
             ->where('isDeleted', 0)
             ->where(function($q) use ($fromDate, $toDate) {
-                $q->whereBetween('date_from', [$fromDate, $toDate])
-                ->orWhereBetween('date_to', [$fromDate, $toDate])
-                ->orWhere(function($q2) use ($fromDate, $toDate) {
-                    $q2->where('date_from', '<', $fromDate)
-                        ->where('date_to', '>', $toDate);
+                // $q->whereBetween('date_from', [$fromDate, $toDate])
+                // ->orWhereBetween('date_to', [$fromDate, $toDate])
+                // ->orWhere(function($q2) use ($fromDate, $toDate) {
+                //     $q2->where('date_from', '<', $fromDate)
+                //         ->where('date_to', '>', $toDate);
+                // });
+                $q->where(function($q2) use ($fromDate, $toDate) {
+                    $q2->where('date_from', '>=', $fromDate)
+                    ->where('date_from', '<', $toDate);
+                })
+                ->orWhere(function($q3) use ($fromDate, $toDate) {
+                    $q3->where('date_to', '>', $fromDate)
+                    ->where('date_to', '<=', $toDate);
+                })
+                ->orWhere(function($q4) use ($fromDate, $toDate) {
+                    $q4->where('date_from', '<', $fromDate)
+                    ->where('date_to', '>', $toDate);
                 });
             });
 

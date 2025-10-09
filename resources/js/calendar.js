@@ -3,6 +3,12 @@ let checkedOrder = [];
 let currentView = 'Month View'; // global value
 let dataType = 'events'; // or 'cases'
 let eventCaseEditData = [];
+let draggedEvent = null;
+let sourceTable = null;
+let sourceDate = null;
+let sourceUserId = null;
+let targetUserId = null;
+let eventId = null;
 
 $(document).ready(() => {
     ({ month: currentMonth, year: currentYear } = parseMonthYear($('#calendarMonthYearSelected').text()));
@@ -978,172 +984,136 @@ $(document).ready(() => {
         submitEditEventCase(actionUrl, method);
     });
 
+    $(document).on('dragstart', '.eventCase', function (e) {
+        draggedEvent = $(this);
+        sourceTable = draggedEvent.closest('table').attr('id');
 
-    // Make sure you set these on dragstart somewhere:
-    // let draggedEvent = null;
-    // let sourceTable = null;
+        const sourceTd = draggedEvent.closest('td');
+        sourceDate = sourceTd.data('date') || null;
 
-    // $(document).on('dragstart', '.eventCase', function (e) {
-    //     draggedEvent = $(this);
-    //     sourceTable = draggedEvent.closest('table').attr('id');
-    //     e.originalEvent.dataTransfer.effectAllowed = 'move';
-    // });
+        eventId = draggedEvent.data('id');
+        sourceUserId = draggedEvent.closest('table').find('thead tr th div[data-user-id]').first().data('user-id');
 
-    // $('#dailyViewTable td, #dailyViewTableHidden td, #dailyBox3, #dailyBox4').on('dragover', function (e) {
-    //     e.preventDefault(); // Necessary to allow drop
-    //     e.originalEvent.dataTransfer.dropEffect = 'move';
-    // });
+        console.log('Dragging event:', eventId);
+        console.log('From user:', sourceUserId);
 
-    // $('#dailyViewTable td, #dailyViewTableHidden td, #dailyBox3, #dailyBox4').on('drop', function (e) {
-    //     e.preventDefault();
+        e.originalEvent.dataTransfer.effectAllowed = 'move';
+    });
 
-    //     if (!draggedEvent) return;
+    const allDropTargets = `
+        #dailyViewTable td, #dailyViewTableHidden td, #dailyBox3, #dailyBox4,
+        #weeklyViewTable td, #weeklyViewTableHidden td
+    `;
 
-    //     const $dropTarget = $(this);
-    //     let targetTableId;
+    $(document).on('dragover', allDropTargets, function (e) {
+        e.preventDefault();
+        e.originalEvent.dataTransfer.dropEffect = 'move';
+    });
 
-    //     if ($dropTarget.is('#dailyBox4')) {
-    //         // Drop happened on dailyBox4, so target is the hidden table
-    //         targetTableId = 'dailyViewTableHidden';
-    //     } else if ($dropTarget.is('#dailyBox3')) {
-    //         // Drop on dailyBox3, target is normal table
-    //         targetTableId = 'dailyViewTable';
-    //     } else {
-    //         // Drop on a table cell: get closest table's id
-    //         targetTableId = $dropTarget.closest('table').attr('id');
-    //     }
+    $(document).on('drop', allDropTargets, function (e) {
+        e.preventDefault();
 
-    //     // Prevent dropping on same user/table
-    //     if (sourceTable === targetTableId) {
-    //         alert("Cannot drop to same user");
-    //         return;
-    //     }
-    //     console.log(targetTableId);
+        if (!draggedEvent) return;
 
-    //     const groupId = draggedEvent.data('group-id');
+        const $dropTarget = $(this);
+        const targetTableId = $dropTarget.closest('table').attr('id');
 
-    //     if (groupId) {
-    //         // Move all events in the group to the target table's cell
-    //         $(`.eventCase[data-group-id='${groupId}']`).appendTo(
-    //             targetTableId === 'dailyViewTable' || targetTableId === 'dailyViewTableHidden'
-    //                 ? $(`#${targetTableId} td`).first() // Append to first cell or customize as needed
-    //                 : $dropTarget
-    //         );
-    //     } else {
-    //         // Move just the dragged event
-    //         draggedEvent.appendTo(
-    //             targetTableId === 'dailyViewTable' || targetTableId === 'dailyViewTableHidden'
-    //                 ? $(`#${targetTableId} td`).first() // Append to first cell or customize as needed
-    //                 : $dropTarget
-    //         );
-    //     }
+        let targetUserId;
 
-    //     // Reset dragged event references
-    //     draggedEvent = null;
-    //     sourceTable = null;
+        if ($dropTarget.is('#dailyBox3')) {
+            targetUserId = $('#dailyViewTable thead tr th div[data-user-id]').first().data('user-id');
+        } else if ($dropTarget.is('#dailyBox4')) {
+            targetUserId = $('#dailyViewTableHidden thead tr th div[data-user-id]').first().data('user-id');
+        } else {
+            targetUserId = $dropTarget.closest('table').find('thead tr th div[data-user-id]').first().data('user-id');
+        }
 
-    //     // Refresh your calendar or UI after drop
-    //     // refreshCalendar();
-
-    //     // TODO: call your backend here to update event ownership for groupId or single event
-    // });
-
-    let draggedEvent = null;
-let sourceTable = null;
-let sourceDate = null;
-
-$(document).on('dragstart', '.eventCase', function (e) {
-    draggedEvent = $(this);
-    sourceTable = draggedEvent.closest('table').attr('id');
-
-    const sourceTd = draggedEvent.closest('td');
-    sourceDate = sourceTd.data('date') || null;
-
-    e.originalEvent.dataTransfer.effectAllowed = 'move';
-});
-
-const allDropTargets = `
-    #dailyViewTable td, #dailyViewTableHidden td, #dailyBox3, #dailyBox4,
-    #weeklyViewTable td, #weeklyViewTableHidden td
-`;
-
-$(document).on('dragover', allDropTargets, function (e) {
-    e.preventDefault();
-    e.originalEvent.dataTransfer.dropEffect = 'move';
-});
-
-$(document).on('drop', allDropTargets, function (e) {
-    e.preventDefault();
-
-    if (!draggedEvent) return;
-
-    const $dropTarget = $(this);
-    const targetTableId = $dropTarget.closest('table').attr('id');
-
-    // Handle drop to daily boxes (box3/box4)
-    if ($dropTarget.is('#dailyBox3')) return moveToFirstCell('dailyViewTable');
-    if ($dropTarget.is('#dailyBox4')) return moveToFirstCell('dailyViewTableHidden');
-
-    // Prevent drop to same table (same user)
-    if (sourceTable === targetTableId) {
-        alert("Cannot drop to same user");
-        return;
-    }
-
-    const targetTd = $dropTarget.closest('td');
-    const targetDate = targetTd.data('date') || null;
-
-    // Weekly view: Enforce same-date restriction
-    const isWeekly = targetTableId === 'weeklyViewTable' || targetTableId === 'weeklyViewTableHidden';
-
-    if (isWeekly) {
-        if (!sourceDate || !targetDate) {
-            alert("Cannot determine date. Drop not allowed.");
+        // Prevent drop to same user
+        if (sourceUserId === targetUserId) {
+            $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot drop to same user</p>`);
+            $('#errorModal').removeClass('hidden');
             return;
         }
 
-        if (sourceDate !== targetDate) {
-            alert("Can only drop to same date in weekly view.");
-            return;
+        // Handle drop to daily boxes (box3/box4)
+        if ($dropTarget.is('#dailyBox3')) {
+            const targetUserId = $('#dailyViewTable thead tr th div[data-user-id]').first().data('user-id');
+            return moveToFirstCell('dailyViewTable', draggedEvent, eventId, targetUserId);
         }
-    }
 
-    // Move group or single event
-    const groupId = draggedEvent.data('group-id');
-    const appendTarget = targetTd.length ? targetTd : $dropTarget;
+        if ($dropTarget.is('#dailyBox4')) {
+            const targetUserId = $('#dailyViewTableHidden thead tr th div[data-user-id]').first().data('user-id');
+            return moveToFirstCell('dailyViewTableHidden', draggedEvent, eventId, targetUserId);
+        }
 
-    if (groupId) {
-        $(`.eventCase[data-group-id='${groupId}']`).appendTo(appendTarget);
-    } else {
-        draggedEvent.appendTo(appendTarget);
-    }
+        const targetTd = $dropTarget.closest('td');
+        const targetDate = targetTd.data('date') || null;
 
-    // Cleanup
-    draggedEvent = null;
-    sourceTable = null;
-    sourceDate = null;
+        // Weekly view: Enforce same-date restriction
+        const isWeekly = targetTableId === 'weeklyViewTable' || targetTableId === 'weeklyViewTableHidden';
+
+        if (isWeekly) {
+            if (!sourceDate || !targetDate) {
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot determine date. Drop not allowed.</p>`);
+                $('#errorModal').removeClass('hidden');
+                return;
+            }
+
+            if (sourceDate !== targetDate) {
+                alert("Can only drop to same date in weekly view.");
+                return;
+            }
+        }
+
+        // Move group or single event
+        const groupId = draggedEvent.data('group-id');
+        const appendTarget = targetTd.length ? targetTd : $dropTarget;
+
+        if (groupId) {
+            $(`.eventCase[data-group-id='${groupId}']`).appendTo(appendTarget);
+        } else {
+            draggedEvent.appendTo(appendTarget);
+        }
+
+        targetUserId = $dropTarget.closest('table').find('thead tr th div[data-user-id]').first().data('user-id');
+
+        console.log('Dropped event:', eventId);
+        console.log('From user:', sourceUserId);
+        console.log('To user:', targetUserId);
+
+        updateEventUser(eventId, targetUserId);
+
+        // Cleanup
+        draggedEvent = null;
+        sourceTable = null;
+        sourceDate = null;
+        sourceUserId = null;
+        targetUserId = null;
+        eventId = null;
+    });
 });
 
-function moveToFirstCell(targetTableId) {
+function moveToFirstCell(targetTableId, dragged, eventId, targetUserId) {
     const firstCell = $(`#${targetTableId} td`).first();
     if (!firstCell.length) return;
 
-    const groupId = draggedEvent.data('group-id');
+    const groupId = dragged.data('group-id');
     if (groupId) {
         $(`.eventCase[data-group-id='${groupId}']`).appendTo(firstCell);
     } else {
-        draggedEvent.appendTo(firstCell);
+        dragged.appendTo(firstCell);
     }
+
+    updateEventUser(eventId, targetUserId);
 
     // Cleanup
     draggedEvent = null;
     sourceTable = null;
     sourceDate = null;
+    sourceUserId = null;
+    targetUserId = null;
+    eventId = null;
 }
-
-
-
-});
 
 function toggleHeaderForView(view) {
     if(view === 'Monthly') {
@@ -1402,7 +1372,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         $('#dailyBox4')?.removeClass('hidden');
 
         // Fill user 1
-        dailyHeader.html(`${dayName} ${day} <div>${user1.user}</div>`);
+        dailyHeader.html(`${dayName} ${day} <div data-user-id="${user1.userId}">${user1.user}</div>`);
         if (eventsUser1.length === 0) {
             // dailyBody.append(`
             //    <div class="dailyEventInfo text-gray-400 italic">No events</div>
@@ -1426,7 +1396,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         }
 
         // Fill user 2
-        headerHidden.html(`${dayName} ${day} <div>${user2.user}</div>`);
+        headerHidden.html(`${dayName} ${day} <div data-user-id="${user2.userId}">${user2.user}</div>`);
         if (eventsUser2.length === 0) {
             // bodyHidden.append(`
             //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
@@ -1641,13 +1611,13 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     const userRow2 = showTwoUserLayout ? allEventsData[1] : null;
 
     if (userRow1) {
-        $('#userHeader').html(`<div class="border border-[#fff] p-2">${userRow1.user}</div>`);
+        $('#userHeader').html(`<div class="border border-[#fff] p-2" data-user-id="${userRow1.userId}">${userRow1.user}</div>`);
     } else {
         $('#userHeader').html(`<div class="border border-[#fff] p-2">No user</div>`);
     }
 
     if (showTwoUserLayout) {
-        $('#userHeaderHidden').html(`<div class="border border-[#fff] p-2">${userRow2.user}</div>`);
+        $('#userHeaderHidden').html(`<div class="border border-[#fff] p-2" data-user-id="${userRow2.userId}">${userRow2.user}</div>`);
         $('#weeklyViewTableHidden').removeClass('hidden');
         $('#viewWeekly').removeClass('grid-rows-1').addClass('2xl:grid-rows-[40%_60%]');
         $('#weeklyViewTable > tbody').removeClass('2xl:h-[94%]').addClass('2xl:h-[85%]');
@@ -1745,6 +1715,7 @@ function getEventsForDate(eventsData) {
         if (!acc[user_id]) {
             acc[user_id] = {
                 user: userName,
+                userId: user_id,
                 events: []
             };
         }
@@ -2715,4 +2686,35 @@ function deleteEditEventCase(actionUrl, method) {
             `);
         }
     });
+}
+
+function updateEventUser(eventId, newUserId) {
+    $.ajax({
+        url: '/update-event-user',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        method: 'POST',
+        data: {
+            event_id: eventId,
+            new_user_id: newUserId,
+        },
+        success: function(response) {
+            console.log('User reassigned successfully:', response);
+        },
+        error: function (xhr, status, error) {
+            if (xhr.status === 403 && xhr.responseJSON?.error) {
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#errorModal').removeClass('hidden');
+            } else if (xhr.status === 422 && xhr.responseJSON?.error) {
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#errorModal').removeClass('hidden');
+            } else {
+                // Fallback error message
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
+                $('#editCategoryModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
+            }
+        }
+    })
 }

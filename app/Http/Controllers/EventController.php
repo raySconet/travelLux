@@ -288,6 +288,43 @@ class EventController extends Controller
     //         })
     //         ->exists();
     // }
+
+    public function updateEventUser(Request $request)
+    {
+        $currentUser = auth()->user();
+
+        if (!$currentUser->isSuperAdmin()) {
+            return response()->json(['error' => 'Unauthorized access'], 403);
+        }
+
+        $eventId = $request->input('event_id');
+        $newUserId = $request->input('new_user_id');
+
+        $request->validate([
+            'event_id' => 'required|integer|exists:events,id',
+            'new_user_id' => 'required|integer|exists:users,id',
+        ]);
+
+        $event = Event::find($eventId);
+
+        $fromDate = \Carbon\Carbon::parse($event->date_from);
+        $toDate = \Carbon\Carbon::parse($event->date_to);
+
+        if ($this->hasTimeConflict($newUserId, $fromDate, $toDate, $event->id)) {
+            return response()->json([
+                'error' => 'The target user already has an event during this time.'
+            ], 422);
+        }
+
+        $event->user_id = $newUserId;
+        $event->save();
+
+        return response()->json([
+            'message' => 'Event reassigned successfully.',
+            'event' => $event,
+        ]);
+    }
+
     protected function hasTimeConflict($userId, $fromDate, $toDate, $excludeEventId = null) {
         $query = Event::where('user_id', $userId)
             ->where('isDeleted', 0)

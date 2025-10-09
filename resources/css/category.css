@@ -4,12 +4,16 @@ html {
 }
 
 body {
-    font-family: lato !important;
+    /* font-family: lato !important; */
     font-size: 14px !important;
 }
 
 select {
-    font-family: lato !important;
+    /* font-family: lato !important; */
+    font-size: 14px !important;
+}
+
+body input::placeholder {
     font-size: 14px !important;
 }
 

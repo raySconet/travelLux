@@ -3,6 +3,9 @@ html {
     overflow-x: hidden;
 }
 
+body {
+    font-size: 14px !important;
+}
 
 select {
     font-family: 'Lato' !important;

@@ -1,23 +1,23 @@
 <section class="mt-1">
-    <h2   class="mb-1 mt-1 text-md  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
+    <h2   class="mb-1 mt-1 text-2xl  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
         {{ __('Negotiation Chart') }}
     </h2>
 
     <div class="negotiationAppendDuplicates">
         <div class= "grid grid-cols-1 2xl:grid-cols-12 gap-2 w-full " id="negotiationToDuplicate">
-            <x-case-components.col class="2xl:col-span-12 text-center">
+            <x-case-components.col class="2xl:col-span-12 text-xl text-center">
                 <p> Norma - Negotiation Chart </p>
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-4">
                 <div >
                     <x-input-label for="medsTotal" :value="__('Meds Total')" />
-                    <x-text-input id="medsTotal" name="medsTotal" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="medsTotal" />
+                    <x-text-input id="medsTotal" name="medsTotal" type="text" placeholder="$00,000.00" class="mt-1   text-center"  :value="old('name')"  required autofocus autocomplete="medsTotal" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
                 <div >
                     <x-input-label for="medsPviTotal" :value="__('Meds Pvi Total')" />
-                    <x-text-input id="medsPviTotal" name="medsPviTotal" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="medsPviTotal" />
+                    <x-text-input id="medsPviTotal" name="medsPviTotal" type="text" placeholder="$00,000.00"  class="mt-1   text-center"  :value="old('name')"  required autofocus autocomplete="medsPviTotal" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
@@ -25,12 +25,12 @@
             <x-case-components.col class="2xl:col-span-4">
                 <div>
                     <x-input-label for="negotiationLastOffer" :value="__('Negotiation Last Offer')" />
-                    <x-text-input id="negotiationLastOffer" name="negotiationLastOffer" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="negotiationLastOffer" />
+                    <x-text-input id="negotiationLastOffer" name="negotiationLastOffer" type="text" placeholder="$00,000.00" class="mt-1   text-center" :value="old('name')"  required autofocus autocomplete="negotiationLastOffer" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
                 <div>
                     <x-input-label for="negotiationLastOfferDate" :value="__('Negotiation Last Offer Date')" />
-                    <x-text-input id="negotiationLastOfferDate" name="negotiationLastOfferDate" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="negotiationLastOfferDate" />
+                    <x-text-input id="negotiationLastOfferDate" name="negotiationLastOfferDate" type="text" placeholder="00/00/00" class="mt-1   text-center" :value="old('name')"  required autofocus autocomplete="negotiationLastOfferDate" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
@@ -39,12 +39,12 @@
 
                 <div>
                     <x-input-label for="negotiationLastDemand" :value="__('Negotiation Last Demand')" />
-                    <x-text-input id="negotiationLastDemand" name="negotiationLastDemand" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="negotiationLastDemand" />
+                    <x-text-input id="negotiationLastDemand" name="negotiationLastDemand" type="text" placeholder="$00,000.00 " class="mt-1   text-center" :value="old('name')"  required autofocus autocomplete="negotiationLastDemand" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
                 <div>
                     <x-input-label for="negotiationLastDemandDate" :value="__('Negotiation Last Demand Date')" />
-                    <x-text-input id="negotiationLastDemandDate" name="negotiationLastDemandDate" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="negotiationLastDemandDate" />
+                    <x-text-input id="negotiationLastDemandDate" name="negotiationLastDemandDate" type="text"  placeholder="00/00/00" class="mt-1   text-center" :value="old('name')"  required autofocus autocomplete="negotiationLastDemandDate" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
@@ -53,10 +53,13 @@
 
         <div class= "grid grid-cols-1 2xl:grid-cols-12 gap-2 w-full " id="">
             <x-case-components.col class="2xl:col-span-12">
-
                 <div>
                     <x-input-label for="physicalPainMentalAnguishText" :value="__('Physical Pain / Mental Anguish / Other Value Factors')" />
-                    <x-text-area id="physicalPainMentalAnguishText" name="physicalPainMentalAnguishText" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="physicalPainMentalAnguishText" />
+                    <x-text-area id="physicalPainMentalAnguishText"  name="physicalPainMentalAnguishText" type="text"
+                    placeholder="Sprain/Strain, limited movement, broken bones, surgery etc.
+                        Can’t pick up kids, afraid of driving now, can’t work out anymore, missed vacation etc.
+                        Drunk driver, car totaled, great client."
+                        class="mt-1   text-center" :value="old('name')"  required autofocus autocomplete="physicalPainMentalAnguishText" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
@@ -90,5 +93,4 @@
             </div>
         </x-case-components.col>
     </div>
-
 </section>

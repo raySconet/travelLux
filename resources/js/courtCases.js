@@ -250,7 +250,7 @@ $(document).ready(() => {
             data: $('#addManageSectionForm').serialize(),
             dataType: 'json',
             success: function (response) {
-                $form[0].reset();
+                $("#addManageSectionForm")[0].reset();
                 $('#addManageSectionsModal').addClass('hidden');
                 // $('#modalSuccessContent').html(response.message);
                 // $('#successModal').removeClass('hidden');

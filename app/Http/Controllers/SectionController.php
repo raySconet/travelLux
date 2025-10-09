@@ -28,8 +28,10 @@ class SectionController extends Controller
                 'caseId' => '1',
             ]);
 
-            return redirect()->route('caseInfo')
-                 ->with('success', 'Section created successfully!');
+             return response()->json([
+                    'message' => 'Event created successfully!',
+                    'event' => $section,
+                ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'errors' => $e->errors(),

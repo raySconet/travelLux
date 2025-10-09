@@ -2,6 +2,6 @@
 
 <label
     id="{{ $id }}"
-    {{ $attributes->merge(['class' => 'block  text-gray-700 ' . $class]) }}>
+    {{ $attributes->merge(['class' => 'block  text-gray-700 text-center' . $class]) }}>
         {{ $value ?? $slot }}
 </label>

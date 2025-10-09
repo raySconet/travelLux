@@ -76,9 +76,6 @@ $(document).ready(() => {
         // console.log('Selected User ID:', $(this).data('user-id'));
     });
 
-<<<<<<< HEAD
-    $('#openManageSectionModal').on('click', function() {
-=======
     $('#openAddCategoryModal').on('click', function() {
         $('.input-error-text').remove();
         $('input, select').removeClass('border-red-500');
@@ -122,7 +119,6 @@ $(document).ready(() => {
                 $('.sp-container').addClass('z-50'); // Optional: bring to front if overlapping UI
             }
         });
->>>>>>> 89208f3295260c29ee360ad3af98decd0293c64c
         $('#addCategoryModal').removeClass('hidden');
     });
 

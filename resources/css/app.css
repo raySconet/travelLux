@@ -2,10 +2,12 @@
 
 body {
     font-family: 'Lato' !important;
-    font-size: 14px ;
+    font-size: 13px ;
 }
 
-
+body input::placeholder {
+    font-size: 13px ;
+}
 
 .incompleteButton {
   border: 1px solid black;
@@ -29,6 +31,53 @@ body {
   cursor:pointer;
 }
 
+input{
+    border-color: #00000014 !important;
+}
+
+/* ---------------------- */
+.litigationChartSection input, .litigationChartSection p, .litigationChartSection h2{
+    color:purple !important;
+}
+.litigationChartSection input::placeholder {
+    color:purple !important;
+}
+.litigationChartSection label{
+    color:purple !important;
+}
+
+/* ---------------------- */
+.affidavitChartSection input, .affidavitChartSection p, .affidavitChartSection h2{
+    color:rgb(20, 110, 165) !important;
+}
+.affidavitChartSection input::placeholder{
+    color:rgb(20, 110, 165)  !important;
+}
+.affidavitChartSection label{
+    color:rgb(20, 110, 165)  !important;
+}
+
+/* ---------------------- */
+.facilitatingSettlementSection h2 {
+    color:rgb(147, 204, 140) !important;
+}
+.facilitatingSettlementSection input, .facilitatingSettlementSection p,
+.facilitatingSettlementSection input::placeholder {
+    color:rgb(4, 117, 0)important;
+}
+
+.facilitatingSettlementSection label{
+    color:rgb(4, 117, 0) !important;
+}
+
+/* ---------------------- */
+.depositsExpensesSection h2{
+    color:rgb(122, 90, 1) !important;
+}
+.depositsExpensesSection label, .depositsExpensesSection input, .depositsExpensesSection p,
+.depositsExpensesSection input::placeholder {
+    color:rgb(139, 102, 0) !important;
+}
 
 
 

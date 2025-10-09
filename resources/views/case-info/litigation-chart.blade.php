@@ -1,5 +1,5 @@
-<section class="mt-1">
-    <h2   class="mb-1 mt-1 text-md  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
+<section class="mt-1 litigationChartSection">
+    <h2   class="mb-1 mt-1 text-2xl  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
         {{ __('Litigation Chart') }}
     </h2>
 
@@ -7,7 +7,7 @@
         <div class= "grid grid-cols-1 2xl:grid-cols-10 gap-2 w-full " id="">
             <x-case-components.col class="2xl:col-span-2">
                 <div >
-                    <x-input-label for="caseInfoStyle" :value="__('Case Info Stle')" />
+                    <x-input-label for="caseInfoStyle"  :value="__('Case Info Stle')" />
                     <x-text-input id="caseInfoStyle" name="caseInfoStyle" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="caseInfoStyle" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
@@ -135,5 +135,15 @@
 
         </div>
     </div>
-
+    <h2 class=" text-lg mt-2">
+        DO THE FOLLOWING AFTER DEFENDANT FILES ORIGINAL ANSWER “OA”:
+    </h2>
+    <p>
+        -Immediately Calendar the Following Deadlines: <br>
+	    30 Days from Defendant’s OA - “*CLIENT NAME” – Plaintiff’s Initial Disclosures Due – Use Lit Form L3” <br>
+	    60 Days from Defendant’s OA – “*CLIENT NAME – 30 Days Deadline to Serve 18.001 Affidavit <br>
+        90 Days from Defendant’s OA –“**CLIENT NAME” – 90 Day Deadline to Serve 18.001 Affs” <br>
+	    120 Days from Defendant’s OA –“CLIENT NAME – Defendant’s 120 Day Controverting Affidavit Deadline” <br>
+        -<i>Please see the affidavit chart below on how to handle service of affidavits under the law that went into effect Sept. 1, 2019.</i>
+    </p>
 </section>

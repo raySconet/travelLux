@@ -1,7 +1,7 @@
 <form method="POST" action="{{ route('sections.store') }}" class="space-y-6" id="addManageSectionForm">
     @csrf
 
-    <div class="grid grid-cols-12 gap-8">
+    <div class="grid grid-cols-12 gap-4">
         <div class="col-span-12 sm:col-span-6">
             <x-input-label
                 for="todoSectionTitle"

@@ -1,12 +1,12 @@
-<section class="mt-1">
-    <h2 class="text-lg font-medium text-gray-900">
+<section class="mt-1 depositsExpensesSection">
+    <h2 class="text-2xl font-medium text-center text-gray-900">
         {{ __(' Deposits / Expenses / Advances') }}
     </h2>
 
     <x-case-components.grid class="2xl:grid-cols-12">
         {{--Client Section  --}}
         <x-case-components.col class="2xl:col-span-12 ">
-            <p  class="mb-1 text-md  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
+            <p  class="mb-1 text-xl   text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
                 {{ __("Deposits") }}
             </p>
             <div class="appendDuplicatesForDeposits">
@@ -51,7 +51,7 @@
 
     <x-case-components.grid  class="2xl:grid-cols-12 mt-2">
         <div class="2xl:col-span-12 flex flex-col ">
-            <p class="mb-1 text-md mt-1 text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
+            <p class="mb-1 text-xl mt-1 text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
                 {{ __("Expenses") }}
             </p>
             <div class="appendDuplicatesForExpenses">
@@ -94,7 +94,7 @@
 
     <x-case-components.grid  class="2xl:grid-cols-12 mt-2">
         <div class="2xl:col-span-12 flex flex-col ">
-            <p class="mb-1 text-md mt-1 text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
+            <p class="mb-1 text-xl mt-1 text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
                 {{ __("Advances") }}
             </p>
            <div class="appendDuplicatesForAdvances">

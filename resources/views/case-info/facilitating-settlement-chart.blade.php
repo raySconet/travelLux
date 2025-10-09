@@ -1,5 +1,5 @@
-<section class="mt-1">
-    <h2   class="mb-1 mt-1 text-md  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
+<section class="mt-1 facilitatingSettlementSection">
+    <h2   class="mb-1 mt-1 text-2xl  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
         {{ __(' Facilitating Settlement Chart ') }}
     </h2>
 

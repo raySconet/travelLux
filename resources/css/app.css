@@ -8,6 +8,10 @@ body {
 body input::placeholder {
     font-size: 13px ;
 }
+select,
+select option {
+  font-family: 'Lato', sans-serif !important;
+}
 
 .incompleteButton {
   border: 1px solid black;

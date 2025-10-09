@@ -26,7 +26,7 @@ class CourtCase extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'user_case', 'case_id', 'user_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'user_case', 'case_id', 'user_id')->withTimestamps()->wherePivot('isDeleted', 0);
     }
 
     public function userCases()

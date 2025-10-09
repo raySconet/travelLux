@@ -1,8 +1,8 @@
 $(document).ready(() => {
     getUsers(function () {
-        getEventsCases(function(data) {
+        getEventsCases(function(categories, permissions) {
             // console.log("Received data:", data);
-            renderEventCases(data);
+            renderEventCases(categories, permissions);
         });
     });
 
@@ -68,9 +68,9 @@ $(document).ready(() => {
 
         // Check the clicked one
         $(this).prop('checked', true);
-        getEventsCases(function(data) {
+        getEventsCases(function(categories, permissions) {
             // console.log("Received data:", data);
-            renderEventCases(data);
+            renderEventCases(categories, permissions);
         });
 
         // console.log('Selected User ID:', $(this).data('user-id'));
@@ -139,8 +139,12 @@ $(document).ready(() => {
         $('#successModal').addClass('hidden');
     });
 
+    $('#closeCategoryDeleteConfirmModal, #cancelCategoryDeleteBtn').on('click', function() {
+        $('#deleteCategoryConfirmModal').addClass('hidden');
+    });
+
     // Optional: Close when clicking outside modal content
-    $('#addCategoryModal, #errorModal, #successModal').on('click', function(e) {
+    $('#addCategoryModal, #errorModal, #successModal, #editCategoryModal, #deleteCategoryConfirmModal').on('click', function(e) {
         if ($(e.target).is(this)) {
             $(this).addClass('hidden');
         }
@@ -222,8 +226,8 @@ $(document).ready(() => {
                 $('#addCategoryModal').addClass('hidden');
                 $('#modalSuccessContent').html(response.message);
                 $('#successModal').removeClass('hidden');
-                getEventsCases(function(data) {
-                    renderEventCases(data);
+                getEventsCases(function(categories, permissions) {
+                    renderEventCases(categories, permissions);
                 });
             },
             error: function (xhr) {
@@ -272,6 +276,10 @@ $(document).ready(() => {
 
     $(document).on('click', '.editCategoryBtn', function(e) {
         e.stopPropagation();
+
+        $('.input-error-text').remove();
+        $('input').removeClass('border-red-500');
+        $('.colorBox').removeClass('border border-red-500');
 
         const categoryId = $(this).data('id');
         console.log(categoryId);
@@ -369,6 +377,30 @@ $(document).ready(() => {
 
         submitEditCategory(actionUrl);
     });
+
+    $(document).on('click', '.deletedCategoryBtn', function(e) {
+        e.stopPropagation();
+
+        const categoryId = $(this).data('id');
+        console.log(categoryId);
+
+        let actionUrl = '/category/delete';
+        let method = 'POST';
+
+        $('#confirmCategoryDeleteBtn')
+        .data('action-url', actionUrl)
+        .data('method', method)
+        .data('category-id', categoryId);
+
+        $('#deleteCategoryConfirmModal').removeClass('hidden');
+    });
+
+    $(document).on('click', '#confirmCategoryDeleteBtn', function() {
+        const actionUrl = $(this).data('action-url');
+        const categoryId = $(this).data('category-id');
+
+        deleteCategory(actionUrl, categoryId);
+    });
     // $('#deletedCategoryBtn')
 
     // const data = getEventsCases();
@@ -392,7 +424,7 @@ function getEventsCases(callback) {
         success: function (response) {
             // console.log("error");
             if (typeof callback === 'function') {
-                callback(response);
+                callback(response.categories, response.permissions);
             }
         },
         error: function (xhr) {
@@ -403,17 +435,29 @@ function getEventsCases(callback) {
     });
 }
 
-function renderEventCases(data) {
+function renderEventCases(categories, permissions) {
     const container = $("#categoryLayoutContent");
     container.empty();
 
-    data.forEach(category => {
+    categories.forEach(category => {
         const itemCount = category.items.length;
 
         const baseColor = category.colorClass;
         const darkerBorderColor = darkenHexColor(baseColor, 20);
 
         const borderStyle = `style="border-color: ${darkerBorderColor}; background-color: ${baseColor};"`;
+
+        const editButtonHtml = permissions.can_edit ? `
+            <button title="Edit" class="editCategoryBtn text-[limegreen] hover:text-green-800 cursor-pointer" data-id="${category.id}">
+                <i class="fa-solid fa-pen-to-square shadow-lg fa-lg"></i>
+            </button>
+        ` : '';
+
+        const deleteButtonHtml = permissions.can_delete ? `
+            <button title="Delete" class="deletedCategoryBtn text-red-600 hover:text-red-800 ml-2 cursor-pointer" data-id="${category.id}">
+                <i class="fa-solid fa-trash fa-lg"></i>
+            </button>
+        ` : '';
 
         const $categoryTitle = $(`
             <div
@@ -427,13 +471,8 @@ function renderEventCases(data) {
                 <label>${category.label}: ${itemCount} item(s)</label>
 
                 <div class="ml-auto">
-                    <button title="Edit" class="editCategoryBtn text-[limegreen] hover:text-green-800 cursor-pointer" data-id="${category.id}">
-                        <i class="fa-solid fa-pen-to-square shadow-lg fa-lg"></i>
-                    </button>
-
-                    <button title="Delete" class="deletedCategoryBtn text-red-600 hover:text-red-800 ml-2 cursor-pointer" data-id="${category.id}">
-                        <i class="fa-solid fa-trash fa-lg"></i>
-                    </button>
+                    ${editButtonHtml}
+                    ${deleteButtonHtml}
                 </div>
             </div>
         `);
@@ -597,8 +636,8 @@ function submitEditCategory(actionUrl) {
     const $button = $('#submitEditCategoryBtn');
 
     // console.log($form.serialize());
-    console.log('Name sent:', $form.find('input[name="nameEditCategory"]').val());
-console.log('Color sent:', $form.find('input[name="color"]').val());
+    // console.log('Name sent:', $form.find('input[name="nameEditCategory"]').val());
+    // console.log('Color sent:', $form.find('input[name="color"]').val());
 
 
     $('#modalErrorContent').empty();
@@ -622,12 +661,12 @@ console.log('Color sent:', $form.find('input[name="color"]').val());
             $('#editCategoryModal').addClass('hidden');
             $('#modalSuccessContent').html(response.message);
             $('#successModal').removeClass('hidden');
-            getEventsCases(function(data) {
-                renderEventCases(data);
+            getEventsCases(function(categories, permissions) {
+                renderEventCases(categories, permissions);
             });
         },
         error: function (xhr) {
-            if (xhr.status) {
+            if (xhr.status === 422 && xhr.responseJSON?.errors) {
                 const errors = xhr.responseJSON.errors;
 
                 // Loop over errors and display inline
@@ -649,6 +688,16 @@ console.log('Color sent:', $form.find('input[name="color"]').val());
                         $('.colorBox').addClass('border border-red-500');
                     }
                 });
+            } else if (xhr.responseJSON?.error) {
+                // For 403 or other custom errors
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#editCategoryModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
+            } else {
+                // Fallback error message
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
+                $('#editCategoryModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
             }
         },
         complete: function () {
@@ -656,6 +705,81 @@ console.log('Color sent:', $form.find('input[name="color"]').val());
                 <i class="fa-solid fa-paper-plane"></i>
                 <span class="ml-1">
                     Save
+                </span>
+            `);
+        }
+    });
+}
+
+function deleteCategory(actionUrl, categoryId) {
+    const $button = $('#confirmCategoryDeleteBtn');
+
+    $('#deleteCategoryConfirmModal').addClass('hidden');
+    $('#modalErrorContent').empty();
+    $('#errorModal').addClass('hidden');
+
+    $button.prop('disabled', true).html(`
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span class="ml-1">
+            Deleting...
+        </span>
+    `);
+
+    $.ajax({
+        type: 'POST',
+        url: actionUrl,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            category_id: categoryId,
+        },
+        dataType: 'json',
+        success: function (response) {
+            $('#modalSuccessContent').html(response.message);
+            $('#successModal').removeClass('hidden');
+            getEventsCases(function(data) {
+                renderEventCases(data);
+            });
+        },
+        error: function (xhr) {
+            let jsonResponse = xhr.responseJSON;
+
+            if (xhr.status === 422 && jsonResponse.errors) {
+                const errors = jsonResponse.errors;
+
+                // Loop over validation errors and display them
+                $.each(errors, function (field, messages) {
+                    let $input = $(`[name="${field}"]`);
+                    if ($input.length === 0) {
+                        const baseField = field.split('.')[0];
+                        $input = $(`[name="${baseField}[]"], [name="${baseField}"]`);
+                    }
+
+                    $input.addClass('border-red-500');
+
+                    if ($input.next('.input-error-text').length === 0) {
+                        $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
+                    }
+                });
+            } else if (jsonResponse && jsonResponse.message) {
+                // Show backend message returned on other error statuses (like 404 or your custom logic)
+                $('#modalErrorContent').html(jsonResponse.message);
+                $('#errorModal').removeClass('hidden');
+            } else if (xhr.responseJSON?.error) {
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#editCategoryModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
+            } else {
+                // Generic fallback
+                $('#modalErrorContent').html("An error occurred while deleting the category.");
+                $('#errorModal').removeClass('hidden');
+            }
+        },
+        complete: function () {
+            $button.prop('disabled', false).html(`
+                <span class="ml-1">
+                    YES, DELETE
                 </span>
             `);
         }

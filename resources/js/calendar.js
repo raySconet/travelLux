@@ -3,6 +3,13 @@ let checkedOrder = [];
 let currentView = 'Month View'; // global value
 let dataType = 'events'; // or 'cases'
 let eventCaseEditData = [];
+let draggedEvent = null;
+let sourceTable = null;
+let sourceDate = null;
+let sourceUserId = null;
+let targetUserId = null;
+let itemId = null;
+let itemType = null;
 
 $(document).ready(() => {
     ({ month: currentMonth, year: currentYear } = parseMonthYear($('#calendarMonthYearSelected').text()));
@@ -37,6 +44,134 @@ $(document).ready(() => {
 
         highlightSelectedSidebarDay();
     });
+
+    // $(document).on('click', '.view-all-events-btn', function() {
+    //     const dateStr = $(this).data('date');
+    //     const [year, month, day] = dateStr.split('-').map(Number);
+
+    //     const selected = new Date(year, month - 1, day);
+    //     window.selectedDate = selected;
+
+    //     currentMonth = selected.getMonth();
+    //     currentYear = selected.getFullYear();
+
+    //     updateCalendarHeader(currentMonth, currentYear);
+    //     buildMonthlyCalendarDays(currentMonth, currentYear);
+    //     buildDailyView(day, currentMonth, currentYear);
+    //     updateDailyHeader(selected);
+
+    //     $('#selectedDayWeekMonthOption').text('Day View');
+    //     showView('Daily');
+
+    //     highlightSelectedSidebarDay();
+    // });
+
+    $(document).on('click', '#closeDailyModalBtn, #closeDailyEventsModal', function () {
+        $('#dailyEventsModal').addClass('hidden');
+    });
+
+    $(document).on('click', '.view-all-events-btn', function () {
+        const dateStr = $(this).data('date');
+        const [year, month, day] = dateStr.split('-');
+        const formattedDate = new Date(dateStr).toLocaleDateString(undefined, {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Get events for this date
+        const eventsForDay = (eventsData || [])
+            .flatMap(user => user.events || [])
+            .filter(event => event.date === dateStr && !event.isDuplicate);
+
+        eventsForDay.sort((a, b) => {
+            const dateA = new Date(`${a.date}T${a.from || "00:00"}:00`);
+            const dateB = new Date(`${b.date}T${b.from || "00:00"}:00`);
+
+            if (dateA.getTime() === dateB.getTime()) {
+                return (a.title || "").localeCompare(b.title || "", undefined, { sensitivity: 'base' });
+            }
+
+            return dateA - dateB;
+        });
+
+        // Determine which types exist
+        const hasEvents = eventsForDay.some(e => e.type === 'event');
+        const hasCases = eventsForDay.some(e => e.type === 'case');
+
+        let labelText = '';
+        if (hasEvents && hasCases) {
+            labelText = 'Events & Cases';
+        } else if (hasEvents) {
+            labelText = 'Events';
+        } else if (hasCases) {
+            labelText = 'Cases';
+        } else {
+            labelText = 'Items';
+        }
+
+        // Set modal header
+        $('#dailyEventsModalDate').text(`${labelText} for ${formattedDate}`);
+
+        const $modalBody = $('#dailyEventsModalBody');
+        $modalBody.empty();
+
+        if (eventsForDay.length === 0) {
+            $modalBody.append('<p class="text-gray-500">No ${labelText} for this day.</p>');
+        } else {
+            eventsForDay.forEach(event => {
+                // console.log(event); // border border-gray-300 #eaeef2
+                // const verticalType = event.type.toUpperCase().split('').join('<br>');
+                let bgColor;
+                if(event.type === "event") {
+                    bgColor = "bg-blue-100";
+                } else {
+                    bgColor = "bg-[#eaeef2]";
+                }
+                const verticalType = event.type.charAt(0).toUpperCase() + event.type.slice(1).toLowerCase();;
+
+                const eventHTML = `
+                    <div class="relative rounded bg-gray-50 shadow-sm flex flex-column">
+                        <div class="w-[32px] h-[64px] ${bgColor} text-gray-800 font-semibold text-xs flex items-center justify-center">
+                            <span class="transform -rotate-90 origin-center leading-tight tracking-widest">
+                               ${verticalType}
+                            </span>
+                        </div>
+
+                        <div class="w-full p-3 overflow-hidden">
+                            <div class="flex items-center justify-between">
+                                <div class="group font-semibold text-gray-800 flex items-center gap-1 max-w-[85%]">
+                                    <span class="inline-block min-w-3 min-h-3 rounded-full" style="background-color: ${event.color};"></span>
+                                    <span class="truncate whitespace-nowrap overflow-hidden max-w-[max-content]">
+                                        ${event.title}
+                                    </span>
+                                    <div class="absolute left-10 bottom-full mb-[-15px] hidden group-hover:block z-10">
+                                        <div class="relative bg-[#fff] text-gray-800 text-xs p-2 rounded shadow-lg w-[max-content] max-w-[300px]">
+                                            ${event.title}
+                                            <div class="absolute left-1 top-full w-0 h-0 border-6 border-transparent border-t-[#fff]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    ${event.editable ? `
+                                        <i class="fa-solid fa-pen-to-square text-gray-500 hover:text-gray-800 cursor-pointer iconPencil" title="Edit Event" data-id="${event.id}" data-type="${event.type}"></i>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600">${event.from || 'All Day'} ${event.to ? `– ${event.to}` : ''}</p>
+                        </div>
+                    </div>
+                `;
+                $modalBody.append(eventHTML);
+            });
+        }
+
+        // Show the modal (remove `hidden` class)
+        $('#dailyEventsModalBody').parent().removeClass('p-6');
+        $('#dailyEventsModal').removeClass('hidden');
+    });
+
 
     $(document).on('click', '#sidebarCalendarMonthYearSelected', function() {
         if ($('#calendarMonthYearDropdown').is(':visible')) {
@@ -652,6 +787,7 @@ $(document).ready(() => {
         const eventType = $(this).data('type');
         const arrowPlane = '<i class="fa-solid fa-paper-plane"></i>';
 
+        $('#dailyEventsModal').addClass('hidden');
         $('#eventCaseType').addClass('hidden');
         $('#headerIcon').removeClass('fa-solid fa-calendar-plus').addClass('fa-solid fa-pen-to-square');
         $('.input-error-text').remove();
@@ -758,6 +894,17 @@ $(document).ready(() => {
             $('input[name="toDate"]').val(dateTo);
             $categorySelect.val(eventCaseEditData.categoryId);
 
+            const fromFlatpickr = $('input[name="fromDate"]')[0]._flatpickr; // added
+            const toFlatpickr = $('input[name="toDate"]')[0]._flatpickr; // added
+
+            if (fromFlatpickr) {
+                fromFlatpickr.setDate(dateFrom, false);
+            }
+
+            if (toFlatpickr) {
+                toFlatpickr.setDate(dateTo, false);
+            }
+
             if (eventType === 'case') {
                 const userIds = (eventCaseEditData.users || []).map(u => u.id.toString());
                 $userSelect.val(userIds).trigger('change');
@@ -837,7 +984,128 @@ $(document).ready(() => {
 
         submitEditEventCase(actionUrl, method);
     });
+
+    $(document).on('dragstart', '.eventCase', function (e) {
+        draggedEvent = $(this);
+        sourceTable = draggedEvent.closest('table').attr('id');
+
+        const sourceTd = draggedEvent.closest('td');
+        sourceDate = sourceTd.data('date') || null;
+
+        itemId = draggedEvent.data('id');
+        itemType = draggedEvent.data('type');
+        sourceUserId = draggedEvent.closest('table').find('thead tr th div[data-user-id]').first().data('user-id');
+
+        console.log('Dragging event:', itemId);
+        console.log('From user:', sourceUserId);
+
+        e.originalEvent.dataTransfer.effectAllowed = 'move';
+    });
+
+    const allDropTargets = `
+        #dailyViewTable td, #dailyViewTableHidden td, #dailyBox3, #dailyBox4,
+        #weeklyViewTable td, #weeklyViewTableHidden td
+    `;
+
+    $(document).on('dragover', allDropTargets, function (e) {
+        e.preventDefault();
+        e.originalEvent.dataTransfer.dropEffect = 'move';
+    });
+
+    $(document).on('drop', allDropTargets, function (e) {
+        e.preventDefault();
+
+        if (!draggedEvent) return;
+
+        const $dropTarget = $(this);
+        const targetTableId = $dropTarget.closest('table').attr('id');
+
+        if ($dropTarget.is('#dailyBox3')) {
+            targetUserId = $('#dailyViewTable thead tr th div[data-user-id]').first().data('user-id');
+        } else if ($dropTarget.is('#dailyBox4')) {
+            targetUserId = $('#dailyViewTableHidden thead tr th div[data-user-id]').first().data('user-id');
+        } else {
+            targetUserId = $dropTarget.closest('table').find('thead tr th div[data-user-id]').first().data('user-id');
+        }
+
+        // Prevent drop to same user
+        if (sourceUserId === targetUserId) {
+            $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot drop to same user</p>`);
+            $('#errorModal').removeClass('hidden');
+            return;
+        }
+
+        // Handle drop to daily boxes (box3/box4)
+        if ($dropTarget.is('#dailyBox3')) {
+            // const targetUserId = $('#dailyViewTable thead tr th div[data-user-id]').first().data('user-id');
+            return moveToFirstCell('dailyViewTable', draggedEvent, itemId, itemType, sourceUserId, targetUserId);
+        }
+
+        if ($dropTarget.is('#dailyBox4')) {
+            // const targetUserId = $('#dailyViewTableHidden thead tr th div[data-user-id]').first().data('user-id');
+            return moveToFirstCell('dailyViewTableHidden', draggedEvent, itemId, itemType, sourceUserId, targetUserId);
+        }
+
+        const targetTd = $dropTarget.closest('td');
+        const targetDate = targetTd.data('date') || null;
+
+        // Weekly view: Enforce same-date restriction
+        const isWeekly = targetTableId === 'weeklyViewTable' || targetTableId === 'weeklyViewTableHidden';
+
+        if (isWeekly) {
+            if (!sourceDate || !targetDate) {
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot determine date. Drop not allowed.</p>`);
+                $('#errorModal').removeClass('hidden');
+                return;
+            }
+
+            if (sourceDate !== targetDate) {
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Can only drop to same date in weekly view.</p>`);
+                $('#errorModal').removeClass('hidden');
+                return;
+            }
+        }
+
+        // Move group or single event
+        const groupId = draggedEvent.data('group-id');
+        const appendTarget = targetTd.length ? targetTd : $dropTarget;
+
+        targetUserId = $dropTarget.closest('table').find('thead tr th div[data-user-id]').first().data('user-id');
+
+        console.log('Dropped item:', itemId, '| Type:', itemType);
+        console.log('From user:', sourceUserId);
+        console.log('To user:', targetUserId);
+
+        updateItemUser(itemType, itemId, sourceUserId, targetUserId, function() {
+            if (groupId) {
+                $(`.eventCase[data-group-id='${groupId}']`).appendTo(appendTarget);
+            } else {
+                draggedEvent.appendTo(appendTarget);
+            }
+            // Cleanup
+            draggedEvent = null;
+            sourceTable = null;
+            sourceDate = null;
+            sourceUserId = null;
+            targetUserId = null;
+            itemId = null;
+        });
+    });
 });
+
+function moveToFirstCell(targetTableId, dragged, itemId, itemType, sourceUserId, targetUserId) {
+    const firstCell = $(`#${targetTableId} td`).first();
+    if (!firstCell.length) return;
+
+    updateItemUser(itemType, itemId, sourceUserId, targetUserId, function() {
+        const groupId = dragged.data('group-id');
+        if (groupId) {
+            $(`.eventCase[data-group-id='${groupId}']`).appendTo(firstCell);
+        } else {
+            dragged.appendTo(firstCell);
+        }
+    });
+}
 
 function toggleHeaderForView(view) {
     if(view === 'Monthly') {
@@ -935,27 +1203,28 @@ function showView(view) {
     // }
 
     if (view === 'Daily') {
-        if (window.selectedDate) {
-            const newMonth = window.selectedDate.getMonth();
-            const newYear = window.selectedDate.getFullYear();
+        getData(checkedOrder, () => { // added on 10/03/2025
+            if (window.selectedDate) {
+                const newMonth = window.selectedDate.getMonth();
+                const newYear = window.selectedDate.getFullYear();
 
-            if (newMonth !== currentMonth || newYear !== currentYear) {
-                currentMonth = newMonth;
-                currentYear = newYear;
-                updateCalendarHeader(currentMonth, currentYear);
-                buildMonthlyCalendarDays(currentMonth, currentYear);
+                if (newMonth !== currentMonth || newYear !== currentYear) {
+                    currentMonth = newMonth;
+                    currentYear = newYear;
+                    updateCalendarHeader(currentMonth, currentYear);
+                    buildMonthlyCalendarDays(currentMonth, currentYear);
+                }
+
+                buildDailyView(
+                    window.selectedDate.getDate(),
+                    window.selectedDate.getMonth(),
+                    window.selectedDate.getFullYear()
+                );
+            } else {
+                buildDailyView();
             }
-
-            buildDailyView(
-                window.selectedDate.getDate(),
-                window.selectedDate.getMonth(),
-                window.selectedDate.getFullYear()
-            );
-        } else {
-            buildDailyView();
-        }
-        highlightSelectedSidebarDay();
-
+            highlightSelectedSidebarDay();
+        });
     } else if (view === 'Weekly') {
         window.viewedWeekDate = new Date(window.selectedDate.getTime());
         getData(checkedOrder, () => {
@@ -1037,9 +1306,9 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     if (allUsers.length === 0) {
         $('#dailyViewTable').removeClass('hidden');
         dailyHeader.html(`${dayName} ${day} <div class="text-gray-400 italic">No users</div>`);
-        dailyBody.append(`
-            <div class="text-gray-400 italic dailyEventInfo">No events</div>
-        `);
+        // dailyBody.append(`
+        //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
+        // `);
         return;
     }
 
@@ -1055,9 +1324,9 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         dailyHeader.html(`${dayName} ${day} <div>${user.user}</div>`);
 
         if (eventsToday.length === 0) {
-            dailyBody.append(`
-                <div class="text-gray-400 italic dailyEventInfo">No events</div>
-            `);
+            // dailyBody.append(`
+            //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
+            // `);
         } else {
             eventsToday.forEach(event => {
                 console.log('event::', event);
@@ -1095,11 +1364,11 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         $('#dailyBox4')?.removeClass('hidden');
 
         // Fill user 1
-        dailyHeader.html(`${dayName} ${day} <div>${user1.user}</div>`);
+        dailyHeader.html(`${dayName} ${day} <div data-user-id="${user1.userId}">${user1.user}</div>`);
         if (eventsUser1.length === 0) {
-            dailyBody.append(`
-               <div class="dailyEventInfo text-gray-400 italic">No events</div>
-            `);
+            // dailyBody.append(`
+            //    <div class="dailyEventInfo text-gray-400 italic">No events</div>
+            // `);
         } else {
             eventsUser1.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
@@ -1119,11 +1388,11 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         }
 
         // Fill user 2
-        headerHidden.html(`${dayName} ${day} <div>${user2.user}</div>`);
+        headerHidden.html(`${dayName} ${day} <div data-user-id="${user2.userId}">${user2.user}</div>`);
         if (eventsUser2.length === 0) {
-            bodyHidden.append(`
-                <div class="text-gray-400 italic dailyEventInfo">No events</div>
-            `);
+            // bodyHidden.append(`
+            //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
+            // `);
         } else {
             eventsUser2.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
@@ -1175,9 +1444,9 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         dailyBody.empty();
 
         if (eventsToday.length === 0) {
-            dailyBody.append(`
-                <div class="text-gray-400 italic dailyEventInfo">No events</div>
-            `);
+            // dailyBody.append(`
+            //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
+            // `);
         } else {
             eventsToday.forEach(event => {
                 if (event.isDuplicate) {
@@ -1320,7 +1589,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                     cell.append(eventDiv);
                 });
             } else {
-                cell.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
+                // cell.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
             }
         }
 
@@ -1334,13 +1603,13 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     const userRow2 = showTwoUserLayout ? allEventsData[1] : null;
 
     if (userRow1) {
-        $('#userHeader').html(`<div class="border border-[#fff] p-2">${userRow1.user}</div>`);
+        $('#userHeader').html(`<div class="border border-[#fff] p-2" data-user-id="${userRow1.userId}">${userRow1.user}</div>`);
     } else {
         $('#userHeader').html(`<div class="border border-[#fff] p-2">No user</div>`);
     }
 
     if (showTwoUserLayout) {
-        $('#userHeaderHidden').html(`<div class="border border-[#fff] p-2">${userRow2.user}</div>`);
+        $('#userHeaderHidden').html(`<div class="border border-[#fff] p-2" data-user-id="${userRow2.userId}">${userRow2.user}</div>`);
         $('#weeklyViewTableHidden').removeClass('hidden');
         $('#viewWeekly').removeClass('grid-rows-1').addClass('2xl:grid-rows-[40%_60%]');
         $('#weeklyViewTable > tbody').removeClass('2xl:h-[94%]').addClass('2xl:h-[85%]');
@@ -1359,6 +1628,8 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 
         const cellMain = $(`#weeklyViewTable .${dayClass}`);
         const cellHidden = $(`#weeklyViewTableHidden .${dayClass}`);
+        cellMain.attr('data-date', isoDate);
+        cellHidden.attr('data-date', isoDate);
 
         // User 1 events or no events placeholder
         if (userRow1) {
@@ -1380,7 +1651,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                     cellMain.append(eventDiv);
                 });
             } else {
-                cellMain.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
+                // cellMain.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
             }
         } else {
             cellMain.append('<div class="text-gray-400 italic weeklyEventInfo">No user</div>');
@@ -1406,7 +1677,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                     cellHidden.append(eventDiv);
                 });
             } else {
-                cellHidden.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
+                // cellHidden.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
             }
         } else {
             cellHidden.append('<div class="text-gray-400 italic weeklyEventInfo">No user</div>');
@@ -1436,6 +1707,7 @@ function getEventsForDate(eventsData) {
         if (!acc[user_id]) {
             acc[user_id] = {
                 user: userName,
+                userId: user_id,
                 events: []
             };
         }
@@ -1578,9 +1850,14 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
             } else {
                 $td.html('<span class="font-bold cursor-pointer">' + day + '</span>');
 
-                // 🔹 Inject events for the day
+                // 🔹 Inject events for the day 123
                 const eventsForDay = userEvents.filter(event => event.date === dateStr);
-                eventsForDay.forEach(event => {
+
+                const maxEventsToShow = 6;
+                const uniqueEventsForDay = eventsForDay.filter(event => !event.isDuplicate);
+                const eventsToShow = uniqueEventsForDay.slice(0, maxEventsToShow);
+
+                eventsToShow.forEach(event => {
                     if (event.isDuplicate) {
                         return; // ❌ Skip in UI, but kept in data
                     }
@@ -1592,20 +1869,41 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     ` : '';
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                            <div class="relative">
-                                <span>${event.title.length > 22 ? event.title.slice(0, 22) + '...' : event.title}</span>
+                            <div class="relative w-[185px] truncate">
+                                <span class="truncate w-[100%]">${event.title}</span>
                                 ${iconPencil}
                             </div>
-                            <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10">
-                                <div class="relative bg-[#14548d] text-white text-xs p-2 rounded shadow-lg whitespace-nowrap">
+                            <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[300px] hidden group-hover:block z-10">
+                                <div class="relative bg-[#fff] text-gray-800 text-xs p-2 rounded shadow-lg">
                                     ${event.title}
-                                    <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#14548d]"></div>
+                                    <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#fff]"></div>
                                 </div>
                             </div>
                         </div>
                     `);
                     $td.append(eventDiv);
                 });
+
+                if (uniqueEventsForDay.length > maxEventsToShow) {
+                    const moreBtn = $(`
+                        <button
+                            class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-date="${dateStr}"
+                            title="View all events for this day"
+                        >
+                            +${uniqueEventsForDay.length - maxEventsToShow} more
+                        </button>
+                    `);
+
+                    $td.css('position', 'relative'); // Ensure parent is relative positioned
+                    $td.append(moreBtn);
+
+                    moreBtn.on('click', function() {
+                        const date = $(this).data('date');
+                        console.log('Go to daily view for:', date);
+                        // window.location.href = `/daily?date=${date}`;
+                    });
+                }
             }
 
             // if (!window.selectedDate && isCurrentMonth && day === today.getDate()) {
@@ -1785,6 +2083,31 @@ function updateUserSelectMode() {
     $userSelect.data('selectedValues', selectedValues);
 
     if (selectedType === 'case') {
+        $.ajax({
+            url: '/user/can-create-case',
+            method: 'GET',
+            success: function (response) {
+                if (!response.can_create) {
+                    const $caseRadio = $('input[type="radio"][name="type"][value="case"]');
+                    const $eventRadio = $('input[type="radio"][name="type"][value="event"]');
+                    const $caseLabel = $caseRadio.closest('label');
+
+                    $caseRadio.prop('disabled', true);
+
+                    if ($caseLabel.length) {
+                        $caseLabel.css('opacity', 0.5).attr('title', 'You are not allowed to create cases.');
+                    }
+
+                    if ($caseRadio.is(':checked')) {
+                        $eventRadio.prop('checked', true).trigger('change');
+                    }
+                }
+            },
+            error: function () {
+                console.error('Failed to check user permissions.');
+            }
+        });
+
         $userFieldsContainer.removeClass('hidden');
         $('#userSelect').removeClass('selectArrowDown');
         $userSelect.attr('multiple', 'multiple');
@@ -2079,6 +2402,8 @@ function populateMonthYearDropdown() {
 function getUsersCategoriesAddEditCasesEvents(callback) {
     const $categorySelect = $('#categorySelect');
     const $userSelect = $('#userSelect');
+    const $caseRadio = $('input[type="radio"][name="type"][value="case"]');
+    const $eventRadio = $('input[type="radio"][name="type"][value="event"]');
 
     $categorySelect.html('<option value="-1" disabled selected>Loading...</option>')
     $userSelect.html('<option value="-1" disabled selected>Loading...</option>')
@@ -2130,6 +2455,7 @@ function getUsersCategoriesAddEditCasesEvents(callback) {
         success: function (response) {
             const categories = response.categories || [];
             const users = response.users || [];
+            const canCreate = response.can_create ?? false;
 
             // ✅ Populate categories
             $categorySelect.empty().append('<option value="-1">Select a category</option>');
@@ -2142,6 +2468,19 @@ function getUsersCategoriesAddEditCasesEvents(callback) {
             users.forEach(function (user) {
                 $userSelect.append(`<option value="${user.id}">${user.name}</option>`);
             });
+
+            if (!canCreate) {
+                $caseRadio.prop('disabled', true);
+
+                $caseRadio.closest('label').css('opacity', 0.5).attr('title', 'You do not have permission to create cases');
+
+                if ($caseRadio.is(':checked')) {
+                    $eventRadio.prop('checked', true).trigger('change');
+                }
+            } else {
+                $caseRadio.prop('disabled', false);
+                $caseRadio.closest('label').css('opacity', 1).removeAttr('title');
+            }
 
             updateUserSelectMode();
 
@@ -2220,7 +2559,7 @@ function submitEditEventCase(actionUrl, method) {
             refreshCalendar();
         },
         error: function (xhr) {
-            if (xhr.status) {
+            if (xhr.status === 422 && xhr.responseJSON?.errors) {
                 const errors = xhr.responseJSON.errors;
 
                 // Loop over errors and display inline
@@ -2243,6 +2582,16 @@ function submitEditEventCase(actionUrl, method) {
                         $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
                     }
                 });
+            } else if (xhr.responseJSON?.error) {
+                // For 403 or other custom errors
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#addEventCaseModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
+            } else {
+                // Fallback error message
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
+                $('#addEventCaseModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
             }
         },
         complete: function () {
@@ -2286,7 +2635,7 @@ function deleteEditEventCase(actionUrl, method) {
             refreshCalendar();
         },
         error: function (xhr) {
-            if (xhr.status) {
+            if (xhr.status === 422 && xhr.responseJSON?.errors) {
                 const errors = xhr.responseJSON.errors;
 
                 // Loop over errors and display inline
@@ -2309,6 +2658,16 @@ function deleteEditEventCase(actionUrl, method) {
                         $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
                     }
                 });
+            } else if (xhr.responseJSON?.error) {
+                // For 403 or other custom errors
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#deleteConfirmModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
+            } else {
+                // Fallback error message
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
+                $('#deleteConfirmModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
             }
         },
         complete: function () {
@@ -2317,6 +2676,60 @@ function deleteEditEventCase(actionUrl, method) {
                     YES, DELETE
                 </span>
             `);
+        }
+    });
+}
+
+function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess) {
+    let url = '';
+    let data = {};
+
+    if (itemType === 'event') {
+        url = '/update-event-user';
+        data = {
+            event_id: itemId,
+            new_user_id: newUserId
+        };
+    } else if (itemType === 'case') {
+        url = '/update-case-user';
+        data = {
+            case_id: itemId,
+            current_user_id: currentUserId,
+            new_user_id: newUserId
+        };
+    } else {
+        console.error('Unsupported item type:', itemType);
+        return;
+    }
+
+    $.ajax({
+        url: url,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        method: 'POST',
+        data: data,
+        success: function(response) {
+            // console.log('User reassigned successfully:', response);
+            if (typeof onSuccess === 'function') {
+                onSuccess();
+            }
+
+            refreshCalendar();
+        },
+        error: function (xhr) {
+            if (xhr.status === 403 && xhr.responseJSON?.error) {
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#errorModal').removeClass('hidden');
+            } else if (xhr.status === 422 && xhr.responseJSON?.error) {
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
+                $('#errorModal').removeClass('hidden');
+            } else {
+                // Fallback error message
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
+                $('#editCategoryModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
+            }
         }
     });
 }

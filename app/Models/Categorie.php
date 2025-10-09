@@ -8,7 +8,7 @@ class Categorie extends Model
 {
     protected $table = 'categories';
 
-    protected $fillable = ['categoryName', 'color'];
+    protected $fillable = ['categoryName', 'color', 'isDeleted'];
 
     public static function getActiveCategories()
     {
@@ -17,11 +17,16 @@ class Categorie extends Model
 
     public function events()
     {
-        return $this->hasMany(Event::class);
+        return $this->hasMany(Event::class, 'categoryId');
     }
 
     public function courtCases()
     {
-        return $this->hasMany(CourtCase::class);
+        return $this->hasMany(CourtCase::class, 'categoryId');
+    }
+
+    public function hasCasesOrEvents()
+    {
+        return $this->courtCases()->exists() || $this->events()->exists();
     }
 }

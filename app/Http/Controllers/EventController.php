@@ -16,22 +16,28 @@ class EventController extends Controller
 
         $currentUser = auth()->user();
 
+        // Enforce user permissions for viewing other users' events
+        if ($request->has('user_id')) {
+            $requestedUserIds = $request->input('user_id');
+
+            // Normalize to array for easier checking
+            if (!is_array($requestedUserIds)) {
+                $requestedUserIds = [(int) $requestedUserIds];
+            } else {
+                $requestedUserIds = array_map('intval', $requestedUserIds);
+            }
+
+            // If user is regular and tries to access other user's events
+            if ($currentUser->isRegularUser() && !in_array($currentUser->id, $requestedUserIds)) {
+                return response()->json([]);
+            }
+
+            $userIds = $requestedUserIds;
+        } else {
+            $userIds = [$currentUser->id];
+        }
+
         if ($eventId) {
-            // $event = Event::with(['categorie:id,categoryName,color', 'user:id,name'])
-            //     ->select(['id', 'title', 'user_id', 'categoryId', 'date_from', 'date_to'])
-            //     ->where('id', $eventId)
-            //     ->where('isDeleted', 0)
-            //     ->first();
-
-            // if (!$event) {
-            //     return response()->json(['error' => 'Event not found'], 404);
-            // }
-
-            // if ($event->user_id !== $currentUser->id && $currentUser->userPermission !== 'admin') {
-            //     return response()->json(['error' => 'Unauthorized access'], 403);
-            // }
-
-            // return response()->json($event);
             $event = Event::with([
                 'categorie:id,categoryName,color',
                 'user:id,name'
@@ -45,7 +51,11 @@ class EventController extends Controller
                 return response()->json(['error' => 'Event not found'], 404);
             }
 
-            if ($event->user_id !== $currentUser->id && $currentUser->userPermission !== 'admin') {
+            // if ($event->user_id !== $currentUser->id && $currentUser->userPermission !== 'admin') {
+            //     return response()->json(['error' => 'Unauthorized access'], 403);
+            // }
+
+            if (!$currentUser->canEditEvent($event)) {
                 return response()->json(['error' => 'Unauthorized access'], 403);
             }
 
@@ -61,15 +71,18 @@ class EventController extends Controller
             ]);
         }
 
-        $userIds = $request->input('user_id');
+        // $userIds = $request->input('user_id');
+        // $startDateInput = $request->input('start_date');
+        // $endDateInput = $request->input('end_date');
+
+        // if(!$userIds) {
+        //     $userIds = [auth()->id()];
+        // } elseif (!is_array($userIds)) {
+        //     $userIds = [(int) $userIds];
+        // }
+
         $startDateInput = $request->input('start_date');
         $endDateInput = $request->input('end_date');
-
-        if(!$userIds) {
-            $userIds = [auth()->id()];
-        } elseif (!is_array($userIds)) {
-            $userIds = [(int) $userIds];
-        }
 
         try {
             $startDate = Carbon::parse($startDateInput)->startOfDay();
@@ -85,8 +98,13 @@ class EventController extends Controller
             ->whereBetween('date_from', [$startDate, $endDate])
             ->get();
 
+        // $events->transform(function ($event) use ($currentUser) {
+        //     $event->editable = ($currentUser->userPermission === 'admin' || $event->user_id === $currentUser->id);
+        //     return $event;
+        // });
+
         $events->transform(function ($event) use ($currentUser) {
-            $event->editable = ($currentUser->userPermission === 'admin' || $event->user_id === $currentUser->id);
+            $event->editable = $currentUser->canEditEvent($event);
             return $event;
         });
 
@@ -171,9 +189,15 @@ class EventController extends Controller
     }
 
     public function update(Request $request, Event $event) {
-        if ($event->user_id !== auth()->id() && auth()->user()->userPermission !== 'admin') {
+        $currentUser = auth()->user();
+
+        if (!$currentUser->canEditEvent($event)) {
             return response()->json(['error' => 'Unauthorized access'], 403);
         }
+
+        // if ($event->user_id !== auth()->id() && auth()->user()->userPermission !== 'admin') {
+        //     return response()->json(['error' => 'Unauthorized access'], 403);
+        // }
 
         $fromDateRaw = str_replace('+', '', $request->input('fromDate'));
         $toDateRaw = str_replace('+', '', $request->input('toDate'));
@@ -196,13 +220,27 @@ class EventController extends Controller
         $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'));
         $toDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('toDate'));
 
-        // Conflict check
-        if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon, $event->id)) {
-            throw ValidationException::withMessages([
-                'fromDate' => ['You already have an event during this time.'],
-                'toDate' => ['You already have an event during this time.'],
-            ]);
+        // Only check for conflict if dates were changed
+        $existingFrom = \Carbon\Carbon::parse($event->date_from)->format('Y-m-d H:i');
+        $existingTo = \Carbon\Carbon::parse($event->date_to)->format('Y-m-d H:i');
+        $newFrom = $fromDateCarbon->format('Y-m-d H:i');
+        $newTo = $toDateCarbon->format('Y-m-d H:i');
+
+        if ($existingFrom !== $newFrom || $existingTo !== $newTo) {
+            if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon, $event->id)) {
+                throw ValidationException::withMessages([
+                    'fromDate' => ['You already have an event during this time.'],
+                    'toDate' => ['You already have an event during this time.'],
+                ]);
+            }
         }
+        // // Conflict check
+        // if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon, $event->id)) {
+        //     throw ValidationException::withMessages([
+        //         'fromDate' => ['You already have an event during this time.'],
+        //         'toDate' => ['You already have an event during this time.'],
+        //     ]);
+        // }
 
         $event->update([
             'title' => $request->input('title'),
@@ -218,7 +256,13 @@ class EventController extends Controller
     }
 
     public function delete(Request $request, Event $event) {
-        if ($event->user_id !== auth()->id() && auth()->user()->userPermission !== 'admin') {
+        // if ($event->user_id !== auth()->id() && auth()->user()->userPermission !== 'admin') {
+        //     return response()->json(['error' => 'Unauthorized access'], 403);
+        // }
+
+        $currentUser = auth()->user();
+
+        if (!$currentUser->canDeleteEvent($event)) {
             return response()->json(['error' => 'Unauthorized access'], 403);
         }
 
@@ -244,14 +288,64 @@ class EventController extends Controller
     //         })
     //         ->exists();
     // }
+
+    public function updateEventUser(Request $request)
+    {
+        $currentUser = auth()->user();
+
+        if (!$currentUser->isSuperAdmin()) {
+            return response()->json(['error' => 'Unauthorized access'], 403);
+        }
+
+        $eventId = $request->input('event_id');
+        $newUserId = $request->input('new_user_id');
+
+        $request->validate([
+            'event_id' => 'required|integer|exists:events,id',
+            'new_user_id' => 'required|integer|exists:users,id',
+        ]);
+
+        $event = Event::find($eventId);
+
+        $fromDate = \Carbon\Carbon::parse($event->date_from);
+        $toDate = \Carbon\Carbon::parse($event->date_to);
+
+        if ($this->hasTimeConflict($newUserId, $fromDate, $toDate, $event->id)) {
+            return response()->json([
+                'error' => 'The target user already has an event during this time.'
+            ], 422);
+        }
+
+        $event->user_id = $newUserId;
+        $event->save();
+
+        return response()->json([
+            'message' => 'Event reassigned successfully.',
+            'event' => $event,
+        ]);
+    }
+
     protected function hasTimeConflict($userId, $fromDate, $toDate, $excludeEventId = null) {
         $query = Event::where('user_id', $userId)
+            ->where('isDeleted', 0)
             ->where(function($q) use ($fromDate, $toDate) {
-                $q->whereBetween('date_from', [$fromDate, $toDate])
-                ->orWhereBetween('date_to', [$fromDate, $toDate])
-                ->orWhere(function($q2) use ($fromDate, $toDate) {
-                    $q2->where('date_from', '<=', $fromDate)
-                        ->where('date_to', '>=', $toDate);
+                // $q->whereBetween('date_from', [$fromDate, $toDate])
+                // ->orWhereBetween('date_to', [$fromDate, $toDate])
+                // ->orWhere(function($q2) use ($fromDate, $toDate) {
+                //     $q2->where('date_from', '<', $fromDate)
+                //         ->where('date_to', '>', $toDate);
+                // });
+                $q->where(function($q2) use ($fromDate, $toDate) {
+                    $q2->where('date_from', '>=', $fromDate)
+                    ->where('date_from', '<', $toDate);
+                })
+                ->orWhere(function($q3) use ($fromDate, $toDate) {
+                    $q3->where('date_to', '>', $fromDate)
+                    ->where('date_to', '<=', $toDate);
+                })
+                ->orWhere(function($q4) use ($fromDate, $toDate) {
+                    $q4->where('date_from', '<', $fromDate)
+                    ->where('date_to', '>', $toDate);
                 });
             });
 
@@ -261,6 +355,20 @@ class EventController extends Controller
 
         return $query->exists();
     }
+    // protected function hasTimeConflict($userId, $fromDate, $toDate, $excludeEventId = null)
+    // {
+    //     $query = Event::where('user_id', $userId)
+    //         ->where(function ($q) use ($fromDate, $toDate) {
+    //             $q->where('date_from', '<', $toDate)
+    //             ->where('date_to', '>', $fromDate);
+    //         });
+
+    //     if ($excludeEventId) {
+    //         $query->where('id', '!=', $excludeEventId);
+    //     }
+
+    //     return $query->exists();
+    // }
 }
 
 ?>

@@ -48,7 +48,6 @@ $(document).ready(() => {
     // $(document).on('click', '.view-all-events-btn', function() {
     //     const dateStr = $(this).data('date');
     //     const [year, month, day] = dateStr.split('-').map(Number);
-
     //     const selected = new Date(year, month - 1, day);
     //     window.selectedDate = selected;
 

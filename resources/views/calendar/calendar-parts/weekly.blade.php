@@ -1,4 +1,4 @@
-<table id="weeklyViewTable" class="table-fixed h-full bg-[#eaf1ff] border-t-1 border-r-1 border-b-0 border-l-1 border-[#fff]">
+<table id="weeklyViewTable" class="table-fixed h-full bg-[#eaf1ff] border-t-1 border-r-1 border-b-0 border-l-1 border-[#fff]"> {{-- border-b-0 --}}
     <thead class="2xl:h-[60px]">
         <tr>
             <th id="userHeader"></th>

@@ -2124,7 +2124,20 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                 $(this).hide();
             }
         });
-    })
+    });
+
+    let visibleTrCount = $('#sidebarCalendarBody tr:visible').length;
+    console.log('Visible Rows (actual weeks shown):', visibleTrCount);
+
+    if (visibleTrCount === 6) {
+        $('#viewWeekly').removeClass('gap-px');
+        $('#weeklyViewTable').removeClass('border-b-1').addClass('border-b-0');
+    } else if(visibleTrCount === 4) {
+        $('#viewWeekly').removeClass('gap-0');
+        $('#weeklyViewTable').removeClass('border-b-0').addClass('border-b-1');
+    } else {
+        $('#viewWeekly').addClass('gap-px');
+    }
 
     // fetchEventsByMonthYear(month, year, currentEventTypeIdFilter, status, subStatus);
 }

@@ -1342,7 +1342,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 dailyBody.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                        <div class="relative truncate w-full flex justify-between">
+                        <div class="relative flex justify-between">
                             <span>${event.title}</span>
                             ${timeRange}
                             ${iconPencil}
@@ -1391,7 +1391,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 dailyBody.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                        <div class="relative truncate w-full flex justify-between">
+                        <div class="relative flex justify-between">
                             <span>${event.title}</span>
                             ${timeRange}
                             ${iconPencil}
@@ -1423,7 +1423,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 bodyHidden.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                        <div class="relative truncate w-full flex justify-between">
+                        <div class="relative flex justify-between">
                             <span>${event.title}</span>
                             ${timeRange}
                             ${iconPencil}
@@ -1489,7 +1489,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 dailyBody.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                        <div class="relative truncate w-full flex justify-between">
+                        <div class="relative flex justify-between">
                             <span>${event.title}</span>
                             ${timeRange}
                             ${iconPencil}

@@ -1289,6 +1289,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
     // const allUsers = getEventsForDate(); // Get full list of users with events
     const allUsers = eventsData;
+    let maxEventsToShowUser1 = 28;
 
     // DOM references
     const dailyHeader = $('#dailyHeader');
@@ -1301,6 +1302,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     dailyBody.empty();
     headerHidden.empty();
     bodyHidden.empty();
+    $('#dailyBox3').empty();
+    $('#dailyBox4').empty();
 
     $('#dailyViewTable').addClass('hidden');
     $('#dailyViewTableHidden').addClass('hidden');
@@ -1332,8 +1335,9 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
             // `);
         } else {
-            eventsToday.forEach(event => {
-                console.log('event::', event);
+            const eventsToShow = eventsToday.slice(0, maxEventsToShowUser1);
+            eventsToShow.forEach(event => {
+                // console.log('event::', event);
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
@@ -1342,8 +1346,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 dailyBody.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                        <div class="relative flex justify-between">
-                            <span>${event.title}</span>
+                        <div class="relative w-full flex justify-between">
+                            <span class="truncate w-[70%]">${event.title}</span>
                             ${timeRange}
                             ${iconPencil}
                         </div>
@@ -1356,6 +1360,21 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     </div>
                 `);
             });
+
+            if (eventsToday.length > maxEventsToShowUser1) {
+                const moreBtn = $(`
+                    <button
+                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                        data-date="${isoDate}"
+                        title="View all events for this day"
+                    >
+                        +${eventsToday.length - maxEventsToShowUser1} more
+                    </button>
+                `);
+
+                $('#dailyBox3').css('position', 'relative');
+                $('#dailyBox3').append(moreBtn);
+            }
         }
 
         return;
@@ -1382,7 +1401,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             //    <div class="dailyEventInfo text-gray-400 italic">No events</div>
             // `);
         } else {
-            eventsUser1.forEach(event => {
+            const eventsToShowUser1 = eventsUser1.slice(0, maxEventsToShowUser1);
+            eventsToShowUser1.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
@@ -1391,8 +1411,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 dailyBody.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                        <div class="relative flex justify-between">
-                            <span>${event.title}</span>
+                        <div class="relative w-full flex justify-between">
+                            <span class="truncate w-[70%]">${event.title}</span>
                             ${timeRange}
                             ${iconPencil}
                         </div>
@@ -1405,6 +1425,21 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     </div>
                 `);
             });
+
+            if (eventsUser1.length > maxEventsToShowUser1) {
+                const moreBtn = $(`
+                    <button
+                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                        data-date="${isoDate}"
+                        title="View all events for this day"
+                    >
+                        +${eventsUser1.length - maxEventsToShowUser1} more
+                    </button>
+                `);
+
+                $('#dailyBox3').css('position', 'relative');
+                $('#dailyBox3').append(moreBtn);
+            }
         }
 
         // Fill user 2
@@ -1414,7 +1449,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
             // `);
         } else {
-            eventsUser2.forEach(event => {
+            const eventsToShowUser2 = eventsUser2.slice(0, maxEventsToShowUser1);
+            eventsToShowUser2.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
@@ -1423,8 +1459,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 bodyHidden.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                        <div class="relative flex justify-between">
-                            <span>${event.title}</span>
+                        <div class="relative w-full flex justify-between">
+                            <span class="truncate w-[70%]">${event.title}</span>
                             ${timeRange}
                             ${iconPencil}
                         </div>
@@ -1437,6 +1473,21 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     </div>
                 `);
             });
+
+            if (eventsUser2.length > maxEventsToShowUser1) {
+                const moreBtn = $(`
+                    <button
+                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                        data-date="${isoDate}"
+                        title="View all events for this day"
+                    >
+                        +${eventsUser2.length - maxEventsToShowUser1} more
+                    </button>
+                `);
+
+                $('#dailyBox4').css('position', 'relative');
+                $('#dailyBox4').append(moreBtn);
+            }
         }
     }
 
@@ -1476,7 +1527,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
             // `);
         } else {
-            eventsToday.forEach(event => {
+            const eventsToShowUser1 = eventsToday.slice(0, maxEventsToShowUser1);
+            eventsToShowUser1.forEach(event => {
                 if (event.isDuplicate) {
                     return;
                 }
@@ -1489,8 +1541,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 dailyBody.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                        <div class="relative flex justify-between">
-                            <span>${event.title}</span>
+                        <div class="relative w-full flex justify-between">
+                            <span class="truncate w-[70%]">${event.title}</span>
                             ${timeRange}
                             ${iconPencil}
                         </div>
@@ -1503,6 +1555,21 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     </div>
                 `);
             });
+
+            if (eventsToday.length > maxEventsToShowUser1) {
+                const moreBtn = $(`
+                    <button
+                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                        data-date="${isoDate}"
+                        title="View all events for this day"
+                    >
+                        +${eventsToday.length - maxEventsToShowUser1} more
+                    </button>
+                `);
+
+                $('#dailyBox3').css('position', 'relative');
+                $('#dailyBox3').append(moreBtn);
+            }
         }
     }
 

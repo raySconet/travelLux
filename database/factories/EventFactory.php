@@ -28,7 +28,7 @@ class EventFactory extends Factory
 
         return [
             'title' => $this->faker->sentence(5),
-            'user_id' => 2,
+            'user_id' => 25,
             'date_from' => $start,
             'date_to' => $end,
             'categoryId' => $category->id,

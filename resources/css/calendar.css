@@ -54,7 +54,7 @@ option {
     justify-content: space-between;
     cursor: pointer;
     margin-top:5px;
-    padding: 8px;
+    padding: 8px 6px;
     border-radius:6px;
     /* height:38px; */
 }

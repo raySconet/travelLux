@@ -289,9 +289,9 @@ $(document).ready(() => {
         if (!window.selectedDate) window.selectedDate = new Date();
         if (!window.viewedWeekDate) window.viewedWeekDate = new Date(window.selectedDate.getTime());
 
-        console.log('Current viewedWeekDate111111:', window.viewedWeekDate);
+        // console.log('Current viewedWeekDate111111:', window.viewedWeekDate);
         window.viewedWeekDate.setDate(window.viewedWeekDate.getDate() - 7);
-        console.log('Current viewedWeekDate222222:', window.viewedWeekDate);
+        // console.log('Current viewedWeekDate222222:', window.viewedWeekDate);
 
         const newMonth = window.viewedWeekDate.getMonth();
         const newYear = window.viewedWeekDate.getFullYear();
@@ -689,18 +689,20 @@ $(document).ready(() => {
             <label>Lawyers</label>
         `);
 
-        const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
-        checkedOrder = [];
+        if($('#selectedDayWeekMonthOption').text() === "Month View") {
+            const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
+            checkedOrder = [];
 
-        allCheckBoxes.each(function (index) {
-            const $checkbox = $(this);
-            if(index === 0) {
-                $checkbox.prop('checked', true);
-                checkedOrder.push($checkbox.data('user-id'));
-            } else {
-                $checkbox.prop('checked', false);
-            }
-        });
+            allCheckBoxes.each(function (index) {
+                const $checkbox = $(this);
+                if(index === 0) {
+                    $checkbox.prop('checked', true);
+                    checkedOrder.push($checkbox.data('user-id'));
+                } else {
+                    $checkbox.prop('checked', false);
+                }
+            });
+        }
 
         refreshCalendar();
         $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');

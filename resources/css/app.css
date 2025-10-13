@@ -36,9 +36,9 @@ select option {
   cursor:pointer;
 }
 
-input{
+/* input{
     border-color: #00000014 !important;
-}
+} */
 
 /* ---------------------- */
 .litigationChartSection input, .litigationChartSection p, .litigationChartSection h2{

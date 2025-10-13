@@ -16,4 +16,20 @@ class UserController extends Controller
             'auth_user_id' => auth()->id(),
         ]);
     }
+
+    public function userPermissions()
+    {
+        $users = User::where('isDeleted', 0)
+                ->orderByRaw('id = ? DESC', [auth()->id()])
+                ->orderBy('name')
+                ->get();
+        return view('permissions', [
+            'users' => $users,
+        ]);
+    }
+
+    public function updatePermissions(Request $request)
+    {
+
+    }
 }

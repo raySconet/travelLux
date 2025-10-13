@@ -514,6 +514,8 @@ $(document).ready(() => {
         $('#headerIcon').removeClass('fa-solid fa-pen-to-square').addClass('fa-solid fa-calendar-plus');
         $('.addEventCaseModalTitle').text(`Add Event or Case`);
         $('#addEventCaseModal').removeClass('hidden');
+        $('.input-error-text').remove();
+        $('input, select').removeClass('border-red-500');
         $('#modalFooterAction').empty().append(`
             <button type="submit" id="submitAddEventCaseBtn" class="self-end bg-[#14548d] text-white font-semibold py-2 px-4 rounded cursor-pointer">
                 Add E/C

@@ -1,3 +1,7 @@
+@php
+    $user = auth()->user();
+@endphp
+
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,6 +47,12 @@
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
+
+                        @if ($user && $user->isSuperAdmin())
+                            <x-dropdown-link :href="route('permissions')" :active="request()->routeIs('permissions')">
+                                {{ __('Permissions') }}
+                            </x-dropdown-link>
+                        @endif
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
@@ -92,6 +102,12 @@
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
+
+                @if ($user && $user->isSuperAdmin())
+                    <x-responsive-nav-link :href="route('permissions')" :active="request()->routeIs('permissions')">
+                        {{ __('Permissions') }}
+                    </x-responsive-nav-link>
+                @endif
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">

@@ -33,7 +33,7 @@
                     @php
                         $disableInputs = ($user->id === auth()->id() && $user->isSuperAdmin());
                     @endphp
-                    <div class="relative grid grid-cols-12">
+                    <div class="relative grid grid-cols-12 shadow-xs">
                         <div class="col-span-3 p-6 text-gray-900 font-semibold">
                             {{ $user->name }} {{ $user->id === auth()->id() ? '(You)' : '' }}
                         </div>

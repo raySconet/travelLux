@@ -11,7 +11,7 @@
                 @csrf
 
             </form>
-            <div class="relative grid grid-cols-12 font-bold bg-white overflow-hidden shadow-xs sm:rounded-lg">
+            <div class="relative grid grid-cols-12 font-bold bg-white overflow-hidden shadow-xs sm:rounded-lg border border-gray-200">
                 <div class="col-span-3 p-6 text-gray-900">
                     {{ __("Lawyers") }}
                 </div>
@@ -28,12 +28,16 @@
                     Save
                 </button>
             </div>
-            <div class="relative bg-white overflow-hidden shadow-xs sm:rounded-lg mt-2">
+            <div class="relative overflow-hidden shadow-xs sm:rounded-lg mt-2 border border-gray-200">
                 @foreach($users as $user)
                     @php
                         $disableInputs = ($user->id === auth()->id() && $user->isSuperAdmin());
                     @endphp
-                    <div class="relative grid grid-cols-12 shadow-xs">
+                    <div
+                        class="relative grid grid-cols-12
+                        {{ $loop->index % 2 === 0 ? 'bg-white' : 'bg-[#f3f4f6]' }}
+                        {{ !$loop->last ? 'border-b border-gray-200' : ''}}
+                        shadow-xl">
                         <div class="col-span-3 p-6 text-gray-900 font-semibold">
                             {{ $user->name }} {{ $user->id === auth()->id() ? '(You)' : '' }}
                         </div>
@@ -45,7 +49,7 @@
                                     value="super_admin"
                                     {{ $user->isSuperAdmin() ? 'checked' : '' }}
                                     {{ $disableInputs ? 'disabled' : '' }}
-                                    class="{{ $disableInputs ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer' }} peer appearance-none h-4.5 w-4.5 border border-gray-300 rounded-sm checked:bg-blue-600 checked:border-transparent focus:outline-none"
+                                    class="{{ $disableInputs ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer' }} peer appearance-none h-[18px] w-[18px] bg-white border border-gray-300 rounded-sm checked:bg-blue-600 checked:border-transparent focus:outline-none"
                                 >
                                 <i class="fa-solid fa-check fa-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white peer-checked:block hidden pointer-events-none cursor-pointer"></i>
                             </label>
@@ -58,7 +62,7 @@
                                     value="admin"
                                     {{ $user->isAdmin() ? 'checked' : '' }}
                                     {{ $disableInputs ? 'disabled' : '' }}
-                                    class="{{ $disableInputs ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer' }} peer appearance-none h-4.5 w-4.5 border border-gray-300 rounded-sm checked:bg-blue-600 checked:border-transparent focus:outline-none"
+                                    class="{{ $disableInputs ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer' }} peer appearance-none h-[18px] w-[18px] bg-white border border-gray-300 rounded-sm checked:bg-blue-600 checked:border-transparent focus:outline-none"
                                 >
                                 <i class="fa-solid fa-check fa-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white peer-checked:block hidden pointer-events-none cursor-pointer"></i>
                             </label>
@@ -71,12 +75,12 @@
                                     value="user"
                                     {{ $user->isRegularUser() ? 'checked' : '' }}
                                     {{ $disableInputs ? 'disabled' : '' }}
-                                    class="{{ $disableInputs ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer' }} peer appearance-none h-4.5 w-4.5 border border-gray-300 rounded-sm checked:bg-blue-600 checked:border-transparent focus:outline-none"
+                                    class="{{ $disableInputs ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer' }} peer appearance-none h-[18px] w-[18px] bg-white border border-gray-300 rounded-sm checked:bg-blue-600 checked:border-transparent focus:outline-none"
                                 >
                                 <i class="fa-solid fa-check fa-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white peer-checked:block hidden pointer-events-none cursor-pointer"></i>
                             </label>
                         </div>
-                        <button aria-label="Delete item" id="deleteUser" class="group absolute top-1/2 right-4 transform -translate-y-1/2 p-1 border-none bg-transparent cursor-pointer text-[0.875em] transition-transform duration-200 ease-in-out" data-user-id="{{ $user->id }}">
+                        <button aria-label="Delete item" class="deleteUser group absolute top-1/2 right-4 transform -translate-y-1/2 p-1 border-none bg-transparent cursor-pointer text-[0.875em] transition-transform duration-200 ease-in-out" data-user-id="{{ $user->id }}">
                             <svg
                                 class="w-10 h-8 transition-transform duration-[300ms] [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] drop-shadow-sm overflow-visible group-hover:scale-[1.08] group-hover:rotate-[3deg] group-active:scale-[0.96] group-active:rotate-[-1deg] mb-1"
                                 viewBox="0 -10 64 74"

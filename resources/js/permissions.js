@@ -13,7 +13,7 @@ $(document).ready(function() {
         $('#deleteUserConfirmModal').addClass('hidden');
     });
 
-    $('input[type=radio][name^="permissions"]').on('change', function() {
+    $(document).on('change', 'input[type=radio][name^="permissions"]', function() {
         const userId = $(this).attr('name').match(/\d+/)[0];
         const permission = $(this).val();
         changedPermissions[userId] = permission;
@@ -67,10 +67,13 @@ $(document).ready(function() {
                 $('#modalErrorContent').html(`<p>${msg}</p>`);
                 $('#errorModal').removeClass('hidden');
             },
+            complete: function() {
+                refreshUserRows();
+            },
         });
     });
 
-    $('.deleteUserBtn').on('click', function() {
+    $(document).on('click', '.deleteUserBtn', function() {
         const userId = $(this).data('user-id');
         $('#confirmUserDeleteBtn').data('user-id', userId);
         $('#deleteUserConfirmModal').removeClass('hidden');
@@ -87,8 +90,8 @@ $(document).ready(function() {
             url: `/users/${userId}`,
             success: function(response) {
                 $('#deleteUserConfirmModal').addClass('hidden');
-                $(`#userRow${userId}`).remove();
-                reapplyUserRowStriping();
+                refreshUserRows();
+                // reapplyUserRowStriping();
                 $('#modalSuccessContent').html(response.message);
                 $('#successModal').removeClass('hidden');
             },
@@ -106,5 +109,21 @@ function reapplyUserRowStriping() {
     $('.user-row:visible').each(function(index) {
         $(this).removeClass('bg-white bg-[#f3f4f6]');
         $(this).addClass(index % 2 === 0 ? 'bg-white' : 'bg-[#f3f4f6]');
+    });
+}
+
+function refreshUserRows() {
+    $.ajax({
+        url: '/users/permissions/partial',
+        type: 'GET',
+        success: function(html) {
+            $('#userPermissionTable').html(html);
+            reapplyUserRowStriping();
+            changedPermissions = {};
+        },
+        error: function() {
+            $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Failed to refresh user list.</p>`);
+            $('#errorModal').removeClass('hidden');
+        }
     });
 }

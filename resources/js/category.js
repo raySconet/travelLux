@@ -422,7 +422,7 @@ function getEventsCases(callback) {
         data: { user_id: userId },
         method: 'GET',
         success: function (response) {
-            // console.log("error");
+            console.log(response);
             if (typeof callback === 'function') {
                 callback(response.categories, response.permissions);
             }
@@ -438,6 +438,7 @@ function getEventsCases(callback) {
 function renderEventCases(categories, permissions) {
     const container = $("#categoryLayoutContent");
     container.empty();
+    console.log(categories, permissions);
 
     categories.forEach(category => {
         const itemCount = category.items.length;
@@ -738,8 +739,8 @@ function deleteCategory(actionUrl, categoryId) {
         success: function (response) {
             $('#modalSuccessContent').html(response.message);
             $('#successModal').removeClass('hidden');
-            getEventsCases(function(data) {
-                renderEventCases(data);
+            getEventsCases(function(categories, permissions) {
+                renderEventCases(categories, permissions);
             });
         },
         error: function (xhr) {

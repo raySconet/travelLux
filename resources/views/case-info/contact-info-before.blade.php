@@ -7,7 +7,7 @@
     <x-case-components.grid class="2xl:grid-cols-12">
         {{--Client Section  --}}
         <x-case-components.col class="2xl:col-span-12 ">
-            <p  class="mb-1 text-xl  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
+            <p  class="mb-1 text-xl  font-bold text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
                 {{ __("Client") }}
             </p>
             <div class="appendDuplicates">

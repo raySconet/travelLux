@@ -31,7 +31,7 @@
             <x-case-components.col class="2xl:col-span-2">
                 <div >
                     <x-input-label for="providerName" :value="__('Provider Name')" />
-                    <x-text-input id="providerName" name="providerName" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="providerName" />
+                    <x-text-input id="providerName"  placeholder="00/00/00"  name="providerName" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="providerName" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
@@ -39,7 +39,7 @@
             <x-case-components.col class="2xl:col-span-2">
                 <div>
                     <x-input-label for="dateOrdered" :value="__('Date Ordered')" />
-                    <x-text-input id="dateOrdered" name="dateOrdered" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="dateOrdered" />
+                    <x-text-input id="dateOrdered"  placeholder="00/00/00"  name="dateOrdered" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="dateOrdered" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
@@ -47,12 +47,12 @@
             <x-case-components.col class="2xl:col-span-2">
                 <div >
                     <x-input-label for="dateReceivedMr" :value="__('Date Received Mr')" />
-                    <x-text-input id="dateReceivedMr" name="dateReceivedMr" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="dateReceivedMr" />
+                    <x-text-input id="dateReceivedMr"  placeholder="00/00/00"  name="dateReceivedMr" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="dateReceivedMr" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
                 <div >
                     <x-input-label for="dateReceivedBr" :value="__('Date Received Br')" />
-                    <x-text-input id="dateReceivedBr" name="dateReceivedBr" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="dateReceivedBr" />
+                    <x-text-input id="dateReceivedBr"  placeholder="00/00/00"  name="dateReceivedBr" type="text" class="mt-1" :value="old('name')"  required autofocus autocomplete="dateReceivedBr" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
@@ -60,12 +60,12 @@
             <x-case-components.col class="2xl:col-span-2">
                 <div>
                     <x-input-label for="affidavitDateServed" :value="__('Date Served')" />
-                    <x-text-input id="affidavitDateServed" name="affidavitDateServed" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="affidavitDateServed" />
+                    <x-text-input id="affidavitDateServed"  placeholder="00/00/00"  name="affidavitDateServed" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="affidavitDateServed" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
                 <div>
                     <x-input-label for="affidavitNoticeFiled" :value="__('Notice Filled')" />
-                    <x-text-input id="affidavitNoticeFiled" name="affidavitNoticeFiled" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="affidavitNoticeFiled" />
+                    <x-text-input id="affidavitNoticeFiled"  placeholder="00/00/00"  name="affidavitNoticeFiled" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="affidavitNoticeFiled" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>
@@ -81,7 +81,7 @@
             <x-case-components.col class="2xl:col-span-2">
                 <div>
                     <x-input-label for="controverted" :value="__('Controverted')" />
-                    <x-text-input id="controverted" name="controverted" type="text" class="mt-1 " :value="old('controverted')"  required autofocus autocomplete="controverted" />
+                    <x-text-input id="controverted"  placeholder="Y/N"  name="controverted" type="text" class="mt-1 " :value="old('controverted')"  required autofocus autocomplete="controverted" />
                     {{-- <x-input-error class="mt-2" :messages="$errors->get('name')" /> --}}
                 </div>
             </x-case-components.col>

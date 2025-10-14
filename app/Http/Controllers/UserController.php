@@ -28,6 +28,21 @@ class UserController extends Controller
         ]);
     }
 
+    public function partial()
+    {
+        $users = $this->getUsersForPermissionsView();
+
+        return view('permissions.user-permission-table', compact('users'));
+    }
+
+    private function getUsersForPermissionsView()
+    {
+        return User::where('isDeleted', 0)
+            ->orderByRaw('id = ? DESC', [auth()->id()])
+            ->orderBy('name')
+            ->get();
+    }
+
     public function updatePermissions(Request $request)
     {
         if(!auth()->user()->isSuperAdmin()) {
@@ -69,8 +84,6 @@ class UserController extends Controller
             if ($user) {
                 $user->userPermission = $permission;
                 $updated = $user->save();
-            } else {
-                $updated = false;
             }
         }
         return response()->json([

@@ -50,7 +50,7 @@
 
                         @if ($user && $user->isSuperAdmin())
                             <x-dropdown-link :href="route('permissions')" :active="request()->routeIs('permissions')">
-                                {{ __('Permissions') }}
+                                {{ __('Manage users') }}
                             </x-dropdown-link>
                         @endif
 
@@ -105,7 +105,7 @@
 
                 @if ($user && $user->isSuperAdmin())
                     <x-responsive-nav-link :href="route('permissions')" :active="request()->routeIs('permissions')">
-                        {{ __('Permissions') }}
+                        {{ __('Manage users') }}
                     </x-responsive-nav-link>
                 @endif
 

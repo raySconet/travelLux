@@ -28,9 +28,11 @@ Route::get('/permissions', [UserController::class, 'userPermissions'])
     ->middleware(['auth', 'verified'])
     ->name('permissions');
 
-Route::patch('/permissions/update',[UserController::class, 'updatePermissions'])
+Route::post('/permissions/update',[UserController::class, 'updatePermissions'])
     ->middleware(['auth', 'verified'])
     ->name('permissions.update');
+
+Route::put('/users/{user}', [UserController::class, 'delete'])->name('user.delete');
 
 Route::get('/calendar', function () {
     return view('calendar');

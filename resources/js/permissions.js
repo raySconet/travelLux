@@ -42,18 +42,30 @@ $(document).ready(function() {
                 permissions: changedPermissions,
             },
             success: function(response) {
-                $('#modalSuccessContent').html(response.message);
+                const results = response.results;
+                const errorMessages = [];
+
+                for (const userId in results) {
+                    if (results[userId].status === 'error') {
+                        errorMessages.push(`<li class="text-red-600">${results[userId].message}</li>`);
+                    }
+                }
+
+                if (errorMessages.length === 0) {
+                    $('#modalSuccessContent').html('<p class="text-gray-900 text-sm">Successfully updated.</p>');
+                } else {
+                    $('#modalSuccessContent').html(`
+                        <div class="text-sm text-gray-800 mb-2">Some users could not be updated:</div>
+                        <ul class="list-disc list-inside space-y-1">${errorMessages.join('')}</ul>
+                    `);
+                }
                 $('#successModal').removeClass('hidden');
                 changedPermissions = {};
             },
             error: function(xhr) {
-                if (xhr.responseJSON?.error) {
-                    $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
-                    $('#errorModal').removeClass('hidden');
-                } else {
-                    $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
-                    $('#errorModal').removeClass('hidden');
-                }
+                const msg = xhr.responseJSON?.message || 'Something went wrong.';
+                $('#modalErrorContent').html(`<p>${msg}</p>`);
+                $('#errorModal').removeClass('hidden');
             },
         });
     });

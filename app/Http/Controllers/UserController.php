@@ -37,6 +37,8 @@ class UserController extends Controller
             ], 403);
         }
 
+        $results = [];
+
         foreach ($request->input('permissions', []) as $userId => $permission) {
             $user = User::find($userId);
 
@@ -45,6 +47,10 @@ class UserController extends Controller
                 //     'status' => 'error',
                 //     'message' => 'User not found.'
                 // ], 404);
+                $results[$userId] = [
+                    'status' => 'error',
+                    'message' => 'User not found.'
+                ];
                 continue;
             }
 
@@ -53,6 +59,10 @@ class UserController extends Controller
                 //     'status' => 'error',
                 //     'message' => "You cannot remove yourself from the Super Admin role."
                 // ], 403);
+                $results[$userId] = [
+                    'status' => 'error',
+                    'message' => 'You cannot change your own Super Admin role.'
+                ];
                 continue;
             }
 
@@ -64,9 +74,13 @@ class UserController extends Controller
             }
         }
         return response()->json([
-            'status' => 'success',
-            'message' => 'Permissions updated successfully.',
-            'updated' => $updated ?? false,
+            'status' => 'completed',
+            'summary' => [
+                'total' => count($results),
+                'success' => collect($results)->where('status', 'success')->count(),
+                'errors' => collect($results)->where('status', 'error')->count(),
+            ],
+            'results' => $results,
         ]);
     }
 

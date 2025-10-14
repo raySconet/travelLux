@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="2xl:col-span-9 flex flex-col h-full overflow-x-auto"> {{-- overflow-x-auto --}}
-        <div class="min-w-[1300px] flex flex-col h-full"> {{-- min-w-[1075px] 1530 1377 --}}
+        <div class="min-w-[1150px] flex flex-col h-full"> {{-- min-w-[1075px] 1530 1377 --}}
             <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
                 <div class="p-6">
                     @include('calendar.calendar-parts.calendar-header') {{-- Include the calendar header component --}}

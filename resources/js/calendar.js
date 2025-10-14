@@ -501,8 +501,10 @@ $(document).ready(() => {
 
                 if(checkedOrder.length === 2) {
                     $('#dailyViewTable').removeClass('max-w-[750px] mx-auto xl:col-span-12').addClass('xl:col-span-6');
+                    $('.dailyEventInfo').addClass('max-w-[645px]');
                 } else {
                     $('#dailyViewTable').addClass('max-w-[750px] mx-auto xl:col-span-12').removeClass('xl:col-span-6');
+                    $('.dailyEventInfo').removeClass('max-w-[645px]');
                 }
             });
         }
@@ -774,8 +776,10 @@ $(document).ready(() => {
                 const $table = $('#dailyViewTable');
                 if (checkedOrder.length === 2) {
                     $table.removeClass('max-w-[750px] mx-auto xl:col-span-12').addClass('xl:col-span-6');
+                    $('.dailyEventInfo').addClass('max-w-[645px]');
                 } else {
                     $table.addClass('max-w-[750px] mx-auto xl:col-span-12').removeClass('xl:col-span-6');
+                    $('.dailyEventInfo').removeClass('max-w-[645px]');
                 }
             }
         });
@@ -1328,6 +1332,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         const eventsToday = user.events.filter(event => event.date === isoDate);
 
         $('#dailyViewTable').removeClass('hidden xl:col-span-6').addClass('max-w-[750px] xl:col-span-12 mx-auto');
+        $('.dailyEventInfo').removeClass('max-w-[645px]');
         $('#dailyViewTableHidden').addClass('hidden');
         $('#dailyBox3').removeClass('xl:col-span-6').addClass('w-[750px] xl:col-span-12 mx-auto');
 
@@ -1393,6 +1398,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
         // $('#dailyViewTable').removeClass('hidden');
         $('#dailyViewTable').removeClass('hidden max-w-[750px] mx-auto xl:col-span-12').addClass('xl:col-span-6');
+        $('.dailyEventInfo').addClass('max-w-[645px]');
         $('#dailyViewTableHidden').removeClass('hidden');
         $('#dailyBox3').addClass('xl:col-span-6').removeClass('w-[750px] xl:col-span-12 mx-auto');
         $('#dailyBox4')?.removeClass('hidden');
@@ -1513,6 +1519,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
         // UI Setup
         $('#dailyViewTable').removeClass('hidden xl:col-span-6').addClass('max-w-[750px] xl:col-span-12 mx-auto');
+        $('.dailyEventInfo').removeClass('max-w-[645px]');
         $('#dailyViewTableHidden').addClass('hidden');
         $('#dailyBox3').removeClass('xl:col-span-6').addClass('w-[750px] xl:col-span-12 mx-auto');
 
@@ -2054,7 +2061,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     ` : '';
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                            <div class="relative w-[185px] truncate">
+                            <div class="relative w-[160px] truncate">
                                 <span>${event.title}</span>
                                 ${iconPencil}
                             </div>
@@ -2552,8 +2559,10 @@ function refreshCalendar() {
 
             if (checkedOrder.length === 2) {
                 $('#dailyViewTable').removeClass('max-w-[750px] mx-auto xl:col-span-12').addClass('xl:col-span-6');
+                $('.dailyEventInfo').addClass('max-w-[645px]');
             } else {
                 $('#dailyViewTable').addClass('max-w-[750px] mx-auto xl:col-span-12').removeClass('xl:col-span-6');
+                $('.dailyEventInfo').removeClass('max-w-[645px]');
             }
         }
     });

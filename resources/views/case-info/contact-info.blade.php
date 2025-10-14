@@ -7,7 +7,7 @@
     <x-case-components.grid class="2xl:grid-cols-12">
         {{--Client Section  --}}
         <x-case-components.col class="2xl:col-span-3 ">
-            <p  class="mb-1 text-md  text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
+            <p  class="mb-1 text-md  font-bold text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
                 {{ __("Client") }}
             </p>
             <div class="appendDuplicates items-center justify-center h-full  grid">
@@ -61,7 +61,7 @@
 
 
         <div class="2xl:col-span-3 flex flex-col ">
-            <p class="   text-md text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
+            <p class="   text-md  font-bold text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
                 {{ __("3P") }}
             </p>
             <div class="appendDuplicatesFor3p items-center justify-center h-full  grid" >
@@ -104,7 +104,7 @@
 
 
         <div class="2xl:col-span-3 flex flex-col ">
-            <p class="mb-1 text-md  text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
+            <p class="mb-1 text-md  font-bold  text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
                 {{ __("1P") }}
             </p>
            <div class="appendDuplicatesFor1p  items-center justify-center h-full  grid gap-0 space-y-0">
@@ -156,7 +156,7 @@
         </div>
 
         <div class="2xl:col-span-3 flex flex-col ">
-            <p class="mb-1 text-md  text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
+            <p class="mb-1 text-md font-bold  text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
                 {{ __("Defense Counsel") }}
             </p>
             <div class="appendDuplicatesForDefense  items-center justify-center h-full grid">

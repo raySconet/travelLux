@@ -20,7 +20,24 @@
 
             <div id="errorCategoryName" class="text-sm text-red-600 space-y-1 "></div>
         </div>
+        <div class="col-span-12 sm:col-span-6">
+            <x-input-label
+                for="todoSectionCategory"
+                :value="__('Category')"
+                class="mb-1"
+            />
+            <select
+                id="todoSectionCategory"
+                name="todoSectionCategory"
+                class="
+                    block w-full rounded-md bg-white border border-gray-200
+                    cursor-pointer appearance-none bg-no-repeat bg-right
+                "
+            >
+            </select>
 
+            <div id="errorCategoryName" class="text-sm text-red-600 space-y-1 "></div>
+        </div>
          <div class="col-span-12 sm:col-span-12">
             <x-input-label
                 for="sectionDescription"

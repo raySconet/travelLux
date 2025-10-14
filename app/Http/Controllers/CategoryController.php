@@ -37,8 +37,16 @@ class CategoryController extends Controller
             }
 
             $request->validate([
-                'name' => ['required', 'string', 'max:255', 'regex:/^[^\d]+$/', 'unique:categories,categoryName',],
-                'color' => ['nullable', 'regex:/^#([A-Fa-f0-9]{6})$/', 'unique:categories,color',],
+                'name' => ['required', 'string', 'max:255', 'regex:/^[^\d]+$/',
+                    Rule::unique('categories', 'categoryName')->where(function ($query) {
+                        return $query->where('isDeleted', 0);
+                    }),
+                ],
+                'color' => ['nullable', 'regex:/^#([A-Fa-f0-9]{6})$/',
+                    Rule::unique('categories', 'color')->where(function ($query) {
+                        return $query->where('isDeleted', 0);
+                    }),
+                ],
             ], [
                 'name.regex' => 'The name field must not contain numbers.',
                 'name.unique' => 'The name has already been taken.',

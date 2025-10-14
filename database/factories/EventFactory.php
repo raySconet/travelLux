@@ -27,8 +27,8 @@ class EventFactory extends Factory
         $end = (clone $start)->modify('+1 hour');
 
         return [
-            'title' => $this->faker->sentence(3),
-            'user_id' => 2,
+            'title' => $this->faker->sentence(5),
+            'user_id' => 25,
             'date_from' => $start,
             'date_to' => $end,
             'categoryId' => $category->id,

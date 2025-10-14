@@ -24,6 +24,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/permissions', [UserController::class, 'userPermissions'])
+    ->middleware(['auth', 'verified'])
+    ->name('permissions');
+
+Route::patch('/permissions/update',[UserController::class, 'updatePermissions'])
+    ->middleware(['auth', 'verified'])
+    ->name('permissions.update');
+
 Route::get('/calendar', function () {
     return view('calendar');
 })->middleware(['auth', 'verified'])->name('calendar');

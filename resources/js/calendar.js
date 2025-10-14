@@ -48,7 +48,6 @@ $(document).ready(() => {
     // $(document).on('click', '.view-all-events-btn', function() {
     //     const dateStr = $(this).data('date');
     //     const [year, month, day] = dateStr.split('-').map(Number);
-
     //     const selected = new Date(year, month - 1, day);
     //     window.selectedDate = selected;
 
@@ -289,9 +288,9 @@ $(document).ready(() => {
         if (!window.selectedDate) window.selectedDate = new Date();
         if (!window.viewedWeekDate) window.viewedWeekDate = new Date(window.selectedDate.getTime());
 
-        console.log('Current viewedWeekDate111111:', window.viewedWeekDate);
+        // console.log('Current viewedWeekDate111111:', window.viewedWeekDate);
         window.viewedWeekDate.setDate(window.viewedWeekDate.getDate() - 7);
-        console.log('Current viewedWeekDate222222:', window.viewedWeekDate);
+        // console.log('Current viewedWeekDate222222:', window.viewedWeekDate);
 
         const newMonth = window.viewedWeekDate.getMonth();
         const newYear = window.viewedWeekDate.getFullYear();
@@ -515,6 +514,8 @@ $(document).ready(() => {
         $('#headerIcon').removeClass('fa-solid fa-pen-to-square').addClass('fa-solid fa-calendar-plus');
         $('.addEventCaseModalTitle').text(`Add Event or Case`);
         $('#addEventCaseModal').removeClass('hidden');
+        $('.input-error-text').remove();
+        $('input, select').removeClass('border-red-500');
         $('#modalFooterAction').empty().append(`
             <button type="submit" id="submitAddEventCaseBtn" class="self-end bg-[#14548d] text-white font-semibold py-2 px-4 rounded cursor-pointer">
                 Add E/C
@@ -682,33 +683,37 @@ $(document).ready(() => {
 
     $('#calendarEventTypeFilter').on('click', function() {
         dataType = 'events';
-        $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
-        $(this).addClass('activeEventsCases');
+        // $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
+        // $(this).addClass('activeEventsCases');
 
         $('#lawyersHeader').html(`
             <label>Lawyers</label>
         `);
 
-        const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
-        checkedOrder = [];
+        if($('#selectedDayWeekMonthOption').text() === "Month View") {
+            const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
+            checkedOrder = [];
 
-        allCheckBoxes.each(function (index) {
-            const $checkbox = $(this);
-            if(index === 0) {
-                $checkbox.prop('checked', true);
-                checkedOrder.push($checkbox.data('user-id'));
-            } else {
-                $checkbox.prop('checked', false);
-            }
-        });
+            allCheckBoxes.each(function (index) {
+                const $checkbox = $(this);
+                if(index === 0) {
+                    $checkbox.prop('checked', true);
+                    checkedOrder.push($checkbox.data('user-id'));
+                } else {
+                    $checkbox.prop('checked', false);
+                }
+            });
+        }
 
         refreshCalendar();
+        $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
+        $(this).addClass('activeEventsCases');
     });
 
     $('#calendarCases').on('click', function() {
         dataType = 'cases';
-        $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
-        $(this).addClass('activeEventsCases');
+        // $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
+        // $(this).addClass('activeEventsCases');
 
         $('#lawyersHeader').html(`
             <label>Lawyers</label>
@@ -719,6 +724,8 @@ $(document).ready(() => {
         `);
 
         refreshCalendar();
+        $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
+        $(this).addClass('activeEventsCases');
     });
 
     $(document).on('change', '#selectAllLawyers', function () {
@@ -1285,6 +1292,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
     // const allUsers = getEventsForDate(); // Get full list of users with events
     const allUsers = eventsData;
+    let maxEventsToShowUser1 = 28;
 
     // DOM references
     const dailyHeader = $('#dailyHeader');
@@ -1297,6 +1305,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     dailyBody.empty();
     headerHidden.empty();
     bodyHidden.empty();
+    $('#dailyBox3').empty();
+    $('#dailyBox4').empty();
 
     $('#dailyViewTable').addClass('hidden');
     $('#dailyViewTableHidden').addClass('hidden');
@@ -1328,8 +1338,9 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
             // `);
         } else {
-            eventsToday.forEach(event => {
-                console.log('event::', event);
+            const eventsToShow = eventsToday.slice(0, maxEventsToShowUser1);
+            eventsToShow.forEach(event => {
+                // console.log('event::', event);
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
@@ -1338,12 +1349,35 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 dailyBody.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                            <span>${event.title}</span>
+                        <div class="relative w-full flex justify-between">
+                            <span class="truncate w-[70%]">${event.title}</span>
                             ${timeRange}
                             ${iconPencil}
+                        </div>
+                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[300px] hidden group-hover:block z-10">
+                            <div class="relative bg-[#fff] text-gray-800 text-xs p-2 rounded shadow-lg">
+                                ${event.title}
+                                <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#fff]"></div>
+                            </div>
+                        </div>
                     </div>
                 `);
             });
+
+            if (eventsToday.length > maxEventsToShowUser1) {
+                const moreBtn = $(`
+                    <button
+                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                        data-date="${isoDate}"
+                        title="View all events for this day"
+                    >
+                        +${eventsToday.length - maxEventsToShowUser1} more
+                    </button>
+                `);
+
+                $('#dailyBox3').css('position', 'relative');
+                $('#dailyBox3').append(moreBtn);
+            }
         }
 
         return;
@@ -1370,7 +1404,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             //    <div class="dailyEventInfo text-gray-400 italic">No events</div>
             // `);
         } else {
-            eventsUser1.forEach(event => {
+            const eventsToShowUser1 = eventsUser1.slice(0, maxEventsToShowUser1);
+            eventsToShowUser1.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
@@ -1379,12 +1414,35 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 dailyBody.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                        <span>${event.title}</span>
-                        ${timeRange}
-                        ${iconPencil}
+                        <div class="relative w-full flex justify-between">
+                            <span class="truncate w-[70%]">${event.title}</span>
+                            ${timeRange}
+                            ${iconPencil}
+                        </div>
+                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[300px] hidden group-hover:block z-10">
+                            <div class="relative bg-[#fff] text-gray-800 text-xs p-2 rounded shadow-lg">
+                                ${event.title}
+                                <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#fff]"></div>
+                            </div>
+                        </div>
                     </div>
                 `);
             });
+
+            if (eventsUser1.length > maxEventsToShowUser1) {
+                const moreBtn = $(`
+                    <button
+                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                        data-date="${isoDate}"
+                        title="View all events for this day"
+                    >
+                        +${eventsUser1.length - maxEventsToShowUser1} more
+                    </button>
+                `);
+
+                $('#dailyBox3').css('position', 'relative');
+                $('#dailyBox3').append(moreBtn);
+            }
         }
 
         // Fill user 2
@@ -1394,7 +1452,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
             // `);
         } else {
-            eventsUser2.forEach(event => {
+            const eventsToShowUser2 = eventsUser2.slice(0, maxEventsToShowUser1);
+            eventsToShowUser2.forEach(event => {
                 const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
@@ -1403,12 +1462,35 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 bodyHidden.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                        <span>${event.title}</span>
-                        ${timeRange}
-                        ${iconPencil}
+                        <div class="relative w-full flex justify-between">
+                            <span class="truncate w-[70%]">${event.title}</span>
+                            ${timeRange}
+                            ${iconPencil}
+                        </div>
+                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[300px] hidden group-hover:block z-10">
+                            <div class="relative bg-[#fff] text-gray-800 text-xs p-2 rounded shadow-lg">
+                                ${event.title}
+                                <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#fff]"></div>
+                            </div>
+                        </div>
                     </div>
                 `);
             });
+
+            if (eventsUser2.length > maxEventsToShowUser1) {
+                const moreBtn = $(`
+                    <button
+                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                        data-date="${isoDate}"
+                        title="View all events for this day"
+                    >
+                        +${eventsUser2.length - maxEventsToShowUser1} more
+                    </button>
+                `);
+
+                $('#dailyBox4').css('position', 'relative');
+                $('#dailyBox4').append(moreBtn);
+            }
         }
     }
 
@@ -1448,7 +1530,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             //     <div class="text-gray-400 italic dailyEventInfo">No events</div>
             // `);
         } else {
-            eventsToday.forEach(event => {
+            const eventsToShowUser1 = eventsToday.slice(0, maxEventsToShowUser1);
+            eventsToShowUser1.forEach(event => {
                 if (event.isDuplicate) {
                     return;
                 }
@@ -1461,12 +1544,35 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                 ` : '';
                 dailyBody.append(`
                     <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                        <span>${event.title}</span>
-                        ${timeRange}
-                        ${iconPencil}
+                        <div class="relative w-full flex justify-between">
+                            <span class="truncate w-[70%]">${event.title}</span>
+                            ${timeRange}
+                            ${iconPencil}
+                        </div>
+                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[300px] hidden group-hover:block z-10">
+                            <div class="relative bg-[#fff] text-gray-800 text-xs p-2 rounded shadow-lg">
+                                ${event.title}
+                                <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#fff]"></div>
+                            </div>
+                        </div>
                     </div>
                 `);
             });
+
+            if (eventsToday.length > maxEventsToShowUser1) {
+                const moreBtn = $(`
+                    <button
+                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                        data-date="${isoDate}"
+                        title="View all events for this day"
+                    >
+                        +${eventsToday.length - maxEventsToShowUser1} more
+                    </button>
+                `);
+
+                $('#dailyBox3').css('position', 'relative');
+                $('#dailyBox3').append(moreBtn);
+            }
         }
     }
 
@@ -1526,6 +1632,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     if (allEventsData.length >= 3 && dataType === 'cases') {
         const startOfWeek = new Date(year, month, day);
         startOfWeek.setDate(day - new Date(year, month, day).getDay());
+        let maxEventsToShowUser1 = 34;
 
         const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
@@ -1570,11 +1677,12 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 
             // Filter events for this date
             const eventsForDay = flatWeeklyEvents.filter(e => e.date === toLocalDateString(currentDate));
+            const eventsToShow = eventsForDay.slice(0, maxEventsToShowUser1);
 
             const cell = $(`#weeklyViewTable .${dayClass}`);
 
-            if (eventsForDay.length) {
-                eventsForDay.forEach(event => {
+            if (eventsToShow.length) {
+                eventsToShow.forEach(event => {
                     const iconPencil = event.editable ? `
                         <div class="iconPencil absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                             <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1582,12 +1690,34 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                     ` : '';
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                            <span>${event.title}</span>
-                            ${iconPencil}
+                            <div class="relative truncate">
+                                <span>${event.title}</span>
+                                ${iconPencil}
+                            </div>
+                            <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[300px] hidden group-hover:block z-10">
+                                <div class="relative bg-[#fff] text-gray-800 text-xs p-2 rounded shadow-lg">
+                                    ${event.title}
+                                    <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#fff]"></div>
+                                </div>
+                            </div>
                         </div>
                     `);
                     cell.append(eventDiv);
                 });
+
+                if (eventsForDay.length > maxEventsToShowUser1) {
+                    const moreBtn = $(`
+                        <button
+                            class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-date="${isoDate}"
+                            title="View all events for this day"
+                        >
+                            +${eventsForDate.length - maxEventsToShowUser1} more
+                        </button>
+                    `);
+
+                    cellMain.append(moreBtn);
+                }
             } else {
                 // cell.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
             }
@@ -1602,6 +1732,9 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     const userRow1 = allEventsData[0] || null;
     const userRow2 = showTwoUserLayout ? allEventsData[1] : null;
 
+    let maxEventsToShowUser1;
+    let maxEventsToShowUser2;
+
     if (userRow1) {
         $('#userHeader').html(`<div class="border border-[#fff] p-2" data-user-id="${userRow1.userId}">${userRow1.user}</div>`);
     } else {
@@ -1609,11 +1742,14 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
     }
 
     if (showTwoUserLayout) {
+        maxEventsToShowUser1 = 11;
+        maxEventsToShowUser2 = 19;
         $('#userHeaderHidden').html(`<div class="border border-[#fff] p-2" data-user-id="${userRow2.userId}">${userRow2.user}</div>`);
         $('#weeklyViewTableHidden').removeClass('hidden');
         $('#viewWeekly').removeClass('grid-rows-1').addClass('2xl:grid-rows-[40%_60%]');
         $('#weeklyViewTable > tbody').removeClass('2xl:h-[94%]').addClass('2xl:h-[85%]');
     } else {
+        maxEventsToShowUser1 = 34;
         $('#weeklyViewTableHidden').addClass('hidden');
         $('#viewWeekly').removeClass('2xl:grid-rows-[40%_60%]').addClass('grid-rows-1');
         $('#weeklyViewTable > tbody').removeClass('2xl:h-[85%]').addClass('2xl:h-[94%]');
@@ -1629,13 +1765,17 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         const cellMain = $(`#weeklyViewTable .${dayClass}`);
         const cellHidden = $(`#weeklyViewTableHidden .${dayClass}`);
         cellMain.attr('data-date', isoDate);
+        cellMain.css('position', 'relative');
         cellHidden.attr('data-date', isoDate);
+        cellHidden.css('position', 'relative');
 
         // User 1 events or no events placeholder
         if (userRow1) {
             const eventsForDate = userRow1.events.filter(e => e.date === isoDate);
-            if (eventsForDate.length) {
-                eventsForDate.forEach(event => {
+            const eventsToShow = eventsForDate.slice(0, maxEventsToShowUser1);
+            // const eventsForDate = userRow1.events.filter(e => e.date === isoDate);
+            if (eventsToShow.length) {
+                eventsToShow.forEach(event => {
                     console.log(event.editable);
                     const iconPencil =  event.editable ? `
                         <div class="iconPencil absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
@@ -1644,12 +1784,34 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                     ` : '';
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                            <span>${event.title}</span>
-                            ${iconPencil}
+                            <div class="relative truncate">
+                                <span>${event.title}</span>
+                                ${iconPencil}
+                            </div>
+                            <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[300px] hidden group-hover:block z-10">
+                                <div class="relative bg-[#fff] text-gray-800 text-xs p-2 rounded shadow-lg">
+                                    ${event.title}
+                                    <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#fff]"></div>
+                                </div>
+                            </div>
                         </div>
                     `);
                     cellMain.append(eventDiv);
                 });
+
+                if (eventsForDate.length > maxEventsToShowUser1) {
+                    const moreBtn = $(`
+                        <button
+                            class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-date="${isoDate}"
+                            title="View all events for this day"
+                        >
+                            +${eventsForDate.length - maxEventsToShowUser1} more
+                        </button>
+                    `);
+
+                    cellMain.append(moreBtn);
+                }
             } else {
                 // cellMain.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
             }
@@ -1661,8 +1823,9 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         // if (userRow2) {
         if (showTwoUserLayout && userRow2) {
             const eventsForDate = userRow2.events.filter(e => e.date === isoDate);
-            if (eventsForDate.length) {
-                eventsForDate.forEach(event => {
+            const eventsToShow = eventsForDate.slice(0, maxEventsToShowUser2);
+            if (eventsToShow.length) {
+                eventsToShow.forEach(event => {
                     const iconPencil = event.editable ? `
                         <div class="iconPencil absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                             <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1670,12 +1833,34 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                     ` : '';
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold weeklyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                            <span>${event.title}</span>
-                            ${iconPencil}
+                            <div class="relative truncate">
+                                <span>${event.title}</span>
+                                ${iconPencil}
+                            </div>
+                            <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[300px] hidden group-hover:block z-10">
+                                <div class="relative bg-[#fff] text-gray-800 text-xs p-2 rounded shadow-lg">
+                                    ${event.title}
+                                    <div class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-6 border-transparent border-t-[#fff]"></div>
+                                </div>
+                            </div>
                         </div>
                     `);
                     cellHidden.append(eventDiv);
                 });
+
+                if (eventsForDate.length > maxEventsToShowUser2) {
+                    const moreBtn = $(`
+                        <button
+                            class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-date="${isoDate}"
+                            title="View all events for this day"
+                        >
+                            +${eventsForDate.length - maxEventsToShowUser2} more
+                        </button>
+                    `);
+
+                    cellHidden.append(moreBtn);
+                }
             } else {
                 // cellHidden.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
             }
@@ -1870,7 +2055,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                             <div class="relative w-[185px] truncate">
-                                <span class="truncate w-[100%]">${event.title}</span>
+                                <span>${event.title}</span>
                                 ${iconPencil}
                             </div>
                             <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[300px] hidden group-hover:block z-10">
@@ -1898,11 +2083,11 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     $td.css('position', 'relative'); // Ensure parent is relative positioned
                     $td.append(moreBtn);
 
-                    moreBtn.on('click', function() {
-                        const date = $(this).data('date');
-                        console.log('Go to daily view for:', date);
-                        // window.location.href = `/daily?date=${date}`;
-                    });
+                    // moreBtn.on('click', function() {
+                    //     const date = $(this).data('date');
+                    //     console.log('Go to daily view for:', date);
+                    //     // window.location.href = `/daily?date=${date}`;
+                    // });
                 }
             }
 
@@ -1942,7 +2127,20 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                 $(this).hide();
             }
         });
-    })
+    });
+
+    let visibleTrCount = $('#sidebarCalendarBody tr:visible').length;
+    console.log('Visible Rows (actual weeks shown):', visibleTrCount);
+
+    if (visibleTrCount === 6) {
+        $('#viewWeekly').removeClass('gap-px');
+        $('#weeklyViewTable').removeClass('border-b-1').addClass('border-b-0');
+    } else if(visibleTrCount === 4) {
+        $('#viewWeekly').removeClass('gap-0');
+        $('#weeklyViewTable').removeClass('border-b-0').addClass('border-b-1');
+    } else {
+        $('#viewWeekly').addClass('gap-px');
+    }
 
     // fetchEventsByMonthYear(month, year, currentEventTypeIdFilter, status, subStatus);
 }

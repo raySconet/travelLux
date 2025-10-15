@@ -12,7 +12,7 @@
                 id="nameEditCategory"
                 name="nameEditCategory"
                 type="text"
-                class="block w-full"
+                class="block w-full text-start"
                 :value="old('nameEditCategory')"
                 placeholder="Enter a category name"
                 required

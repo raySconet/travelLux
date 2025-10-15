@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="2xl:col-span-9 flex flex-col h-full overflow-x-auto"> {{-- overflow-x-auto --}}
-        <div class="min-w-[1530px] flex flex-col h-full"> {{-- min-w-[1075px] --}}
+        <div class="min-w-[1150px] flex flex-col h-full"> {{-- min-w-[1075px] 1530 1377 --}}
             <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
                 <div class="p-6">
                     @include('calendar.calendar-parts.calendar-header') {{-- Include the calendar header component --}}
@@ -40,7 +40,7 @@
                 <div id="viewMonthly" class="p-6">
                     @include('calendar.calendar-parts.monthly') {{-- Include the calendar drawing component --}}
                 </div>
-                <div id="viewWeekly" class="grid grid-rows-1 2xl:grid-rows-[40%_60%] gap-px p-6 h-full hidden">
+                <div id="viewWeekly" class="grid grid-rows-1 2xl:grid-rows-[40%_60%] gap-px p-6 h-full 2xl:h-[1322px] hidden">
                     @include('calendar.calendar-parts.weekly') {{-- Include the calendar drawing component --}}
                 </div>
                 <div id="viewDaily" class="p-6 hidden h-full">

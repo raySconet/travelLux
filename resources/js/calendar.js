@@ -1365,18 +1365,21 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             });
 
             if (eventsToday.length > maxEventsToShowUser1) {
+                $('#dailyViewTable .view-all-events-btn').parent().remove();
                 const moreBtn = $(`
-                    <button
-                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
-                        data-date="${isoDate}"
-                        title="View all events for this day"
-                    >
-                        +${eventsToday.length - maxEventsToShowUser1} more
-                    </button>
+                    <div class="flex justify-center mt-2 pb-2">
+                        <button
+                            class="w-[80%] max-w-[524px] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-date="${isoDate}"
+                            title="View all events for this day"
+                        >
+                            +${eventsToday.length - maxEventsToShowUser1} more
+                        </button>
+                    </div>
                 `);
 
-                $('#dailyBox3').css('position', 'relative');
-                $('#dailyBox3').append(moreBtn);
+                $('#dailyViewTable').css('position', 'relative');
+                $('#dailyViewTable').append(moreBtn);
             }
         }
 
@@ -1413,7 +1416,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     </div>
                 ` : '';
                 dailyBody.append(`
-                    <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
+                    <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase w-[536px] mx-auto" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                         <div class="relative w-full flex justify-between">
                             <span class="truncate w-[70%]">${event.title}</span>
                             ${timeRange}
@@ -1430,18 +1433,21 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             });
 
             if (eventsUser1.length > maxEventsToShowUser1) {
+                $('#dailyViewTable .view-all-events-btn').parent().remove();
                 const moreBtn = $(`
-                    <button
-                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
-                        data-date="${isoDate}"
-                        title="View all events for this day"
-                    >
-                        +${eventsUser1.length - maxEventsToShowUser1} more
-                    </button>
+                    <div class="flex justify-center mt-2 pb-2">
+                        <button
+                            class="w-[80%] max-w-[524px] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-date="${isoDate}"
+                            title="View all events for this day"
+                        >
+                            +${eventsUser1.length - maxEventsToShowUser1} more
+                        </button>
+                    </div>
                 `);
 
-                $('#dailyBox3').css('position', 'relative');
-                $('#dailyBox3').append(moreBtn);
+                $('#dailyViewTable').css('position', 'relative');
+                $('#dailyViewTable').append(moreBtn);
             }
         }
 
@@ -1461,7 +1467,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     </div>
                 ` : '';
                 bodyHidden.append(`
-                    <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
+                    <div class="relative group text-gray-900 font-semibold dailyEventInfo eventCase w-[536px] mx-auto" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
                         <div class="relative w-full flex justify-between">
                             <span class="truncate w-[70%]">${event.title}</span>
                             ${timeRange}
@@ -1478,18 +1484,21 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             });
 
             if (eventsUser2.length > maxEventsToShowUser1) {
+                $('#dailyViewTableHidden .view-all-events-btn').parent().remove();
                 const moreBtn = $(`
-                    <button
-                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
-                        data-date="${isoDate}"
-                        title="View all events for this day"
-                    >
-                        +${eventsUser2.length - maxEventsToShowUser1} more
-                    </button>
+                    <div class="flex justify-center mt-2 pb-2">
+                        <button
+                            class="w-[80%] max-w-[524px] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-date="${isoDate}"
+                            title="View all events for this day"
+                        >
+                            +${eventsUser2.length - maxEventsToShowUser1} more
+                        </button>
+                    </div>
                 `);
 
-                $('#dailyBox4').css('position', 'relative');
-                $('#dailyBox4').append(moreBtn);
+                $('#dailyViewTableHidden').css('position', 'relative');
+                $('#dailyViewTableHidden').append(moreBtn);
             }
         }
     }
@@ -1560,18 +1569,21 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             });
 
             if (eventsToday.length > maxEventsToShowUser1) {
+                $('#dailyViewTable .view-all-events-btn').parent().remove();
                 const moreBtn = $(`
-                    <button
-                        class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
-                        data-date="${isoDate}"
-                        title="View all events for this day"
-                    >
-                        +${eventsToday.length - maxEventsToShowUser1} more
-                    </button>
+                    <div class="flex justify-center mt-2 pb-2">
+                        <button
+                            class="w-[80%] max-w-[524px] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-date="${isoDate}"
+                            title="View all events for this day"
+                        >
+                            +${eventsToday.length - maxEventsToShowUser1} more
+                        </button>
+                    </div>
                 `);
 
-                $('#dailyBox3').css('position', 'relative');
-                $('#dailyBox3').append(moreBtn);
+                $('#dailyViewTable').css('position', 'relative');
+                $('#dailyViewTable').append(moreBtn);
             }
         }
     }
@@ -1707,16 +1719,18 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 
                 if (eventsForDay.length > maxEventsToShowUser1) {
                     const moreBtn = $(`
-                        <button
-                            class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
-                            data-date="${isoDate}"
-                            title="View all events for this day"
-                        >
-                            +${eventsForDate.length - maxEventsToShowUser1} more
-                        </button>
+                        <div class="flex justify-center mt-2">
+                            <button
+                                class="w-[80%] font-semibold view-all-events-btntext-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                                data-date="${isoDate}"
+                                title="View all events for this day"
+                            >
+                                +${eventsForDay.length - maxEventsToShowUser1} more
+                            </button>
+                        </div>
                     `);
 
-                    cellMain.append(moreBtn);
+                    cell.append(moreBtn);
                 }
             } else {
                 // cell.append('<div class="text-gray-400 italic weeklyEventInfo">No events</div>');
@@ -1801,13 +1815,15 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 
                 if (eventsForDate.length > maxEventsToShowUser1) {
                     const moreBtn = $(`
+                    <div class="flex justify-center mt-[15px]">
                         <button
-                            class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            class="w-[80%] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
                             data-date="${isoDate}"
                             title="View all events for this day"
                         >
                             +${eventsForDate.length - maxEventsToShowUser1} more
                         </button>
+                    </div>
                     `);
 
                     cellMain.append(moreBtn);
@@ -1850,13 +1866,15 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
 
                 if (eventsForDate.length > maxEventsToShowUser2) {
                     const moreBtn = $(`
-                        <button
-                            class="w-[80%] font-semibold view-all-events-btn absolute bottom-1 left-1/2 -translate-x-1/2 text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
-                            data-date="${isoDate}"
-                            title="View all events for this day"
-                        >
-                            +${eventsForDate.length - maxEventsToShowUser2} more
-                        </button>
+                        <div class="flex justify-center mt-2">
+                            <button
+                                class="w-[80%] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                                data-date="${isoDate}"
+                                title="View all events for this day"
+                            >
+                                +${eventsForDate.length - maxEventsToShowUser2} more
+                            </button>
+                        </div>
                     `);
 
                     cellHidden.append(moreBtn);
@@ -2054,8 +2072,8 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                     ` : '';
                     const eventDiv = $(`
                         <div class="relative group text-gray-900 font-semibold yearlyEventInfo my-1 p-1 rounded cursor-pointer eventCase" style="background-color: ${event.color}" draggable="true" data-id="${event.id}" data-type="${event.type}">
-                            <div class="relative w-[185px] truncate">
-                                <span>${event.title}</span>
+                            <div class="relative flex-shrink-0 overflow-hidden">
+                                <span class="truncate block whitespace-nowrap overflow-hidden text-ellipsis">${event.title}</span>
                                 ${iconPencil}
                             </div>
                             <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[max-content] max-w-[300px] hidden group-hover:block z-10">
@@ -2139,7 +2157,8 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
         $('#viewWeekly').removeClass('gap-0');
         $('#weeklyViewTable').removeClass('border-b-0').addClass('border-b-1');
     } else {
-        $('#viewWeekly').addClass('gap-px');
+        $('#viewWeekly').removeClass('gap-px');
+        $('#weeklyViewTable').removeClass('border-b-1').addClass('border-b-0');
     }
 
     // fetchEventsByMonthYear(month, year, currentEventTypeIdFilter, status, subStatus);

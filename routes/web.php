@@ -24,6 +24,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::post('/users/store', [UserController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('store.user');
+
+Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
+
 Route::get('/permissions', [UserController::class, 'userPermissions'])
     ->middleware(['auth', 'verified'])
     ->name('permissions');

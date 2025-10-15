@@ -11,7 +11,7 @@
             id="title"
             name="title"
             type="text"
-            class="block w-full"
+            class="block w-full text-start"
             :value="old('title')"
             placeholder="Enter here..."
             required
@@ -34,7 +34,7 @@
                 id="fromDate"
                 name="fromDate"
                 type="text"
-                class="datetimepicker"
+                class="datetimepicker text-start"
                 {{-- class="datetimepicker w-full border border-gray-300 rounded-md shadow-sm focus:outline-none" --}}
                 :value="old('fromDate')"
                 placeholder="Select date and time"
@@ -56,7 +56,7 @@
                 id="toDate"
                 name="toDate"
                 type="text"
-                class="datetimepicker"
+                class="datetimepicker text-start"
                 {{-- class="datetimepicker w-full border border-gray-300 rounded-md shadow-sm focus:outline-none" --}}
                 :value="old('to')"
                 placeholder="Select date and time"

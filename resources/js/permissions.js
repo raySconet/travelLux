@@ -13,6 +13,20 @@ $(document).ready(function() {
         $('#deleteUserConfirmModal').addClass('hidden');
     });
 
+    $("#openAddUserModal").on('click', function() {
+        $('#addUserModal').removeClass('hidden');
+    });
+
+    $("#closeAddUserModal").on('click', function() {
+        const $form = $('#addUserForm');
+        $('#addUserModal').addClass('hidden');
+
+        $form[0].reset();
+
+        $form.find('.input-error-text').remove();
+        $form.find('.border-red-500').removeClass('border-red-500');
+    });
+
     $(document).on('change', 'input[type=radio][name^="permissions"]', function() {
         const userId = $(this).attr('name').match(/\d+/)[0];
         const permission = $(this).val();
@@ -103,6 +117,53 @@ $(document).ready(function() {
             },
         });
     });
+
+    $('#submitAddUserBtn').on('click', function(e) {
+        e.preventDefault();
+        const form = $('#addUserForm');
+        const url = form.attr('action');
+        const formData  = form.serialize();
+        // console.log(formData);
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'POST',
+            url: url,
+            data: formData,
+            success: function(response) {
+                $('#addUserModal').addClass('hidden');
+                form[0].reset();
+                refreshUserRows();
+                $('#modalSuccessContent').html('<p class="text-gray-900 text-sm">User added successfully.</p>');
+                $('#successModal').removeClass('hidden');
+            },
+            error: function(xhr) {
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    const errors = xhr.responseJSON.errors;
+
+                    // Clear old errors first
+                    form.find('.input-error-text').remove();
+                    form.find('.border-red-500').removeClass('border-red-500');
+
+                    $.each(errors, function (field, messages) {
+                        let $input = form.find(`[name="${field}"]`);
+
+                        if ($input.length === 0) {
+                            const baseField = field.split('.')[0];
+                            $input = form.find(`[name="${baseField}[]"], [name="${baseField}"]`);
+                        }
+
+                        $input.addClass('border-red-500');
+
+                        if ($input.next('.input-error-text').length === 0) {
+                            $input.after(`<p class="input-error-text text-red-600 text-sm text-center mt-1">${messages[0]}</p>`);
+                        }
+                    });
+                }
+            },
+        });
+    });
 });
 
 function reapplyUserRowStriping() {
@@ -124,6 +185,23 @@ function refreshUserRows() {
         error: function() {
             $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Failed to refresh user list.</p>`);
             $('#errorModal').removeClass('hidden');
+        }
+    });
+}
+
+
+function getUserData(userId, callback) {
+    $.ajax({
+        url: `/users/${userId}`,
+        type: 'GET',
+        success: function(response) {
+            if (response.status === 'success') {
+                callback(null, response.user);
+            } else {
+                callback(response.message, null);
+            }
+        },
+        error: function(xhr) {
         }
     });
 }

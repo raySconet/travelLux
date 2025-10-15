@@ -35,14 +35,14 @@
         <div class="2xl:col-span-3 flex flex-col ">
             <div>
                 <x-input-label for="facts" :value="__('Facts')" />
-                <x-text-area id="facts" name="facts" placeholder="How it happened" type="text" class="mt-1   text-center" :value="old('name')"  required autofocus autocomplete="facts" />
+                <x-text-area id="facts" name="facts" placeholder="How it happened" type="text" class="mt-1 h-[77px]  text-center" :value="old('name')"  required autofocus autocomplete="facts" />
                 <x-input-error class="mt-2" :messages="$errors->get('name')" />
             </div>
         </div>
         <div class="2xl:col-span-3 flex flex-col ">
             <div>
                 <x-input-label for="injuries" :value="__('Injuries')" />
-                <x-text-area id="injuries" name="injuries" placeholder="Neck & Back" type="text" class="mt-1   text-center" :value="old('name')"  required autofocus autocomplete="injuries" />
+                <x-text-area id="injuries" name="injuries" placeholder="Neck & Back" type="text" class="mt-1 h-[77px]  text-center" :value="old('name')"  required autofocus autocomplete="injuries" />
                 <x-input-error class="mt-2" :messages="$errors->get('name')" />
             </div>
         </div>

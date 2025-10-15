@@ -11,6 +11,7 @@ class TodoSection extends Model
     protected $fillable = [
         'title',
         'description',
+        'categoryId',
         'completeDate',
         'sectionOrder',
         'caseId',

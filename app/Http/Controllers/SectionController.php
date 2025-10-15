@@ -20,11 +20,13 @@ class SectionController extends Controller
             $request->validate([
                 'todoSectionTitle' => 'nullable|string|max:255',
                 'sectionDescription' => 'nullable|string',
+                'todoSectionCategory' => 'nullable|integer',
             ]);
 
             $section = TodoSection::create([
                 'title' => $request->todoSectionTitle ?? null,
                 'description' => $request->sectionDescription ?? null,
+                'categoryId' => $request->todoSectionCategory ?? null,
                 'caseId' => '1',
             ]);
 

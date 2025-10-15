@@ -229,6 +229,39 @@ $(document).ready(() => {
     });
     // End Add Edit Buttons
     $('#openManageSectionModal').on('click', function() {
+        $.ajax({
+            type: 'GET',
+            url: "getCategories",
+            dataType: 'json',
+            success: function (data) {
+                console.log(data)
+                // ✅ Process and return list
+                const $categorySelect = $('#todoSectionCategory');
+                $categorySelect.empty().append('<option value="-1">Select a category</option>');
+                data.forEach(category => {
+                    $categorySelect.append(`<option value="${category.id}">${category.categoryName}</option>`);
+                });
+            },
+            error: function (xhr) {
+                console.error(`Error fetching ${dataType}:`, xhr);
+
+                let errorMsg = 'Unknown error occurred';
+
+                // Try to parse error message from JSON response
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response && response.error) {
+                        errorMsg = response.error;
+                    }
+                } catch (e) {
+                    // parsing failed, keep default errorMsg
+                }
+
+                if (typeof callback === "function") {
+                    callback({ error: errorMsg }, null);
+                }
+            }
+        });
         $('#addManageSectionsModal').removeClass('hidden');
     });
 

@@ -32,7 +32,7 @@
 
                     <x-case-components.col class="2xl:col-span-12">
                         {{-- <x-input-label for="Address" :value="__('Address')" /> --}}
-                        <x-text-input  name="Address" type="text" class="mt-1 placeholder:text-yellow-600 text-center"   placeholder="Address" :value="old('name')"  required autofocus autocomplete="Address" />
+                        <x-text-area  name="Address" type="text" class="mt-1  placeholder:text-yellow-600 text-center  h-[56px]"    placeholder="Address" :value="old('name')"  required autofocus autocomplete="Address" />
                         <x-input-error class="mt-2" :messages="$errors->get('name')" />
                     </x-case-components.col>
 

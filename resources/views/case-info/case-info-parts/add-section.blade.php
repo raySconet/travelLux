@@ -30,7 +30,7 @@
                 id="todoSectionCategory"
                 name="todoSectionCategory"
                 class="
-                    block w-full rounded-md bg-white border border-gray-200
+                    block w-full text-center rounded-md bg-white border border-gray-200
                     cursor-pointer appearance-none bg-no-repeat bg-right
                 "
             >

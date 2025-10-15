@@ -111,3 +111,7 @@ option {
 .icon:hover {
   transform: translate(2px);
 } */
+
+#categorySelect {
+    height: 27px !important;
+}

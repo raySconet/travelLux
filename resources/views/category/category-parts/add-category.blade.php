@@ -12,7 +12,7 @@
                 id="name"
                 name="name"
                 type="text"
-                class="block w-full"
+                class="block w-full text-start"
                 :value="old('name')"
                 placeholder="Enter a category name"
                 required

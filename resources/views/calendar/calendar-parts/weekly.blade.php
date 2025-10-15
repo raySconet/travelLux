@@ -1,4 +1,4 @@
-<table id="weeklyViewTable" class="table-fixed h-full bg-[#eaf1ff] border-t-1 border-r-1 border-b-0 border-l-1 border-[#fff]"> {{-- border-b-0 --}}
+<table id="weeklyViewTable" class="table-fixed h-full min-h-[450px] bg-[#eaf1ff] border-t-1 border-r-1 border-b-0 border-l-1 border-[#fff]"> {{-- border-b-0 --}}
     <thead class="2xl:h-[60px]">
         <tr>
             <th id="userHeader"></th>
@@ -14,7 +14,7 @@
         </tr>
     </thead>
     <tbody class="2xl:h-[85%]">
-        <tr class="grid grid-cols-7 h-full calendarRowData min-h-[200px]" data-week="" dataId="">
+        <tr class="grid grid-cols-7 h-full calendarRowData min-h-[420px]" data-week="" dataId="">
             <x-calendar-components.td class="sunday" />
             <x-calendar-components.td class="monday" />
             <x-calendar-components.td class="tuesday" />
@@ -26,7 +26,7 @@
     </tbody>
 </table>
 
-<table id="weeklyViewTableHidden" class="table-fixed h-full bg-[#eaf1ff] border-t-0 border-r-1 border-b-1 border-l-1 border-[#fff] hidden">
+<table id="weeklyViewTableHidden" class="table-fixed h-full min-h-[420px] bg-[#eaf1ff] border-t-0 border-r-1 border-b-1 border-l-1 border-[#fff] hidden">
     <thead class="2xl:h-[60px]">
         <tr>
             <th id="userHeaderHidden"></th>
@@ -42,7 +42,7 @@
         </tr>
     </thead>
     <tbody class="2xl:h-[90%]">
-        <tr class="grid grid-cols-7 h-full calendarRowData min-h-[200px]" data-week="" dataId="">
+        <tr class="grid grid-cols-7 h-full calendarRowData min-h-[450px]" data-week="" dataId="">
             <x-calendar-components.td class="sunday" />
             <x-calendar-components.td class="monday" />
             <x-calendar-components.td class="tuesday" />

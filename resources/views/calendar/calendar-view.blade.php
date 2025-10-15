@@ -40,7 +40,7 @@
                 <div id="viewMonthly" class="p-6">
                     @include('calendar.calendar-parts.monthly') {{-- Include the calendar drawing component --}}
                 </div>
-                <div id="viewWeekly" class="grid grid-rows-1 2xl:grid-rows-[40%_60%] gap-px p-6 h-full hidden">
+                <div id="viewWeekly" class="grid grid-rows-1 2xl:grid-rows-[40%_60%] gap-px p-6 h-full 2xl:h-[1322px] hidden">
                     @include('calendar.calendar-parts.weekly') {{-- Include the calendar drawing component --}}
                 </div>
                 <div id="viewDaily" class="p-6 hidden h-full">

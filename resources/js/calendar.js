@@ -1313,6 +1313,11 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     $('#dailyBox3')?.removeClass('xl:col-span-6').addClass('xl:col-span-12');
     $('#dailyBox4')?.addClass('hidden');
 
+    // Remove any existing "+more" buttons
+    $('#dailyViewTable .view-all-events-btn').parent().remove();
+    $('#dailyViewTableHidden .view-all-events-btn').parent().remove();
+
+
     if (allUsers.length === 0) {
         $('#dailyViewTable').removeClass('hidden');
         dailyHeader.html(`${dayName} ${day} <div class="text-gray-400 italic">No users</div>`);
@@ -1610,6 +1615,11 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         $(`#weeklyViewTable .${dayClass}`).empty();
         $(`#weeklyViewTableHidden .${dayClass}`).empty();
     });
+
+    // REMOVE all "+more" buttons before building new ones
+    $('#weeklyViewTable .view-all-events-btn').parent().remove();
+    $('#weeklyViewTableHidden .view-all-events-btn').parent().remove();
+
 
     $('#userHeader').empty();
     $('#userHeaderHidden').empty();

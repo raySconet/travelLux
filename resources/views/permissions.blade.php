@@ -163,7 +163,6 @@
 
         <form method="POST" id="editUserForm" class="space-y-6">
             @csrf
-            @method('PUT')
 
             <!-- Name -->
             <div>

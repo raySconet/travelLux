@@ -50,9 +50,9 @@
                 <i class="fa-solid fa-check fa-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white peer-checked:block hidden pointer-events-none cursor-pointer"></i>
             </label>
         </div>
-        {{-- <button title="Edit" class="editUserBtn absolute top-1/2 right-13 transform -translate-y-1/2 p-1 text-[limegreen] hover:text-green-800 cursor-pointer" data-user-id="{{ $user->id }}">
+        <button title="Edit" class="editUserBtn absolute top-1/2 right-14 transform -translate-y-1/2 p-1 text-[limegreen] hover:text-green-800 cursor-pointer" data-user-id="{{ $user->id }}">
             <i class="fa-solid fa-pen-to-square shadow-lg fa-lg"></i>
-        </button> --}}
+        </button>
         <div aria-label="Delete item" class="deleteUserBtn group absolute top-1/2 right-4 transform -translate-y-1/2 p-1 border-none bg-transparent cursor-pointer text-[0.875em] transition-transform duration-200 ease-in-out" data-user-id="{{ $user->id }}">
             <svg
                 style="filter: none; backdrop-filter: none; box-shadow: none;"

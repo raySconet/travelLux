@@ -30,6 +30,9 @@ Route::post('/users/store', [UserController::class, 'store'])
     ->name('store.user');
 
 Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
+Route::post('/users/{user}/update', [UserController::class, 'update'])
+    ->middleware(['auth', 'verified'])
+    ->name('users.update');
 
 Route::get('/permissions', [UserController::class, 'userPermissions'])
     ->middleware(['auth', 'verified', RoleMiddleware::class . ':super_admin'])

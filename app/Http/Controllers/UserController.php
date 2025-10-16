@@ -58,6 +58,27 @@ class UserController extends Controller
         ]);
     }
 
+    public function update(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+
+        $user->save();
+
+        return response()->json(['message' => 'User updated successfully']);
+    }
+
+
     public function userPermissions()
     {
         $users = User::where('isDeleted', 0)

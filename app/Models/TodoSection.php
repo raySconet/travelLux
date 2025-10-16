@@ -17,10 +17,11 @@ class TodoSection extends Model
         'caseId',
     ];
 
-      public function todos()
+    public function todos()
     {
         return $this->hasMany(Todo::class);
     }
+
     public static function boot()
     {
         parent::boot();

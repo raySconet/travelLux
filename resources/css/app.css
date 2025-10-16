@@ -12,7 +12,11 @@ body input::placeholder {
 select,
 select option {
   font-family: 'Lato', sans-serif !important;
-  /* height:27px !important */
+}
+#addManageSectionsModal select,
+ #addManageSectionsModalselect option {
+    height:27px !important
+
 }
 
 .incompleteButton {

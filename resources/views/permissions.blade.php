@@ -18,7 +18,7 @@
     </x-slot>
 
     <div class="py-4 text-sm">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+        <div class="min-w-[768px] max-w-5xl mx-auto sm:px-6 lg:px-8">
             <form id="permissionsForm" action="{{ route('permissions.update') }}" method="POST">
                 @csrf
 

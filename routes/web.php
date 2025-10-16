@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Models\CourtCase;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SectionController;
+use App\Http\Middleware\RoleMiddleware;
 
 Route::get('/', function () {
     return view('auth/login');
@@ -31,7 +32,7 @@ Route::post('/users/store', [UserController::class, 'store'])
 Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
 
 Route::get('/permissions', [UserController::class, 'userPermissions'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', RoleMiddleware::class . ':super_admin'])
     ->name('permissions');
 
 Route::post('/permissions/update',[UserController::class, 'updatePermissions'])

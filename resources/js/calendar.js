@@ -393,6 +393,7 @@ $(document).ready(() => {
     });
 
     $(document).on('change', 'input[type="checkbox"][data-user-id]', function () {
+        console.log(checkedOrder);
         const view = $('#selectedDayWeekMonthOption').text().trim();
         const allCheckboxes = $('input[type="checkbox"][data-user-id]');
         const $this = $(this);
@@ -402,7 +403,7 @@ $(document).ready(() => {
         // console.log('User ID (changed):', userId);
 
         if (view === 'Month View') {
-            if (dataType === 'events') {
+            if (dataType === 'events' || dataType === 'eventsNCases') {
                 // Only one user allowed
                 allCheckboxes.prop('checked', false);
                 $this.prop('checked', true);
@@ -446,7 +447,7 @@ $(document).ready(() => {
                 );
 
 
-                if (checkedOrder.length > 2 && dataType === 'events') {
+                if (checkedOrder.length > 2 && (dataType === 'events' || dataType === 'eventsNCases')) {
                     // Too many checked, remove the first one (oldest)
                     const firstCheckedId = checkedOrder.shift();
                     $(`input[type="checkbox"][data-user-id="${firstCheckedId}"]`).prop('checked', false);
@@ -541,6 +542,17 @@ $(document).ready(() => {
             $(this).addClass('hidden');
         }
     });
+
+    $('#fromDate').on('change', function () {
+        const fromPicker = $(this)[0]._flatpickr;
+        const toPicker = $('#toDate')[0]._flatpickr;
+
+        const selectedDate = fromPicker.selectedDates[0];
+        if (selectedDate) {
+            toPicker.setDate(selectedDate, true);
+        }
+    });
+
 
     $('input[name="type"]').on('change', function () {
         // $('input, select').removeClass('border-red-500');
@@ -682,50 +694,97 @@ $(document).ready(() => {
     });
 
     $('#calendarEventTypeFilter').on('click', function() {
-        dataType = 'events';
+        if($('#calendarCases').hasClass('activeEventsCases') && $('#calendarEventTypeFilter').hasClass('activeEventsCases')) {
+            dataType = 'cases';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+                <label id="selectAllUsersCheckbox" class="ml-2 text-sm font-normal cursor-pointer">
+                    <input type="checkbox" id="selectAllLawyers" class="mr-1">
+                    <span>All</span>
+                </label>
+            `);
+            $(this).removeClass('activeEventsCases');
+        } else if($('#calendarCases').hasClass('activeEventsCases') && !$('#calendarEventTypeFilter').hasClass('activeEventsCases')){
+            dataType = 'eventsNCases';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+            `);
+            $(this).addClass('activeEventsCases');
+        } else {
+            dataType = 'events';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+            `);
+
+            $(this).addClass('activeEventsCases');
+        }
         // $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
         // $(this).addClass('activeEventsCases');
 
-        $('#lawyersHeader').html(`
-            <label>Lawyers</label>
-        `);
 
-        if($('#selectedDayWeekMonthOption').text() === "Month View") {
-            const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
-            checkedOrder = [];
+        // if($('#selectedDayWeekMonthOption').text() === "Month View") {
+        //     const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
+        //     checkedOrder = [];
 
-            allCheckBoxes.each(function (index) {
-                const $checkbox = $(this);
-                if(index === 0) {
-                    $checkbox.prop('checked', true);
-                    checkedOrder.push($checkbox.data('user-id'));
-                } else {
-                    $checkbox.prop('checked', false);
-                }
-            });
-        }
+        //     allCheckBoxes.each(function (index) {
+        //         const $checkbox = $(this);
+        //         if(index === 0) {
+        //             $checkbox.prop('checked', true);
+        //             checkedOrder.push($checkbox.data('user-id'));
+        //         } else {
+        //             $checkbox.prop('checked', false);
+        //         }
+        //     });
+        // }
 
         refreshCalendar();
-        $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
-        $(this).addClass('activeEventsCases');
+        // $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
     });
 
     $('#calendarCases').on('click', function() {
-        dataType = 'cases';
+        if($('#calendarCases').hasClass('activeEventsCases') && $('#calendarEventTypeFilter').hasClass('activeEventsCases')) {
+            dataType = 'events';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+            `);
+            $(this).removeClass('activeEventsCases');
+        } else if(!$('#calendarCases').hasClass('activeEventsCases') && $('#calendarEventTypeFilter').hasClass('activeEventsCases')) {
+            dataType = 'eventsNCases';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+            `);
+            $(this).addClass('activeEventsCases');
+        } else {
+            dataType = 'cases';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+                <label id="selectAllUsersCheckbox" class="ml-2 text-sm font-normal cursor-pointer">
+                    <input type="checkbox" id="selectAllLawyers" class="mr-1">
+                    <span>All</span>
+                </label>
+            `);
+            $(this).addClass('activeEventsCases');
+        }
         // $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
         // $(this).addClass('activeEventsCases');
 
-        $('#lawyersHeader').html(`
-            <label>Lawyers</label>
-            <label id="selectAllUsersCheckbox" class="ml-2 text-sm font-normal cursor-pointer">
-                <input type="checkbox" id="selectAllLawyers" class="mr-1">
-                <span>All</span>
-            </label>
-        `);
+        // if($('#selectedDayWeekMonthOption').text() === "Month View") {
+        //     const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
+        //     checkedOrder = [];
+
+        //     allCheckBoxes.each(function (index) {
+        //         const $checkbox = $(this);
+        //         if(index === 0) {
+        //             $checkbox.prop('checked', true);
+        //             checkedOrder.push($checkbox.data('user-id'));
+        //         } else {
+        //             $checkbox.prop('checked', false);
+        //         }
+        //     });
+        // }
 
         refreshCalendar();
-        $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
-        $(this).addClass('activeEventsCases');
+        // $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
     });
 
     $(document).on('change', '#selectAllLawyers', function () {
@@ -918,7 +977,7 @@ $(document).ready(() => {
             }
 
             $('#addEventCaseModal').removeClass('hidden');
-        }, eventCaseId);
+        }, eventCaseId, eventType);
 
         console.log('Clicked case ID:', eventCaseId);
     });
@@ -1119,7 +1178,7 @@ function toggleHeaderForView(view) {
         $('#monthToggleSection').removeClass('hidden');
         $('#weekToggleSection').addClass('hidden');
         $('#dayToggleSection').addClass('hidden');
-        if(dataType === 'events') {
+        if(dataType === 'events' || dataType === 'eventsNCases') {
             const checkboxes = $('input[type="checkbox"][data-user-id]');
             checkboxes.prop('checked', false);
             checkboxes.first().prop('checked', true);
@@ -1261,8 +1320,10 @@ function showView(view) {
         // console.log(window.selectedDate);
         // console.log('1: ', checkedOrder);
         // ✅ Keep only last selected user in Month View
-        if (checkedOrder.length >= 1 && dataType === 'events') {
+        if (checkedOrder.length >= 1 && (dataType === 'events' || dataType === 'eventsNCases')) {
             const lastUserId = checkedOrder[checkedOrder.length - 1];
+            // const lastUserId = checkedOrder[0];
+
             checkedOrder = [lastUserId];
 
             // Uncheck all checkboxes, check only the last selected one
@@ -2343,7 +2404,7 @@ function updateUserSelectMode() {
         flatpickr(".datetimepicker", {
             enableTime: false,
             dateFormat: "m-d-Y",
-            // defaultDate: new Date(),
+            defaultDate: new Date(),
         });
 
         // Bind new change handler
@@ -2387,7 +2448,7 @@ function updateUserSelectMode() {
             enableTime: true,
             dateFormat: "m-d-Y H:i",
             time_24hr: true,
-            // defaultDate: new Date(),
+            defaultDate: new Date(),
         });
     }
     // else {
@@ -2447,7 +2508,7 @@ function getUsers(callback) {
     });
 }
 
-function getData(ids, callback, eventCaseId = null) {
+function getData(ids, callback, eventCaseId = null, eventTypeId = null) {
     const month = $('#currentDateData').attr('data-month');
     const year = $('#currentDateData').attr('data-year');
     // console.log("Fetching data for:", ids, month, year);
@@ -2457,7 +2518,11 @@ function getData(ids, callback, eventCaseId = null) {
     const startDateStr = visibleStartDate.toISOString().split('T')[0];
     const endDateStr = visibleEndDate.toISOString().split('T')[0];
     // console.log("Fetching data from", startDateStr, "to", endDateStr);
-    const endpoint = dataType === 'cases' ? '/getCases' : '/getEvents';
+    let endpoint = dataType === 'cases' ? '/getCases' : dataType === 'events' ? '/getEvents' : '/getEventsNCases';
+
+    if(eventCaseId && eventTypeId) {
+        endpoint = '/get' + eventTypeId.charAt(0).toUpperCase() + eventTypeId.slice(1) + 's';
+    }
 
     const requestData = eventCaseId
         ? { event_case_id: eventCaseId }
@@ -2477,7 +2542,7 @@ function getData(ids, callback, eventCaseId = null) {
         data: requestData,
         dataType: 'json',
         success: function (response) {
-            // console.log(response);
+            console.log('hey', response);
             // if(ids) {
             //     eventsData = getEventsForDate(response || []); // You may rename this for generality
             // } else {
@@ -2535,8 +2600,9 @@ function initializeCheckedOrder() {
 function refreshCalendar() {
     const view = $('#selectedDayWeekMonthOption').text().trim();
     currentView = view;
-    if (dataType === 'events' && view === 'Month View' && checkedOrder.length > 1) {
-        const lastUserId = checkedOrder[checkedOrder.length - 1];
+    if ((dataType === 'events' || dataType === 'eventsNCases') && view === 'Month View' && checkedOrder.length > 1) {
+        // const lastUserId = checkedOrder[checkedOrder.length - 1];
+        const lastUserId = checkedOrder[0];
         checkedOrder = [lastUserId];
 
         // Uncheck all checkboxes, check only the last selected one
@@ -2544,7 +2610,7 @@ function refreshCalendar() {
             const isLast = $(this).data('user-id') === lastUserId;
             $(this).prop('checked', isLast);
         });
-    } else if (dataType === 'events' && (view === 'Week View' || view === 'Day View') && checkedOrder.length > 2) {
+    } else if ((dataType === 'events' || dataType === 'eventsNCases') && (view === 'Week View' || view === 'Day View') && checkedOrder.length > 2) {
         const frstUserId = checkedOrder[checkedOrder.length - 1];
         const scndUserId = checkedOrder[checkedOrder.length - 2];
 
@@ -2553,6 +2619,7 @@ function refreshCalendar() {
             const isSecond = $(this).data('user-id') === scndUserId;
             $(this).prop('checked', isFirst || isSecond);
         });
+        console.log('Adjusted checkedOrder for Week/Day View with events:', frstUserId, scndUserId);
     }
 
     getData(checkedOrder, () => {
@@ -2960,3 +3027,43 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess) {
         }
     });
 }
+
+
+
+
+
+// function getEventsNcases() {
+//     const month = $('#currentDateData').attr('data-month');
+//     const year = $('#currentDateData').attr('data-year');
+//     // console.log("Fetching data for:", ids, month, year);
+//     const viewMode = $('#selectedDayWeekMonthOption').text().trim();
+//     const { visibleStartDate, visibleEndDate } = getMonthWeekBoundaries(year, month);
+//     // console.log("Visible range:", visibleStartDate, "to", visibleEndDate);
+//     const startDateStr = visibleStartDate.toISOString().split('T')[0];
+//     const endDateStr = visibleEndDate.toISOString().split('T')[0];
+//     // console.log("Fetching data from", startDateStr, "to", endDateStr);
+//     const endpoint = '/getEventsNCases';
+
+//     const requestData = {
+//         user_id: 2,
+//         start_date: startDateStr,
+//         end_date: endDateStr,
+//         view_mode: viewMode
+//     };
+
+//     $.ajax({
+//         headers: {
+//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//         },
+//         type: 'POST',
+//         url: endpoint,
+//         data: requestData,
+//         dataType: 'json',
+//         success: function (response) {
+//             console.log(response);
+//         },
+//         error: function (xhr) {
+
+//         }
+//     });
+// }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CourtCasesController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventCourtCaseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserCategoryController;
 use App\Http\Controllers\UserController;
@@ -74,6 +75,7 @@ Route::post('/getCases', [CourtCasesController::class, 'index']);
 Route::put('/caseUpdate/{case}', [CourtCasesController::class, 'update'])->name('case.update');
 Route::put('/caseDelete/{case}', [CourtCasesController::class, 'delete'])->name('case.delete');
 
+Route::post('/getEventsNCases', [EventCourtCaseController::class, 'index']);
 Route::get('/getEventsCases', [CategoryController::class, 'getEventsAndCases']);
 
 Route::middleware('auth')->group(function () {

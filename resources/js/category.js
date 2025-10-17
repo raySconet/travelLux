@@ -505,7 +505,7 @@ function renderEventCases(categories, permissions) {
                 const $panel = $(`
                     <div class="grid grid-cols-12 gap-2 mb-1">
                         <div class="col-span-2 flex gap-2">
-                            <div class="w-[10px] h-[22px] border" style="background-color: ${baseColor}; border-color: ${darkerBorderColor};"></div>
+                            <div class="w-[10px] h-[22px] border my-auto" style="background-color: ${baseColor}; border-color: ${darkerBorderColor};"></div>
                             <label class="my-auto">${item.tag}</label>
                         </div>
                         <div class="col-span-6 my-auto">${item.description}</div>

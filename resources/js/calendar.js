@@ -446,13 +446,15 @@ $(document).ready(() => {
                     $(`input[type="checkbox"][data-user-id="${id}"]`).is(':checked')
                 );
 
-
+console.log('checkedOrder before limit check:', checkedOrder);
                 if (checkedOrder.length > 2 && (dataType === 'events' || dataType === 'eventsNCases')) {
                     // Too many checked, remove the first one (oldest)
                     const firstCheckedId = checkedOrder.shift();
                     $(`input[type="checkbox"][data-user-id="${firstCheckedId}"]`).prop('checked', false);
                     // console.log(`Unchecking oldest user ID: ${firstCheckedId}`);
                 }
+                console.log('checkedOrder after limit check:', checkedOrder);
+                console.log('DataType:', dataType);
             } else {
                 // Checkbox is being unchecked manually
                 // checkedOrder = checkedOrder.filter(id => id !== userId);
@@ -479,6 +481,8 @@ $(document).ready(() => {
         }
 
         if (view === 'Week View') {
+// console.log('checkedOrder.length:', checkedOrder.length);
+
             getData(checkedOrder, () => {
                 const dateToUse = window.viewedWeekDate || new Date(); // fallback to today if null
 
@@ -499,9 +503,13 @@ $(document).ready(() => {
                 } else {
                     buildDailyView();
                 }
-
+// console.log('checkedOrder.length:', checkedOrder.length);
                 if(checkedOrder.length === 2) {
                     $('#dailyViewTable').removeClass('max-w-[750px] mx-auto xl:col-span-12').addClass('xl:col-span-6');
+                    // $('#dailyViewTable').removeClass('hidden max-w-[750px] mx-auto xl:col-span-12').addClass('xl:col-span-6');
+                    // $('#dailyViewTableHidden').removeClass('hidden');
+                    // $('#dailyBox3').addClass('xl:col-span-6').removeClass('w-[750px] xl:col-span-12 mx-auto');
+                    // $('#dailyBox4')?.removeClass('hidden');
                 } else {
                     $('#dailyViewTable').addClass('max-w-[750px] mx-auto xl:col-span-12').removeClass('xl:col-span-6');
                 }
@@ -955,7 +963,10 @@ $(document).ready(() => {
             const dateFrom = `${formatDateToMMDDYYYY(eventCaseEditData.date_from)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_from) : ''}`;
             const dateTo = `${formatDateToMMDDYYYY(eventCaseEditData.date_to)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_to) : ''}`;
 
-            $('input[name="title"]').val(eventCaseEditData.title);
+            $('input[name="atty_initials"]').val(eventCaseEditData.atty_initials);
+            $('input[name="stage_of_process"]').val(eventCaseEditData.stage_of_process);
+            $('input[name="client_name"]').val(eventCaseEditData.client_name);
+
             $('input[name="fromDate"]').val(dateFrom);
             $('input[name="toDate"]').val(dateTo);
             $categorySelect.val(eventCaseEditData.categoryId);
@@ -1353,6 +1364,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
     // const allUsers = getEventsForDate(); // Get full list of users with events
     const allUsers = eventsData;
+    console.log('allUsers::', allUsers.length);
     let maxEventsToShowUser1 = 28;
 
     // DOM references
@@ -1970,8 +1982,11 @@ function getEventsForDate(eventsData) {
         const user = item.user;
         const data = isCase ? item.case : item;
 
+        const eventCaseTitle = data ? `${data.atty_initials} ${data.stage_of_process ? ' - ' + data.stage_of_process : ''} ${data.client_name ? ' - ' + data.client_name : ''}` : null;
+
         const id = isCase ? data.id : (item.id || null);
-        const title = isCase ? data.caseTitle : item.title;
+        // const title = isCase ? caseTitle : item.title;
+        const title = eventCaseTitle;
         const dateFrom = isCase ? data.dateFrom : item.date_from;
         const dateTo = isCase ? data.dateTo : item.date_to;
         const categorie = data.categorie;

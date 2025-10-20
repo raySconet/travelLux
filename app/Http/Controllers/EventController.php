@@ -42,7 +42,7 @@ class EventController extends Controller
                 'categorie:id,categoryName,color',
                 'user:id,name'
             ])
-                ->select(['id', 'title', 'user_id', 'categoryId', 'date_from', 'date_to'])
+                ->select(['id', 'atty_initials', 'stage_of_process', 'client_name', 'user_id', 'categoryId', 'date_from', 'date_to'])
                 ->where('id', $eventId)
                 ->where('isDeleted', 0)
                 ->first();
@@ -92,7 +92,7 @@ class EventController extends Controller
         }
 
         $events = Event::with(['categorie:id,categoryName,color', 'user:id,name'])
-            ->select(['id', 'title', 'user_id', 'categoryId', 'date_from', 'date_to'])
+            ->select(['id', 'atty_initials', 'stage_of_process', 'client_name', 'user_id', 'categoryId', 'date_from', 'date_to'])
             ->whereIn('user_id', $userIds)
             ->where('isDeleted', 0)
             ->whereBetween('date_from', [$startDate, $endDate])
@@ -121,7 +121,9 @@ class EventController extends Controller
         $missingUserEvents = $missingUsers->map(function ($user) {
             return (object)[
                 'id' => null,
-                'title' => null,
+                'atty_initials' => null,
+                'stage_of_process' => null,
+                'client_name' => null,
                 'user_id' => $user->id,
                 'categoryId' => null,
                 'date_from' => null,
@@ -152,7 +154,7 @@ class EventController extends Controller
 
         // Validate input dates in correct format
         $request->validate([
-            'title' => 'required|string|max:255',
+            'atty_initials' => 'required|string|max:255',
             'type' => 'required|in:event',
             'fromDate' => ['required', 'date_format:m-d-Y H:i'],
             'toDate' => ['required', 'date_format:m-d-Y H:i', 'after:fromDate'],
@@ -175,7 +177,9 @@ class EventController extends Controller
         }
 
         $event = Event::create([
-            'title' => $request['title'],
+            'atty_initials' => $request['atty_initials'],
+            'stage_of_process' => $request['stage_of_process'],
+            'client_name' => $request['client_name'],
             'user_id' => auth()->id(),
             'categoryId' => $request['category'],
             'date_from' => $fromDateCarbon->format('Y-m-d H:i:s'),
@@ -208,7 +212,7 @@ class EventController extends Controller
         ]);
 
         $request->validate([
-            'title' => 'required|string|max:255',
+            'atty_initials' => 'required|string|max:255',
             'type' => 'required|in:event',
             'fromDate' => ['required', 'date_format:m-d-Y H:i'],
             'toDate' => ['required', 'date_format:m-d-Y H:i', 'after:fromDate'],
@@ -243,7 +247,9 @@ class EventController extends Controller
         // }
 
         $event->update([
-            'title' => $request->input('title'),
+            'atty_initials' => $request->input('atty_initials'),
+            'stage_of_process' => $request->input('stage_of_process'),
+            'client_name' => $request->input('client_name'),
             'categoryId' => $request->input('category'),
             'date_from' => $fromDateCarbon->format('Y-m-d H:i:s'),
             'date_to' => $toDateCarbon->format('Y-m-d H:i:s'),

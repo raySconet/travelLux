@@ -66,7 +66,9 @@ class CourtCasesController extends Controller
 
             $transformed = [
                 'id' => $case->id,
-                'title' => $case->caseTitle ?? '',
+                'atty_initials' => $case->atty_initials ?? '',
+                'stage_of_process' => $case->stage_of_process ?? '',
+                'client_name' => $case->client_name ?? '',
                 'categoryId' => $case->categoryId,
                 'date_from' => $case->dateFrom,
                 'date_to' => $case->dateTo,
@@ -204,7 +206,7 @@ class CourtCasesController extends Controller
 
         // Validate input dates in correct format
         $request->validate([
-            'title' => 'required|string|max:255',
+            'atty_initials' => 'required|string|max:255',
             'type' => 'required|in:case',
             'fromDate' => ['required', 'date_format:m-d-Y'],
             'toDate' => ['required', 'date_format:m-d-Y', 'after_or_equal:fromDate'],
@@ -221,7 +223,9 @@ class CourtCasesController extends Controller
 
         // create case
         $case = CourtCase::create([
-            'caseTitle' => $request['title'],
+            'atty_initials' => $request['atty_initials'],
+            'stage_of_process' => $request['stage_of_process'],
+            'client_name' => $request['client_name'],
             'categoryId' => $request['category'],
             'dateFrom' => $fromDateCarbon->format('Y-m-d'),
             'dateTo' => $toDateCarbon->format('Y-m-d'),
@@ -271,7 +275,7 @@ class CourtCasesController extends Controller
         ]);
 
         $request->validate([
-            'title' => 'required|string|max:255',
+            'atty_initials' => 'required|string|max:255',
             'type' => 'required|in:case',
             'fromDate' => ['required', 'date_format:m-d-Y'],
             'toDate' => ['required', 'date_format:m-d-Y', 'after_or_equal:fromDate'],
@@ -286,7 +290,9 @@ class CourtCasesController extends Controller
         $toDate = \Carbon\Carbon::createFromFormat('m-d-Y', $request->input('toDate'))->format('Y-m-d');
 
         $case->update([
-            'caseTitle' => $request['title'],
+            'atty_initials' => $request['atty_initials'],
+            'stage_of_process' => $request['stage_of_process'],
+            'client_name' => $request['client_name'],
             'categoryId' => $request['category'],
             'dateFrom' => $fromDate,
             'dateTo' => $toDate,

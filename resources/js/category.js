@@ -499,6 +499,7 @@ function renderEventCases(categories, permissions) {
             $categoryContent.append($noItemsPanel);
         } else {
             category.items.forEach(item => {
+                const title = `${item.description.atty_initials}${item.description.stage_of_process ? ' - ' + item.description.stage_of_process : ''}${item.description.client_name ? ' - ' + item.description.client_name : ''}`
                 const fromFormatted = formatCustomDate(item.from);
                 const toFormatted = formatCustomDate(item.to);
                 // it was w-13 h-28
@@ -508,7 +509,7 @@ function renderEventCases(categories, permissions) {
                             <div class="w-[10px] h-[22px] border my-auto" style="background-color: ${baseColor}; border-color: ${darkerBorderColor};"></div>
                             <label class="my-auto">${item.tag}</label>
                         </div>
-                        <div class="col-span-6 my-auto">${item.description}</div>
+                        <div class="col-span-6 my-auto">${title}</div>
                         <div class="col-span-2 my-auto">${fromFormatted}</div>
                         <div class="col-span-2 my-auto">${toFormatted}</div>
                     </div>

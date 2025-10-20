@@ -12,7 +12,9 @@ class CourtCase extends Model
     protected $table = 'court_cases';
 
     protected $fillable = [
-        'caseTitle',
+        'atty_initials',
+        'stage_of_process',
+        'client_name',
         'categoryId',
         'dateFrom',
         'dateTo',

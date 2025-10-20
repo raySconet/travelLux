@@ -238,7 +238,11 @@ class CategoryController extends Controller
             if(isset($categoryIndex[$catId])) {
                 $categoryIndex[$catId]['items'][] = [
                     'tag' => strtoupper($case->type ?? 'case'),
-                    'description' => $case->caseTitle,
+                    'description' => [
+                        'atty_initials' => $case->atty_initials,
+                        'stage_of_process' => $case->stage_of_process,
+                        'client_name' => $case->client_name,
+                    ],
                     'from' => $case->dateFrom,
                     'to' => $case->dateTo,
                 ];
@@ -250,7 +254,11 @@ class CategoryController extends Controller
             if(isset($categoryIndex[$catId])) {
                 $categoryIndex[$catId]['items'][] = [
                     'tag' => strtoupper($event->type ?? 'event'),
-                    'description' => $event->title,
+                    'description' => [
+                        'atty_initials' => $event->atty_initials,
+                        'stage_of_process' => $event->stage_of_process,
+                        'client_name' => $event->client_name,
+                    ],
                     'from' => $event->date_from,
                     'to' => $event->date_to,
                 ];

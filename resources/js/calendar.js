@@ -1081,7 +1081,8 @@ console.log('checkedOrder before limit check:', checkedOrder);
 
     const allDropTargets = `
         #dailyViewTable td, #dailyViewTableHidden td, #dailyBox3, #dailyBox4,
-        #weeklyViewTable td, #weeklyViewTableHidden td
+        #weeklyViewTable td, #weeklyViewTableHidden td,
+        #myTable td
     `;
 
     $(document).on('dragover', allDropTargets, function (e) {
@@ -1106,11 +1107,11 @@ console.log('checkedOrder before limit check:', checkedOrder);
         }
 
         // Prevent drop to same user
-        if (sourceUserId === targetUserId) {
-            $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot drop to same user</p>`);
-            $('#errorModal').removeClass('hidden');
-            return;
-        }
+        // if (sourceUserId === targetUserId) {
+        //     $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot drop to same user</p>`);
+        //     $('#errorModal').removeClass('hidden');
+        //     return;
+        // }
 
         // Handle drop to daily boxes (box3/box4)
         if ($dropTarget.is('#dailyBox3')) {
@@ -1127,21 +1128,21 @@ console.log('checkedOrder before limit check:', checkedOrder);
         const targetDate = targetTd.data('date') || null;
 
         // Weekly view: Enforce same-date restriction
-        const isWeekly = targetTableId === 'weeklyViewTable' || targetTableId === 'weeklyViewTableHidden';
+        // const isWeekly = targetTableId === 'weeklyViewTable' || targetTableId === 'weeklyViewTableHidden';
 
-        if (isWeekly) {
-            if (!sourceDate || !targetDate) {
-                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot determine date. Drop not allowed.</p>`);
-                $('#errorModal').removeClass('hidden');
-                return;
-            }
+        // if (isWeekly) {
+        //     if (!sourceDate || !targetDate) {
+        //         $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot determine date. Drop not allowed.</p>`);
+        //         $('#errorModal').removeClass('hidden');
+        //         return;
+        //     }
 
-            if (sourceDate !== targetDate) {
-                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Can only drop to same date in weekly view.</p>`);
-                $('#errorModal').removeClass('hidden');
-                return;
-            }
-        }
+        //     if (sourceDate !== targetDate) {
+        //         $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Can only drop to same date in weekly view.</p>`);
+        //         $('#errorModal').removeClass('hidden');
+        //         return;
+        //     }
+        // }
 
         // Move group or single event
         const groupId = draggedEvent.data('group-id');
@@ -1166,7 +1167,7 @@ console.log('checkedOrder before limit check:', checkedOrder);
             sourceUserId = null;
             targetUserId = null;
             itemId = null;
-        });
+        }, targetDate);
     });
 });
 
@@ -2132,6 +2133,8 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
             const $td = $tds.eq(tdIndex);
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
+            $td.attr('data-date', dateStr);
+
             $td.removeClass('currentDay'); // Always clear before setting
             if (calendarId === '#sidebarCalendarBody') {
                 $td.html(`<button class="font-bold sidebar-day-btn cursor-pointer" data-date="${dateStr}">${day}</button>`);
@@ -2989,7 +2992,7 @@ function deleteEditEventCase(actionUrl, method) {
     });
 }
 
-function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess) {
+function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess, newDate = null) {
     let url = '';
     let data = {};
 
@@ -2999,6 +3002,7 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess) {
             event_id: itemId,
             new_user_id: newUserId
         };
+        if (newDate) data.new_date = newDate;
     } else if (itemType === 'case') {
         url = '/update-case-user';
         data = {
@@ -3006,6 +3010,7 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess) {
             current_user_id: currentUserId,
             new_user_id: newUserId
         };
+        if (newDate) data.new_date = newDate;
     } else {
         console.error('Unsupported item type:', itemType);
         return;

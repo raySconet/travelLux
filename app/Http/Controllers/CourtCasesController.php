@@ -390,36 +390,64 @@ class CourtCasesController extends Controller
         }
 
         $caseId = $request->input('case_id');
-        $currentUserId = $request->input('current_user_id');
-        $newUserId = $request->input('new_user_id');
+        $currentUserId = $request->input('current_user_id') ?? null;
+        $newUserId = $request->input('new_user_id') ?? null;
+        $newDate = $request->input('new_date');
 
         $request->validate([
             'case_id' => 'required|integer|exists:court_cases,id',
-            'new_user_id' => 'required|integer|exists:users,id',
+            // 'new_user_id' => 'required|integer|exists:users,id',
         ]);
 
-        $case = UserCase::where('user_id', $currentUserId)
-                ->where('case_id', $caseId)
-                ->first();
+        if ($newDate) {
+            $case = CourtCase::where('id', $caseId)->first();
 
-        if (!$case) {
-            return response()->json(['error' => 'Case not found or not assigned to current user'], 404);
+            if (!$case) {
+                return response()->json(['error' => 'Case not found'], 404);
+            }
+
+            $oldFrom = Carbon::parse($case->dateFrom);
+            $oldTo = Carbon::parse($case->dateTo);
+
+            // ✅ Calculate difference between old start and new drop date
+            $newStart = Carbon::parse($newDate);
+            $daysToShift = $oldFrom->diffInDays($newStart, false); // second param = signed diff
+
+            // ✅ Shift both dates by the same amount
+            $newFrom = $oldFrom->copy()->addDays($daysToShift);
+            $newTo = $oldTo->copy()->addDays($daysToShift);
+
+            $case->dateFrom = $newFrom;
+            $case->dateTo = $newTo;
+            $case->save();
         }
 
-        $alreadyAssigned = UserCase::where('user_id', $newUserId)
-            ->where('case_id', $caseId)
-            ->exists();
+        if($currentUserId && $newUserId) {
+            $userCase = UserCase::where('user_id', $currentUserId)
+                    ->where('case_id', $caseId)
+                    ->first();
 
-        if ($alreadyAssigned) {
-            return response()->json(['error' => 'Case is already assigned to the target user'], 422);
+            if (!$userCase) {
+                return response()->json(['error' => 'Case not found or not assigned to current user'], 404);
+            }
+
+            // $alreadyAssigned = UserCase::where('user_id', $newUserId)
+            //     ->where('case_id', $caseId)
+            //     ->exists();
+
+            // if ($alreadyAssigned) {
+            //     return response()->json(['error' => 'Case is already assigned to the target user'], 422);
+            // }
+
+            $userCase->user_id = $newUserId;
+            $userCase->save();
         }
-
-        $case->user_id = $newUserId;
-        $case->save();
 
         return response()->json([
             'message' => 'Case reassigned successfully.',
-            'event' => $case,
+            // 'case' => $userCase,
+            'newfrom' => $newFrom ?? null,
+            'newto' => $newTo ?? null,
         ]);
     }
 

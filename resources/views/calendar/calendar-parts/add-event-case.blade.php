@@ -1,7 +1,7 @@
 <form method="POST" action="" class="space-y-6" id="addEventCaseForm">
     @csrf
 
-    <div class="grid grid-cols-3 sm:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
             <x-input-label
                 for="atty_initials"

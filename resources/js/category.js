@@ -20,7 +20,8 @@ $(document).ready(() => {
         $('#categoryLayout')
             .addClass('col-span-12 xl:col-span-9');
 
-        $('#categorySidebar > div > div').addClass('min-h-[900px]');
+        $('#categorySidebar > div > div').addClass('min-h-[900px]'); // sm:min-h-[120px]
+        // $('#categorySidebar > div').removeClass('h-full');
     });
 
     $('#closeDrawer').on('click', function () {
@@ -38,6 +39,7 @@ $(document).ready(() => {
                 .removeClass('col-span-12 xl:col-span-9');
 
             $('#categorySidebar > div > div').removeClass('min-h-[900px]');
+            // $('#categorySidebar > div').addClass('h-full');
         }, 100);
     });
 
@@ -460,15 +462,16 @@ function renderEventCases(categories, permissions) {
             </button>
         ` : '';
 
+        // it was w-13 h-28 - added h-35px
         const $categoryTitle = $(`
             <div
                 id="flip${category.id}"
                 data-target="#${category.panelId}"
-                class="flex items-center gap-2 flip bg-[#e4e9eec7] text-gray-900 py-2 px-4 rounded cursor-pointer"
+                class="flex items-center gap-2 flip bg-[#e4e9eec7] text-gray-900 py-2 px-4 rounded cursor-pointer h-[35px]"
             >
                 <i class="fa-solid fa-chevron-right w-[15px] h-[15px]"></i>
                 <i class="fa-solid fa-chevron-down w-[15px] h-[15px]" style="display:none"></i>
-                <div class="w-[13px] h-[28px] border" ${borderStyle}></div>
+                <div class="w-[10px] h-[22px] border" ${borderStyle}></div>
                 <label>${category.label}: ${itemCount} item(s)</label>
 
                 <div class="ml-auto">
@@ -496,15 +499,17 @@ function renderEventCases(categories, permissions) {
             $categoryContent.append($noItemsPanel);
         } else {
             category.items.forEach(item => {
+                const title = `${item.description.atty_initials}${item.description.stage_of_process ? ' - ' + item.description.stage_of_process : ''}${item.description.client_name ? ' - ' + item.description.client_name : ''}`
                 const fromFormatted = formatCustomDate(item.from);
                 const toFormatted = formatCustomDate(item.to);
+                // it was w-13 h-28
                 const $panel = $(`
                     <div class="grid grid-cols-12 gap-2 mb-1">
                         <div class="col-span-2 flex gap-2">
-                            <div class="w-[13px] h-[28px] border" style="background-color: ${baseColor}; border-color: ${darkerBorderColor};"></div>
+                            <div class="w-[10px] h-[22px] border my-auto" style="background-color: ${baseColor}; border-color: ${darkerBorderColor};"></div>
                             <label class="my-auto">${item.tag}</label>
                         </div>
-                        <div class="col-span-6 my-auto">${item.description}</div>
+                        <div class="col-span-6 my-auto">${title}</div>
                         <div class="col-span-2 my-auto">${fromFormatted}</div>
                         <div class="col-span-2 my-auto">${toFormatted}</div>
                     </div>
@@ -543,15 +548,29 @@ function getUsers(callback) {
         url: '/getUsers',
         method: 'GET',
         success: function (response) {
-            const users = response.users || [];
+            console.log('Users response:', response);
+            let users = response.users || [];
             const authUserId = response.auth_user_id;
 
-            // Move auth user to the top of the list
-            const authUserIndex = users.findIndex(user => user.id === authUserId);
-            if (authUserIndex > -1) {
-                const [authUser] = users.splice(authUserIndex, 1);
-                users.unshift(authUser);
+            const authUser = users.find(user => user.id === authUserId);
+
+            // If permission is "user", only show their own data
+            if (authUser?.userPermission === 'user') {
+                users = [authUser];
+            } else {
+                // Move auth user to top of list
+                const authUserIndex = users.findIndex(user => user.id === authUserId);
+                if (authUserIndex > -1) {
+                    const [authUserData] = users.splice(authUserIndex, 1);
+                    users.unshift(authUserData);
+                }
             }
+            // Move auth user to the top of the list
+            // const authUserIndex = users.findIndex(user => user.id === authUserId);
+            // if (authUserIndex > -1) {
+            //     const [authUser] = users.splice(authUserIndex, 1);
+            //     users.unshift(authUser);
+            // }
 
             const $lawyersList = $('#lawyersList');
             $lawyersList.empty();
@@ -560,9 +579,10 @@ function getUsers(callback) {
                 const isChecked = user.id === authUserId || user.isChecked;
                 const checked = isChecked ? 'checked' : '';
 
+                // addded h-35px
                 const lawyerHtml = `
                     <li>
-                        <label class="lawyersCheckboxSection w-full p-3 bg-[#eaf1ff] rounded-lg shadow flex items-center justify-between hover:bg-[#dce9ff] transition duration-200 ease-in-out cursor-pointer">
+                        <label class="lawyersCheckboxSection w-full p-3 bg-[#eaf1ff] rounded-lg shadow flex items-center justify-between hover:bg-[#dce9ff] transition duration-200 ease-in-out cursor-pointer h-[35px]">
                             <span class="text-sm font-medium text-gray-900">${user.name}</span>
                             <input type="checkbox" data-user-id="${user.id}" ${checked} />
                         </label>

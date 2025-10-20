@@ -3,12 +3,14 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CourtCasesController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventCourtCaseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserCategoryController;
 use App\Http\Controllers\UserController;
 use App\Models\CourtCase;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SectionController;
+use App\Http\Middleware\RoleMiddleware;
 
 Route::get('/', function () {
     return view('auth/login');
@@ -29,9 +31,12 @@ Route::post('/users/store', [UserController::class, 'store'])
     ->name('store.user');
 
 Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
+Route::post('/users/{user}/update', [UserController::class, 'update'])
+    ->middleware(['auth', 'verified'])
+    ->name('users.update');
 
 Route::get('/permissions', [UserController::class, 'userPermissions'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', RoleMiddleware::class . ':super_admin'])
     ->name('permissions');
 
 Route::post('/permissions/update',[UserController::class, 'updatePermissions'])
@@ -70,6 +75,7 @@ Route::post('/getCases', [CourtCasesController::class, 'index']);
 Route::put('/caseUpdate/{case}', [CourtCasesController::class, 'update'])->name('case.update');
 Route::put('/caseDelete/{case}', [CourtCasesController::class, 'delete'])->name('case.delete');
 
+Route::post('/getEventsNCases', [EventCourtCaseController::class, 'index']);
 Route::get('/getEventsCases', [CategoryController::class, 'getEventsAndCases']);
 
 Route::middleware('auth')->group(function () {

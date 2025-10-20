@@ -1,26 +1,70 @@
 <form method="POST" action="" class="space-y-6" id="addEventCaseForm">
     @csrf
 
-    <div>
-        <x-input-label
-            for="title"
-            :value="__('Title')"
-            class="block mb-1"
-        />
-        <x-text-input
-            id="title"
-            name="title"
-            type="text"
-            class="block w-full text-start"
-            :value="old('title')"
-            placeholder="Enter here..."
-            required
-            autocomplete="title"
-        />
-        <x-input-error
-            class="mt-2"
-            :messages="$errors->get('title')"
-        />
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+            <x-input-label
+                for="atty_initials"
+                :value="__('Attorny Initials')"
+                class="block mb-1"
+            />
+            <x-text-input
+                id="atty_initials"
+                name="atty_initials"
+                type="text"
+                class="block w-full text-start"
+                :value="old('atty_initials')"
+                placeholder="Atty initials..."
+                required
+                autocomplete="atty_initials"
+            />
+            <x-input-error
+                class="mt-2"
+                :messages="$errors->get('atty_initials')"
+            />
+        </div>
+        <div>
+            <x-input-label
+                for="stage_of_process"
+                :value="__('Stage Of Process')"
+                class="block mb-1"
+            />
+            <x-text-input
+                id="stage_of_process"
+                name="stage_of_process"
+                type="text"
+                class="block w-full text-start"
+                :value="old('stage_of_process')"
+                placeholder="Stage of process..."
+                required
+                autocomplete="stage_of_process"
+            />
+            <x-input-error
+                class="mt-2"
+                :messages="$errors->get('stage_of_process')"
+            />
+        </div>
+        <div>
+            <x-input-label
+                for="client_name"
+                :value="__('Client Name')"
+                class="block mb-1"
+            />
+            <x-text-input
+                id="client_name"
+                name="client_name"
+                type="text"
+                class="block w-full text-start"
+                :value="old('client_name')"
+                placeholder="Client name..."
+                required
+                autocomplete="client_name"
+            />
+            <x-input-error
+                class="mt-2"
+                :messages="$errors->get('client_name')"
+            />
+        </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -393,6 +393,7 @@ $(document).ready(() => {
     });
 
     $(document).on('change', 'input[type="checkbox"][data-user-id]', function () {
+        console.log(checkedOrder);
         const view = $('#selectedDayWeekMonthOption').text().trim();
         const allCheckboxes = $('input[type="checkbox"][data-user-id]');
         const $this = $(this);
@@ -402,7 +403,7 @@ $(document).ready(() => {
         // console.log('User ID (changed):', userId);
 
         if (view === 'Month View') {
-            if (dataType === 'events') {
+            if (dataType === 'events' || dataType === 'eventsNCases') {
                 // Only one user allowed
                 allCheckboxes.prop('checked', false);
                 $this.prop('checked', true);
@@ -445,13 +446,15 @@ $(document).ready(() => {
                     $(`input[type="checkbox"][data-user-id="${id}"]`).is(':checked')
                 );
 
-
-                if (checkedOrder.length > 2 && dataType === 'events') {
+console.log('checkedOrder before limit check:', checkedOrder);
+                if (checkedOrder.length > 2 && (dataType === 'events' || dataType === 'eventsNCases')) {
                     // Too many checked, remove the first one (oldest)
                     const firstCheckedId = checkedOrder.shift();
                     $(`input[type="checkbox"][data-user-id="${firstCheckedId}"]`).prop('checked', false);
                     // console.log(`Unchecking oldest user ID: ${firstCheckedId}`);
                 }
+                console.log('checkedOrder after limit check:', checkedOrder);
+                console.log('DataType:', dataType);
             } else {
                 // Checkbox is being unchecked manually
                 // checkedOrder = checkedOrder.filter(id => id !== userId);
@@ -478,6 +481,8 @@ $(document).ready(() => {
         }
 
         if (view === 'Week View') {
+// console.log('checkedOrder.length:', checkedOrder.length);
+
             getData(checkedOrder, () => {
                 const dateToUse = window.viewedWeekDate || new Date(); // fallback to today if null
 
@@ -498,9 +503,13 @@ $(document).ready(() => {
                 } else {
                     buildDailyView();
                 }
-
+// console.log('checkedOrder.length:', checkedOrder.length);
                 if(checkedOrder.length === 2) {
                     $('#dailyViewTable').removeClass('max-w-[750px] mx-auto xl:col-span-12').addClass('xl:col-span-6');
+                    // $('#dailyViewTable').removeClass('hidden max-w-[750px] mx-auto xl:col-span-12').addClass('xl:col-span-6');
+                    // $('#dailyViewTableHidden').removeClass('hidden');
+                    // $('#dailyBox3').addClass('xl:col-span-6').removeClass('w-[750px] xl:col-span-12 mx-auto');
+                    // $('#dailyBox4')?.removeClass('hidden');
                 } else {
                     $('#dailyViewTable').addClass('max-w-[750px] mx-auto xl:col-span-12').removeClass('xl:col-span-6');
                 }
@@ -541,6 +550,17 @@ $(document).ready(() => {
             $(this).addClass('hidden');
         }
     });
+
+    $('#fromDate').on('change', function () {
+        const fromPicker = $(this)[0]._flatpickr;
+        const toPicker = $('#toDate')[0]._flatpickr;
+
+        const selectedDate = fromPicker.selectedDates[0];
+        if (selectedDate) {
+            toPicker.setDate(selectedDate, true);
+        }
+    });
+
 
     $('input[name="type"]').on('change', function () {
         // $('input, select').removeClass('border-red-500');
@@ -682,50 +702,97 @@ $(document).ready(() => {
     });
 
     $('#calendarEventTypeFilter').on('click', function() {
-        dataType = 'events';
+        if($('#calendarCases').hasClass('activeEventsCases') && $('#calendarEventTypeFilter').hasClass('activeEventsCases')) {
+            dataType = 'cases';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+                <label id="selectAllUsersCheckbox" class="ml-2 text-sm font-normal cursor-pointer">
+                    <input type="checkbox" id="selectAllLawyers" class="mr-1">
+                    <span>All</span>
+                </label>
+            `);
+            $(this).removeClass('activeEventsCases');
+        } else if($('#calendarCases').hasClass('activeEventsCases') && !$('#calendarEventTypeFilter').hasClass('activeEventsCases')){
+            dataType = 'eventsNCases';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+            `);
+            $(this).addClass('activeEventsCases');
+        } else {
+            dataType = 'events';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+            `);
+
+            $(this).addClass('activeEventsCases');
+        }
         // $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
         // $(this).addClass('activeEventsCases');
 
-        $('#lawyersHeader').html(`
-            <label>Lawyers</label>
-        `);
 
-        if($('#selectedDayWeekMonthOption').text() === "Month View") {
-            const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
-            checkedOrder = [];
+        // if($('#selectedDayWeekMonthOption').text() === "Month View") {
+        //     const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
+        //     checkedOrder = [];
 
-            allCheckBoxes.each(function (index) {
-                const $checkbox = $(this);
-                if(index === 0) {
-                    $checkbox.prop('checked', true);
-                    checkedOrder.push($checkbox.data('user-id'));
-                } else {
-                    $checkbox.prop('checked', false);
-                }
-            });
-        }
+        //     allCheckBoxes.each(function (index) {
+        //         const $checkbox = $(this);
+        //         if(index === 0) {
+        //             $checkbox.prop('checked', true);
+        //             checkedOrder.push($checkbox.data('user-id'));
+        //         } else {
+        //             $checkbox.prop('checked', false);
+        //         }
+        //     });
+        // }
 
         refreshCalendar();
-        $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
-        $(this).addClass('activeEventsCases');
+        // $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
     });
 
     $('#calendarCases').on('click', function() {
-        dataType = 'cases';
+        if($('#calendarCases').hasClass('activeEventsCases') && $('#calendarEventTypeFilter').hasClass('activeEventsCases')) {
+            dataType = 'events';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+            `);
+            $(this).removeClass('activeEventsCases');
+        } else if(!$('#calendarCases').hasClass('activeEventsCases') && $('#calendarEventTypeFilter').hasClass('activeEventsCases')) {
+            dataType = 'eventsNCases';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+            `);
+            $(this).addClass('activeEventsCases');
+        } else {
+            dataType = 'cases';
+            $('#lawyersHeader').html(`
+                <label>Lawyers</label>
+                <label id="selectAllUsersCheckbox" class="ml-2 text-sm font-normal cursor-pointer">
+                    <input type="checkbox" id="selectAllLawyers" class="mr-1">
+                    <span>All</span>
+                </label>
+            `);
+            $(this).addClass('activeEventsCases');
+        }
         // $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
         // $(this).addClass('activeEventsCases');
 
-        $('#lawyersHeader').html(`
-            <label>Lawyers</label>
-            <label id="selectAllUsersCheckbox" class="ml-2 text-sm font-normal cursor-pointer">
-                <input type="checkbox" id="selectAllLawyers" class="mr-1">
-                <span>All</span>
-            </label>
-        `);
+        // if($('#selectedDayWeekMonthOption').text() === "Month View") {
+        //     const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
+        //     checkedOrder = [];
+
+        //     allCheckBoxes.each(function (index) {
+        //         const $checkbox = $(this);
+        //         if(index === 0) {
+        //             $checkbox.prop('checked', true);
+        //             checkedOrder.push($checkbox.data('user-id'));
+        //         } else {
+        //             $checkbox.prop('checked', false);
+        //         }
+        //     });
+        // }
 
         refreshCalendar();
-        $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
-        $(this).addClass('activeEventsCases');
+        // $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
     });
 
     $(document).on('change', '#selectAllLawyers', function () {
@@ -896,7 +963,10 @@ $(document).ready(() => {
             const dateFrom = `${formatDateToMMDDYYYY(eventCaseEditData.date_from)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_from) : ''}`;
             const dateTo = `${formatDateToMMDDYYYY(eventCaseEditData.date_to)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_to) : ''}`;
 
-            $('input[name="title"]').val(eventCaseEditData.title);
+            $('input[name="atty_initials"]').val(eventCaseEditData.atty_initials);
+            $('input[name="stage_of_process"]').val(eventCaseEditData.stage_of_process);
+            $('input[name="client_name"]').val(eventCaseEditData.client_name);
+
             $('input[name="fromDate"]').val(dateFrom);
             $('input[name="toDate"]').val(dateTo);
             $categorySelect.val(eventCaseEditData.categoryId);
@@ -918,7 +988,7 @@ $(document).ready(() => {
             }
 
             $('#addEventCaseModal').removeClass('hidden');
-        }, eventCaseId);
+        }, eventCaseId, eventType);
 
         console.log('Clicked case ID:', eventCaseId);
     });
@@ -1011,7 +1081,8 @@ $(document).ready(() => {
 
     const allDropTargets = `
         #dailyViewTable td, #dailyViewTableHidden td, #dailyBox3, #dailyBox4,
-        #weeklyViewTable td, #weeklyViewTableHidden td
+        #weeklyViewTable td, #weeklyViewTableHidden td,
+        #myTable td
     `;
 
     $(document).on('dragover', allDropTargets, function (e) {
@@ -1036,11 +1107,11 @@ $(document).ready(() => {
         }
 
         // Prevent drop to same user
-        if (sourceUserId === targetUserId) {
-            $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot drop to same user</p>`);
-            $('#errorModal').removeClass('hidden');
-            return;
-        }
+        // if (sourceUserId === targetUserId) {
+        //     $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot drop to same user</p>`);
+        //     $('#errorModal').removeClass('hidden');
+        //     return;
+        // }
 
         // Handle drop to daily boxes (box3/box4)
         if ($dropTarget.is('#dailyBox3')) {
@@ -1057,21 +1128,21 @@ $(document).ready(() => {
         const targetDate = targetTd.data('date') || null;
 
         // Weekly view: Enforce same-date restriction
-        const isWeekly = targetTableId === 'weeklyViewTable' || targetTableId === 'weeklyViewTableHidden';
+        // const isWeekly = targetTableId === 'weeklyViewTable' || targetTableId === 'weeklyViewTableHidden';
 
-        if (isWeekly) {
-            if (!sourceDate || !targetDate) {
-                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot determine date. Drop not allowed.</p>`);
-                $('#errorModal').removeClass('hidden');
-                return;
-            }
+        // if (isWeekly) {
+        //     if (!sourceDate || !targetDate) {
+        //         $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Cannot determine date. Drop not allowed.</p>`);
+        //         $('#errorModal').removeClass('hidden');
+        //         return;
+        //     }
 
-            if (sourceDate !== targetDate) {
-                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Can only drop to same date in weekly view.</p>`);
-                $('#errorModal').removeClass('hidden');
-                return;
-            }
-        }
+        //     if (sourceDate !== targetDate) {
+        //         $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Can only drop to same date in weekly view.</p>`);
+        //         $('#errorModal').removeClass('hidden');
+        //         return;
+        //     }
+        // }
 
         // Move group or single event
         const groupId = draggedEvent.data('group-id');
@@ -1096,7 +1167,7 @@ $(document).ready(() => {
             sourceUserId = null;
             targetUserId = null;
             itemId = null;
-        });
+        }, targetDate);
     });
 });
 
@@ -1119,7 +1190,7 @@ function toggleHeaderForView(view) {
         $('#monthToggleSection').removeClass('hidden');
         $('#weekToggleSection').addClass('hidden');
         $('#dayToggleSection').addClass('hidden');
-        if(dataType === 'events') {
+        if(dataType === 'events' || dataType === 'eventsNCases') {
             const checkboxes = $('input[type="checkbox"][data-user-id]');
             checkboxes.prop('checked', false);
             checkboxes.first().prop('checked', true);
@@ -1261,8 +1332,10 @@ function showView(view) {
         // console.log(window.selectedDate);
         // console.log('1: ', checkedOrder);
         // ✅ Keep only last selected user in Month View
-        if (checkedOrder.length >= 1 && dataType === 'events') {
+        if (checkedOrder.length >= 1 && (dataType === 'events' || dataType === 'eventsNCases')) {
             const lastUserId = checkedOrder[checkedOrder.length - 1];
+            // const lastUserId = checkedOrder[0];
+
             checkedOrder = [lastUserId];
 
             // Uncheck all checkboxes, check only the last selected one
@@ -1292,6 +1365,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
     // const allUsers = getEventsForDate(); // Get full list of users with events
     const allUsers = eventsData;
+    console.log('allUsers::', allUsers.length);
     let maxEventsToShowUser1 = 28;
 
     // DOM references
@@ -1312,6 +1386,11 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
     $('#dailyViewTableHidden').addClass('hidden');
     $('#dailyBox3')?.removeClass('xl:col-span-6').addClass('xl:col-span-12');
     $('#dailyBox4')?.addClass('hidden');
+
+    // Remove any existing "+more" buttons
+    $('#dailyViewTable .view-all-events-btn').parent().remove();
+    $('#dailyViewTableHidden .view-all-events-btn').parent().remove();
+
 
     if (allUsers.length === 0) {
         $('#dailyViewTable').removeClass('hidden');
@@ -1611,6 +1690,11 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         $(`#weeklyViewTableHidden .${dayClass}`).empty();
     });
 
+    // REMOVE all "+more" buttons before building new ones
+    $('#weeklyViewTable .view-all-events-btn').parent().remove();
+    $('#weeklyViewTableHidden .view-all-events-btn').parent().remove();
+
+
     $('#userHeader').empty();
     $('#userHeaderHidden').empty();
 
@@ -1899,8 +1983,11 @@ function getEventsForDate(eventsData) {
         const user = item.user;
         const data = isCase ? item.case : item;
 
+        const eventCaseTitle = data ? `${data.atty_initials} ${data.stage_of_process ? ' - ' + data.stage_of_process : ''} ${data.client_name ? ' - ' + data.client_name : ''}` : null;
+
         const id = isCase ? data.id : (item.id || null);
-        const title = isCase ? data.caseTitle : item.title;
+        // const title = isCase ? caseTitle : item.title;
+        const title = eventCaseTitle;
         const dateFrom = isCase ? data.dateFrom : item.date_from;
         const dateTo = isCase ? data.dateTo : item.date_to;
         const categorie = data.categorie;
@@ -2045,6 +2132,8 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
         while (day <= daysInMonth && tdIndex < $tds.length) {
             const $td = $tds.eq(tdIndex);
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+            $td.attr('data-date', dateStr);
 
             $td.removeClass('currentDay'); // Always clear before setting
             if (calendarId === '#sidebarCalendarBody') {
@@ -2333,7 +2422,7 @@ function updateUserSelectMode() {
         flatpickr(".datetimepicker", {
             enableTime: false,
             dateFormat: "m-d-Y",
-            // defaultDate: new Date(),
+            defaultDate: new Date(),
         });
 
         // Bind new change handler
@@ -2377,7 +2466,7 @@ function updateUserSelectMode() {
             enableTime: true,
             dateFormat: "m-d-Y H:i",
             time_24hr: true,
-            // defaultDate: new Date(),
+            defaultDate: new Date(),
         });
     }
     // else {
@@ -2437,7 +2526,7 @@ function getUsers(callback) {
     });
 }
 
-function getData(ids, callback, eventCaseId = null) {
+function getData(ids, callback, eventCaseId = null, eventTypeId = null) {
     const month = $('#currentDateData').attr('data-month');
     const year = $('#currentDateData').attr('data-year');
     // console.log("Fetching data for:", ids, month, year);
@@ -2447,7 +2536,11 @@ function getData(ids, callback, eventCaseId = null) {
     const startDateStr = visibleStartDate.toISOString().split('T')[0];
     const endDateStr = visibleEndDate.toISOString().split('T')[0];
     // console.log("Fetching data from", startDateStr, "to", endDateStr);
-    const endpoint = dataType === 'cases' ? '/getCases' : '/getEvents';
+    let endpoint = dataType === 'cases' ? '/getCases' : dataType === 'events' ? '/getEvents' : '/getEventsNCases';
+
+    if(eventCaseId && eventTypeId) {
+        endpoint = '/get' + eventTypeId.charAt(0).toUpperCase() + eventTypeId.slice(1) + 's';
+    }
 
     const requestData = eventCaseId
         ? { event_case_id: eventCaseId }
@@ -2467,7 +2560,7 @@ function getData(ids, callback, eventCaseId = null) {
         data: requestData,
         dataType: 'json',
         success: function (response) {
-            // console.log(response);
+            console.log('hey', response);
             // if(ids) {
             //     eventsData = getEventsForDate(response || []); // You may rename this for generality
             // } else {
@@ -2525,8 +2618,9 @@ function initializeCheckedOrder() {
 function refreshCalendar() {
     const view = $('#selectedDayWeekMonthOption').text().trim();
     currentView = view;
-    if (dataType === 'events' && view === 'Month View' && checkedOrder.length > 1) {
-        const lastUserId = checkedOrder[checkedOrder.length - 1];
+    if ((dataType === 'events' || dataType === 'eventsNCases') && view === 'Month View' && checkedOrder.length > 1) {
+        // const lastUserId = checkedOrder[checkedOrder.length - 1];
+        const lastUserId = checkedOrder[0];
         checkedOrder = [lastUserId];
 
         // Uncheck all checkboxes, check only the last selected one
@@ -2534,7 +2628,7 @@ function refreshCalendar() {
             const isLast = $(this).data('user-id') === lastUserId;
             $(this).prop('checked', isLast);
         });
-    } else if (dataType === 'events' && (view === 'Week View' || view === 'Day View') && checkedOrder.length > 2) {
+    } else if ((dataType === 'events' || dataType === 'eventsNCases') && (view === 'Week View' || view === 'Day View') && checkedOrder.length > 2) {
         const frstUserId = checkedOrder[checkedOrder.length - 1];
         const scndUserId = checkedOrder[checkedOrder.length - 2];
 
@@ -2543,6 +2637,7 @@ function refreshCalendar() {
             const isSecond = $(this).data('user-id') === scndUserId;
             $(this).prop('checked', isFirst || isSecond);
         });
+        console.log('Adjusted checkedOrder for Week/Day View with events:', frstUserId, scndUserId);
     }
 
     getData(checkedOrder, () => {
@@ -2897,7 +2992,7 @@ function deleteEditEventCase(actionUrl, method) {
     });
 }
 
-function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess) {
+function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess, newDate = null) {
     let url = '';
     let data = {};
 
@@ -2907,6 +3002,7 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess) {
             event_id: itemId,
             new_user_id: newUserId
         };
+        if (newDate) data.new_date = newDate;
     } else if (itemType === 'case') {
         url = '/update-case-user';
         data = {
@@ -2914,6 +3010,7 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess) {
             current_user_id: currentUserId,
             new_user_id: newUserId
         };
+        if (newDate) data.new_date = newDate;
     } else {
         console.error('Unsupported item type:', itemType);
         return;
@@ -2950,3 +3047,43 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess) {
         }
     });
 }
+
+
+
+
+
+// function getEventsNcases() {
+//     const month = $('#currentDateData').attr('data-month');
+//     const year = $('#currentDateData').attr('data-year');
+//     // console.log("Fetching data for:", ids, month, year);
+//     const viewMode = $('#selectedDayWeekMonthOption').text().trim();
+//     const { visibleStartDate, visibleEndDate } = getMonthWeekBoundaries(year, month);
+//     // console.log("Visible range:", visibleStartDate, "to", visibleEndDate);
+//     const startDateStr = visibleStartDate.toISOString().split('T')[0];
+//     const endDateStr = visibleEndDate.toISOString().split('T')[0];
+//     // console.log("Fetching data from", startDateStr, "to", endDateStr);
+//     const endpoint = '/getEventsNCases';
+
+//     const requestData = {
+//         user_id: 2,
+//         start_date: startDateStr,
+//         end_date: endDateStr,
+//         view_mode: viewMode
+//     };
+
+//     $.ajax({
+//         headers: {
+//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//         },
+//         type: 'POST',
+//         url: endpoint,
+//         data: requestData,
+//         dataType: 'json',
+//         success: function (response) {
+//             console.log(response);
+//         },
+//         error: function (xhr) {
+
+//         }
+//     });
+// }

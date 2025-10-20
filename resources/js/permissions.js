@@ -27,6 +27,16 @@ $(document).ready(function() {
         $form.find('.border-red-500').removeClass('border-red-500');
     });
 
+    $("#closeEditUserModal").on('click', function() {
+        const $form = $('#editUserForm');
+        $('#editUserModal').addClass('hidden');
+
+        $form[0].reset();
+
+        $form.find('.input-error-text').remove();
+        $form.find('.border-red-500').removeClass('border-red-500');
+    });
+
     $(document).on('change', 'input[type=radio][name^="permissions"]', function() {
         const userId = $(this).attr('name').match(/\d+/)[0];
         const permission = $(this).val();
@@ -164,6 +174,70 @@ $(document).ready(function() {
             },
         });
     });
+
+    $(document).on('click', '.editUserBtn', function(e) {
+        e.preventDefault();
+        const userId = $(this).data('user-id');
+        console.log("Edit button clicked for user ID:", userId);
+
+        getUserData(userId, function(err, user) {
+            if (err) {
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${err}</p>`);
+                $('#errorModal').removeClass('hidden');
+                return;
+            }
+
+            // $('#editUserId').val(user.id);
+            $('#edit_name').val(user.name);
+            $('#edit_email').val(user.email);
+
+            $('#editUserModal').removeClass('hidden');
+        });
+
+        $('#submitEditUserBtn').attr('data-edit-user-id', userId);
+    });
+
+    $(document).on('click', '#submitEditUserBtn', function(e) {
+        e.preventDefault();
+
+        const userId = $(this).attr('data-edit-user-id');
+        const form = $('#editUserForm');
+        console.log("Form data to be submitted:", form.serialize());
+        console.log("Submitting edit for user ID:", userId);
+        $.ajax({
+            url: `/users/${userId}/update`,
+            type: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+                refreshUserRows();
+                $('#editUserModal').addClass('hidden');
+            },
+            error: function(xhr) {
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    const errors = xhr.responseJSON.errors;
+
+                    // Clear old errors first
+                    form.find('.input-error-text').remove();
+                    form.find('.border-red-500').removeClass('border-red-500');
+
+                    $.each(errors, function (field, messages) {
+                        let $input = form.find(`[name="${field}"]`);
+
+                        if ($input.length === 0) {
+                            const baseField = field.split('.')[0];
+                            $input = form.find(`[name="${baseField}[]"], [name="${baseField}"]`);
+                        }
+
+                        $input.addClass('border-red-500');
+
+                        if ($input.next('.input-error-text').length === 0) {
+                            $input.after(`<p class="input-error-text text-red-600 text-sm text-center mt-1">${messages[0]}</p>`);
+                        }
+                    });
+                }
+            }
+        });
+    });
 });
 
 function reapplyUserRowStriping() {
@@ -188,7 +262,6 @@ function refreshUserRows() {
         }
     });
 }
-
 
 function getUserData(userId, callback) {
     $.ajax({

@@ -29,4 +29,9 @@ class Categorie extends Model
     {
         return $this->courtCases()->exists() || $this->events()->exists();
     }
+
+    public function todoSections()
+    {
+        return $this->hasMany(TodoSection::class, 'categoryId', 'id');
+    }
 }

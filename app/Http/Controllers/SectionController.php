@@ -9,10 +9,15 @@ use Illuminate\Validation\ValidationException;
 
 class SectionController extends Controller
 {
-    public function index(): JsonResponse
+    public function index($caseId)
     {
-        // $categories = Categorie::getActiveCategories();
-        // return response()->json($categories);
+        $sections = TodoSection::with(['Categorie:id,color'])
+                    ->where('caseId', $caseId)->get();
+
+        return response()->json([
+            'success' => true,
+            'sections' => $sections
+        ]);
     }
 
     public function store(Request $request) {
@@ -45,5 +50,22 @@ class SectionController extends Controller
             ], 500);
         }
     }
+
+    //  public function show($id)
+    // {
+    //     $user = User::find($id);
+
+    //     if (!$user) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'User not found.',
+    //         ], 404);
+    //     }
+
+    //     return response()->json([
+    //         'status' => 'success',
+    //         'user' => $user,
+    //     ]);
+    // }
 }
 ?>

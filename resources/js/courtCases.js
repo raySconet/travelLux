@@ -1,4 +1,6 @@
 $(document).ready(() => {
+    getSectionsAndTodos();
+
     // Add Edit Buttons
     $(document).on('click', '.addClientInfoButton', function() {
         let container = $(this).parent().parent();
@@ -106,9 +108,6 @@ $(document).ready(() => {
         }, 500);
     });
 
-
-
-
     $(document).on('click', '.addButtonForNegotiation', function() {
         let container = $(this).parent().parent();
         let newItem = container.clone(); // duplicate first
@@ -131,7 +130,6 @@ $(document).ready(() => {
             btn.prop('disabled', false);
         }, 500);
     });
-
 
     $(document).on('click', '.addAffidavitButton', function() {
         let container = $(this).parent().parent();
@@ -156,7 +154,6 @@ $(document).ready(() => {
         }, 500);
     });
 
-
     $(document).on('click', '.addButtonForDeposits', function() {
         let container = $(this).parent().parent();
         let newItem = container.clone(); // duplicate first
@@ -179,7 +176,6 @@ $(document).ready(() => {
             btn.prop('disabled', false);
         }, 500);
     });
-
 
     $(document).on('click', '.addButtonForExpenses', function() {
         let container = $(this).parent().parent();
@@ -204,7 +200,6 @@ $(document).ready(() => {
         }, 500);
     });
 
-
     $(document).on('click', '.addButtonForAdvances', function() {
         let container = $(this).parent().parent();
         let newItem = container.clone(); // duplicate first
@@ -227,6 +222,7 @@ $(document).ready(() => {
             btn.prop('disabled', false);
         }, 500);
     });
+
     // End Add Edit Buttons
     $('#openManageSectionModal').on('click', function() {
         $.ajax({
@@ -318,4 +314,50 @@ $(document).ready(() => {
             }
         });
     });
+
+
+
+
+
+
+    // ----------------End-----------------//
 })
+
+
+
+
+//------------------------Functions---------------------//
+function getSectionsAndTodos() {
+
+    let caseId = "1";
+    $.ajax({
+        url: '/cases/' + caseId + '/sections',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            console.log(response);
+
+            if (response.success) {
+                let sections = response.sections;
+                let html = `
+                <div class="  mt-3 text-green-800">
+                    <h2  class="text-lg   text-center">Facilitating Settlement</h2>
+                    <p class="mb-1 text-md  ">
+                        Once the insurance company has either paid limits OR made a reasonable settlement offer and they are at their top:
+                    </p>
+
+                `;
+                sections.forEach(section => {
+                    html += `<div class="  mt-3 "  style="color: ${section.categorie.color}">`;
+                    html += ` <h2  class="text-lg  addNewToDo text-center"  dataId="${section.id}" >${section.title} <i class="fa-regular fa-pen-to-square" style="margin-left:5px; cursor:pointer;"></i></h2>`;
+                    html += `<p class="mb-1 text-md  ">${section.description}</p>`;
+                    html += `</div>`;
+                });
+                $('#displayTodosHere').html(html);
+            }
+        },
+        error: function(xhr) {
+            console.error('Error:', xhr.responseText);
+        }
+    });
+}

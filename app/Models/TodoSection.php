@@ -33,4 +33,10 @@ class TodoSection extends Model
             }
         });
     }
+
+    // Belongs to a category
+    public function categorie()
+    {
+        return $this->belongsTo(Categorie::class, 'categoryId', 'id');
+    }
 }

@@ -87,7 +87,7 @@
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-1 items-center">
-                <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addAffidavitButton" style="margin-top:22px; width:26px; height:26px;">
+                <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addAffidavitButton" style="margin-top:22px; width:22px; height:22px;">
                     <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                 </div>
             </x-case-components.col>

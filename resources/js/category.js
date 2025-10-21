@@ -551,12 +551,21 @@ function getUsers(callback) {
             console.log('Users response:', response);
             let users = response.users || [];
             const authUserId = response.auth_user_id;
+            const assignedUserIds = response.assigned_user_ids || [];
 
             const authUser = users.find(user => user.id === authUserId);
 
             // If permission is "user", only show their own data
             if (authUser?.userPermission === 'user') {
-                users = [authUser];
+                users = users.filter(user =>
+                    user.id === authUserId || assignedUserIds.includes(user.id)
+                );
+
+                const authUserIndex = users.findIndex(user => user.id === authUserId);
+                if (authUserIndex > -1) {
+                    const [authUserData] = users.splice(authUserIndex, 1);
+                    users.unshift(authUserData);
+                }
             } else {
                 // Move auth user to top of list
                 const authUserIndex = users.findIndex(user => user.id === authUserId);

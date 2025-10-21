@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categorie;
 use App\Models\CourtCase;
 use App\Models\Event;
+use App\Models\UserAssignment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -169,6 +170,11 @@ class CategoryController extends Controller
         // $requestUserId = $request->input('user_id');
         $authUser = auth()->user();
 
+        $assignedUserIds = UserAssignment::where('user_id', $authUser->id)
+            ->where('isDeleted', false)
+            ->pluck('assigned_id')
+            ->toArray();
+
         // $targetUserId = $requestUserId ?? $authUser->id;
 
         // if($authUser->userPermission !== 'admin' && $authUser->id != $targetUserId) {
@@ -184,8 +190,14 @@ class CategoryController extends Controller
             $targetUserId = array_map('intval', $targetUserId);
         }
 
+        // if ($authUser->isAdmin() || $authUser->isRegularUser()) {
+        //     $targetUserId = array_unique(array_merge($targetUserId, $assignedUserIds));
+        // }
+
         if ($authUser->isRegularUser()) {
-            if (count($targetUserId) !== 1 || $targetUserId[0] !== $authUser->id) {
+            $allowedIds = array_merge([$authUser->id], $assignedUserIds);
+            if (count(array_intersect($targetUserId, $allowedIds)) !== count($targetUserId)) {
+            // if (count($targetUserId) !== 1 || $targetUserId[0] !== $authUser->id) {
                 $categories = Categorie::getActiveCategories();
                 $result = $categories->map(function ($category) {
                     return [
@@ -206,6 +218,8 @@ class CategoryController extends Controller
                     ],
                 ]);
             }
+
+            $targetUserId = array_unique(array_merge($targetUserId, $assignedUserIds));
         }
 
         $categories = Categorie::getActiveCategories();

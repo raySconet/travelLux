@@ -1080,13 +1080,14 @@ console.log('checkedOrder before limit check:', checkedOrder);
     });
 
     const allDropTargets = `
-        #dailyViewTable td, #dailyViewTableHidden td, #dailyBox3, #dailyBox4,
+        #dailyViewTable, #dailyViewTableHidden, #dailyBox3, #dailyBox4,
         #weeklyViewTable td, #weeklyViewTableHidden td,
         #myTable td
     `;
 
     $(document).on('dragover', allDropTargets, function (e) {
         e.preventDefault();
+        e.stopPropagation();
         e.originalEvent.dataTransfer.dropEffect = 'move';
     });
 
@@ -1095,8 +1096,18 @@ console.log('checkedOrder before limit check:', checkedOrder);
 
         if (!draggedEvent) return;
 
-        const $dropTarget = $(this);
+        let $dropTarget = $(this);
         const targetTableId = $dropTarget.closest('table').attr('id');
+
+        console.log('Dropping on table:', targetTableId, 'Element:', $dropTarget);
+
+        if (targetTableId === 'dailyViewTable' || targetTableId === 'dailyViewTableHidden') {
+            // Redirect drop always to the first td of the respective daily table
+            const forcedDropTarget = $(`#${targetTableId} td`).first();
+            if (forcedDropTarget.length) {
+                $dropTarget = forcedDropTarget;
+            }
+        }
 
         if ($dropTarget.is('#dailyBox3')) {
             targetUserId = $('#dailyViewTable thead tr th div[data-user-id]').first().data('user-id');

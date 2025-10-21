@@ -30,7 +30,7 @@ class EventFactory extends Factory
             'atty_initials' => strtoupper($this->faker->randomLetter . $this->faker->randomLetter),
             'stage_of_process' => $this->faker->randomElement(['Filing', 'Discovery', 'Trial', 'Appeal']),
             'client_name' => $this->faker->name(),
-            'user_id' => 2,
+            'user_id' => 25,
             'date_from' => $start,
             'date_to' => $end,
             'categoryId' => $category->id,
@@ -41,6 +41,7 @@ class EventFactory extends Factory
     {
         // Predefined weeks per month (Mon–Fri)
         $weeks = [
+            6 => ['2025-10-23'],
             7 => ['2025-10-02'],
             8 => ['2025-08-04', '2025-08-05', '2025-08-06', '2025-08-07', '2025-08-08'],
             9 => [

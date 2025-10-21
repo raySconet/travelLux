@@ -315,7 +315,7 @@ class EventController extends Controller
         $event = Event::find($eventId);
 
         if ($newDate) {
-            $newDate = \Carbon\Carbon::parse($newDate)->startOfDay();
+            $newDate = \Carbon\Carbon::parse($newDate);
 
             // Extract original time components
             $originalFrom = \Carbon\Carbon::parse($event->date_from);
@@ -326,7 +326,9 @@ class EventController extends Controller
             $toDate = $newDate->copy()->setTimeFrom($originalTo);
 
             // Check for conflicts
-            if ($this->hasTimeConflict($newUserId, $fromDate, $toDate, $event->id)) {
+            $userId = $newUserId ?? $event->user_id;
+
+            if ($this->hasTimeConflict($userId, $fromDate, $toDate, $event->id)) {
                 return response()->json([
                     'error' => 'The target user already has an event during this time.'
                 ], 422);
@@ -338,6 +340,14 @@ class EventController extends Controller
 
         if($newUserId) {
             $event->user_id = $newUserId;
+            $fromDate = \Carbon\Carbon::parse($event->date_from);
+            $toDate = \Carbon\Carbon::parse($event->date_to);
+
+            if ($this->hasTimeConflict($newUserId, $fromDate, $toDate, $event->id)) {
+                return response()->json([
+                    'error' => 'The target user already has an event during this time.'
+                ], 422);
+            }
         }
 
         $event->save();

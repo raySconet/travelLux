@@ -128,6 +128,11 @@ class User extends Authenticatable
         }
 
         return $this->id === $targetUserId;
+
+        return UserAssignment::where('user_id', $this->id)
+            ->where('assigned_id', $targetUserId)
+            ->where('isDeleted', false)
+            ->exists();
     }
 
     public function canAddCategory()
@@ -143,5 +148,16 @@ class User extends Authenticatable
     public function canDeleteCategory()
     {
         return $this->isSuperAdmin();
+    }
+
+    public function assignedUsers()
+    {
+        return $this->belongsToMany(User::class,'user_assignments','user_id','assigned_id')->wherePivot('isDeleted', false);
+    }
+
+    public function usersWhoAssignedMe()
+    {
+        return $this->belongsToMany(
+            User::class,'user_assignments','assigned_id','user_id')->wherePivot('isDeleted', false);
     }
 }

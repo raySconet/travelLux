@@ -43,6 +43,14 @@ Route::post('/permissions/update',[UserController::class, 'updatePermissions'])
     ->middleware(['auth', 'verified'])
     ->name('permissions.update');
 
+Route::get('/getUsersAndAssignedUsers', [UserController::class, 'getUsersAndAssignedUsers'])
+    ->middleware(['auth', 'verified', RoleMiddleware::class . ':super_admin'])
+    ->name('getUsersAndAssignedUsers');
+
+Route::post('/assignViewAccess', [UserController::class, 'assignViewAccess'])
+    ->middleware(['auth', 'verified', RoleMiddleware::class . ':super_admin'])
+    ->name('assignViewAccess');
+
 Route::get('/users/permissions/partial', [UserController::class, 'partial'])->name('permissions.partial');
 Route::put('/users/{user}', [UserController::class, 'delete'])->name('user.delete');
 

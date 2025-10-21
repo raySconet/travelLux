@@ -2134,7 +2134,10 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
         // Fill days from previous month in the first cells (before firstDay)
         for (; tdIndex < firstDay && tdIndex < $tds.length; tdIndex++) {
             const dayNum = daysInPrevMonth - firstDay + 1 + tdIndex;
-            $tds.eq(tdIndex).html(`<span class="font-bold text-gray-500">${dayNum}</span>`);  // muted color for prev month days
+            const prevDateStr = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`; // added new
+            $tds.eq(tdIndex)
+                .attr('data-date', prevDateStr) // added new
+                .html(`<span class="font-bold text-gray-500">${dayNum}</span>`);  // muted color for prev month days
         }
 
         // Fill days for current month
@@ -2494,14 +2497,34 @@ function getUsers(callback) {
         url: '/getUsers',
         method: 'GET',
         success: function (response) {
-            const users = response.users || [];
+            let users = response.users || [];
             const authUserId = response.auth_user_id;
+            const assignedUserIds = response.assigned_user_ids || [];
 
             // Move auth user to the top of the list
-            const authUserIndex = users.findIndex(user => user.id === authUserId);
-            if (authUserIndex > -1) {
-                const [authUser] = users.splice(authUserIndex, 1);
-                users.unshift(authUser);
+            // const authUserIndex = users.findIndex(user => user.id === authUserId);
+            // if (authUserIndex > -1) {
+            //     const [authUser] = users.splice(authUserIndex, 1);
+            //     users.unshift(authUser);
+            // }
+            const authUser = users.find(user => user.id === authUserId);
+            if (authUser?.userPermission === 'user') {
+                users = users.filter(user =>
+                    user.id === authUserId || assignedUserIds.includes(user.id)
+                );
+
+                const authUserIndex = users.findIndex(user => user.id === authUserId);
+                if (authUserIndex > -1) {
+                    const [authUserData] = users.splice(authUserIndex, 1);
+                    users.unshift(authUserData);
+                }
+            } else {
+                // Move auth user to top of list
+                const authUserIndex = users.findIndex(user => user.id === authUserId);
+                if (authUserIndex > -1) {
+                    const [authUserData] = users.splice(authUserIndex, 1);
+                    users.unshift(authUserData);
+                }
             }
 
             const $lawyersList = $('#lawyersList');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categorie;
 use App\Models\Event;
 use App\Models\User;
+use App\Models\UserAssignment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -13,8 +14,12 @@ class EventController extends Controller
 {
     public function index(Request $request) {
         $eventId = $request->input('event_case_id');
-
         $currentUser = auth()->user();
+
+        $assignedUserIds = UserAssignment::where('user_id', $currentUser->id)
+            ->where('isDeleted', false)
+            ->pluck('assigned_id')
+            ->toArray();
 
         // Enforce user permissions for viewing other users' events
         if ($request->has('user_id')) {
@@ -28,13 +33,28 @@ class EventController extends Controller
             }
 
             // If user is regular and tries to access other user's events
-            if ($currentUser->isRegularUser() && !in_array($currentUser->id, $requestedUserIds)) {
-                return response()->json([]);
+            // if ($currentUser->isRegularUser() && !in_array($currentUser->id, $requestedUserIds)) {
+            //     return response()->json([]);
+            // }
+
+            if ($currentUser->isRegularUser()) {
+                $allowedUserIds = array_merge([$currentUser->id], $assignedUserIds);
+
+                foreach ($requestedUserIds as $reqId) {
+                    if (!in_array($reqId, $allowedUserIds)) {
+                        return response()->json([], 403);
+                    }
+                }
             }
 
             $userIds = $requestedUserIds;
         } else {
-            $userIds = [$currentUser->id];
+            // $userIds = [$currentUser->id];
+            if ($currentUser->isRegularUser()) {
+                $userIds = array_merge([$currentUser->id], $assignedUserIds);
+            } else {
+                $userIds = User::pluck('id')->toArray(); // all users for admin
+            }
         }
 
         if ($eventId) {

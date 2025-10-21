@@ -238,6 +238,146 @@ $(document).ready(function() {
             }
         });
     });
+
+    $(document).on('click', '#closeAssignViewAccessModal', function (e) {
+        e.preventDefault();
+        const $form = $('#assignViewAccessForm');
+        $('#assignViewAccessModal').addClass('hidden');
+
+        $form[0].reset();
+
+        $form.find('.input-error-text').remove();
+        $form.find('.border-red-500').removeClass('border-red-500');
+        $('#assignSelectedUsers').empty();
+        $('#assignUserSelect').data('assignSelectedValues', new Set());
+        $('#assignUserSelect option').prop('hidden', false);
+    });
+
+    $(document).on('click', '.assign-view-access-btn', function (e) {
+        e.preventDefault();
+        getUsersCategoriesAddEditCasesEvents($(this).attr('data-user-id'));
+
+        $('#submitAssignViewAccessBtn').removeAttr('data-user-id');
+        $('#submitAssignViewAccessBtn').attr('data-user-id', $(this).attr('data-user-id'));
+        // console.log($('#submitAssignViewAccessBtn').attr('data-user-id'));
+        $('#assignViewAccessModal').removeClass('hidden');
+    });
+
+    // Remove user when "X" is clicked
+    $(document).on('click', '.removeUserSelect', function (e) {
+        const $target = $(e.target).closest('.removeUserSelect');
+        const userId = $target.attr('data-user-id');
+        const $userSelect = $('#assignUserSelect');
+        const selectedSet = $userSelect.data('assignSelectedValues');
+
+        if (!userId) {
+            console.warn('No userId found on clicked remove icon');
+            return;
+        }
+
+        $target.parent().remove(); // Remove user from the right side
+        selectedSet?.delete(userId); // Remove from the set
+
+        const $option = $userSelect.find(`option[value="${userId}"]`);
+        $option.prop('hidden', false);
+
+        // Remove from current value array
+        let currentVals = $userSelect.val() || [];
+        const newVals = currentVals.filter(val => val !== userId);
+        $userSelect.val(newVals);
+
+        // Clear selection to allow re-selecting same item
+        setTimeout(() => {
+            $userSelect.val(null);
+        }, 0);
+    });
+
+    // Handle selecting users
+    $('#assignUserSelect').on('change', function () {
+        const $userSelect = $(this);
+
+        // Initialize Set if not already
+        if (!$userSelect.data('assignSelectedValues')) {
+            $userSelect.data('assignSelectedValues', new Set());
+        }
+
+        const selectedSet = $userSelect.data('assignSelectedValues');
+        const val = $userSelect.val();
+        if (!val) return;
+
+        val.forEach(v => {
+            if (v && v !== '-1' && !selectedSet.has(v)) {
+                selectedSet.add(v); // Add to selected set
+
+                const $option = $userSelect.find(`option[value="${v}"]`);
+                const label = $option.text();
+
+                $option.prop('hidden', true);
+
+                // Add the user tag to the right-side div
+                const $tag = $('<div class="text-sm cursor-default select-none w-full flex justify-between items-center px-2"></div>')
+                    .html(`<span>${label}</span>`)
+                    .append($(`
+                        <i
+                            class="removeUserSelect fa-solid fa-xmark fa-lg text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+                            title="Remove"
+                            data-user-id="${v}">
+                        </i>`).addClass('ml-1 text-blue-600'));
+
+                $('#assignSelectedUsers').append($tag);
+            }
+        });
+
+        // Reset selection to allow re-choosing same users after deletion
+        setTimeout(() => {
+            $userSelect.val(null);
+        }, 0);
+    });
+
+    $(document).on('click', '#submitAssignViewAccessBtn', function(e) {
+        e.preventDefault();
+        const form = $('#assignViewAccessForm');
+        const formData  = form.serialize();
+        const selectedSet = $('#assignUserSelect').data('assignSelectedValues');
+        console.log(formData);
+        console.log(selectedSet, $(this).attr('data-user-id')); // Should output array of selected user IDs
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'POST',
+            url: '/assignViewAccess',
+            data: {
+                user_id: $(this).attr('data-user-id'),
+                assigned_user_ids: Array.from(selectedSet || []),
+            },
+            success: function(response) {
+                $('#assignViewAccessModal').addClass('hidden');
+                form[0].reset();
+                $('#assignSelectedUsers').empty();
+                $('#assignUserSelect').data('assignSelectedValues', new Set());
+                $('#assignUserSelect option').prop('hidden', false);
+                refreshUserRows();
+                $('#modalSuccessContent').html('<p class="text-gray-900 text-sm">View access assigned successfully.</p>');
+                $('#successModal').removeClass('hidden');
+            },
+            error: function(xhr) {
+                let errorMsg = 'An unexpected error occurred.';
+
+                if ((xhr.status === 403 || xhr.status === 422) && xhr.responseJSON?.error) {
+                    errorMsg = xhr.responseJSON.error;
+                }
+
+                $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${errorMsg}</p>`);
+                $('#assignViewAccessModal').addClass('hidden');
+                $('#errorModal').removeClass('hidden');
+            },
+            complete: function() {
+                $('#submitAssignViewAccessBtn').removeAttr('data-user-id');
+            },
+        });
+    });
 });
 
 function reapplyUserRowStriping() {
@@ -275,6 +415,59 @@ function getUserData(userId, callback) {
             }
         },
         error: function(xhr) {
+        }
+    });
+}
+
+function getUsersCategoriesAddEditCasesEvents(userId, callback) {
+    const $userSelect = $('#assignUserSelect');
+
+    $userSelect.html('<option value="-1" disabled selected>Loading...</option>');
+    $('#assignSelectedUsers').empty();
+    $userSelect.data('assignSelectedValues', new Set());
+
+    $.ajax({
+        url: '/getUsersAndAssignedUsers',
+        method: 'GET',
+        data: { user_id: userId },
+        dataType: 'json',
+        success: function (response) {
+            const users = response.users || [];
+            const assignedIds = response.assigned_user_ids || [];
+
+            $userSelect.empty();
+            users.forEach(function (user) {
+                const isAssigned = assignedIds.includes(user.id);
+
+                // Append option
+                const $opt = $(`<option value="${user.id}">${user.name}</option>`);
+                if (isAssigned) $opt.prop('hidden', true);
+                $userSelect.append($opt);
+
+                // Show badge if assigned
+                if (isAssigned) {
+                    const selectedSet = $userSelect.data('assignSelectedValues');
+                    selectedSet.add(user.id.toString());
+
+                    const $tag = $('<div class="text-sm cursor-default select-none w-full flex justify-between items-center px-2"></div>')
+                        .html(`<span>${user.name}</span>`)
+                        .append($(`
+                            <i
+                                class="removeUserSelect fa-solid fa-xmark fa-lg text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+                                title="Remove"
+                                data-user-id="${user.id}">
+                            </i>`).addClass('ml-1 text-blue-600'));
+
+                    $('#assignSelectedUsers').append($tag);
+                }
+            });
+
+            if (typeof callback === 'function') {
+                callback();
+            }
+        },
+        error: function () {
+            $userSelect.html('<option value="-1" disabled selected>Error loading users</option>');
         }
     });
 }

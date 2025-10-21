@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TodoSection;
+use App\Models\Todo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-class SectionController extends Controller
+class TodoController extends Controller
 {
     public function index($caseId)
     {
         $sections = TodoSection::with(['Categorie:id,color'])
-                    ->where('caseId', $caseId)
-                    ->orderBy('id', 'asc')
-                    ->get();
+                    ->where('caseId', $caseId)->get();
 
         return response()->json([
             'success' => true,

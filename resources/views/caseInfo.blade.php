@@ -65,6 +65,8 @@
     <div style="height: 20px;">
     </div>
 </x-app-layout>
+
+
 <x-general-modal id="addManageSectionsModal">
     <x-slot name="header">
         <div class="grid grid-cols-[auto_1fr] items-center gap-2">
@@ -86,6 +88,34 @@
 
     <x-slot name="footer">
         <x-primary-btn class="ml-auto" id="submitManageSectionBtn">
+            {{ __('Save Section') }}
+        </x-primary-btn>
+    </x-slot>
+</x-general-modal>
+
+
+
+<x-general-modal id="addTodoModal">
+    <x-slot name="header">
+        <div class="grid grid-cols-[auto_1fr] items-center gap-2">
+            <i class="fas fa-list fa-xl primary-color" style="color: #14548d;"></i>
+            <h2 class="text-xl font-semibold text-gray-800">
+                {{ __('Manage Todos') }}
+            </h2>
+        </div>
+        <i
+            id="closeAddTodoModal"
+            class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+            role="button"
+            data-bs-dismiss="modal"
+            aria-label="Close">
+        </i>
+    </x-slot>
+
+    @include('case-info.case-info-parts.add-todo')
+
+    <x-slot name="footer">
+        <x-primary-btn class="ml-auto" id="submitTodoBtn">
             {{ __('Save Section') }}
         </x-primary-btn>
     </x-slot>

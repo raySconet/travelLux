@@ -1,6 +1,12 @@
 $(document).ready(() => {
     getSectionsAndTodos();
 
+    flatpickr(".datetimepicker", {
+        enableTime: false,
+        dateFormat: "m-d-Y",
+        defaultDate: new Date(),
+    });
+
     // Add Edit Buttons
     $(document).on('click', '.addClientInfoButton', function() {
         let container = $(this).parent().parent();
@@ -224,6 +230,8 @@ $(document).ready(() => {
     });
 
     // End Add Edit Buttons
+
+    // manage modal section
     $('#openManageSectionModal').on('click', function() {
         $.ajax({
             type: 'GET',
@@ -281,34 +289,12 @@ $(document).ready(() => {
             success: function (response) {
                 $("#addManageSectionForm")[0].reset();
                 $('#addManageSectionsModal').addClass('hidden');
+                getSectionsAndTodos();
                 // $('#modalSuccessContent').html(response.message);
                 // $('#successModal').removeClass('hidden');
             },
             error: function (xhr) {
-                if (xhr.status) {
-                    const errors = xhr.responseJSON.errors;
-
-                    // Loop over errors and display inline
-                    $.each(errors, function (field, messages) {
-                        let $input = $form.find(`[name="${field}"]`);
-
-                        if ($input.length === 0) {
-                            // Handle array-like error field names like user.0, user.1
-                            const baseField = field.split('.')[0];
-                            $input = $form.find(`[name="${baseField}[]"], [name="${baseField}"]`);
-                        }
-
-                        $input.addClass('border-red-500');
-
-                        // if(field === "user") {
-                        //     $("#selectedUsers").addClass("border-red-500");
-                        // }
-
-                        if ($input.next('.input-error-text').length === 0) {
-                            $input.after(`<p class="input-error-text text-red-600 text-sm mt-1">${messages[0]}</p>`);
-                        }
-                    });
-                }
+                console.error('Error:', xhr.responseText);
             },
             complete: function () {
             }
@@ -316,6 +302,23 @@ $(document).ready(() => {
     });
 
 
+
+    // todo modal
+    $(document).on('click', '.addNewToDo', function () {
+
+        $('#addTodoModal').removeClass('hidden');
+    });
+
+    $('#closeAddTodoModal').on('click', function() {
+        $('#addTodoModal').addClass('hidden');
+    });
+
+    // Optional: Close when clicking outside modal content
+    $('#addTodoModal').on('click', function(e) {
+        if ($(e.target).is(this)) {
+            $(this).addClass('hidden');
+        }
+    });
 
 
 

@@ -86,6 +86,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/sections/store', [SectionController::class, 'store'])->name('sections.store');
     Route::get('/cases/{caseId}/sections', [SectionController::class, 'index'])->name('sections.index');
+
+    Route::post('/todos/store', [todo::class, 'store'])->name('todos.store');
+
 });
 
 Route::get('/user/can-create-case', [CourtCasesController::class, 'canCreateCase']);

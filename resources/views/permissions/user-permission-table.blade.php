@@ -50,6 +50,9 @@
                 <i class="fa-solid fa-check fa-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white peer-checked:block hidden pointer-events-none cursor-pointer"></i>
             </label>
             <div class="absolute right-4.5 flex">
+                <button class="assign-view-access-btn text-[#14548d] p-1 mr-2.5 cursor-pointer" data-user-id="{{ $user->id }}">
+                    <i class="fa-solid fa-users-viewfinder shadow-lg fa-lg" title="Can view team events"></i>
+                </button>
                 <button title="Edit" class="editUserBtn p-1 text-[limegreen] hover:text-green-800 cursor-pointer" data-user-id="{{ $user->id }}">
                     <i class="fa-solid fa-pen-to-square shadow-lg fa-lg"></i>
                 </button>

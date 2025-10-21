@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
+use App\Models\UserAssignment;
 use App\Models\UserCase;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -76,6 +77,11 @@ class EventCourtCaseController extends Controller
     {
         $currentUser = auth()->user();
 
+        $assignedUserIds = UserAssignment::where('user_id', $currentUser->id)
+            ->where('isDeleted', false)
+            ->pluck('assigned_id')
+            ->toArray();
+
         // Normalize user_ids (single or multiple)
         if ($request->has('user_id')) {
             $requestedUserIds = $request->input('user_id');
@@ -85,13 +91,27 @@ class EventCourtCaseController extends Controller
                 $requestedUserIds = array_map('intval', $requestedUserIds);
             }
 
-            if ($currentUser->isRegularUser() && !in_array($currentUser->id, $requestedUserIds)) {
-                return response()->json([]);
+            // if ($currentUser->isRegularUser() && !in_array($currentUser->id, $requestedUserIds)) {
+            //     return response()->json([]);
+            // }
+
+            if ($currentUser->isRegularUser()) {
+                $allowedUserIds = array_merge([$currentUser->id], $assignedUserIds);
+                foreach ($requestedUserIds as $reqId) {
+                    if (!in_array($reqId, $allowedUserIds)) {
+                        return response()->json([], 403); // Forbidden
+                    }
+                }
             }
 
             $userIds = $requestedUserIds;
         } else {
-            $userIds = [$currentUser->id];
+            // $userIds = [$currentUser->id];
+            if ($currentUser->isRegularUser()) {
+                $userIds = array_merge([$currentUser->id], $assignedUserIds);
+            } else {
+                $userIds = User::pluck('id')->toArray(); // Admin or other roles can see all users
+            }
         }
 
         // Parse dates safely

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categorie;
 use App\Models\CourtCase;
 use App\Models\User;
+use App\Models\UserAssignment;
 use App\Models\UserCase;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,6 +18,11 @@ class CourtCasesController extends Controller
         $caseId = $request->input('event_case_id');
         $currentUser = auth()->user();
 
+        $assignedUserIds = UserAssignment::where('user_id', $currentUser->id)
+            ->where('isDeleted', false)
+            ->pluck('assigned_id')
+            ->toArray();
+
         if ($request->has('user_id')) {
             $requestedUserIds = $request->input('user_id');
 
@@ -27,16 +33,34 @@ class CourtCasesController extends Controller
                 $requestedUserIds = array_map('intval', $requestedUserIds);
             }
 
+            // if ($currentUser->isRegularUser()) {
+            //     if (!in_array($currentUser->id, $requestedUserIds)) {
+            //         return response()->json([]);
+            //     }
+            //     $userIds = [$currentUser->id];
+            // } else {
+            //     $userIds = $requestedUserIds;
+            // }
             if ($currentUser->isRegularUser()) {
-                if (!in_array($currentUser->id, $requestedUserIds)) {
-                    return response()->json([]);
+                $allowedUserIds = array_merge([$currentUser->id], $assignedUserIds);
+
+                foreach ($requestedUserIds as $reqId) {
+                    if (!in_array($reqId, $allowedUserIds)) {
+                        return response()->json([], 403);
+                    }
                 }
-                $userIds = [$currentUser->id];
+
+                $userIds = $requestedUserIds;
             } else {
                 $userIds = $requestedUserIds;
             }
         } else {
-            $userIds = [$currentUser->id];
+            // $userIds = [$currentUser->id];
+            if ($currentUser->isRegularUser()) {
+                $userIds = array_merge([$currentUser->id], $assignedUserIds);
+            } else {
+                $userIds = User::pluck('id')->toArray(); // or however you want to handle admin/all users
+            }
         }
 
         if ($caseId) {

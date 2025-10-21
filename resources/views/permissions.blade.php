@@ -210,4 +210,50 @@
             </x-primary-btn>
         </x-slot>
     </x-general-modal>
+
+    <x-general-modal id="assignViewAccessModal" class="hidden m-auto max-w-xl">
+        <x-slot name="header">
+            <div class="grid grid-cols-[auto_1fr] items-center gap-2">
+                <i class="fa-solid fa-users shadow-lg fa-xl primary-color" style="color: #14548d;"></i>
+                <h2 class="text-xl font-semibold text-gray-800">
+                    {{ __('Assign View Access') }}
+                </h2>
+            </div>
+            <i
+                id="closeAssignViewAccessModal"
+                class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+                role="button"
+                data-bs-dismiss="modal"
+                aria-label="Close">
+            </i>
+        </x-slot>
+
+        <form method="POST" id="assignViewAccessForm" class="space-y-6">
+            @csrf
+            <div id="assignViewAccessFormContainer">
+                <x-input-label
+                    for="user"
+                    :value="__('Users')"
+                    class="block mb-1"
+                />
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <select id="assignUserSelect" name="user[]" class="block w-full h-[200px] rounded-md bg-white border border-gray-300 px-1.5 text-gray-900 cursor-pointer appearance-none bg-no-repeat bg-right bg-[length:1.25em_1.25em]" multiple="multiple">
+                        </select>
+                        <x-input-error
+                            class="mt-2"
+                            :messages="$errors->get('user') ?: $errors->get('user.*')"
+                        />
+                    </div>
+                    <div id="assignSelectedUsers" class="min-w-[120px] h-[200px] gap-2 border border-gray-300 rounded-md overflow-y-auto"></div>
+                </div>
+            </div>
+        </form>
+
+        <x-slot name="footer">
+            <x-primary-btn class="ml-auto" form="assignViewAccessForm" id="submitAssignViewAccessBtn">
+                {{ __('Save') }}
+            </x-primary-btn>
+        </x-slot>
+    </x-general-modal>
 </x-app-layout>

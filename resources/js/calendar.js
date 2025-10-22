@@ -80,9 +80,21 @@ $(document).ready(() => {
         });
 
         // Get events for this date
-        const eventsForDay = (eventsData || [])
-            .flatMap(user => user.events || [])
-            .filter(event => event.date === dateStr && !event.isDuplicate);
+        // const eventsForDay = (eventsData || [])
+        //     .flatMap(user => user.events || [])
+        //     .filter(event => event.date === dateStr && !event.isDuplicate);
+
+        const userId = $(this).data('user-id');
+        let eventsForDay = [];
+
+        if (userId) {
+            const userData = (eventsData || []).find(user => user.userId === userId);
+            eventsForDay = (userData?.events || []).filter(event => event.date === dateStr && !event.isDuplicate);
+        } else {
+            eventsForDay = (eventsData || [])
+                .flatMap(user => user.events || [])
+                .filter(event => event.date === dateStr && !event.isDuplicate);
+        }
 
         eventsForDay.sort((a, b) => {
             const dateA = new Date(`${a.date}T${a.from || "00:00"}:00`);
@@ -128,7 +140,7 @@ $(document).ready(() => {
                 } else {
                     bgColor = "bg-[#eaeef2]";
                 }
-                const verticalType = event.type.charAt(0).toUpperCase() + event.type.slice(1).toLowerCase();;
+                const verticalType = event.type.charAt(0).toUpperCase() + event.type.slice(1).toLowerCase();
 
                 const eventHTML = `
                     <div class="relative rounded bg-gray-50 shadow-sm flex flex-column">
@@ -1460,6 +1472,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     <div class="flex justify-center mt-2 pb-2">
                         <button
                             class="w-[80%] max-w-[524px] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-user-id="${user.userId}"
                             data-date="${isoDate}"
                             title="View all events for this day"
                         >
@@ -1528,6 +1541,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     <div class="flex justify-center mt-2 pb-2">
                         <button
                             class="w-[80%] max-w-[524px] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-user-id="${user1.userId}"
                             data-date="${isoDate}"
                             title="View all events for this day"
                         >
@@ -1579,6 +1593,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     <div class="flex justify-center mt-2 pb-2">
                         <button
                             class="w-[80%] max-w-[524px] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-user-id="${user2.userId}"
                             data-date="${isoDate}"
                             title="View all events for this day"
                         >
@@ -1913,6 +1928,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                     <div class="flex justify-center mt-[15px]">
                         <button
                             class="w-[80%] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-user-id="${userRow1.userId}"
                             data-date="${isoDate}"
                             title="View all events for this day"
                         >
@@ -1964,6 +1980,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                         <div class="flex justify-center mt-2">
                             <button
                                 class="w-[80%] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                                data-user-id="${userRow2.userId}"
                                 data-date="${isoDate}"
                                 title="View all events for this day"
                             >

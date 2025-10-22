@@ -153,7 +153,6 @@ $(document).ready(function() {
                 if (xhr.status === 422 && xhr.responseJSON?.errors) {
                     const errors = xhr.responseJSON.errors;
 
-                    // Clear old errors first
                     form.find('.input-error-text').remove();
                     form.find('.border-red-500').removeClass('border-red-500');
 

@@ -37,7 +37,7 @@ class EventController extends Controller
             //     return response()->json([]);
             // }
 
-            if ($currentUser->isRegularUser()) {
+            if ($currentUser->isRegularUser() || $currentUser->isAdmin()) { // added new || $currentUser->isAdmin()
                 $allowedUserIds = array_merge([$currentUser->id], $assignedUserIds);
 
                 foreach ($requestedUserIds as $reqId) {
@@ -50,7 +50,7 @@ class EventController extends Controller
             $userIds = $requestedUserIds;
         } else {
             // $userIds = [$currentUser->id];
-            if ($currentUser->isRegularUser()) {
+            if ($currentUser->isRegularUser() || $currentUser->isAdmin()) { // added new || $currentUser->isAdmin()
                 $userIds = array_merge([$currentUser->id], $assignedUserIds);
             } else {
                 $userIds = User::pluck('id')->toArray(); // all users for admin
@@ -88,6 +88,10 @@ class EventController extends Controller
                 'users' => $users,
                 'categories' => $categories,
                 'auth_user_id' => $currentUser->id,
+                'permissions' => [
+                    'can_delete' => $currentUser->canDeleteEvent($event),
+                    'can_edit' => $currentUser->canEditEvent($event),
+                ]
             ]);
         }
 

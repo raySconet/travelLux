@@ -19,7 +19,7 @@ class UserController extends Controller
         $assignedUserIds = [];
 
         // Only fetch assigned users if not admin/super_admin
-        if (!in_array($authUser->userPermission, ['admin', 'super_admin'])) {
+        if (!in_array($authUser->userPermission, ['super_admin'])) { // ['admin', 'super_admin']
             $assignedUserIds = UserAssignment::where('user_id', $authUser->id)
                 ->where('isDeleted', false)
                 ->pluck('assigned_id')
@@ -243,7 +243,7 @@ class UserController extends Controller
 
         $user = User::find($userId);
 
-        if ($user && in_array($user->userPermission, ['admin', 'super_admin'])) {
+        if ($user && in_array($user->userPermission, ['super_admin'])) { // ['admin', 'super_admin']
             return response()->json([
                 'message' => 'Admins do not need to assign view access.'
             ], 403);

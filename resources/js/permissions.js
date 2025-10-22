@@ -97,7 +97,8 @@ $(document).ready(function() {
         });
     });
 
-    $(document).on('click', '.deleteUserBtn', function() {
+    $(document).on('click', '.deleteUserBtn', function(e) {
+        e.preventDefault();
         const userId = $(this).data('user-id');
         $('#confirmUserDeleteBtn').data('user-id', userId);
         $('#deleteUserConfirmModal').removeClass('hidden');

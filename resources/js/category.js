@@ -556,7 +556,7 @@ function getUsers(callback) {
             const authUser = users.find(user => user.id === authUserId);
 
             // If permission is "user", only show their own data
-            if (authUser?.userPermission === 'user') {
+            if (authUser?.userPermission === 'user' || authUser?.userPermission === 'admin') { // added new authUser?.userPermission === 'admin'
                 users = users.filter(user =>
                     user.id === authUserId || assignedUserIds.includes(user.id)
                 );

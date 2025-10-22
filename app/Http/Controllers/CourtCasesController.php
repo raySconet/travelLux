@@ -41,7 +41,7 @@ class CourtCasesController extends Controller
             // } else {
             //     $userIds = $requestedUserIds;
             // }
-            if ($currentUser->isRegularUser()) {
+            if ($currentUser->isRegularUser() || $currentUser->isAdmin()) { // added new || $currentUser->isAdmin()
                 $allowedUserIds = array_merge([$currentUser->id], $assignedUserIds);
 
                 foreach ($requestedUserIds as $reqId) {
@@ -56,7 +56,7 @@ class CourtCasesController extends Controller
             }
         } else {
             // $userIds = [$currentUser->id];
-            if ($currentUser->isRegularUser()) {
+            if ($currentUser->isRegularUser() || $currentUser->isAdmin()) { // added new || $currentUser->isAdmin()
                 $userIds = array_merge([$currentUser->id], $assignedUserIds);
             } else {
                 $userIds = User::pluck('id')->toArray(); // or however you want to handle admin/all users
@@ -117,6 +117,10 @@ class CourtCasesController extends Controller
                 'users' => $users,
                 'categories' => $categories,
                 'auth_user_id' => $currentUser->id,
+                'permissions' => [
+                    'can_edit' => $currentUser->canEditCase($case),
+                    'can_delete' => $currentUser->canDeleteCase($case),
+                ],
             ]);
 
             // return response()->json($transformed);
@@ -423,29 +427,6 @@ class CourtCasesController extends Controller
             // 'new_user_id' => 'required|integer|exists:users,id',
         ]);
 
-        if ($newDate) {
-            $case = CourtCase::where('id', $caseId)->first();
-
-            if (!$case) {
-                return response()->json(['error' => 'Case not found'], 404);
-            }
-
-            $oldFrom = Carbon::parse($case->dateFrom);
-            $oldTo = Carbon::parse($case->dateTo);
-
-            // ✅ Calculate difference between old start and new drop date
-            $newStart = Carbon::parse($newDate);
-            $daysToShift = $oldFrom->diffInDays($newStart, false); // second param = signed diff
-
-            // ✅ Shift both dates by the same amount
-            $newFrom = $oldFrom->copy()->addDays($daysToShift);
-            $newTo = $oldTo->copy()->addDays($daysToShift);
-
-            $case->dateFrom = $newFrom;
-            $case->dateTo = $newTo;
-            $case->save();
-        }
-
         if($currentUserId && $newUserId) {
             $userCase = UserCase::where('user_id', $currentUserId)
                     ->where('case_id', $caseId)
@@ -467,6 +448,29 @@ class CourtCasesController extends Controller
 
             $userCase->user_id = $newUserId;
             $userCase->save();
+        }
+
+        if ($newDate) {
+            $case = CourtCase::where('id', $caseId)->first();
+
+            if (!$case) {
+                return response()->json(['error' => 'Case not found'], 404);
+            }
+
+            $oldFrom = Carbon::parse($case->dateFrom);
+            $oldTo = Carbon::parse($case->dateTo);
+
+            // ✅ Calculate difference between old start and new drop date
+            $newStart = Carbon::parse($newDate);
+            $daysToShift = $oldFrom->diffInDays($newStart, false); // second param = signed diff
+
+            // ✅ Shift both dates by the same amount
+            $newFrom = $oldFrom->copy()->addDays($daysToShift);
+            $newTo = $oldTo->copy()->addDays($daysToShift);
+
+            $case->dateFrom = $newFrom;
+            $case->dateTo = $newTo;
+            $case->save();
         }
 
         return response()->json([

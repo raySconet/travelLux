@@ -943,6 +943,12 @@ console.log('checkedOrder before limit check:', checkedOrder);
                 return;
             }
 
+            const canDelete = data.permissions?.can_delete === true;
+
+            if (!canDelete) {
+                $('#deleteEditEventCaseBtn').remove();
+            }
+
             console.log("heloo",data);
             const eventCaseEditData = data.eventCase; console.log(eventCaseEditData);
             const users = data.users || [];
@@ -2525,7 +2531,7 @@ function getUsers(callback) {
             //     users.unshift(authUser);
             // }
             const authUser = users.find(user => user.id === authUserId);
-            if (authUser?.userPermission === 'user') {
+            if (authUser?.userPermission === 'user' || authUser?.userPermission === 'admin') { // added new authUser?.userPermission === 'admin'
                 users = users.filter(user =>
                     user.id === authUserId || assignedUserIds.includes(user.id)
                 );

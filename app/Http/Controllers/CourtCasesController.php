@@ -455,13 +455,15 @@ class CourtCasesController extends Controller
                 return response()->json(['error' => 'Case not found or not assigned to current user'], 404);
             }
 
-            // $alreadyAssigned = UserCase::where('user_id', $newUserId)
-            //     ->where('case_id', $caseId)
-            //     ->exists();
+            if($currentUserId != $newUserId) {
+                $alreadyAssigned = UserCase::where('user_id', $newUserId)
+                    ->where('case_id', $caseId)
+                    ->exists();
 
-            // if ($alreadyAssigned) {
-            //     return response()->json(['error' => 'Case is already assigned to the target user'], 422);
-            // }
+                if ($alreadyAssigned) {
+                    return response()->json(['error' => 'Case is already assigned to the target user'], 422);
+                }
+            }
 
             $userCase->user_id = $newUserId;
             $userCase->save();

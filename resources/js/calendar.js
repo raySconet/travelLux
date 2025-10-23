@@ -737,20 +737,6 @@ console.log('checkedOrder before limit check:', checkedOrder);
             `);
 
             $(this).addClass('activeEventsCases');
-            if($('#selectedDayWeekMonthOption').text() === "Month View") {
-                const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
-                checkedOrder = [];
-
-                allCheckBoxes.each(function (index) {
-                    const $checkbox = $(this);
-                    if(index === 0) {
-                        $checkbox.prop('checked', true);
-                        checkedOrder.push($checkbox.data('user-id'));
-                    } else {
-                        $checkbox.prop('checked', false);
-                    }
-                });
-            }
         }
         // $('#calendarEventTypeFilter, #calendarCases').removeClass('activeEventsCases');
         // $(this).addClass('activeEventsCases');
@@ -782,20 +768,6 @@ console.log('checkedOrder before limit check:', checkedOrder);
                 <label>Lawyers</label>
             `);
             $(this).removeClass('activeEventsCases');
-            if($('#selectedDayWeekMonthOption').text() === "Month View") {
-                const allCheckBoxes = $('input[type="checkbox"][data-user-id]');
-                checkedOrder = [];
-
-                allCheckBoxes.each(function (index) {
-                    const $checkbox = $(this);
-                    if(index === 0) {
-                        $checkbox.prop('checked', true);
-                        checkedOrder.push($checkbox.data('user-id'));
-                    } else {
-                        $checkbox.prop('checked', false);
-                    }
-                });
-            }
         } else if(!$('#calendarCases').hasClass('activeEventsCases') && $('#calendarEventTypeFilter').hasClass('activeEventsCases')) {
             dataType = 'eventsNCases';
             $('#lawyersHeader').html(`

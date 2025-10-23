@@ -404,7 +404,6 @@ $(document).ready(() => {
         deleteCategory(actionUrl, categoryId);
     });
     // $('#deletedCategoryBtn')
-
     // const data = getEventsCases();
     // renderEventCases(data);
 });

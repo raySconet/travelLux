@@ -242,7 +242,8 @@ class CourtCasesController extends Controller
             // 'user' => ['required', 'array', 'min:1'],
             'user.*' => ['required', 'exists:users,id'],
         ], [
-            'category.not_in' => 'The category field is required.',
+            'category.not_in' => 'The Category field is required.',
+            'toDate.after' => 'The "To Date" must be later than the "From Date".',
         ]);
 
         // Convert to Carbon date for saving
@@ -310,7 +311,8 @@ class CourtCasesController extends Controller
             'category' => ['required', 'not_in:-1', 'exists:categories,id'],
             'user.*' => ['required', 'exists:users,id'],
         ], [
-            'category.not_in' => 'The category field is required.',
+            'category.not_in' => 'The Category field is required.',
+            'toDate.after' => 'The "To Date" must be later than the "From Date".',
         ]);
 
         // Step 2: Parse and update case

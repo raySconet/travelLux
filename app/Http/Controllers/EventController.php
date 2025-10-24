@@ -185,7 +185,8 @@ class EventController extends Controller
             'category' => ['required','not_in:-1' , 'exists:categories,id'],
             // 'user' => 'required|exists:users,id',
         ], [
-            'category.not_in' => 'The category field is required.',
+            'category.not_in' => 'The Category field is required.',
+            'toDate.after' => 'The "To Date" must be later than the "From Date".',
         ]);
 
         // Convert to Carbon date for saving
@@ -242,7 +243,8 @@ class EventController extends Controller
             'toDate' => ['required', 'date_format:m-d-Y H:i', 'after:fromDate'],
             'category' => ['required','not_in:-1' , 'exists:categories,id'],
         ], [
-            'category.not_in' => 'The category field is required.',
+            'category.not_in' => 'The Category field is required.',
+            'toDate.after' => 'The "To Date" must be later than the "From Date".',
         ]);
 
         $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'));

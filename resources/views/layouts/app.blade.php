@@ -114,8 +114,6 @@
         <div class="loader h-12 w-12 border-4 border-t-[#14548d] border-gray-200 rounded-full animate-spin"></div>
     </div>
 
-
-
         {{-- Flatpickr JS --}}
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script>

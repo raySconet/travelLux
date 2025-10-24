@@ -1449,7 +1449,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             const eventsToShow = eventsToday.slice(0, maxEventsToShowUser1);
             eventsToShow.forEach(event => {
                 // console.log('event::', event);
-                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1518,7 +1518,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             const eventsToShowUser1 = eventsUser1.slice(0, maxEventsToShowUser1);
             eventsToShowUser1.forEach(event => {
-                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1570,7 +1570,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             const eventsToShowUser2 = eventsUser2.slice(0, maxEventsToShowUser1);
             eventsToShowUser2.forEach(event => {
-                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1656,7 +1656,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     return;
                 }
 
-                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>

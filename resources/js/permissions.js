@@ -1,6 +1,10 @@
 let changedPermissions = {};
 
 $(document).ready(function() {
+    $('#searchByName').val('');
+    $('input[id="searchByName"]').on('keyup', filterUsers);
+    filterUsers();
+
     $('#closeErrorModal').on('click', function() {
         $('#errorModal').addClass('hidden');
     });
@@ -392,7 +396,7 @@ function refreshUserRows() {
         url: '/users/permissions/partial',
         type: 'GET',
         success: function(html) {
-            $('#userPermissionTable').html(html);
+            $('#userPermissionBody').html(html);
             reapplyUserRowStriping();
             changedPermissions = {};
         },
@@ -470,4 +474,39 @@ function getUsersCategoriesAddEditCasesEvents(userId, callback) {
             $userSelect.html('<option value="-1" disabled selected>Error loading users</option>');
         }
     });
+}
+
+function filterUsers() {
+    var searchText = $('input[id="searchByName"]').val().toLowerCase();
+    var anyVisible = false;
+
+    $('.user-row').each(function() {
+        var name = $(this).find('.col-span-3.font-semibold').text().toLowerCase();
+
+        if (name.includes(searchText)) {
+            $(this).show();
+            anyVisible = true;
+        } else {
+            $(this).hide();
+        }
+    });
+
+    // Remove existing no-match message
+    $('#noMatchMessage').remove();
+    reapplyUserRowStriping();
+
+    // If nothing is visible, add a message
+    if (!anyVisible) {
+        $('#userPermissionBody').append(`
+            <div id="noMatchMessage" class="col-span-12 text-center py-10 bg-white text-gray-500 dark:text-gray-400">
+                <div class="flex flex-col items-center justify-center space-y-3">
+                    <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m0 0v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8m18 0l-9 6-9-6" />
+                    </svg>
+                    <p class="text-lg font-medium">No matching records</p>
+                    <p class="text-sm text-gray-400">Try adjusting your search.</p>
+                </div>
+            </div>
+        `);
+    }
 }

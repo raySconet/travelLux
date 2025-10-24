@@ -201,7 +201,7 @@ $(document).ready(() => {
     // Optional: hide picker when clicking outside
     $(document).on('click', function(e) {
         if (!$(e.target).closest('.colorBox, .sp-container').length) {
-        $('.colorBox').spectrum('hide');
+            $('.colorBox').spectrum('hide');
         }
     });
 

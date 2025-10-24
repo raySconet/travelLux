@@ -8,10 +8,10 @@
         {{ $loop->index % 2 === 0 ? 'bg-white' : 'bg-[#f3f4f6]' }}
         {{ !$loop->last ? 'border-b border-gray-200' : ''}}
         shadow-xl">
-        <div class="col-span-3 p-6 text-gray-900 font-semibold flex items-center">
+        <div class="col-span-3 px-6 py-3 text-gray-900 font-semibold flex items-center">
             {{ $user->name }} {{ $user->id === auth()->id() ? '(You)' : '' }}
         </div>
-        <div class="col-span-3 p-6 text-gray-900 align-middle flex items-center">
+        <div class="col-span-3 px-6 py-3 text-gray-900 align-middle flex items-center">
             <label class="relative w-[max-content] flex justify-center items-center">
                 <input
                     type="radio"
@@ -24,7 +24,7 @@
                 <i class="fa-solid fa-check fa-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white peer-checked:block hidden pointer-events-none cursor-pointer"></i>
             </label>
         </div>
-        <div class="col-span-3 p-6 text-gray-900 flex items-center">
+        <div class="col-span-3 px-6 py-3 text-gray-900 flex items-center">
             <label class="relative w-[max-content] flex justify-center items-center">
                 <input
                     type="radio"
@@ -37,7 +37,7 @@
                 <i class="fa-solid fa-check fa-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white peer-checked:block hidden pointer-events-none cursor-pointer"></i>
             </label>
         </div>
-        <div class="col-span-3 p-6 text-gray-900 flex items-center justify-between relative">
+        <div class="col-span-3 px-6 py-3 text-gray-900 flex items-center justify-between relative">
             <label class="relative w-[max-content] flex justify-center items-center">
                 <input
                     type="radio"

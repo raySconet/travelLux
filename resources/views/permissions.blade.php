@@ -21,7 +21,10 @@
         <div class="min-w-[768px] max-w-5xl mx-auto sm:px-6 lg:px-8">
             <form id="permissionsForm" action="{{ route('permissions.update') }}" method="POST">
                 @csrf
-                <input type="text" id="searchByName" class="w-full mb-2 p-2 font-bold bg-white overflow-hidden shadow-xs sm:rounded-lg border border-gray-200" value="" placeholder="Search here..." />
+                <div class="relative mb-2">
+                    <input type="text" id="searchByName" class="w-full p-2 font-bold bg-white overflow-hidden shadow-xs sm:rounded-lg border border-gray-200" value="" placeholder="Search..." />
+                    <i class="fa-solid fa-magnifying-glass fa-lg absolute top-1/2 -translate-y-1/2 right-4 text-gray-400"></i>
+                </div>
 
                 <div class="relative grid grid-cols-12 font-bold bg-white overflow-hidden shadow-xs sm:rounded-t-lg border border-gray-200">
                     <div class="col-span-3 p-6 text-gray-900">

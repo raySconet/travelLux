@@ -30,7 +30,7 @@ class EventFactory extends Factory
             'atty_initials' => strtoupper($this->faker->randomLetter . $this->faker->randomLetter),
             'stage_of_process' => $this->faker->randomElement(['Filing', 'Discovery', 'Trial', 'Appeal']),
             'client_name' => $this->faker->name(),
-            'user_id' => 25,
+            'user_id' => 2,
             'date_from' => $start,
             'date_to' => $end,
             'categoryId' => $category->id,

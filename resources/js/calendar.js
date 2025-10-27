@@ -134,17 +134,19 @@ $(document).ready(() => {
             eventsForDay.forEach(event => {
                 // console.log(event); // border border-gray-300 #eaeef2
                 // const verticalType = event.type.toUpperCase().split('').join('<br>');
-                let bgColor;
+                let bgColor, txtColor;
                 if(event.type === "event") {
                     bgColor = "bg-blue-100";
+                    txtColor = "text-gray-800";
                 } else {
-                    bgColor = "bg-[#eaeef2]";
+                    bgColor = "bg-[#ffcaf2]";
+                    txtColor = "text-gray-800";
                 }
                 const verticalType = event.type.charAt(0).toUpperCase() + event.type.slice(1).toLowerCase();
 
                 const eventHTML = `
                     <div class="relative rounded bg-gray-50 shadow-sm flex flex-column">
-                        <div class="w-[32px] h-[64px] ${bgColor} text-gray-800 font-semibold text-xs flex items-center justify-center">
+                        <div class="w-[32px] h-[64px] ${bgColor} ${txtColor} font-semibold text-xs flex items-center justify-center">
                             <span class="transform -rotate-90 origin-center leading-tight tracking-widest">
                                ${verticalType}
                             </span>
@@ -2177,7 +2179,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                 $td.html(`<button class="font-bold sidebar-day-btn cursor-pointer" data-date="${dateStr}">${day}</button>`);
                 $td.addClass('sidebar-day-btn-parent cursor-pointer');
             } else {
-                $td.html('<span class="font-bold cursor-pointer">' + day + '</span>');
+                $td.html('<span class="font-bold">' + day + '</span>');
 
                 // 🔹 Inject events for the day 123
                 const eventsForDay = userEvents.filter(event => event.date === dateStr);

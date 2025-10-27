@@ -1,7 +1,7 @@
 <div id="categoryViewSection" class="text-gray-900 px-5 py-5 grid grid-cols-12 gap-2"> {{-- removed: grid-cols-1 xl:grid-cols-[100px_1fr] / added: grid-cols-1 xl:grid-cols-[100px_1fr] --}}
     <div id="categorySidebar" class="col-span-12 xl:col-span-3 flex flex-col h-full"> {{-- added: col-span-12 xl:col-span-3 --}}
         <div class="bg-white overflow-visible shadow-xs sm:rounded-lg py-6 h-full"> {{-- h-full --}}
-            <div class="h-full min-h-[900px] overflow-y-auto"> {{-- xl:min-h-[900px] --}}
+            <div class="h-full min-h-[750px] overflow-y-auto"> {{-- xl:min-h-[900px] --}}
                 @include('category.category-parts.category-sidebar')
             </div>
         </div>

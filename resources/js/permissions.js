@@ -171,7 +171,7 @@ $(document).ready(function() {
                         $input.addClass('border-red-500');
 
                         if ($input.next('.input-error-text').length === 0) {
-                            $input.after(`<p class="input-error-text text-red-600 text-sm text-center mt-1">${messages[0]}</p>`);
+                            $input.after(`<div class="input-error-text text-red-600 text-sm text-left mt-1">${messages[0]}</div>`);
                         }
                     });
                 }
@@ -235,7 +235,7 @@ $(document).ready(function() {
                         $input.addClass('border-red-500');
 
                         if ($input.next('.input-error-text').length === 0) {
-                            $input.after(`<p class="input-error-text text-red-600 text-sm text-center mt-1">${messages[0]}</p>`);
+                            $input.after(`<div class="input-error-text text-red-600 text-sm text-left mt-1">${messages[0]}</div>`);
                         }
                     });
                 }

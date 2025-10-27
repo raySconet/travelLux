@@ -100,23 +100,23 @@
 
             <!-- Name -->
             <div>
-                <x-input-label for="name" :value="__('Name')" />
-                <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+                <x-input-label for="name" :value="__('Name')" class="text-left" />
+                <x-text-input id="name" class="block text-left mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
                 <x-input-error :messages="$errors->get('name')" class="mt-2" />
             </div>
 
             <!-- Email Address -->
             <div class="mt-4">
-                <x-input-label for="email" :value="__('Email')" />
-                <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+                <x-input-label for="email" :value="__('Email')" class="text-left" />
+                <x-text-input id="email" class="block text-left mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
             <!-- Password -->
             <div class="mt-4">
-                <x-input-label for="password" :value="__('Password')" />
+                <x-input-label for="password" :value="__('Password')" class="text-left"/>
 
-                <x-text-input id="password" class="block mt-1 w-full"
+                <x-text-input id="password" class="block text-left mt-1 w-full"
                                 type="password"
                                 name="password"
                                 required autocomplete="new-password" />
@@ -126,9 +126,9 @@
 
             <!-- Confirm Password -->
             <div class="mt-4">
-                <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+                <x-input-label for="password_confirmation" :value="__('Confirm Password')" class="text-left" />
 
-                <x-text-input id="password_confirmation" class="block mt-1 w-full"
+                <x-text-input id="password_confirmation" class="block text-left mt-1 w-full"
                                 type="password"
                                 name="password_confirmation" required autocomplete="new-password" />
 
@@ -167,23 +167,23 @@
 
             <!-- Name -->
             <div>
-                <x-input-label for="edit_name" :value="__('Name')" />
-                <x-text-input id="edit_name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="Enter a name" />
+                <x-input-label for="edit_name" :value="__('Name')" class="text-left"/>
+                <x-text-input id="edit_name" class="block text-left mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="Enter a name" />
                 <x-input-error :messages="$errors->get('name')" class="mt-2" />
             </div>
 
             <!-- Email Address -->
             <div class="mt-4">
-                <x-input-label for="edit_email" :value="__('Email')" />
-                <x-text-input id="edit_email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="Enter an email" />
+                <x-input-label for="edit_email" :value="__('Email')" class="text-left"/>
+                <x-text-input id="edit_email" class="block text-left mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="Enter an email" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
             <!-- Password -->
             <div class="mt-4">
-                <x-input-label for="edit_password" :value="__('Password')" />
+                <x-input-label for="edit_password" :value="__('Password')" class="text-left"/>
 
-                <x-text-input id="edit_password" class="block mt-1 w-full"
+                <x-text-input id="edit_password" class="block text-left mt-1 w-full"
                                 type="password"
                                 name="password"
                                 autocomplete="new-password" placeholder="Leave blank to keep current password" />
@@ -193,9 +193,9 @@
 
             <!-- Confirm Password -->
             <div class="mt-4">
-                <x-input-label for="edit_password_confirmation" :value="__('Confirm Password')" />
+                <x-input-label for="edit_password_confirmation" :value="__('Confirm Password')" class="text-left"/>
 
-                <x-text-input id="edit_password_confirmation" class="block mt-1 w-full"
+                <x-text-input id="edit_password_confirmation" class="block text-left mt-1 w-full"
                                 type="password"
                                 name="password_confirmation" autocomplete="new-password" placeholder="Confirm password if changed" />
 

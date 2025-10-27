@@ -20,7 +20,7 @@ $(document).ready(() => {
         $('#categoryLayout')
             .addClass('col-span-12 xl:col-span-9');
 
-        $('#categorySidebar > div > div').addClass('min-h-[900px]'); // sm:min-h-[120px]
+        $('#categorySidebar > div > div').addClass('min-h-[750px]'); // sm:min-h-[120px]
         // $('#categorySidebar > div').removeClass('h-full');
     });
 
@@ -38,7 +38,7 @@ $(document).ready(() => {
             $('#categoryLayout')
                 .removeClass('col-span-12 xl:col-span-9');
 
-            $('#categorySidebar > div > div').removeClass('min-h-[900px]');
+            $('#categorySidebar > div > div').removeClass('min-h-[750px]');
             // $('#categorySidebar > div').addClass('h-full');
         }, 100);
     });

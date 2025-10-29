@@ -77,6 +77,7 @@ class CategoryController extends Controller
     }
 
     public function update(Request $request, Categorie $categorie) {
+        // dd($categorie);
         try {
             $authUser = auth()->user();
 
@@ -97,12 +98,29 @@ class CategoryController extends Controller
                 ],
             ];
 
-            if (trim($request->name) !== trim($categorie->categoryName)) {
-                $rules['nameEditCategory'][] = Rule::unique('categories', 'categoryName')->ignore($categorie->id);
+            // if (trim($request->name) !== trim($categorie->categoryName)) {
+            //     $rules['nameEditCategory'][] = Rule::unique('categories', 'categoryName')->ignore($categorie->id);
+            // }
+
+            // if (trim($request->color) !== trim($categorie->color)) {
+            //     $rules['color'][] = Rule::unique('categories', 'color')->ignore($categorie->id);
+            // }
+
+            $newName  = trim($request->input('nameEditCategory', ''));
+            $oldName  = trim($categorie->categoryName ?? '');
+            $newColor = trim((string)$request->input('color', ''));
+            $oldColor = trim((string)$categorie->color ?? '');
+
+            if ($newName !== $oldName) {
+                $rules['nameEditCategory'][] = Rule::unique('categories', 'categoryName')
+                    ->ignore($categorie->id, 'id')
+                    ->where(fn($query) => $query->where('isDeleted', 0));
             }
 
-            if (trim($request->color) !== trim($categorie->color)) {
-                $rules['color'][] = Rule::unique('categories', 'color')->ignore($categorie->id);
+            if ($newColor !== $oldColor) {
+                $rules['color'][] = Rule::unique('categories', 'color')
+                    ->ignore($categorie->id, 'id')
+                    ->where(fn($query) => $query->where('isDeleted', 0));
             }
 
             $validated = $request->validate($rules, [

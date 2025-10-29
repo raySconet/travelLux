@@ -83,6 +83,7 @@ $(document).ready(() => {
         $('input, select').removeClass('border-red-500');
         $('.colorBox').removeClass('border border-red-500');
         $('.colorBox').css('background-color', '#14548d');
+        $('.colorInput').val('#14548d');
         $('.colorBox').spectrum({
             color: "#14548d",
             showPalette: true,
@@ -279,12 +280,13 @@ $(document).ready(() => {
     $(document).on('click', '.editCategoryBtn', function(e) {
         e.stopPropagation();
 
+        $('#editCategoryForm')[0].reset();
         $('.input-error-text').remove();
         $('input').removeClass('border-red-500');
         $('.colorBox').removeClass('border border-red-500');
 
         const categoryId = $(this).data('id');
-        console.log(categoryId);
+        console.log("ssss", categoryId);
 
         $.ajax({
             headers: {
@@ -303,6 +305,7 @@ $(document).ready(() => {
 
                 if (category) {
                     $('input[name="nameEditCategory"]').val(category.categoryName);
+                    $('#submitEditCategoryBtn').data('id', category.id);
                     // $('#name').val(category.categoryName);
                     $('.colorInput').val(category.color);
                     $('.colorBox').css('background-color', category.color);
@@ -346,7 +349,7 @@ $(document).ready(() => {
                     });
                 }
 
-                $('#submitEditCategoryBtn').attr('data-id', category.id);
+                // $('#submitEditCategoryBtn').attr('data-id', category.id);
             },
             error: function (xhr) {
                 console.error(`Error fetching category name:`, xhr);

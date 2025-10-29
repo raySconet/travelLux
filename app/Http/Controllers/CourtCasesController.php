@@ -152,6 +152,7 @@ class CourtCasesController extends Controller
                 'case.categorie:id,categoryName,color'
             ])
                 ->whereIn('user_id', $userIds)
+                ->where('isDeleted', 0)
                 ->whereHas('case', function ($query) use ($startDate, $endDate) {
                     $query->where('isDeleted', 0)
                         ->whereBetween('dateFrom', [$startDate, $endDate]);
@@ -164,6 +165,7 @@ class CourtCasesController extends Controller
                 'case.categorie:id,categoryName,color'
             ])
                 ->whereIn('user_id', $userIds)
+                ->where('isDeleted', 0)
                 ->whereHas('case', function ($query) use ($startDate, $endDate) {
                     $query->where('isDeleted', 0)
                         ->whereBetween('dateFrom', [$startDate, $endDate]);

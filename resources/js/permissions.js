@@ -76,7 +76,7 @@ $(document).ready(function() {
                 for (const userId in results) {
                     if (results[userId].status === 'error') {
                         errorMessages.push(`<li class="text-red-600">${results[userId].message}</li>`);
-                    } else {
+                    } else { // new
                         // update the UI immediately for successful changes
                         const newPermission = changedPermissions[userId];
                         $(`input[name="permission_${userId}"][value="${newPermission}"]`).prop('checked', true);

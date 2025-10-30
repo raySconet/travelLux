@@ -76,6 +76,10 @@ $(document).ready(function() {
                 for (const userId in results) {
                     if (results[userId].status === 'error') {
                         errorMessages.push(`<li class="text-red-600">${results[userId].message}</li>`);
+                    } else {
+                        // update the UI immediately for successful changes
+                        const newPermission = changedPermissions[userId];
+                        $(`input[name="permission_${userId}"][value="${newPermission}"]`).prop('checked', true);
                     }
                 }
 
@@ -96,7 +100,7 @@ $(document).ready(function() {
                 $('#errorModal').removeClass('hidden');
             },
             complete: function() {
-                refreshUserRows();
+                // refreshUserRows();
             },
         });
     });
@@ -395,6 +399,7 @@ function refreshUserRows() {
     $.ajax({
         url: '/users/permissions/partial',
         type: 'GET',
+        cache: false,
         success: function(html) {
             $('#userPermissionBody').html(html);
             reapplyUserRowStriping();

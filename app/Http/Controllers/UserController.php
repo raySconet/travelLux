@@ -320,10 +320,13 @@ class UserController extends Controller
 
         // --- Step 4: Insert new ones ---
         if (!empty($toInsert)) {
+            $now = now();
             $insertData = array_map(fn($assignedId) => [
                 'user_id' => $userId,
                 'assigned_id' => $assignedId,
                 'isDeleted' => false,
+                'created_at' => $now,
+                'updated_at' => $now,
             ], $toInsert);
 
             UserAssignment::insert($insertData);

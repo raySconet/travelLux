@@ -3122,7 +3122,7 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess, n
 //     // console.log("Visible range:", visibleStartDate, "to", visibleEndDate);
 //     const startDateStr = visibleStartDate.toISOString().split('T')[0];
 //     const endDateStr = visibleEndDate.toISOString().split('T')[0];
-//     // console.log("Fetching data from", startDateStr, "to", endDateStr);
+
 //     const endpoint = '/getEventsNCases';
 
 //     const requestData = {

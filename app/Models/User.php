@@ -83,12 +83,13 @@ class User extends Authenticatable
 
     public function canEditEvent(Event $event)
     {
-        return $this->isSuperAdmin() || ($this->isAdmin() && $event->user_id === $this->id);
+        return $this->isSuperAdmin() || ($this->isAdmin() && ($event->user_id === $this->id || $this->canViewEventsAndCasesForUser($event->user_id)));
     }
 
     public function canDeleteEvent(Event $event)
     {
-        return $this->canEditEvent($event); // same logic for now
+        // return $this->canEditEvent($event); // same logic for now
+        return $this->isSuperAdmin(); // same logic for now
     }
 
     // public function canViewEvent(Event $event)
@@ -98,17 +99,48 @@ class User extends Authenticatable
 
     public function canViewCase(CourtCase $case)
     {
-        return $this->isSuperAdmin() || $this->isAdmin() || $this->isAssignedToCase($case);
+        return $this->isSuperAdmin() ||  $this->isAssignedToCase($case); // $this->isAdmin() ||
     }
+
+    // public function canEditCase(CourtCase $case)
+    // {
+    //     return $this->isSuperAdmin() || ($this->isAdmin() && ($this->isAssignedToCase($case) || $this->canViewEventsAndCasesForUser($case->user_id)));
+    // }
 
     public function canEditCase(CourtCase $case)
     {
-        return $this->isSuperAdmin() || ($this->isAdmin() && $this->isAssignedToCase($case));
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        if (!$this->isAdmin()) {
+            return false;
+        }
+
+        // Check if assigned directly
+        if ($this->isAssignedToCase($case)) {
+            return true;
+        }
+
+        // Ensure users are loaded
+        if (!$case->relationLoaded('users')) {
+            $case->load('users');
+        }
+
+        // Check if admin can view any user assigned to the case
+        foreach ($case->users as $user) {
+            if ($this->canViewEventsAndCasesForUser($user->id)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function canDeleteCase(CourtCase $case)
     {
-        return $this->canEditCase($case);
+        // return $this->canEditCase($case);
+        return $this->isSuperAdmin();
     }
 
     protected function isAssignedToCase(CourtCase $case)
@@ -123,15 +155,18 @@ class User extends Authenticatable
 
     public function canViewEventsAndCasesForUser($targetUserId)
     {
-        if ($this->isSuperAdmin() || $this->isAdmin()) {
+        if ($this->isSuperAdmin()) { //  || $this->isAdmin()
             return true;
         }
 
-        return $this->id === $targetUserId;
+        if ($this->id === $targetUserId) {
+            return true;
+        }
 
         return UserAssignment::where('user_id', $this->id)
             ->where('assigned_id', $targetUserId)
             ->where('isDeleted', false)
+            ->whereHas('assignedUser', fn ($q) => $q->where('isDeleted', false))
             ->exists();
     }
 

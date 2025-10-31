@@ -43,8 +43,8 @@
                 <div id="viewWeekly" class="grid grid-rows-1 2xl:grid-rows-[40%_60%] gap-px p-6 h-full 2xl:h-[1322px] hidden">
                     @include('calendar.calendar-parts.weekly') {{-- Include the calendar drawing component --}}
                 </div>
-                <div id="viewDaily" class="p-6 hidden h-full">
-                    <div class="grid grid-cols-12 grid-rows-[auto_1fr] gap-0 h-full">
+                <div id="viewDaily" class="p-6 hidden h-full overflow-x-auto min-h-[678px]"> {{-- overflow-x-auto min-h-[678px] --}}
+                    <div class="grid grid-cols-12 grid-rows-[auto_1fr] gap-0 h-full min-w-[1161px]"> {{-- min-w-[1161px] --}}
                         <div class="col-span-12 grid grid-cols-12 gap-0 h-full">
                             @include('calendar.calendar-parts.daily')
                         </div>

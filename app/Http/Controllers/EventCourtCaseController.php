@@ -95,7 +95,7 @@ class EventCourtCaseController extends Controller
             //     return response()->json([]);
             // }
 
-            if ($currentUser->isRegularUser()) {
+            if ($currentUser->isRegularUser() || $currentUser->isAdmin()) { // added new || $currentUser->isAdmin()
                 $allowedUserIds = array_merge([$currentUser->id], $assignedUserIds);
                 foreach ($requestedUserIds as $reqId) {
                     if (!in_array($reqId, $allowedUserIds)) {
@@ -107,7 +107,7 @@ class EventCourtCaseController extends Controller
             $userIds = $requestedUserIds;
         } else {
             // $userIds = [$currentUser->id];
-            if ($currentUser->isRegularUser()) {
+            if ($currentUser->isRegularUser() || $currentUser->isAdmin()) { // added new || $currentUser->isAdmin()
                 $userIds = array_merge([$currentUser->id], $assignedUserIds);
             } else {
                 $userIds = User::pluck('id')->toArray(); // Admin or other roles can see all users
@@ -141,6 +141,7 @@ class EventCourtCaseController extends Controller
             'case.categorie:id,categoryName,color'
         ])
             ->whereIn('user_id', $userIds)
+            ->where('isDeleted', 0)
             ->whereHas('case', function ($query) use ($startDate, $endDate) {
                 $query->where('isDeleted', 0)
                     ->whereBetween('dateFrom', [$startDate, $endDate]);

@@ -19,7 +19,7 @@ class UserController extends Controller
         $assignedUserIds = [];
 
         // Only fetch assigned users if not admin/super_admin
-        if (!in_array($authUser->userPermission, ['admin', 'super_admin'])) {
+        if (!in_array($authUser->userPermission, ['super_admin'])) { // ['admin', 'super_admin']
             $assignedUserIds = UserAssignment::where('user_id', $authUser->id)
                 ->where('isDeleted', false)
                 ->pluck('assigned_id')
@@ -129,8 +129,12 @@ class UserController extends Controller
 
         $results = [];
 
+        $userIds = array_keys($request->input('permissions', [])); // new
+        $users = User::whereIn('id', $userIds)->get()->keyBy('id'); // new
+
         foreach ($request->input('permissions', []) as $userId => $permission) {
-            $user = User::find($userId);
+            // $user = User::find($userId); // old
+            $user = $users->get($userId); // new
 
             if (!$user) {
                 // return response()->json([
@@ -243,7 +247,7 @@ class UserController extends Controller
 
         $user = User::find($userId);
 
-        if ($user && in_array($user->userPermission, ['admin', 'super_admin'])) {
+        if ($user && in_array($user->userPermission, ['super_admin'])) { // ['admin', 'super_admin']
             return response()->json([
                 'message' => 'Admins do not need to assign view access.'
             ], 403);
@@ -260,37 +264,74 @@ class UserController extends Controller
             ->keyBy('assigned_id');
 
         // Step 2: Determine which to insert and which to soft-delete
-        $toInsert = [];
+        // $toInsert = [];
 
-        foreach ($newAssignedIds as $assignedId) {
-            if (! $existingAssignments->has($assignedId)) {
-                // New assignment → insert
-                $toInsert[] = [
-                    'user_id' => $userId,
-                    'assigned_id' => $assignedId,
-                    'isDeleted' => false,
-                ];
-            } else {
-                // Already exists → ensure it's active
-                $existing = $existingAssignments->get($assignedId);
-                if ($existing->isDeleted) {
-                    $existing->update(['isDeleted' => false]);
-                }
-                // Remove from list so we don't mark it for deletion
-                $existingAssignments->forget($assignedId);
-            }
+        // foreach ($newAssignedIds as $assignedId) {
+        //     if (! $existingAssignments->has($assignedId)) {
+        //         // New assignment → insert
+        //         $toInsert[] = [
+        //             'user_id' => $userId,
+        //             'assigned_id' => $assignedId,
+        //             'isDeleted' => false,
+        //         ];
+        //     } else {
+        //         // Already exists → ensure it's active
+        //         $existing = $existingAssignments->get($assignedId);
+        //         if ($existing->isDeleted) {
+        //             $existing->update(['isDeleted' => false]);
+        //         }
+        //         // Remove from list so we don't mark it for deletion
+        //         $existingAssignments->forget($assignedId);
+        //     }
+        // }
+
+        // // Step 3: Mark missing ones as deleted
+        // foreach ($existingAssignments as $oldAssignment) {
+        //     $oldAssignment->update(['isDeleted' => true]);
+        // }
+
+        // // Step 4: Insert new ones
+        // if (!empty($toInsert)) {
+        //     UserAssignment::insert($toInsert);
+        // }
+        // old
+
+        $existingIds = $existingAssignments->keys()->toArray();
+
+        // --- Step 1: Determine what to insert and reactivate ---
+        $toInsert = array_diff($newAssignedIds, $existingIds);
+        $toReactivate = array_intersect($newAssignedIds, $existingIds);
+
+        // --- Step 2: Reactivate soft-deleted ones in bulk ---
+        if (!empty($toReactivate)) {
+            UserAssignment::where('user_id', $userId)
+                ->whereIn('assigned_id', $toReactivate)
+                ->where('isDeleted', true)
+                ->update(['isDeleted' => false]);
         }
 
-        // Step 3: Mark missing ones as deleted
-        foreach ($existingAssignments as $oldAssignment) {
-            $oldAssignment->update(['isDeleted' => true]);
+        // --- Step 3: Mark missing ones as deleted (bulk) ---
+        $toDelete = array_diff($existingIds, $newAssignedIds);
+        if (!empty($toDelete)) {
+            UserAssignment::where('user_id', $userId)
+                ->whereIn('assigned_id', $toDelete)
+                ->update(['isDeleted' => true]);
         }
 
-        // Step 4: Insert new ones
+        // --- Step 4: Insert new ones ---
         if (!empty($toInsert)) {
-            UserAssignment::insert($toInsert);
-        }
+            $now = now();
+            $insertData = array_map(fn($assignedId) => [
+                'user_id' => $userId,
+                'assigned_id' => $assignedId,
+                'isDeleted' => false,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ], $toInsert);
 
+            UserAssignment::insert($insertData);
+        }
+        // new
         return response()->json(['message' => 'View access updated successfully.']);
     }
 }

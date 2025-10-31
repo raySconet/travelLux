@@ -80,9 +80,21 @@ $(document).ready(() => {
         });
 
         // Get events for this date
-        const eventsForDay = (eventsData || [])
-            .flatMap(user => user.events || [])
-            .filter(event => event.date === dateStr && !event.isDuplicate);
+        // const eventsForDay = (eventsData || [])
+        //     .flatMap(user => user.events || [])
+        //     .filter(event => event.date === dateStr && !event.isDuplicate);
+
+        const userId = $(this).data('user-id');
+        let eventsForDay = [];
+
+        if (userId) {
+            const userData = (eventsData || []).find(user => user.userId === userId);
+            eventsForDay = (userData?.events || []).filter(event => event.date === dateStr && !event.isDuplicate);
+        } else {
+            eventsForDay = (eventsData || [])
+                .flatMap(user => user.events || [])
+                .filter(event => event.date === dateStr && !event.isDuplicate);
+        }
 
         eventsForDay.sort((a, b) => {
             const dateA = new Date(`${a.date}T${a.from || "00:00"}:00`);
@@ -122,17 +134,19 @@ $(document).ready(() => {
             eventsForDay.forEach(event => {
                 // console.log(event); // border border-gray-300 #eaeef2
                 // const verticalType = event.type.toUpperCase().split('').join('<br>');
-                let bgColor;
+                let bgColor, txtColor;
                 if(event.type === "event") {
                     bgColor = "bg-blue-100";
+                    txtColor = "text-gray-800";
                 } else {
-                    bgColor = "bg-[#eaeef2]";
+                    bgColor = "bg-[#ffcaf2]";
+                    txtColor = "text-gray-800";
                 }
-                const verticalType = event.type.charAt(0).toUpperCase() + event.type.slice(1).toLowerCase();;
+                const verticalType = event.type.charAt(0).toUpperCase() + event.type.slice(1).toLowerCase();
 
                 const eventHTML = `
                     <div class="relative rounded bg-gray-50 shadow-sm flex flex-column">
-                        <div class="w-[32px] h-[64px] ${bgColor} text-gray-800 font-semibold text-xs flex items-center justify-center">
+                        <div class="w-[32px] h-[64px] ${bgColor} ${txtColor} font-semibold text-xs flex items-center justify-center">
                             <span class="transform -rotate-90 origin-center leading-tight tracking-widest">
                                ${verticalType}
                             </span>
@@ -931,6 +945,12 @@ console.log('checkedOrder before limit check:', checkedOrder);
                 return;
             }
 
+            const canDelete = data.permissions?.can_delete === true;
+
+            if (!canDelete) {
+                $('#deleteEditEventCaseBtn').remove();
+            }
+
             console.log("heloo",data);
             const eventCaseEditData = data.eventCase; console.log(eventCaseEditData);
             const users = data.users || [];
@@ -1431,7 +1451,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
             const eventsToShow = eventsToday.slice(0, maxEventsToShowUser1);
             eventsToShow.forEach(event => {
                 // console.log('event::', event);
-                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1460,6 +1480,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     <div class="flex justify-center mt-2 pb-2">
                         <button
                             class="w-[80%] max-w-[524px] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-user-id="${user.userId}"
                             data-date="${isoDate}"
                             title="View all events for this day"
                         >
@@ -1499,7 +1520,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             const eventsToShowUser1 = eventsUser1.slice(0, maxEventsToShowUser1);
             eventsToShowUser1.forEach(event => {
-                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1528,6 +1549,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     <div class="flex justify-center mt-2 pb-2">
                         <button
                             class="w-[80%] max-w-[524px] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-user-id="${user1.userId}"
                             data-date="${isoDate}"
                             title="View all events for this day"
                         >
@@ -1550,7 +1572,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             const eventsToShowUser2 = eventsUser2.slice(0, maxEventsToShowUser1);
             eventsToShowUser2.forEach(event => {
-                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1579,6 +1601,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     <div class="flex justify-center mt-2 pb-2">
                         <button
                             class="w-[80%] max-w-[524px] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-user-id="${user2.userId}"
                             data-date="${isoDate}"
                             title="View all events for this day"
                         >
@@ -1635,7 +1658,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     return;
                 }
 
-                const timeRange = event.from && event.to ? `<span>~${event.from} - ${event.to}</span>` : '';
+                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1913,6 +1936,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                     <div class="flex justify-center mt-[15px]">
                         <button
                             class="w-[80%] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                            data-user-id="${userRow1.userId}"
                             data-date="${isoDate}"
                             title="View all events for this day"
                         >
@@ -1964,6 +1988,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
                         <div class="flex justify-center mt-2">
                             <button
                                 class="w-[80%] font-semibold view-all-events-btn text-sm text-gray-900 bg-[#f0f4ff] rounded-md px-3 py-1 cursor-pointer shadow-md transition-colors duration-200"
+                                data-user-id="${userRow2.userId}"
                                 data-date="${isoDate}"
                                 title="View all events for this day"
                             >
@@ -2154,7 +2179,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
                 $td.html(`<button class="font-bold sidebar-day-btn cursor-pointer" data-date="${dateStr}">${day}</button>`);
                 $td.addClass('sidebar-day-btn-parent cursor-pointer');
             } else {
-                $td.html('<span class="font-bold cursor-pointer">' + day + '</span>');
+                $td.html('<span class="font-bold">' + day + '</span>');
 
                 // 🔹 Inject events for the day 123
                 const eventsForDay = userEvents.filter(event => event.date === dateStr);
@@ -2508,7 +2533,7 @@ function getUsers(callback) {
             //     users.unshift(authUser);
             // }
             const authUser = users.find(user => user.id === authUserId);
-            if (authUser?.userPermission === 'user') {
+            if (authUser?.userPermission === 'user' || authUser?.userPermission === 'admin') { // added new authUser?.userPermission === 'admin'
                 users = users.filter(user =>
                     user.id === authUserId || assignedUserIds.includes(user.id)
                 );
@@ -2663,14 +2688,16 @@ function refreshCalendar() {
             $(this).prop('checked', isLast);
         });
     } else if ((dataType === 'events' || dataType === 'eventsNCases') && (view === 'Week View' || view === 'Day View') && checkedOrder.length > 2) {
-        const frstUserId = checkedOrder[checkedOrder.length - 1];
-        const scndUserId = checkedOrder[checkedOrder.length - 2];
+        const frstUserId = checkedOrder[0]; // checkedOrder.length - 1
+        const scndUserId = checkedOrder[1]; // checkedOrder.length - 2
 
         $('input[type="checkbox"][data-user-id]').each(function () {
             const isFirst = $(this).data('user-id') === frstUserId;
             const isSecond = $(this).data('user-id') === scndUserId;
             $(this).prop('checked', isFirst || isSecond);
         });
+
+        checkedOrder = [frstUserId, scndUserId];
         console.log('Adjusted checkedOrder for Week/Day View with events:', frstUserId, scndUserId);
     }
 
@@ -3095,7 +3122,7 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess, n
 //     // console.log("Visible range:", visibleStartDate, "to", visibleEndDate);
 //     const startDateStr = visibleStartDate.toISOString().split('T')[0];
 //     const endDateStr = visibleEndDate.toISOString().split('T')[0];
-//     // console.log("Fetching data from", startDateStr, "to", endDateStr);
+
 //     const endpoint = '/getEventsNCases';
 
 //     const requestData = {

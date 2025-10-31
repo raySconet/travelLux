@@ -37,7 +37,7 @@ class EventController extends Controller
             //     return response()->json([]);
             // }
 
-            if ($currentUser->isRegularUser()) {
+            if ($currentUser->isRegularUser() || $currentUser->isAdmin()) { // added new || $currentUser->isAdmin()
                 $allowedUserIds = array_merge([$currentUser->id], $assignedUserIds);
 
                 foreach ($requestedUserIds as $reqId) {
@@ -50,7 +50,7 @@ class EventController extends Controller
             $userIds = $requestedUserIds;
         } else {
             // $userIds = [$currentUser->id];
-            if ($currentUser->isRegularUser()) {
+            if ($currentUser->isRegularUser() || $currentUser->isAdmin()) { // added new || $currentUser->isAdmin()
                 $userIds = array_merge([$currentUser->id], $assignedUserIds);
             } else {
                 $userIds = User::pluck('id')->toArray(); // all users for admin
@@ -88,6 +88,10 @@ class EventController extends Controller
                 'users' => $users,
                 'categories' => $categories,
                 'auth_user_id' => $currentUser->id,
+                'permissions' => [
+                    'can_delete' => $currentUser->canDeleteEvent($event),
+                    'can_edit' => $currentUser->canEditEvent($event),
+                ]
             ]);
         }
 
@@ -181,7 +185,8 @@ class EventController extends Controller
             'category' => ['required','not_in:-1' , 'exists:categories,id'],
             // 'user' => 'required|exists:users,id',
         ], [
-            'category.not_in' => 'The category field is required.',
+            'category.not_in' => 'The Category field is required.',
+            'toDate.after' => 'The "To Date" must be later than the "From Date".',
         ]);
 
         // Convert to Carbon date for saving
@@ -238,7 +243,8 @@ class EventController extends Controller
             'toDate' => ['required', 'date_format:m-d-Y H:i', 'after:fromDate'],
             'category' => ['required','not_in:-1' , 'exists:categories,id'],
         ], [
-            'category.not_in' => 'The category field is required.',
+            'category.not_in' => 'The Category field is required.',
+            'toDate.after' => 'The "To Date" must be later than the "From Date".',
         ]);
 
         $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'));

@@ -8,10 +8,10 @@
         {{ $loop->index % 2 === 0 ? 'bg-white' : 'bg-[#f3f4f6]' }}
         {{ !$loop->last ? 'border-b border-gray-200' : ''}}
         shadow-xl">
-        <div class="col-span-3 p-6 text-gray-900 font-semibold flex items-center">
+        <div class="col-span-3 px-6 py-3 text-gray-900 font-semibold flex items-center">
             {{ $user->name }} {{ $user->id === auth()->id() ? '(You)' : '' }}
         </div>
-        <div class="col-span-3 p-6 text-gray-900 align-middle flex items-center">
+        <div class="col-span-3 px-6 py-3 text-gray-900 align-middle flex items-center">
             <label class="relative w-[max-content] flex justify-center items-center">
                 <input
                     type="radio"
@@ -24,7 +24,7 @@
                 <i class="fa-solid fa-check fa-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white peer-checked:block hidden pointer-events-none cursor-pointer"></i>
             </label>
         </div>
-        <div class="col-span-3 p-6 text-gray-900 flex items-center">
+        <div class="col-span-3 px-6 py-3 text-gray-900 flex items-center">
             <label class="relative w-[max-content] flex justify-center items-center">
                 <input
                     type="radio"
@@ -37,7 +37,7 @@
                 <i class="fa-solid fa-check fa-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white peer-checked:block hidden pointer-events-none cursor-pointer"></i>
             </label>
         </div>
-        <div class="col-span-3 p-6 text-gray-900 flex items-center justify-between relative">
+        <div class="col-span-3 px-6 py-3 text-gray-900 flex items-center justify-between relative">
             <label class="relative w-[max-content] flex justify-center items-center">
                 <input
                     type="radio"
@@ -49,15 +49,16 @@
                 >
                 <i class="fa-solid fa-check fa-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white peer-checked:block hidden pointer-events-none cursor-pointer"></i>
             </label>
-            <div class="absolute right-4.5 flex">
-                <button class="assign-view-access-btn text-[#14548d] p-1 mr-2.5 cursor-pointer" data-user-id="{{ $user->id }}">
+            <div class="absolute right-4.5 flex gap-1">
+                <button class="assign-view-access-btn text-[#14548d] p-1 cursor-pointer" data-user-id="{{ $user->id }}">
                     <i class="fa-solid fa-users-viewfinder shadow-lg fa-lg" title="Can view team events"></i>
                 </button>
-                <button title="Edit" class="editUserBtn p-1 text-[limegreen] hover:text-green-800 cursor-pointer" data-user-id="{{ $user->id }}">
+                <button title="Edit" class="editUserBtn p-1 text-[limegreen] hover:text-green-800 cursor-pointer transition duration-200 ease-in-out" data-user-id="{{ $user->id }}">
                     <i class="fa-solid fa-pen-to-square shadow-lg fa-lg"></i>
                 </button>
-                <div aria-label="Delete item" class="deleteUserBtn group p-1 border-none bg-transparent cursor-pointer text-[0.875em] transition-transform duration-200 ease-in-out" data-user-id="{{ $user->id }}">
-                    <svg
+                <button aria-label="Delete item" class="deleteUserBtn group p-1 text-red-600 hover:text-red-800 cursor-pointer transition duration-200 ease-in-out" data-user-id="{{ $user->id }}">
+                    <i class="fa-solid fa-trash shadow-lg fa-lg"></i>
+                    {{-- <svg border-none bg-transparent cursor-pointer text-[0.875em] transition-transform duration-200 ease-in-out
                         style="filter: none; backdrop-filter: none; box-shadow: none;"
                         class="w-8 h-8 transition-transform duration-[300ms] [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] overflow-visible group-hover:scale-[1.08] group-hover:rotate-[3deg] group-active:scale-[0.96] group-active:rotate-[-1deg] mb-1"
                         viewBox="0 -10 64 74"
@@ -70,8 +71,8 @@
                                 <rect x="26" y="8" width="12" height="4" rx="2" ry="2" fill="#c0392b"></rect>
                             </g>
                         </g>
-                    </svg>
-                </div>
+                    </svg> --}}
+                </button>
             </div>
         </div>
     </div>

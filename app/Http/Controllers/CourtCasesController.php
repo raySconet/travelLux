@@ -41,7 +41,7 @@ class CourtCasesController extends Controller
             // } else {
             //     $userIds = $requestedUserIds;
             // }
-            if ($currentUser->isRegularUser()) {
+            if ($currentUser->isRegularUser() || $currentUser->isAdmin()) { // added new || $currentUser->isAdmin()
                 $allowedUserIds = array_merge([$currentUser->id], $assignedUserIds);
 
                 foreach ($requestedUserIds as $reqId) {
@@ -56,7 +56,7 @@ class CourtCasesController extends Controller
             }
         } else {
             // $userIds = [$currentUser->id];
-            if ($currentUser->isRegularUser()) {
+            if ($currentUser->isRegularUser() || $currentUser->isAdmin()) { // added new || $currentUser->isAdmin()
                 $userIds = array_merge([$currentUser->id], $assignedUserIds);
             } else {
                 $userIds = User::pluck('id')->toArray(); // or however you want to handle admin/all users
@@ -117,6 +117,10 @@ class CourtCasesController extends Controller
                 'users' => $users,
                 'categories' => $categories,
                 'auth_user_id' => $currentUser->id,
+                'permissions' => [
+                    'can_edit' => $currentUser->canEditCase($case),
+                    'can_delete' => $currentUser->canDeleteCase($case),
+                ],
             ]);
 
             // return response()->json($transformed);
@@ -148,6 +152,7 @@ class CourtCasesController extends Controller
                 'case.categorie:id,categoryName,color'
             ])
                 ->whereIn('user_id', $userIds)
+                ->where('isDeleted', 0)
                 ->whereHas('case', function ($query) use ($startDate, $endDate) {
                     $query->where('isDeleted', 0)
                         ->whereBetween('dateFrom', [$startDate, $endDate]);
@@ -160,6 +165,7 @@ class CourtCasesController extends Controller
                 'case.categorie:id,categoryName,color'
             ])
                 ->whereIn('user_id', $userIds)
+                ->where('isDeleted', 0)
                 ->whereHas('case', function ($query) use ($startDate, $endDate) {
                     $query->where('isDeleted', 0)
                         ->whereBetween('dateFrom', [$startDate, $endDate]);
@@ -238,7 +244,8 @@ class CourtCasesController extends Controller
             // 'user' => ['required', 'array', 'min:1'],
             'user.*' => ['required', 'exists:users,id'],
         ], [
-            'category.not_in' => 'The category field is required.',
+            'category.not_in' => 'The Category field is required.',
+            'toDate.after' => 'The "To Date" must be later than the "From Date".',
         ]);
 
         // Convert to Carbon date for saving
@@ -306,7 +313,8 @@ class CourtCasesController extends Controller
             'category' => ['required', 'not_in:-1', 'exists:categories,id'],
             'user.*' => ['required', 'exists:users,id'],
         ], [
-            'category.not_in' => 'The category field is required.',
+            'category.not_in' => 'The Category field is required.',
+            'toDate.after' => 'The "To Date" must be later than the "From Date".',
         ]);
 
         // Step 2: Parse and update case
@@ -423,6 +431,29 @@ class CourtCasesController extends Controller
             // 'new_user_id' => 'required|integer|exists:users,id',
         ]);
 
+        if($currentUserId && $newUserId) {
+            $userCase = UserCase::where('user_id', $currentUserId)
+                    ->where('case_id', $caseId)
+                    ->first();
+
+            if (!$userCase) {
+                return response()->json(['error' => 'Case not found or not assigned to current user'], 404);
+            }
+
+            if($currentUserId != $newUserId) {
+                $alreadyAssigned = UserCase::where('user_id', $newUserId)
+                    ->where('case_id', $caseId)
+                    ->exists();
+
+                if ($alreadyAssigned) {
+                    return response()->json(['error' => 'Case is already assigned to the target user'], 422);
+                }
+            }
+
+            $userCase->user_id = $newUserId;
+            $userCase->save();
+        }
+
         if ($newDate) {
             $case = CourtCase::where('id', $caseId)->first();
 
@@ -444,27 +475,6 @@ class CourtCasesController extends Controller
             $case->dateFrom = $newFrom;
             $case->dateTo = $newTo;
             $case->save();
-        }
-
-        if($currentUserId && $newUserId) {
-            $userCase = UserCase::where('user_id', $currentUserId)
-                    ->where('case_id', $caseId)
-                    ->first();
-
-            if (!$userCase) {
-                return response()->json(['error' => 'Case not found or not assigned to current user'], 404);
-            }
-
-            // $alreadyAssigned = UserCase::where('user_id', $newUserId)
-            //     ->where('case_id', $caseId)
-            //     ->exists();
-
-            // if ($alreadyAssigned) {
-            //     return response()->json(['error' => 'Case is already assigned to the target user'], 422);
-            // }
-
-            $userCase->user_id = $newUserId;
-            $userCase->save();
         }
 
         return response()->json([

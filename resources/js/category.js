@@ -20,7 +20,7 @@ $(document).ready(() => {
         $('#categoryLayout')
             .addClass('col-span-12 xl:col-span-9');
 
-        $('#categorySidebar > div > div').addClass('min-h-[900px]'); // sm:min-h-[120px]
+        $('#categorySidebar > div > div').addClass('min-h-[750px]'); // sm:min-h-[120px]
         // $('#categorySidebar > div').removeClass('h-full');
     });
 
@@ -38,7 +38,7 @@ $(document).ready(() => {
             $('#categoryLayout')
                 .removeClass('col-span-12 xl:col-span-9');
 
-            $('#categorySidebar > div > div').removeClass('min-h-[900px]');
+            $('#categorySidebar > div > div').removeClass('min-h-[750px]');
             // $('#categorySidebar > div').addClass('h-full');
         }, 100);
     });
@@ -83,6 +83,7 @@ $(document).ready(() => {
         $('input, select').removeClass('border-red-500');
         $('.colorBox').removeClass('border border-red-500');
         $('.colorBox').css('background-color', '#14548d');
+        $('.colorInput').val('#14548d');
         $('.colorBox').spectrum({
             color: "#14548d",
             showPalette: true,
@@ -201,7 +202,7 @@ $(document).ready(() => {
     // Optional: hide picker when clicking outside
     $(document).on('click', function(e) {
         if (!$(e.target).closest('.colorBox, .sp-container').length) {
-        $('.colorBox').spectrum('hide');
+            $('.colorBox').spectrum('hide');
         }
     });
 
@@ -279,12 +280,13 @@ $(document).ready(() => {
     $(document).on('click', '.editCategoryBtn', function(e) {
         e.stopPropagation();
 
+        $('#editCategoryForm')[0].reset();
         $('.input-error-text').remove();
         $('input').removeClass('border-red-500');
         $('.colorBox').removeClass('border border-red-500');
 
         const categoryId = $(this).data('id');
-        console.log(categoryId);
+        console.log("ssss", categoryId);
 
         $.ajax({
             headers: {
@@ -303,6 +305,7 @@ $(document).ready(() => {
 
                 if (category) {
                     $('input[name="nameEditCategory"]').val(category.categoryName);
+                    $('#submitEditCategoryBtn').data('id', category.id);
                     // $('#name').val(category.categoryName);
                     $('.colorInput').val(category.color);
                     $('.colorBox').css('background-color', category.color);
@@ -346,7 +349,7 @@ $(document).ready(() => {
                     });
                 }
 
-                $('#submitEditCategoryBtn').attr('data-id', category.id);
+                // $('#submitEditCategoryBtn').attr('data-id', category.id);
             },
             error: function (xhr) {
                 console.error(`Error fetching category name:`, xhr);
@@ -404,7 +407,6 @@ $(document).ready(() => {
         deleteCategory(actionUrl, categoryId);
     });
     // $('#deletedCategoryBtn')
-
     // const data = getEventsCases();
     // renderEventCases(data);
 });
@@ -551,12 +553,21 @@ function getUsers(callback) {
             console.log('Users response:', response);
             let users = response.users || [];
             const authUserId = response.auth_user_id;
+            const assignedUserIds = response.assigned_user_ids || [];
 
             const authUser = users.find(user => user.id === authUserId);
 
             // If permission is "user", only show their own data
-            if (authUser?.userPermission === 'user') {
-                users = [authUser];
+            if (authUser?.userPermission === 'user' || authUser?.userPermission === 'admin') { // added new authUser?.userPermission === 'admin'
+                users = users.filter(user =>
+                    user.id === authUserId || assignedUserIds.includes(user.id)
+                );
+
+                const authUserIndex = users.findIndex(user => user.id === authUserId);
+                if (authUserIndex > -1) {
+                    const [authUserData] = users.splice(authUserIndex, 1);
+                    users.unshift(authUserData);
+                }
             } else {
                 // Move auth user to top of list
                 const authUserIndex = users.findIndex(user => user.id === authUserId);

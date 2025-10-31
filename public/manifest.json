@@ -1,0 +1,50 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-Ci_529Od.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/css/calendar.css": {
+    "file": "assets/calendar-3jCOT5mj.css",
+    "src": "resources/css/calendar.css",
+    "isEntry": true,
+    "names": [
+      "calendar.css"
+    ]
+  },
+  "resources/css/category.css": {
+    "file": "assets/category-BriVyZ-J.css",
+    "src": "resources/css/category.css",
+    "isEntry": true,
+    "names": [
+      "category.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-p9ct721F.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/calendar.js": {
+    "file": "assets/calendar-Dz_s0vk2.js",
+    "name": "calendar",
+    "src": "resources/js/calendar.js",
+    "isEntry": true
+  },
+  "resources/js/category.js": {
+    "file": "assets/category-C1xcc8vB.js",
+    "name": "category",
+    "src": "resources/js/category.js",
+    "isEntry": true
+  },
+  "resources/js/courtCases.js": {
+    "file": "assets/courtCases-37WisMqv.js",
+    "name": "courtCases",
+    "src": "resources/js/courtCases.js",
+    "isEntry": true
+  }
+}

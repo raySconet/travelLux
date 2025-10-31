@@ -1798,6 +1798,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         for (let i = 0; i < 7; i++) {
             const currentDate = new Date(startOfWeek);
             currentDate.setDate(startOfWeek.getDate() + i);
+            const isoDate = toLocalDateString(currentDate);
 
             const dayClass = daysOfWeek[currentDate.getDay()];
             const dayNameCapitalized = dayClass.charAt(0).toUpperCase() + dayClass.slice(1);
@@ -1810,6 +1811,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
             const eventsToShow = eventsForDay.slice(0, maxEventsToShowUser1);
 
             const cell = $(`#weeklyViewTable .${dayClass}`);
+            cell.attr('data-date', isoDate);
 
             if (eventsToShow.length) {
                 eventsToShow.forEach(event => {

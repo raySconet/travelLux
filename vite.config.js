@@ -12,6 +12,7 @@ export default defineConfig({
                'resources/js/calendar.js',
                'resources/js/category.js',
                'resources/js/courtCases.js',
+               'resources/js/permissions.js',
       ],
       refresh: true,
     }),

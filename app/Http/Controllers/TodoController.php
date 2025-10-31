@@ -9,30 +9,31 @@ use Illuminate\Validation\ValidationException;
 
 class TodoController extends Controller
 {
-    public function index($caseId)
-    {
-        $sections = TodoSection::with(['Categorie:id,color'])
-                    ->where('caseId', $caseId)->get();
+    // public function index($caseId)
+    // {
+    //     $sections = Todo::with(['Categorie:id,color'])
+    //                 ->where('caseId', $caseId)->get();
 
-        return response()->json([
-            'success' => true,
-            'sections' => $sections
-        ]);
-    }
+    //     return response()->json([
+    //         'success' => true,
+    //         'sections' => $sections
+    //     ]);
+    // }
 
     public function store(Request $request) {
         try {
             $request->validate([
-                'todoSectionTitle' => 'nullable|string|max:255',
-                'sectionDescription' => 'nullable|string',
-                'todoSectionCategory' => 'nullable|integer',
+                'todoTitle' => 'nullable|string|max:255',
+                'todoDescription' => 'nullable|string',
+                'todoDate' => '',
             ]);
+            $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y', $request->input('todoDate'));
 
-            $section = TodoSection::create([
-                'title' => $request->todoSectionTitle ?? null,
-                'description' => $request->sectionDescription ?? null,
-                'categoryId' => $request->todoSectionCategory ?? null,
-                'caseId' => '1',
+            $section = Todo::create([
+                'title' => $request->todoTitle ?? null,
+                'description' => $request->todoDescription ?? null,
+                'completeDate' => $fromDateCarbon->format('Y-m-d') ?? null,
+                'sectionId' => $request->sectionId,
             ]);
 
              return response()->json([
@@ -51,11 +52,12 @@ class TodoController extends Controller
         }
     }
 
+
     //  public function show($id)
     // {
-    //     $user = User::find($id);
+    //     $Todo = Todo::find($id);
 
-    //     if (!$user) {
+    //     if (!$Todo) {
     //         return response()->json([
     //             'status' => 'error',
     //             'message' => 'User not found.',
@@ -67,5 +69,20 @@ class TodoController extends Controller
     //         'user' => $user,
     //     ]);
     // }
+
+
+    public function toggleComplete(Request $request)
+    {
+        $todo = Todo::findOrFail($request->id);
+
+        // Toggle completed value (0 -> 1 or 1 -> 0)
+        $todo->toDoStatus = $todo->toDoStatus === 'pending' ? 'completed' : 'pending';
+        $todo->save();
+
+        return response()->json([
+            'success' => true,
+            'completed' => $todo->completed,
+        ]);
+    }
 }
 ?>

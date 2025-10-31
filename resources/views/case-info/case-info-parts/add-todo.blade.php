@@ -1,21 +1,22 @@
-<form method="POST" action="{{ route('todos.store') }}" class="space-y-6" id="addManageSectionForm">
+<form method="POST" action="{{ route('todos.store') }}" class="space-y-6" id="addTodoForm">
     @csrf
 
     <div class="grid grid-cols-12 gap-4">
         <div class="col-span-12 sm:col-span-6">
             <x-input-label
-                for="todoTitle"
-                :value="__('Title')"
-                class="mb-1"
+            for="todoTitle"
+            :value="__('Title')"
+            class="mb-1"
             />
+            <input type="hidden" name="sectionId" id="sectionId" value="">
             <x-text-input
-                id="todoSectionTitle"
-                name="todoSectionTitle"
+                id="todoTitle"
+                name="todoTitle"
                 type="text"
                 class="block w-full"
-                :value="old('todoSectionTitle')"
+                :value="old('todoTitle')"
                 required
-                autocomplete="todoSectionTitle"
+                autocomplete="todoTitle"
             />
 
             <div id="errorCategoryName" class="text-sm text-red-600 space-y-1 "></div>
@@ -31,7 +32,6 @@
                 name="todoDate"
                 type="text"
                 class="datetimepicker text-start"
-                {{-- class="datetimepicker w-full border border-gray-300 rounded-md shadow-sm focus:outline-none" --}}
                 :value="old('todoDate')"
                 placeholder="Select date"
                 required
@@ -39,7 +39,7 @@
 
             <div id="errorCategoryName" class="text-sm text-red-600 space-y-1 "></div>
         </div>
-         <div class="col-span-12 sm:col-span-12">
+        <div class="col-span-12 sm:col-span-12">
             <x-input-label
                 for="todoDescription"
                 :value="__('Description')"
@@ -54,7 +54,6 @@
                 required
                 autocomplete="todoDescription"
             />
-
             <div id="errorCategoryName" class="text-sm text-red-600 space-y-1 "></div>
         </div>
 

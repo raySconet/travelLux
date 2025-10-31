@@ -6,7 +6,6 @@
         <b>9/2/2025</b>
     </p>
 
-
     <div  class=" mt-1 text-red-800">
         <div class="grid grid-cols-1 2xl:grid-cols-12 gap-4 w-full">
             <div class="2xl:col-span-1 flex flex-col ">
@@ -19,6 +18,7 @@
             </div>
         </div>
     </div>
+
     <div  class=" mt-1 text-red-800">
         <div class="grid grid-cols-1 2xl:grid-cols-12 gap-4 w-full">
             <div class="2xl:col-span-1 flex flex-col ">
@@ -31,6 +31,7 @@
             </div>
         </div>
     </div>
+
     <div  class=" mt-1 text-red-800">
         <div class="grid grid-cols-1 2xl:grid-cols-12 gap-4 w-full">
             <div class="2xl:col-span-1 flex flex-col ">
@@ -43,6 +44,7 @@
             </div>
         </div>
     </div>
+
      <div class=" mt-3 text-green-800">
         <p class="mt-1 text-md  ">
             <b>FS note :</b> Revecore lien (HCA) for Ingrid $50,695.77 [Adj. to $2,500.00]
@@ -54,7 +56,5 @@
             <b>Case note: </b>Norma used United Healthcare for all hosp/surgery treatment
         </p>
     </div>
-
-
 
 </section>

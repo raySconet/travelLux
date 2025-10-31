@@ -11,7 +11,11 @@ class SectionController extends Controller
 {
     public function index($caseId)
     {
-        $sections = TodoSection::with(['Categorie:id,color'])
+        $sections = TodoSection::with(['Categorie:id,color',
+                                        'todos' => function ($query) {
+                                            $query->orderBy('id', 'asc');
+                                        }
+                                    ])
                     ->where('caseId', $caseId)
                     ->orderBy('id', 'asc')
                     ->get();
@@ -53,21 +57,78 @@ class SectionController extends Controller
         }
     }
 
-    //  public function show($id)
-    // {
-    //     $user = User::find($id);
+    public function show($id)
+    {
+        try {
+            $section = TodoSection::with([
+                'Categorie:id,color',
+                'todos' => function ($query) {
+                    $query->orderBy('id', 'asc');
+                }
+            ])->find($id);
 
-    //     if (!$user) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'User not found.',
-    //         ], 404);
-    //     }
+            if (!$section) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Section not found.',
+                ], 404);
+            }
 
-    //     return response()->json([
-    //         'status' => 'success',
-    //         'user' => $user,
-    //     ]);
-    // }
+            return response()->json([
+                'success' => true,
+                'section' => $section,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'todoSectionTitle' => 'nullable|string|max:255',
+                'sectionDescription' => 'nullable|string',
+                'todoSectionCategory' => 'nullable|integer',
+            ]);
+
+            $section = TodoSection::find($id);
+
+            if (!$section) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Section not found.',
+                ], 404);
+            }
+
+            $section->update([
+                'title' => $request->todoSectionTitle ?? null,
+                'description' => $request->sectionDescription ?? null,
+                'categoryId' => $request->todoSectionCategory ?? null,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Section updated successfully!',
+                'section' => $section,
+            ]);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
 ?>

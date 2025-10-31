@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Models\CourtCase;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\TodoController;
 use App\Http\Middleware\RoleMiddleware;
 
 Route::get('/', function () {
@@ -94,8 +95,12 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/sections/store', [SectionController::class, 'store'])->name('sections.store');
     Route::get('/cases/{caseId}/sections', [SectionController::class, 'index'])->name('sections.index');
+    Route::get('sections/show/{id}', [SectionController::class, 'show']);
+    Route::post('sections/update/{id}', [SectionController::class, 'update'])->name('sections.update');;
 
-    Route::post('/todos/store', [todo::class, 'store'])->name('todos.store');
+    Route::post('/todos/store', [TodoController::class, 'store'])->name('todos.store');
+    // routes/web.php
+    Route::post('/todos/toggle-complete', [TodoController::class, 'toggleComplete'])->name('todos.toggleComplete');
 
 });
 

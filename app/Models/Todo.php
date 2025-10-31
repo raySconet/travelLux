@@ -13,12 +13,12 @@ class Todo extends Model
         'description',
         'completeDate',
         'toDoStatus',
-        'case_id',
+        'sectionId',
     ];
 
     // Each todo belongs to one section
     public function section()
     {
-        return $this->belongsTo(TodoSection::class);
+        return $this->belongsTo(TodoSection::class, 'sectionId', 'id');
     }
 }

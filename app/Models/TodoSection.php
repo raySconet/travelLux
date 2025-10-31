@@ -19,7 +19,7 @@ class TodoSection extends Model
 
     public function todos()
     {
-        return $this->hasMany(Todo::class);
+        return $this->hasMany(Todo::class, 'sectionId', 'id');
     }
 
     public static function boot()

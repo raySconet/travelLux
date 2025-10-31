@@ -115,7 +115,7 @@
     @include('case-info.case-info-parts.add-todo')
 
     <x-slot name="footer">
-        <x-primary-btn class="ml-auto" id="submitTodoBtn">
+        <x-primary-btn class="ml-auto" dataId="" id="submitTodoBtn">
             {{ __('Save Section') }}
         </x-primary-btn>
     </x-slot>

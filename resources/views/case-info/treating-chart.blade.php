@@ -3,9 +3,9 @@
         {{ __('Treating Chart') }}
     </h2>
 
-    <div class="treatingAppendDuplicates">
-        <div class= "grid grid-cols-1 2xl:grid-cols-14 gap-2 w-full text-orange-600" id="treatingToDuplicate">
-            <x-case-components.col class="2xl:col-span-14 text-xl text-orange-600 text-center">
+    <div class="treatingAppendDuplicates"  >
+        <div class= "grid grid-cols-1 2xl:grid-cols-14 gap-2 w-full text-orange-600 treatingToDuplicate" data-client="1" >
+            <x-case-components.col class="2xl:col-span-14 text-xl treatingName text-orange-600 text-center">
                 <p> Norma Treating Chart </p>
             </x-case-components.col>
 

@@ -76,12 +76,20 @@ class TodoController extends Controller
         $todo = Todo::findOrFail($request->id);
 
         // Toggle completed value (0 -> 1 or 1 -> 0)
-        $todo->toDoStatus = $todo->toDoStatus === 'pending' ? 'completed' : 'pending';
+        $statusFlow = [
+            'pending' => 'toBeDone',
+            'toBeDone' => 'completed',
+            'completed' => 'completed',
+        ];
+        $todo->toDoStatus = $statusFlow[$todo->toDoStatus] ?? 'pending';
+        if ($todo->toDoStatus === 'completed') {
+            $todo->completeDate = now();
+        }
         $todo->save();
 
         return response()->json([
             'success' => true,
-            'completed' => $todo->completed,
+            'completed' => $todo->toDoStatus,
         ]);
     }
 }

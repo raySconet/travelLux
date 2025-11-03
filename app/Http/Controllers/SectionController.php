@@ -20,9 +20,24 @@ class SectionController extends Controller
                     ->orderBy('id', 'asc')
                     ->get();
 
+                     // Optionally separate today's + completed todos
+        $todays = [];
+        $completed = [];
+
+        foreach ($sections as $section) {
+            foreach ($section->todos as $todo) {
+                if ($todo->toDoStatus === 'toBeDone') {
+                    $todays[] = $todo;
+                } elseif ($todo->toDoStatus === 'completed') {
+                    $completed[] = $todo;
+                }
+            }
+        }
         return response()->json([
             'success' => true,
-            'sections' => $sections
+            'sections' => $sections,
+            'todays' => $todays,
+            'completed' => $completed,
         ]);
     }
 

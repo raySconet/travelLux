@@ -434,20 +434,13 @@ $(document).ready(() => {
             success: function (response) {
                 if (response.success) {
                     // Toggle appearance
-                    if (response.completed) {
-                        button
-                            .text('Undo')
-                            .removeClass('bg-green-600')
-                            .addClass('bg-gray-500')
-                            .data('completed', 1);
+                    if (response.completed == "pending") {
+                        button.removeClass('completeButton').addClass('incompleteButton');
                     } else {
-                        button
-                            .text('Complete')
-                            .removeClass('bg-gray-500')
-                            .addClass('bg-green-600')
-                            .data('completed', 0);
+                        button.removeClass('incompleteButton').addClass('completeButton');
                     }
                 }
+                getSectionsAndTodos();
             }
         });
     });
@@ -482,36 +475,41 @@ function getSectionsAndTodos() {
                 `;
                 sections.forEach(section => {
                     html += `<div class="  mt-3 "  style="color: ${section.categorie.color}">`;
-                    html += ` <h2  class="text-lg   text-center"  dataId="${section.id}" >${section.title} <i class="fa-regular editTodoSection fa-pen-to-square"  title ="Edit Section" style="margin-left:10px; cursor:pointer;"></i> <i class="fa-solid addNewToDo fa-notes-medical" title ="Add new todo" style="margin-left:10px; cursor:pointer;"></i></h2>`;
+                    html += `<h2  class="text-lg text-center" dataId="${section.id}" >${section.title}
+                                <i class="fa-regular editTodoSection fa-pen-to-square"  title ="Edit Section" style="margin-left:10px; cursor:pointer;"></i>
+                                <i class="fa-solid addNewToDo fa-notes-medical" title ="Add new todo" style="margin-left:10px; cursor:pointer;"></i>
+                            </h2>`;
                     html += `<p class="mb-1 text-md  ">${section.description}</p>`;
 
                     // Todos inside this section
                     if (section.todos && section.todos.length > 0) {
                         section.todos.forEach(todo => {
+                             // Only show todos that are still in the section (not today/completed)
+                            if (todo.toDoStatus !== 'toBeDone' && todo.toDoStatus !== 'completed') {
+                                html += `<div  class=" mt-1" >
+                                            <div class="grid grid-cols-1 2xl:grid-cols-12 gap-4 w-full">
+                                        `;
 
-                            html += `<div  class=" mt-1" >
-                                        <div class="grid grid-cols-1 2xl:grid-cols-12 gap-4 w-full">
-                                    `;
-
-                            html += `
-                                            <div class="2xl:col-span-1 flex flex-col ">
-                                               <button title="Mark task as complete" data-id="${todo.id}" class="completeButton buttonClickForComplete">
-                                                    <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
-                                                </button>`;
-                            html += `       </div>
-                                            <div class="2xl:col-span-11 flex flex-col ">`;
-                                                if (todo.title != null && todo.title != 'NULL' && todo.title != '') {
-                            html += `
-                                                <div class="2xl:col-span-12 flex flex-col ">
-                                                    <p>${todo.title}</p>
+                                html += `
+                                                <div class="2xl:col-span-1 flex flex-col ">
+                                                    <button title="Mark task as complete" data-id="${todo.id}" class="incompleteButton buttonClickForComplete">
+                                                        <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
+                                                    </button>`;
+                                html += `       </div>
+                                                <div class="2xl:col-span-11 flex flex-col ">`;
+                                                    if (todo.title != null && todo.title != 'NULL' && todo.title != '') {
+                                html += `
+                                                    <div class="2xl:col-span-12 flex flex-col ">
+                                                        <p>${todo.title}</p>
+                                                    </div>
+                                        `;
+                                                    }
+                                html += `
+                                                    <p style="color:#a22323 !important;">${todo.description}</p>
                                                 </div>
-                                    `;
-                                            }
-                            html += `
-                                                <p style="color:#a22323 !important;">${todo.description}</p>
                                             </div>
-                                        </div>
-                                    </div>`;
+                                        </div>`;
+                            }
                         });
 
 
@@ -523,7 +521,63 @@ function getSectionsAndTodos() {
                     html += `</div>`;
 
                 });
+
                 $('#displayTodosHere').html(html);
+
+                // 2️⃣ Display Today’s Tasks
+                let todayHtml = '';
+                if (response.todays.length > 0) {
+                    response.todays.forEach(todo => {
+                        todayHtml += `
+                                    <div  class=" mt-1" >
+                                        <div class="grid grid-cols-1 2xl:grid-cols-12 gap-4 w-full">
+                                            <div class="2xl:col-span-1 flex flex-col ">
+                                                <button title="Mark task as complete" data-id="${todo.id}" class="incompleteButton buttonClickForComplete">
+                                                    <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
+                                                </button>
+                                            </div>
+                                            <div class="2xl:col-span-11 flex flex-col ">
+                                                <p style="color:#a22323 !important;" >${todo.title ?? ''}</p>
+                                                <p style="color:#a22323 !important;" class="text-sm ">${todo.description ?? ''}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                        `;
+                    });
+                } else {
+                    todayHtml = `<p class="text-sm text-gray-400">No tasks for today</p>`;
+                }
+                $('#displayTodayTodosHere').html(todayHtml);
+
+                // 3️⃣ Display Completed Tasks
+                let completedHtml = '';
+                if (response.completed.length > 0) {
+                    response.completed.forEach(todo => {
+                        completedHtml += `
+                                    <div  class=" mt-1" >
+                                      <p><b>${formatDateMDY(todo.completeDate)}</b></p>
+                                        <div class="grid grid-cols-1 2xl:grid-cols-12 gap-4 w-full">
+                                            <div class="2xl:col-span-1 flex flex-col ">
+                                                <button title="Mark task as complete" data-id="${todo.id}" class="completeButton ">
+                                                    <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
+                                                </button>
+                                            </div>
+                                            <div class="2xl:col-span-11 flex flex-col ">`;
+                                                if (todo.title != null && todo.title != 'NULL' && todo.title != '') {
+
+                                        completedHtml += ` <p class="font-semibold"> ${todo.title ?? ''}</p> `;
+                                                }
+                                        completedHtml += `
+                                                <p style="color:#a22323 !important;">${todo.description}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                        `;
+                    });
+                } else {
+                    completedHtml = `<p class="text-sm text-gray-400">No completed tasks</p>`;
+                }
+                $('#displayDoneTodosHere').html(completedHtml);
             }
         },
         error: function(xhr) {
@@ -566,4 +620,12 @@ function drawCategories() {
             }
         }
     });
+}
+function formatDateMDY(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1; // 0-indexed
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
 }

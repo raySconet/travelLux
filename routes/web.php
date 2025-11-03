@@ -96,10 +96,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/sections/store', [SectionController::class, 'store'])->name('sections.store');
     Route::get('/cases/{caseId}/sections', [SectionController::class, 'index'])->name('sections.index');
     Route::get('sections/show/{id}', [SectionController::class, 'show']);
-    Route::post('sections/update/{id}', [SectionController::class, 'update'])->name('sections.update');;
+    Route::post('sections/update/{id}', [SectionController::class, 'update'])->name('sections.update');
 
     Route::post('/todos/store', [TodoController::class, 'store'])->name('todos.store');
-    // routes/web.php
     Route::post('/todos/toggle-complete', [TodoController::class, 'toggleComplete'])->name('todos.toggleComplete');
 
 });

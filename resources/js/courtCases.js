@@ -342,7 +342,20 @@ $(document).ready(() => {
                 // $('#successModal').removeClass('hidden');
             },
             error: function (xhr) {
-                console.error('Error:', xhr.responseText);
+                if (xhr.status === 422) {
+                    const errors = xhr.responseJSON.errors;
+                    // clear previous highlights
+                    $('input, select, textarea').removeClass('border-red-500');
+
+                    $.each(errors, function (key, messages) {
+                        const field = $(`[name="${key}"]`);
+                        field.addClass('border-red-500'); // Tailwind red border
+                        // optional: add a small error message
+                        if (field.next('.error-text').length === 0) {
+                            field.after(`<span class="error-text text-red-600 text-sm">${messages[0]}</span>`);
+                        }
+                    });
+                }
             },
             complete: function () {
             }

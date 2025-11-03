@@ -46,13 +46,13 @@ class SectionController extends Controller
             $request->validate([
                 'todoSectionTitle' => 'nullable|string|max:255',
                 'sectionDescription' => 'nullable|string',
-                'todoSectionCategory' => 'required|integer',
+                'todoSectionCategory' => 'required|integer|not_in:-1',
             ]);
 
             $section = TodoSection::create([
                 'title' => $request->todoSectionTitle ?? null,
                 'description' => $request->sectionDescription ?? null,
-                'categoryId' => $request->todoSectionCategory ?? null,
+                'categoryId' => $request->todoSectionCategory ,
                 'caseId' => '1',
             ]);
 
@@ -109,7 +109,7 @@ class SectionController extends Controller
             $request->validate([
                 'todoSectionTitle' => 'nullable|string|max:255',
                 'sectionDescription' => 'nullable|string',
-                'todoSectionCategory' => 'required|integer',
+                'todoSectionCategory' => 'required|integer|not_in:-1',
             ]);
 
             $section = TodoSection::find($id);
@@ -122,9 +122,9 @@ class SectionController extends Controller
             }
 
             $section->update([
-                'title' => $request->todoSectionTitle ?? null,
-                'description' => $request->sectionDescription ?? null,
-                'categoryId' => $request->todoSectionCategory ?? null,
+                'title' => $request->todoSectionTitle ?? NULL,
+                'description' => $request->sectionDescription ?? NULL,
+                'categoryId' => $request->todoSectionCategory,
             ]);
 
             return response()->json([

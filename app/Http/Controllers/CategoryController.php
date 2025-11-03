@@ -297,6 +297,13 @@ class CategoryController extends Controller
             }
         }
 
+        // added
+        foreach ($categoryIndex as &$category) {
+            usort($category['items'], function ($a, $b) {
+                return strtotime($b['from']) <=> strtotime($a['from']);
+            });
+        }
+
         // return response()->json(collect($categoryIndex)->values());
         return response()->json([
             'categories' => collect($categoryIndex)->values(),

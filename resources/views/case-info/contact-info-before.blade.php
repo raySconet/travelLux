@@ -96,17 +96,6 @@
                         <x-text-input  name="threeClaim" type="text" class="mt-1 placeholder:text-yellow-600 text-center"  placeholder="Claim #" :value="old('name')"  required autofocus autocomplete="threeClaim" />
                         <x-input-error class="mt-2" :messages="$errors->get('name')" />
                     </x-case-components.col>
-                    {{-- <x-case-components.col class="2xl:col-span-2">
-                        <x-input-label for="DOB" :value="__('DOB')" />
-                        <x-text-input  name="DOB" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="DOB" />
-                        <x-input-error class="mt-2" :messages="$errors->get('name')" />
-                    </x-case-components.col>
-
-                    <x-case-components.col class="2xl:col-span-2">
-                        <x-input-label for="SS#" :value="__('SS#')" />
-                        <x-text-input  name="SS#" type="text" class="mt-1 " :value="old('name')"  required autofocus autocomplete="SS#" />
-                        <x-input-error class="mt-2" :messages="$errors->get('name')" />
-                    </x-case-components.col> --}}
 
                     <x-case-components.col class="2xl:col-span-1 items-center  ">
                         <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonFor3p" style="margin-top:4px; width:22px; height:22px;">

@@ -4,14 +4,14 @@
         {{ __('Contact Info') }}
     </h2>
 
-    <x-case-components.grid class="2xl:grid-cols-12">
+    <x-case-components.grid class="2xl:grid-cols-12 gap-x-2">
         {{--Client Section  --}}
         <x-case-components.col class="2xl:col-span-3 ">
             <p  class="mb-1 text-md  font-bold text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
                 {{ __("Client") }}
             </p>
-            <div class="appendDuplicates items-center justify-center h-full  grid">
-                <x-case-components.grid class="2xl:grid-cols-12  items-center justify-center" id="clientToDuplicate"  data-client="1">
+            <div class="appendDuplicates  grid ">
+                <x-case-components.grid class="2xl:grid-cols-12 " id="clientToDuplicate"  data-client="1">
                     <x-case-components.col class="2xl:col-span-12">
                         {{-- <x-input-label for="name" :value="__('Name')" /> --}}
                         <x-text-input  name="name" type="text" placeholder="Name" class="mt-1 clientNameInput placeholder:text-yellow-600 text-center"  :value="old('name')"  required autofocus autocomplete="name" />
@@ -64,8 +64,8 @@
             <p class="   text-md  font-bold text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
                 {{ __("3P") }}
             </p>
-            <div class="appendDuplicatesFor3p items-center justify-center h-full  grid" >
-                <x-case-components.grid class="2xl:grid-cols-12   items-center justify-center" id="clientToDuplicate">
+            <div class="appendDuplicatesFor3p    grid" >
+                <x-case-components.grid class="2xl:grid-cols-12   " id="clientToDuplicate">
                     <x-case-components.col class="2xl:col-span-12 hidden">
                         {{-- <x-input-label for="name" :value="__('Name')" /> --}}
                         <x-text-input  name="threePName" type="text" class="mt-1 placeholder:text-yellow-600 text-center"  placeholder="Insurance Co. Name" :value="old('threePName')"  required autofocus autocomplete="threePName" />
@@ -119,8 +119,8 @@
             <p class="mb-1 text-md  font-bold  text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
                 {{ __("1P") }}
             </p>
-           <div class="appendDuplicatesFor1p  items-center  justify-center h-full  grid gap-0 space-y-0">
-                <x-case-components.grid  class="2xl:grid-cols-12  items-center justify-center gap-0 space-y-0" id="clientToDuplicate">
+           <div class="appendDuplicatesFor1p    grid gap-0 space-y-0">
+                <x-case-components.grid  class="2xl:grid-cols-12   gap-0 space-y-0" id="clientToDuplicate">
                     <x-case-components.col class="2xl:col-span-12 hidden">
                         <x-text-input  name="onePName"  placeholder="Insurance Co. Name"  type="text" class="mt-1 placeholder:text-yellow-600 text-center"  :value="old('name')"  required autofocus autocomplete="onePName" />
                         <x-input-error class="mt-2" :messages="$errors->get('name')" />
@@ -183,8 +183,8 @@
             <p class="mb-1 text-md font-bold  text-yellow-600 text-center border border-[#CCC] p-0.5 bg-[#eaf1ffd4]">
                 {{ __("Defense Counsel") }}
             </p>
-            <div class="appendDuplicatesForDefense   items-center justify-center h-full grid">
-                <x-case-components.grid   class="2xl:grid-cols-12 items-center justify-center" id="clientToDuplicate">
+            <div class="appendDuplicatesForDefense  grid">
+                <x-case-components.grid   class="2xl:grid-cols-12 " id="clientToDuplicate">
 
                     <x-case-components.col class="2xl:col-span-12 hidden">
                         {{-- <x-input-label for="name" :value="__('Name')" /> --}}

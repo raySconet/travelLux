@@ -46,7 +46,7 @@ class SectionController extends Controller
             $request->validate([
                 'todoSectionTitle' => 'nullable|string|max:255',
                 'sectionDescription' => 'nullable|string',
-                'todoSectionCategory' => 'nullable|integer',
+                'todoSectionCategory' => 'required|integer',
             ]);
 
             $section = TodoSection::create([
@@ -109,7 +109,7 @@ class SectionController extends Controller
             $request->validate([
                 'todoSectionTitle' => 'nullable|string|max:255',
                 'sectionDescription' => 'nullable|string',
-                'todoSectionCategory' => 'nullable|integer',
+                'todoSectionCategory' => 'required|integer',
             ]);
 
             $section = TodoSection::find($id);

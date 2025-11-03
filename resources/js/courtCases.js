@@ -477,7 +477,7 @@ function getSectionsAndTodos() {
                     html += `<div class="  mt-3 "  style="color: ${section.categorie.color}">`;
                     html += `<h2  class="text-lg text-center" dataId="${section.id}" >${section.title}
                                 <i class="fa-regular editTodoSection fa-pen-to-square"  title ="Edit Section" style="margin-left:10px; cursor:pointer;"></i>
-                                <i class="fa-solid addNewToDo fa-notes-medical" title ="Add new todo" style="margin-left:10px; cursor:pointer;"></i>
+                                <i class="fa-solid addNewToDo fa-notes-medical" title ="Add New todo" style="margin-left:10px; cursor:pointer;"></i>
                             </h2>`;
                     html += `<p class="mb-1 text-md  ">${section.description}</p>`;
 

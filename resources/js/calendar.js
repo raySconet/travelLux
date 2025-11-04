@@ -559,11 +559,16 @@ console.log('checkedOrder before limit check:', checkedOrder);
     });
 
     // Optional: Close when clicking outside modal content
-    $('#addEventCaseModal').on('click', function(e) {
-        if ($(e.target).is('#addEventCaseModal')) {
+    $(document).on('click', '.modal', function (e) {
+        if ($(e.target).is(this)) {
             $(this).addClass('hidden');
         }
     });
+    // $('#addEventCaseModal').on('click', function(e) {
+    //     if ($(e.target).is('#addEventCaseModal')) {
+    //         $(this).addClass('hidden');
+    //     }
+    // });
 
     $('#fromDate').on('change', function () {
         const fromPicker = $(this)[0]._flatpickr;
@@ -674,6 +679,11 @@ console.log('checkedOrder before limit check:', checkedOrder);
                 $('#modalSuccessContent').html(response.message);
                 $('#successModal').removeClass('hidden');
                 refreshCalendar();
+
+                // Hide all modals after 2 seconds (success)
+                setTimeout(() => {
+                    $('#successModal').addClass("hidden");
+                }, 2000);
             },
             error: function (xhr) {
                 if (xhr.status) {
@@ -2932,6 +2942,11 @@ function submitEditEventCase(actionUrl, method) {
             $('#modalSuccessContent').html(response.message);
             $('#successModal').removeClass('hidden');
             refreshCalendar();
+
+            // Hide all modals after 2 seconds (success)
+            setTimeout(() => {
+                $('#successModal').addClass("hidden");
+            }, 2000);
         },
         error: function (xhr) {
             if (xhr.status === 422 && xhr.responseJSON?.errors) {
@@ -2962,11 +2977,19 @@ function submitEditEventCase(actionUrl, method) {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
                 $('#addEventCaseModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             } else {
                 // Fallback error message
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
                 $('#addEventCaseModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             }
         },
         complete: function () {
@@ -3008,6 +3031,11 @@ function deleteEditEventCase(actionUrl, method) {
             $('#modalSuccessContent').html(response.message);
             $('#successModal').removeClass('hidden');
             refreshCalendar();
+
+            // Hide all modals after 2 seconds (success)
+            setTimeout(() => {
+                $('#successModal').addClass("hidden");
+            }, 2000);
         },
         error: function (xhr) {
             if (xhr.status === 422 && xhr.responseJSON?.errors) {
@@ -3038,11 +3066,21 @@ function deleteEditEventCase(actionUrl, method) {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
                 $('#deleteConfirmModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             } else {
                 // Fallback error message
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
                 $('#deleteConfirmModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             }
         },
         complete: function () {
@@ -3098,14 +3136,26 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess, n
             if (xhr.status === 403 && xhr.responseJSON?.error) {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
                 $('#errorModal').removeClass('hidden');
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             } else if (xhr.status === 422 && xhr.responseJSON?.error) {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
                 $('#errorModal').removeClass('hidden');
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             } else {
                 // Fallback error message
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
                 $('#editCategoryModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             }
         }
     });

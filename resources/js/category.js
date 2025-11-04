@@ -147,11 +147,16 @@ $(document).ready(() => {
     });
 
     // Optional: Close when clicking outside modal content
-    $('#addCategoryModal, #errorModal, #successModal, #editCategoryModal, #deleteCategoryConfirmModal').on('click', function(e) {
+    $(document).on('click', '.modal', function (e) {
         if ($(e.target).is(this)) {
             $(this).addClass('hidden');
         }
     });
+    // $('#addCategoryModal, #errorModal, #successModal, #editCategoryModal, #deleteCategoryConfirmModal').on('click', function(e) {
+    //     if ($(e.target).is(this)) {
+    //         $(this).addClass('hidden');
+    //     }
+    // });
 
     // Initialize Spectrum on the square (div)
     $('.colorBox').css('background-color', '#14548d');
@@ -232,6 +237,11 @@ $(document).ready(() => {
                 getEventsCases(function(categories, permissions) {
                     renderEventCases(categories, permissions);
                 });
+
+                // Hide all modals after 2 seconds (success)
+                setTimeout(() => {
+                    $('#successModal').addClass("hidden");
+                }, 2000);
             },
             error: function (xhr) {
                 if (xhr.status === 422) {
@@ -269,6 +279,11 @@ $(document).ready(() => {
                 } else {
                     $('#modalErrorContent').html('An unexpected error occurred. Please try again.');
                     $('#errorModal').removeClass('hidden');
+
+                    // Hide all modals after 3 seconds (error)
+                    setTimeout(() => {
+                        $('#errorModal').addClass("hidden");
+                    }, 3000);
                 }
             },
             complete: function () {
@@ -435,6 +450,11 @@ function getEventsCases(callback) {
             const errorMsg = xhr.responseJSON?.error || 'Error loading data';
             $('#modalErrorContent').text(errorMsg);
             $('#errorModal').removeClass('hidden');
+
+            // Hide all modals after 3 seconds (error)
+            setTimeout(() => {
+                $('#errorModal').addClass("hidden");
+            }, 3000);
         }
     });
 }
@@ -696,6 +716,11 @@ function submitEditCategory(actionUrl) {
             getEventsCases(function(categories, permissions) {
                 renderEventCases(categories, permissions);
             });
+
+            // Hide all modals after 2 seconds (success)
+            setTimeout(() => {
+                $('#successModal').addClass("hidden");
+            }, 2000);
         },
         error: function (xhr) {
             if (xhr.status === 422 && xhr.responseJSON?.errors) {
@@ -725,11 +750,21 @@ function submitEditCategory(actionUrl) {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
                 $('#editCategoryModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             } else {
                 // Fallback error message
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
                 $('#editCategoryModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             }
         },
         complete: function () {
@@ -773,6 +808,11 @@ function deleteCategory(actionUrl, categoryId) {
             getEventsCases(function(categories, permissions) {
                 renderEventCases(categories, permissions);
             });
+
+            // Hide all modals after 2 seconds (success)
+            setTimeout(() => {
+                $('#successModal').addClass("hidden");
+            }, 2000);
         },
         error: function (xhr) {
             let jsonResponse = xhr.responseJSON;
@@ -798,14 +838,29 @@ function deleteCategory(actionUrl, categoryId) {
                 // Show backend message returned on other error statuses (like 404 or your custom logic)
                 $('#modalErrorContent').html(jsonResponse.message);
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             } else if (xhr.responseJSON?.error) {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
                 $('#editCategoryModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             } else {
                 // Generic fallback
                 $('#modalErrorContent').html("An error occurred while deleting the category.");
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             }
         },
         complete: function () {

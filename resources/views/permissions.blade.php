@@ -81,7 +81,7 @@
         </x-slot>
     </x-general-modal>
 
-    <x-general-modal id="addUserModal" class="hidden m-auto max-w-xl">
+    <x-general-modal id="addUserModal" class="hidden">
         <x-slot name="header">
             <div class="grid grid-cols-[auto_1fr] items-center gap-2">
                 <i class="fa-solid fa-user-plus shadow-lg fa-xl primary-color" style="color: #14548d;"></i>
@@ -148,7 +148,7 @@
         </x-slot>
     </x-general-modal>
 
-    <x-general-modal id="editUserModal" class="hidden m-auto max-w-xl">
+    <x-general-modal id="editUserModal" class="hidden">
         <x-slot name="header">
             <div class="grid grid-cols-[auto_1fr] items-center gap-2">
                 <i class="fa-solid fa-user-plus shadow-lg fa-xl primary-color" style="color: #14548d;"></i>
@@ -215,7 +215,7 @@
         </x-slot>
     </x-general-modal>
 
-    <x-general-modal id="assignViewAccessModal" class="hidden m-auto max-w-xl">
+    <x-general-modal id="assignViewAccessModal" class="hidden">
         <x-slot name="header">
             <div class="grid grid-cols-[auto_1fr] items-center gap-2">
                 <i class="fa-solid fa-users shadow-lg fa-xl primary-color" style="color: #14548d;"></i>

@@ -2272,8 +2272,14 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
 
         // Fill days from next month if any cells left
         let nextMonthDay = 1;
+        const nextMonth = month === 11 ? 0 : month + 1; // added
+        const nextYear = month === 11 ? year + 1 : year; // added
+
         while (tdIndex < $tds.length) {
-            $tds.eq(tdIndex).html('<span class="font-bold text-gray-500">' + nextMonthDay + '</span>'); // muted color for next month days
+            const nextDateStr = `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(nextMonthDay).padStart(2, '0')}`; // added
+            $tds.eq(tdIndex)
+                .attr('data-date', nextDateStr) // added
+                .html('<span class="font-bold text-gray-500">' + nextMonthDay + '</span>'); // muted color for next month days
             nextMonthDay++;
             tdIndex++;
         }

@@ -45,26 +45,6 @@ $(document).ready(() => {
         highlightSelectedSidebarDay();
     });
 
-    // $(document).on('click', '.view-all-events-btn', function() {
-    //     const dateStr = $(this).data('date');
-    //     const [year, month, day] = dateStr.split('-').map(Number);
-    //     const selected = new Date(year, month - 1, day);
-    //     window.selectedDate = selected;
-
-    //     currentMonth = selected.getMonth();
-    //     currentYear = selected.getFullYear();
-
-    //     updateCalendarHeader(currentMonth, currentYear);
-    //     buildMonthlyCalendarDays(currentMonth, currentYear);
-    //     buildDailyView(day, currentMonth, currentYear);
-    //     updateDailyHeader(selected);
-
-    //     $('#selectedDayWeekMonthOption').text('Day View');
-    //     showView('Daily');
-
-    //     highlightSelectedSidebarDay();
-    // });
-
     $(document).on('click', '#closeDailyModalBtn, #closeDailyEventsModal', function () {
         $('#dailyEventsModal').addClass('hidden');
     });
@@ -339,9 +319,9 @@ $(document).ready(() => {
         if (!window.selectedDate) window.selectedDate = new Date();
         if (!window.viewedWeekDate) window.viewedWeekDate = new Date(window.selectedDate.getTime());
 
-        console.log('Current viewedWeekDate111111:', window.viewedWeekDate);
+        // console.log('Current viewedWeekDate111111:', window.viewedWeekDate);
         window.viewedWeekDate.setDate(window.viewedWeekDate.getDate() + 7);
-        console.log('Current viewedWeekDate222222:', window.viewedWeekDate);
+        // console.log('Current viewedWeekDate222222:', window.viewedWeekDate);
 
         const newMonth = window.viewedWeekDate.getMonth();
         const newYear = window.viewedWeekDate.getFullYear();
@@ -402,12 +382,12 @@ $(document).ready(() => {
         const view = viewMap[id];
         const el = $('#viewOptionsDropdown [popover]')[0];
         el?.hidePopover?.();
-        console.log('Current viewedWeekDate33333333:', window.viewedWeekDate);
+        // console.log('Current viewedWeekDate33333333:', window.viewedWeekDate);
         showView(view);
     });
 
     $(document).on('change', 'input[type="checkbox"][data-user-id]', function () {
-        console.log(checkedOrder);
+        // console.log(checkedOrder);
         const view = $('#selectedDayWeekMonthOption').text().trim();
         const allCheckboxes = $('input[type="checkbox"][data-user-id]');
         const $this = $(this);
@@ -460,15 +440,15 @@ $(document).ready(() => {
                     $(`input[type="checkbox"][data-user-id="${id}"]`).is(':checked')
                 );
 
-console.log('checkedOrder before limit check:', checkedOrder);
+// console.log('checkedOrder before limit check:', checkedOrder);
                 if (checkedOrder.length > 2 && (dataType === 'events' || dataType === 'eventsNCases')) {
                     // Too many checked, remove the first one (oldest)
                     const firstCheckedId = checkedOrder.shift();
                     $(`input[type="checkbox"][data-user-id="${firstCheckedId}"]`).prop('checked', false);
                     // console.log(`Unchecking oldest user ID: ${firstCheckedId}`);
                 }
-                console.log('checkedOrder after limit check:', checkedOrder);
-                console.log('DataType:', dataType);
+                // console.log('checkedOrder after limit check:', checkedOrder);
+                // console.log('DataType:', dataType);
             } else {
                 // Checkbox is being unchecked manually
                 // checkedOrder = checkedOrder.filter(id => id !== userId);
@@ -875,7 +855,7 @@ console.log('checkedOrder before limit check:', checkedOrder);
     $(document).on('dblclick', '.eventCase', function () {
         const eventId = $(this).data('id');
         const eventType = $(this).data('type');
-        console.log('Clicked event/case ID:', eventId, 'Type:', eventType);
+        // console.log('Clicked event/case ID:', eventId, 'Type:', eventType);
     });
 
     $(document).on('click', '.iconPencil', function (event) {
@@ -961,8 +941,8 @@ console.log('checkedOrder before limit check:', checkedOrder);
                 $('#deleteEditEventCaseBtn').remove();
             }
 
-            console.log("heloo",data);
-            const eventCaseEditData = data.eventCase; console.log(eventCaseEditData);
+            // console.log("heloo",data);
+            const eventCaseEditData = data.eventCase;
             const users = data.users || [];
             const categories = data.categories || [];
 
@@ -1020,18 +1000,18 @@ console.log('checkedOrder before limit check:', checkedOrder);
             $('#addEventCaseModal').removeClass('hidden');
         }, eventCaseId, eventType);
 
-        console.log('Clicked case ID:', eventCaseId);
+        // console.log('Clicked case ID:', eventCaseId);
     });
 
     $(document).on('click', '#clearEditEventCaseBtn', function() {
         const eventType = $('input[name="type"]:checked').val();
-        console.log('hiiiiii', eventType);
+        // console.log('hiiiiii', eventType);
         $('#addEventCaseModal form')[0].reset();
         if (eventType === 'case') {
             $('input[name="type"][value="case"]').prop('checked', true);
             updateUserSelectMode();
         }
-        console.log($('#addEventCaseForm').serialize());
+        // console.log($('#addEventCaseForm').serialize());
     });
 
     $(document).on('click', '#deleteEditEventCaseBtn', function() {
@@ -1103,8 +1083,8 @@ console.log('checkedOrder before limit check:', checkedOrder);
         itemType = draggedEvent.data('type');
         sourceUserId = draggedEvent.closest('table').find('thead tr th div[data-user-id]').first().data('user-id');
 
-        console.log('Dragging event:', itemId);
-        console.log('From user:', sourceUserId);
+        // console.log('Dragging event:', itemId);
+        // console.log('From user:', sourceUserId);
 
         e.originalEvent.dataTransfer.effectAllowed = 'move';
     });
@@ -1129,7 +1109,7 @@ console.log('checkedOrder before limit check:', checkedOrder);
         let $dropTarget = $(this);
         const targetTableId = $dropTarget.closest('table').attr('id');
 
-        console.log('Dropping on table:', targetTableId, 'Element:', $dropTarget);
+        // console.log('Dropping on table:', targetTableId, 'Element:', $dropTarget);
 
         if (targetTableId === 'dailyViewTable' || targetTableId === 'dailyViewTableHidden') {
             // Redirect drop always to the first td of the respective daily table
@@ -1167,7 +1147,7 @@ console.log('checkedOrder before limit check:', checkedOrder);
 
         const targetTd = $dropTarget.closest('td');
         const targetDate = targetTd.attr('data-date') || null;
-        console.log('dateeeeee', targetDate);
+        // console.log('dateeeeee', targetDate);
         // console.log('targetTd', targetTd.get(0));
         // console.log('targetTd.data("date")', targetTd.data('date'));
         // console.log('targetTd.attr("data-date")', targetTd.attr('data-date'));
@@ -1196,9 +1176,9 @@ console.log('checkedOrder before limit check:', checkedOrder);
 
         targetUserId = $dropTarget.closest('table').find('thead tr th div[data-user-id]').first().data('user-id');
 
-        console.log('Dropped item:', itemId, '| Type:', itemType);
-        console.log('From user:', sourceUserId);
-        console.log('To user:', targetUserId);
+        // console.log('Dropped item:', itemId, '| Type:', itemType);
+        // console.log('From user:', sourceUserId);
+        // console.log('To user:', targetUserId);
 
         updateItemUser(itemType, itemId, sourceUserId, targetUserId, function() {
             if (groupId) {
@@ -1412,7 +1392,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
 
     // const allUsers = getEventsForDate(); // Get full list of users with events
     const allUsers = eventsData;
-    console.log('allUsers::', allUsers.length);
+    // console.log('allUsers::', allUsers.length);
     let maxEventsToShowUser1 = 28;
 
     // DOM references
@@ -1923,7 +1903,7 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         if (userRow1) {
             const eventsForDate = userRow1.events.filter(e => e.date === isoDate);
             const eventsToShow = eventsForDate.slice(0, maxEventsToShowUser1);
-            console.log('Date:', isoDate, 'Events:', eventsForDate);
+            // console.log('Date:', isoDate, 'Events:', eventsForDate);
             // const eventsForDate = userRow1.events.filter(e => e.date === isoDate);
             if (eventsToShow.length) {
                 eventsToShow.forEach(event => {
@@ -2301,7 +2281,7 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
     });
 
     let visibleTrCount = $('#sidebarCalendarBody tr:visible').length;
-    console.log('Visible Rows (actual weeks shown):', visibleTrCount);
+    // console.log('Visible Rows (actual weeks shown):', visibleTrCount);
 
     if (visibleTrCount === 6) {
         $('#viewWeekly').removeClass('gap-px');
@@ -2427,7 +2407,7 @@ function updateUserSelectMode() {
     const $selectedUsers = $('#selectedUsers');
     const $userFieldsContainer = $('#userFieldsContainer');
 
-    console.log("Selected type:", selectedType);
+    // console.log("Selected type:", selectedType);
 
     // for (let i = 0; i < $userSelect[0].options.length; i++) {
     //     const option = $userSelect[0].options[i];
@@ -2619,7 +2599,7 @@ function getData(ids, callback, eventCaseId = null, eventTypeId = null) {
     // console.log("Visible range:", visibleStartDate, "to", visibleEndDate);
     const startDateStr = visibleStartDate.toISOString().split('T')[0];
     const endDateStr = visibleEndDate.toISOString().split('T')[0];
-    console.log("Fetching data from", startDateStr, "to", endDateStr);
+    // console.log("Fetching data from", startDateStr, "to", endDateStr);
     let endpoint = dataType === 'cases' ? '/getCases' : dataType === 'events' ? '/getEvents' : '/getEventsNCases';
 
     if(eventCaseId && eventTypeId) {
@@ -2644,7 +2624,7 @@ function getData(ids, callback, eventCaseId = null, eventTypeId = null) {
         data: requestData,
         dataType: 'json',
         success: function (response) {
-            console.log('hey', response);
+            // console.log('hey', response);
             // if(ids) {
             //     eventsData = getEventsForDate(response || []); // You may rename this for generality
             // } else {
@@ -2723,7 +2703,7 @@ function refreshCalendar() {
         });
 
         checkedOrder = [frstUserId, scndUserId];
-        console.log('Adjusted checkedOrder for Week/Day View with events:', frstUserId, scndUserId);
+        // console.log('Adjusted checkedOrder for Week/Day View with events:', frstUserId, scndUserId);
     }
 
     getData(checkedOrder, () => {
@@ -2943,7 +2923,7 @@ function submitEditEventCase(actionUrl, method) {
     $('.input-error-text').remove();
     $('input, select').removeClass('border-red-500');
 
-    console.log($form.serialize());
+    // console.log($form.serialize());
     $.ajax({
         type: method,
         url: actionUrl,
@@ -3174,42 +3154,3 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess, n
     });
 }
 
-
-
-
-
-// function getEventsNcases() {
-//     const month = $('#currentDateData').attr('data-month');
-//     const year = $('#currentDateData').attr('data-year');
-//     // console.log("Fetching data for:", ids, month, year);
-//     const viewMode = $('#selectedDayWeekMonthOption').text().trim();
-//     const { visibleStartDate, visibleEndDate } = getMonthWeekBoundaries(year, month);
-//     // console.log("Visible range:", visibleStartDate, "to", visibleEndDate);
-//     const startDateStr = visibleStartDate.toISOString().split('T')[0];
-//     const endDateStr = visibleEndDate.toISOString().split('T')[0];
-
-//     const endpoint = '/getEventsNCases';
-
-//     const requestData = {
-//         user_id: 2,
-//         start_date: startDateStr,
-//         end_date: endDateStr,
-//         view_mode: viewMode
-//     };
-
-//     $.ajax({
-//         headers: {
-//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//         },
-//         type: 'POST',
-//         url: endpoint,
-//         data: requestData,
-//         dataType: 'json',
-//         success: function (response) {
-//             console.log(response);
-//         },
-//         error: function (xhr) {
-
-//         }
-//     });
-// }

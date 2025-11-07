@@ -17,10 +17,11 @@ class SectionController extends Controller
                                         }
                                     ])
                     ->where('caseId', $caseId)
+                    ->where('isDeleted', '!=', 1)
                     ->orderBy('id', 'asc')
                     ->get();
 
-                     // Optionally separate today's + completed todos
+        // Optionally separate today's + completed todos
         $todays = [];
         $completed = [];
 
@@ -33,6 +34,21 @@ class SectionController extends Controller
                 }
             }
         }
+
+        // Sort completed todos
+        usort($completed, function ($a, $b) {
+            // First compare by date (descending: latest date first)
+            $dateComparison = strcmp(
+                date('Y-m-d', strtotime($b->completeDate)),
+                date('Y-m-d', strtotime($a->completeDate))
+            );
+            // If same date → sort by ID ascending
+            if ($dateComparison === 0) {
+                return $a->id <=> $b->id;
+            }
+
+            return $dateComparison;
+        });
         return response()->json([
             'success' => true,
             'sections' => $sections,
@@ -145,5 +161,30 @@ class SectionController extends Controller
             ], 500);
         }
     }
-}
+
+
+    public function softDelete($id)
+    {
+        try {
+            $section = TodoSection::find($id);
+
+            if (!$section) {
+                return response()->json(['success' => false, 'message' => 'Section not found.']);
+            }
+
+            $section->isDeleted = 1;
+            $section->save();
+
+            return response()->json(['success' => true, 'message' => 'Section marked as deleted.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+} // last one
 ?>

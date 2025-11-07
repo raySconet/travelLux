@@ -221,3 +221,7 @@ select option {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+.deleteTodoBtn{
+    cursor: pointer;
+}

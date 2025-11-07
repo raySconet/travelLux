@@ -307,8 +307,9 @@ $(document).ready(() => {
 
     // manage modal section
     $('#openManageSectionModal').on('click', function() {
+        $("#todoSectionTitle").val("");
+        $("#sectionDescription").val("");
         drawCategories();
-        $("#addManageSectionForm")[0].reset();
         $('#addManageSectionsModal').removeClass('hidden');
     });
 
@@ -335,7 +336,8 @@ $(document).ready(() => {
             data: $('#addManageSectionForm').serialize(),
             dataType: 'json',
             success: function (response) {
-                $("#addManageSectionForm")[0].reset();
+                $("#todoSectionTitle").val("");
+                $("#sectionDescription").val("");
                 $('#addManageSectionsModal').addClass('hidden');
                 getSectionsAndTodos();
                 // $('#modalSuccessContent').html(response.message);
@@ -459,6 +461,269 @@ $(document).ready(() => {
     });
 
 
+    let todoIdToDelete = null;
+    // manage modal section
+    $(document).on('click', '.deleteTodoBtn', function () {
+        todoIdToDelete = $(this).data('id');
+        $('#deleteTodoModal').removeClass('hidden');
+    });
+
+    $('#closedeleteTodoModal , #dontDeleteTodoBtn').on('click', function() {
+        $('#deleteTodoModal').addClass('hidden');
+    });
+
+    $(document).on('click', '#deleteTodoBtn', function () {
+        const todoId = todoIdToDelete;
+        $.ajax({
+            url: `/todos/${todoId}`,
+            type: 'DELETE',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content') // CSRF protection
+            },
+            success: function (response) {
+                if (response.success) {
+                    // remove from DOM smoothly
+                    getSectionsAndTodos();
+                    $('#deleteTodoModal').addClass('hidden');
+                } else {
+                    alert('Failed to delete todo.');
+                }
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                alert('Something went wrong while deleting the todo.');
+            }
+        });
+    });
+
+    let sectionIdToDelete = null;
+    // manage modal section
+    $(document).on('click', '.deleteSectionBtn', function () {
+        sectionIdToDelete = $(this).data('id');
+        $('#deleteSectionModal').removeClass('hidden');
+    });
+
+    $('#closeDeleteSectionModal , #dontDeleteSectionBtn').on('click', function() {
+        $('#deleteSectionModal').addClass('hidden');
+    });
+
+    $(document).on('click', '#deleteSectionBtn', function () {
+        const sectionId = sectionIdToDelete;
+        $.ajax({
+            url: `/sections/soft-delete/${sectionId}`,
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content') // CSRF protection
+            },
+            success: function (response) {
+                if (response.success) {
+                    // remove from DOM smoothly
+                    getSectionsAndTodos();
+                    $('#deleteSectionModal').addClass('hidden');
+                } else {
+                    alert('Failed to delete todo.');
+                }
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                alert('Something went wrong while deleting the section.');
+            }
+        });
+    });
+
+    $(document).on('click', '.arrowToDo', function () {
+        const todoId = $(this).data('id');
+
+        $.ajax({
+            url: `/todos/update-status/${todoId}`,
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.success) {
+                    getSectionsAndTodos(); // refresh the UI
+                } else {
+                    alert('Failed to update todo status.');
+                }
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                alert('Something went wrong while updating the todo.');
+            }
+        });
+    });
+
+
+
+
+    $(document).on('click', '#submitMainForm', function () {
+        // Create empty arrays for each type
+        let clients = [];
+        let firstParties = [];
+        let thirdParties = [];
+        let defenseCounsels = [];
+        let deposits = [];
+        let expenses = [];
+        let advances = [];
+
+        // Loop over each section (use your actual selectors or classes)
+        $('.clientToDuplicate').each(function () {
+            let clientId = $(this).data('client');
+            let clientData = {
+                name: $(this).find('.clientNameInput').val(),
+                email: $(this).find('.clientEmail').val(),
+                address: $(this).find('.clientAddress').val(),
+                dob: $(this).find('.clientDob').val(),
+                tel: $(this).find('.clientTel').val(),
+                ssn: $(this).find('.clientSsn').val(),
+                affidavit_charts: [],
+                treating_charts: [],
+                negotiation_charts: []
+            };
+
+            $(`.affidavitToDuplicate[data-client="${clientId}"]`).each(function () {
+                clientData.affidavit_charts.push({
+                    providerName: $(this).find('.providerName').val(),
+                    dateOrdered: $(this).find('.dateOrdered').val(),
+                    dateReceivedMr: $(this).find('.dateReceivedMr').val(),
+                    dateReceivedBr: $(this).find('.dateReceivedBr').val(),
+                    affidavitDateServed: $(this).find('.affidavitDateServed').val(),
+                    affidavitNoticeFiled: $(this).find('.affidavitNoticeFiled').val(),
+                    mriAndResults: $(this).find('.mriAndResults').val(),
+                    controverted: $(this).find('.controverted').val(),
+                });
+            });
+
+            $(`.treatingToDuplicate[data-client="${clientId}"]`).each(function () {
+                clientData.treating_charts.push({
+                    ems: $(this).find('.ems').val(),
+                    hospital: $(this).find('.hospital').val(),
+                    chiropractor: $(this).find('.chiropractor').val(),
+                    pcpmd: $(this).find('.pcpmd').val(),
+                    mriAndResults: $(this).find('.mriAndResults').val(),
+                    painManagement: $(this).find('.painManagement').val(),
+                    orthoOrSurgery: $(this).find('.orthoOrSurgery').val(),
+                });
+            });
+
+            $(`.negotiationToDuplicate[data-client="${clientId}"]`).each(function () {
+                // Create a negotiation chart object
+                let negotiationChart = {
+                    medsTotal: $(this).find('.medsTotal').val(),
+                    medsPviTotal: $(this).find('.medsPviTotal').val(),
+                    negotiationLastOffer: $(this).find('.negotiationLastOffer').val(),
+                    negotiationLastOfferDate: $(this).find('.negotiationLastOfferDate').val(),
+                    negotiationLastDemand: $(this).find('.negotiationLastDemand').val(),
+                    negotiationLastDemandDate: $(this).find('.negotiationLastDemandDate').val(),
+                    physicalPainMentalAnguishText: $(this).find('.physicalPainMentalAnguishText').val(),
+                    negotiation_subs: [] // 👈 array for the sub negotiations
+                };
+
+                // 🔁 Loop through each sub negotiation row INSIDE this negotiation
+                $(this).find('.negotiationSubToDuplicate').each(function () {
+                    negotiationChart.negotiation_subs.push({
+                        negotiationNameBottom: $(this).find('.negotiationNameBottom').val(),
+                        negotiationDateBottom: $(this).find('.negotiationDateBottom').val(),
+                        negotiationAmountBottom: $(this).find('.negotiationAmountBottom').val(),
+                    });
+                });
+                // Push the negotiation chart (with subs inside) into client data
+                clientData.negotiation_charts.push(negotiationChart);
+
+            });
+
+
+            clients.push(clientData);
+        });
+
+        $('.firstPToDuplicate').each(function () {
+            firstParties.push({
+                name: $(this).find('.onePName').val(),
+                claim: $(this).find('.onePClaim').val(),
+                adjuster: $(this).find('.onePBiAdjuster').val(),
+                tel: $(this).find('.onePTel').val(),
+                fax: $(this).find('.onePFax').val(),
+                email: $(this).find('.onePEmail').val(),
+            });
+        });
+
+        $('.threePToDuplicate').each(function () {
+            thirdParties.push({
+                name: $(this).find('.threePName').val(),
+                claim: $(this).find('.threeClaim').val(),
+                adjuster: $(this).find('.threePBiAdjuster').val(),
+                tel: $(this).find('.threePTel').val(),
+                email: $(this).find('.threeEmail').val(),
+                fax: $(this).find('.threeFax').val(),
+            });
+        });
+
+        $('.defenseToDuplicate').each(function () {
+            defenseCounsels.push({
+                name: $(this).find('.defenseCounselName').val(),
+                attorney: $(this).find('.defenseCounselAttorney').val(),
+                address: $(this).find('.defenseCounselAddress').val(),
+                tel: $(this).find('.defenseCounselTel').val(),
+                email: $(this).find('.defenseCounselEmail').val(),
+                fax: $(this).find('.defenseCounselFax').val(),
+            });
+        });
+
+        $('.DepositsToDuplicate').each(function () {
+            deposits.push({
+                amount: $(this).find('.depositsAmount').val(),
+                name: $(this).find('.deposistsName').val(),
+                date: $(this).find('.depositsDate').val(),
+                checkNumber: $(this).find('.depositsCheckNumber').val(),
+            });
+        });
+
+
+        $('.expensesToDuplicate').each(function () {
+            expenses.push({
+                name: $(this).find('.expensesName').val(),
+                amount: $(this).find('.expensesPrice').val(),
+                date: $(this).find('.expensesDate').val(),
+                checkNumber: $(this).find('.expensesCheck').val(),
+            });
+        });
+
+        $('.advancesToDuplicate').each(function () {
+            advances.push({
+                amount: $(this).find('.advancesAmount').val(),
+                name: $(this).find('.advancesName').val(),
+                date: $(this).find('.advancesDate').val(),
+                checkNumber: $(this).find('.advancesCheckNumber').val(),
+            });
+        });
+
+        // --- Combine everything
+        let formData = $('#mainForm').serialize(); // base form fields
+        formData += '&clients=' + encodeURIComponent(JSON.stringify(clients));
+        formData += '&first_parties=' + encodeURIComponent(JSON.stringify(firstParties));
+        formData += '&third_parties=' + encodeURIComponent(JSON.stringify(thirdParties));
+        formData += '&defense_counsels=' + encodeURIComponent(JSON.stringify(defenseCounsels));
+        formData += '&expenses=' + encodeURIComponent(JSON.stringify(expenses));
+        formData += '&advances=' + encodeURIComponent(JSON.stringify(advances));
+        formData += '&deposits=' + encodeURIComponent(JSON.stringify(deposits));
+        let  caseId = 1;
+        $.ajax({
+            type: 'POST',
+            url: `/cases/update-case-info/${caseId}`,
+            data: formData,
+            dataType: 'json',
+            success: function (response) {
+                alert('Case updated successfully!');},
+            error: function (xhr) {
+                console.error('Error:', xhr.responseText);
+            },
+            complete: function () {
+            }
+        });
+        return false;
+    });
+
 // ----------------End-----------------//
 })
 
@@ -491,6 +756,8 @@ function getSectionsAndTodos() {
                     html += `<h2  class="text-lg text-center" dataId="${section.id}" >${section.title}
                                 <i class="fa-regular editTodoSection fa-pen-to-square"  title ="Edit Section" style="margin-left:10px; cursor:pointer;"></i>
                                 <i class="fa-solid addNewToDo fa-notes-medical" title ="Add New todo" style="margin-left:10px; cursor:pointer;"></i>
+                                <i class="fa-solid fa-xmark deleteSectionBtn" data-id="${section.id}" title="Delete Section" style="margin-left:10px;cursor:pointer;  vertical-align:top; margin-top:4px"></i>
+
                             </h2>`;
                     html += `<p class="mb-1 text-md  ">${section.description}</p>`;
 
@@ -509,16 +776,17 @@ function getSectionsAndTodos() {
                                                         <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
                                                     </button>`;
                                 html += `       </div>
-                                                <div class="2xl:col-span-11 flex flex-col ">`;
+                                                <div class="2xl:col-span-10 flex flex-col ">`;
                                                     if (todo.title != null && todo.title != 'NULL' && todo.title != '') {
                                 html += `
-                                                    <div class="2xl:col-span-12 flex flex-col ">
                                                         <p>${todo.title}</p>
-                                                    </div>
                                         `;
                                                     }
                                 html += `
                                                     <p style="color:#a22323 !important;">${todo.description}</p>
+                                                </div>
+                                                <div class="2xl:col-span-1 flex flex-col ">
+                                                    <i class="fa-solid fa-xmark deleteTodoBtn" data-id="${todo.id}" title="Delete Todo" style="font-size:16px; color:red; vertical-align:top; margin-top:4px"></i>
                                                 </div>
                                             </div>
                                         </div>`;
@@ -543,7 +811,7 @@ function getSectionsAndTodos() {
                     response.todays.forEach(todo => {
                         todayHtml += `
                                     <div  class=" mt-1" >
-                                        <div class="grid grid-cols-1 2xl:grid-cols-12 gap-4 w-full">
+                                        <div class="grid grid-cols-1 2xl:grid-cols-14 gap-4 w-full">
                                             <div class="2xl:col-span-1 flex flex-col ">
                                                 <button title="Mark task as complete" data-id="${todo.id}" class="incompleteButton buttonClickForComplete">
                                                     <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
@@ -552,6 +820,12 @@ function getSectionsAndTodos() {
                                             <div class="2xl:col-span-11 flex flex-col ">
                                                 <p style="color:#a22323 !important;" >${todo.title ?? ''}</p>
                                                 <p style="color:#a22323 !important;" class="text-sm ">${todo.description ?? ''}</p>
+                                            </div>
+                                            <div class="2xl:col-span-1 flex flex-col">
+                                                <i class="fa-solid fa-arrow-right arrowToDo" data-id="${todo.id}" title="Go to Manage Sections" style="font-size:16px; cursor:pointer; vertical-align:top; margin-top:4px"></i>
+                                            </div>
+                                            <div class="2xl:col-span-1 flex flex-col ">
+                                                <i class="fa-solid fa-xmark deleteTodoBtn" data-id="${todo.id}" title="Delete Todo" style="font-size:16px; color:red; vertical-align:top; margin-top:4px"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -565,27 +839,40 @@ function getSectionsAndTodos() {
                 // 3️⃣ Display Completed Tasks
                 let completedHtml = '';
                 if (response.completed.length > 0) {
-                    response.completed.forEach(todo => {
-                        completedHtml += `
-                                    <div  class=" mt-1" >
-                                      <p><b>${formatDateMDY(todo.completeDate)}</b></p>
-                                        <div class="grid grid-cols-1 2xl:grid-cols-12 gap-4 w-full">
-                                            <div class="2xl:col-span-1 flex flex-col ">
-                                                <button title="Mark task as complete" data-id="${todo.id}" class="completeButton ">
-                                                    <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
-                                                </button>
-                                            </div>
-                                            <div class="2xl:col-span-11 flex flex-col ">`;
-                                                if (todo.title != null && todo.title != 'NULL' && todo.title != '') {
+                    let lastDate = ''; // track the last displayed date
 
-                                        completedHtml += ` <p class="font-semibold"> ${todo.title ?? ''}</p> `;
-                                                }
-                                        completedHtml += `
-                                                <p style="color:#a22323 !important;">${todo.description}</p>
-                                            </div>
+                    response.completed.forEach(todo => {
+                        const formattedDate = formatDateMDY(todo.completeDate);
+
+                        // Only show date if it’s different from the last one
+                        if (formattedDate !== lastDate) {
+                            completedHtml += `<p class="mt-4 mb-1 text-sm text-gray-700 font-bold"><b>${formattedDate}</b></p>`;
+                            lastDate = formattedDate;
+                        }
+                        completedHtml += `
+                                <div class="mt-1">
+                                    <div class="grid grid-cols-1 2xl:grid-cols-14 gap-4 w-full">
+                                        <div class="2xl:col-span-1 flex flex-col">
+                                            <button title="Mark task as complete" data-id="${todo.id}" class="completeButton">
+                                                <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
+                                            </button>
+                                        </div>
+                                        <div class="2xl:col-span-11 flex flex-col">`;
+                                            if (todo.title && todo.title !== 'NULL' && todo.title !== '') {
+                                                completedHtml += `<p class="font-semibold">${todo.title}</p>`;
+                                            }
+                        completedHtml += `
+                                            <p style="color:#a22323 !important;">${todo.description}</p>
+                                        </div>
+                                        <div class="2xl:col-span-1 flex flex-col">
+                                            <i class="fa-solid fa-arrow-up arrowToDo " data-id="${todo.id}" title="Go to Todo" style="font-size:16px; cursor:pointer;  vertical-align:top; margin-top:4px"></i>
+                                        </div>
+                                        <div class="2xl:col-span-1 flex flex-col">
+                                            <i class="fa-solid fa-xmark deleteTodoBtn" data-id="${todo.id}" title="Delete Todo" style="font-size:16px; color:red; vertical-align:top; margin-top:4px"></i>
                                         </div>
                                     </div>
-                        `;
+                                </div>
+                            `;
                     });
                 } else {
                     completedHtml = `<p class="text-sm text-gray-400">No completed tasks</p>`;
@@ -599,13 +886,34 @@ function getSectionsAndTodos() {
     });
 }
 
+//------------------------Functions---------------------//
+function getCaseInfoMainData() {
+
+    let caseId = "1";
+    $.ajax({
+        url: '/cases/' + caseId + '/main-info',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            console.log(response);
+
+            if (response.success) {
+                let caseData = response.case;
+            }
+        },
+        error: function(xhr) {
+            console.error('Error:', xhr.responseText);
+        }
+    });
+}
+
+
 function drawCategories() {
     $.ajax({
         type: 'GET',
         url: "getCategories",
         dataType: 'json',
         success: function (data) {
-            console.log(data)
             // ✅ Process and return list
             const $categorySelect = $('#todoSectionCategory');
             $categorySelect.empty().append('<option value="-1">Select a category</option>');

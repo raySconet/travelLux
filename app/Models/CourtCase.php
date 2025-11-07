@@ -18,9 +18,23 @@ class CourtCase extends Model
         'categoryId',
         'dateFrom',
         'dateTo',
+        'referralChiro',
+        'chiro',
+        'doi',
+        'preExistingInjuries',
+        'facts',
+        'injuries',
+        'policeReport',
+        'photos',
+        'propertyDesctiption',
+        '3pLiability',
+        '3pCoverage',
+        '3pLiabilityLimit',
+        '1pCoverageLimits',
         'isDeleted'
     ];
 
+    // Relationships
     public function todoSection()
     {
         return $this->hasMany(TodoSection::class);
@@ -28,7 +42,9 @@ class CourtCase extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'user_case', 'case_id', 'user_id')->withTimestamps()->wherePivot('isDeleted', 0);
+        return $this->belongsToMany(User::class, 'user_case', 'case_id', 'user_id')
+                    ->withTimestamps()
+                    ->wherePivot('isDeleted', 0);
     }
 
     public function userCases()
@@ -36,13 +52,11 @@ class CourtCase extends Model
         return $this->hasMany(UserCase::class, 'case_id', 'id');
     }
 
-    // Belongs to a category
     public function categorie()
     {
         return $this->belongsTo(Categorie::class, 'categoryId');
     }
 
-    // A case belongs to a case stage
     public function caseStage()
     {
         return $this->belongsTo(CaseStage::class);
@@ -50,19 +64,26 @@ class CourtCase extends Model
 
     public function clients()
     {
-        return $this->hasMany(CaseClient::class, 'court_case_id', 'id');
+        return $this->hasMany(CaseClient::class, 'caseId', 'id');
     }
 
-    public function thirdP()
+    public function firstParties()
     {
-        return $this->hasMany(CaseThirdP::class, 'court_case_id', 'id');
+        return $this->hasMany(CaseFirstP::class, 'caseId', 'id');
     }
-    public function firstP()
+
+    public function thirdParties()
     {
-        return $this->hasMany(CaseFirstP::class, 'court_case_id', 'id');
+        return $this->hasMany(CaseThirdP::class, 'caseId', 'id');
     }
-    public function defenseCouncel()
+
+    public function defenseCounsels()
     {
-        return $this->hasMany(CaseDefenseCounsel::class, 'court_case_id', 'id');
+        return $this->hasMany(CaseDefenseCounsel::class, 'caseId', 'id');
+    }
+
+    public function depositExpensesAdvs()
+    {
+        return $this->hasMany(CaseDepositExpensesAdv::class, 'caseId', 'id');
     }
 }

@@ -7,9 +7,19 @@ use App\Models\CourtCase;
 use App\Models\User;
 use App\Models\UserAssignment;
 use App\Models\UserCase;
+use App\Models\CaseClient;
+use App\Models\CaseThirdP;
+use App\Models\CaseFirstP;
+use App\Models\CaseDefenseCounsel;
+use App\Models\CaseAffidavit;
+use App\Models\CaseTreatingChart;
+use App\Models\CaseDepositExpensesAdv;
+use App\Models\CaseNegotiatingChart;
+
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 class CourtCasesController extends Controller
 {
@@ -493,5 +503,249 @@ class CourtCasesController extends Controller
             'can_create' => $user->canCreateCase(),
         ]);
     }
+
+
+
+
+    public function updateCaseInfo(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            // 1️⃣ Find the existing case
+            $case = CourtCase::findOrFail($id);
+
+            // 2️⃣ Update case main data
+            $case->update([
+                'referralChiro' => $request->referralChiro,
+                'chiro' => $request->chiro,
+                'doi' => $request->doi,
+                'preExistingInjuries' => $request->preExistingInjuries ,
+                'facts' => $request->facts,
+                'injuries' => $request->injuries,
+                'policeReport' => $request->policeReport,
+                'photos' => $request->photos,
+                'propertyDesctiption' => $request->propertyDesctiption,
+                '3pLiability' => $request['3pLiability'],
+                '3pCoverage' => $request['3pCoverage'],
+                '3pLiabilityLimit' => $request['3pLiabilityLimit'],
+                '1pCoverageLimits' => $request['1pCoverageLimits'],
+                // add any other fields from your form
+            ]);
+
+            // Decode JSON arrays sent from JS
+            $clients = json_decode($request->clients, true);
+            $firstParties = json_decode($request->first_parties, true);
+            $thirdParties = json_decode($request->third_parties, true);
+            $defenseCounsels = json_decode($request->defense_counsels, true);
+            $expenses = json_decode($request->expenses, true);
+            $advances = json_decode($request->advances, true);
+            $deposits = json_decode($request->deposits, true);
+
+            // Remove old related records if updating
+            $oldClientIds = CaseClient::where('caseId', $id)->pluck('id');
+            CaseAffidavit::whereIn('case_client_id', $oldClientIds)->delete();
+            CaseNegotiatingChart::whereIn('case_client_id', $oldClientIds)->delete();
+            CaseTreatingChart::whereIn('case_client_id', $oldClientIds)->delete();
+            CaseClient::where('caseId', $id)->delete();
+            CaseFirstP::where('caseId', $id)->delete();
+            CaseThirdP::where('caseId', $id)->delete();
+            CaseDefenseCounsel::where('caseId', $id)->delete();
+            CaseDepositExpensesAdv::where('caseId', $id)->delete();
+
+            // Insert Clients + their Affidavits
+            if (!empty($clients)) {
+                foreach ($clients as $client) {
+                    $newClient = CaseClient::create([
+                        'caseId' => $id,
+                        'client_name' => $client['name'] ?? null,
+                        'client_email' => $client['email'] ?? null,
+                        'client_address' => $client['address'] ?? null,
+                        'client_dob' => $client['dob'] ?? null,
+                        'client_tel' => $client['tel'] ?? null,
+                        'client_ssn' => $client['ssn'] ?? null,
+                    ]);
+
+                    if (!empty($client['affidavit_charts'])) {
+                        foreach ($client['affidavit_charts'] as $affidavit) {
+                            CaseAffidavit::create([
+                                'case_client_id' => $newClient->id,
+                                'providerName' => $affidavit['providerName'] ?? null,
+                                'dateOrdered' => $affidavit['dateOrdered'] ?? null,
+                                'dateReceivedMr' => $affidavit['dateReceivedMr'] ?? null,
+                                'dateReceivedBr' => $affidavit['dateReceivedBr'] ?? null,
+                                'dateServed' => $affidavit['affidavitDateServed'] ?? null,
+                                'noticeFilled' => $affidavit['affidavitNoticeFiled'] ?? null,
+                                'mri_and_results' => $affidavit['mriAndResults'] ?? null,
+                                'controverted' => $affidavit['controverted'] ?? null,
+                            ]);
+                        }
+                    }
+
+                    if (!empty($client['treating_charts'])) {
+                        foreach ($client['treating_charts'] as $treating) {
+                            CaseTreatingChart::create([
+                                'case_client_id' => $newClient->id,
+                                'ems' => $treating['ems'] ?? null,
+                                'hospital' => $treating['hospital'] ?? null,
+                                'chiropractor' => $treating['chiropractor'] ?? null,
+                                'pcpmd' => $treating['pcpmd'] ?? null,
+                                'mriAndResults' => $treating['treatingmriAndResults'] ?? null,
+                                'painManagement' => $treating['painManagement'] ?? null,
+                                'orthoOrSurgery' => $treating['orthoOrSurgery'] ?? null
+                            ]);
+                        }
+                    }
+
+                    if (!empty($client['negotiation_charts'])) {
+                        foreach ($client['negotiation_charts'] as $negotiation) {
+                            $newNegotiation = CaseNegotiatingChart::create([
+                                'case_client_id' => $newClient->id,
+                                'medsTotal' => $negotiation['medsTotal'] ?? null,
+                                'medsPviTotal' => $negotiation['medsPviTotal'] ?? null,
+                                'negotiationLastOffer' => $negotiation['negotiationLastOffer'] ?? null,
+                                'negotiationLastOfferDate' => $negotiation['negotiationLastOfferDate'] ?? null,
+                                'negotiationLastDemand' => $negotiation['negotiationLastDemand'] ?? null,
+                                'negotiationLastDemandDate' => $negotiation['negotiationLastDemandDate'] ?? null,
+                                'physicalPainMentalAnguishText' => $negotiation['physicalPainMentalAnguishText'] ?? null,
+                            ]);
+
+                            if (!empty($negotiation['negotiation_subs'])) {
+                                foreach ($negotiation['negotiation_subs'] as $sub) {
+                                    CaseNegotiatingChart::create([
+                                        'case_client_id' => $newClient->id,
+                                        'negotiationNameBottom' => $sub['negotiationNameBottom'] ?? null,
+                                        'negotiationDateBottom' => $sub['negotiationDateBottom'] ?? null,
+                                        'negotiationAmountBottom' => $sub['negotiationAmountBottom'] ?? null,
+                                    ]);
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            // Insert 1P (First Party)
+            if (!empty($firstParties)) {
+                foreach ($firstParties as $fp) {
+                    CaseFirstP::create([
+                        'caseId' => $id,
+                        'name' => $fp['name'] ?? null,
+                        'claim' => $fp['claim'] ?? null,
+                        'adjuster' => $fp['adjuster'] ?? null,
+                        'tel' => $fp['tel'] ?? null,
+                        'fax' => $fp['fax'] ?? null,
+                        'email' => $fp['email'] ?? null,
+                    ]);
+                }
+            }
+
+            // Insert 3P (Third Party)
+            if (!empty($thirdParties)) {
+                foreach ($thirdParties as $tp) {
+                    CaseThirdP::create([
+                        'caseId' => $id,
+                        'third_party_name' => $tp['name'] ?? null,
+                        'third_party_claim' => $tp['claim'] ?? null,
+                        'third_party_adjuster' => $tp['adjuster'] ?? null,
+                        'third_party_tel' => $tp['tel'] ?? null,
+                        'third_party_fax' => $tp['fax'] ?? null,
+                        'third_party_email' => $tp['email'] ?? null,
+                    ]);
+                }
+            }
+
+            // Insert Defense Counsels
+            if (!empty($defenseCounsels)) {
+                foreach ($defenseCounsels as $dc) {
+                    CaseDefenseCounsel::create([
+                        'caseId' => $id,
+                        'defense_name' => $dc['name'] ?? null,
+                        'defense_attorney' => $dc['attorney'] ?? null,
+                        'defense_address' => $dc['address'] ?? null,
+                        'defense_tel' => $dc['tel'] ?? null,
+                        'defense_fax' => $dc['fax'] ?? null,
+                        'defense_email' => $dc['email'] ?? null,
+                    ]);
+                }
+            }
+
+
+            if (!empty($deposits)) {
+                foreach ($deposits as $dep) {
+                    CaseDepositExpensesAdv::create([
+                        'caseId' => $id,
+                        'depositName' => $dep['name'] ?? null,
+                        'depositPrice' => $dep['amount'] ?? null,
+                        'depositDate' => $dep['date'] ?? null,
+                        'depositCheckNumber' => $dep['checkNumber'] ?? null,
+                    ]);
+                }
+            }
+            if (!empty($advances)) {
+                foreach ($advances as $adv) {
+                    CaseDepositExpensesAdv::create([
+                        'caseId' => $id,
+                        'advancesName' => $adv['name'] ?? null,
+                        'advancesAmount' => $adv['amount'] ?? null,
+                        'advancesDate' => $adv['date'] ?? null,
+                        'advancesCheckNumber' => $adv['checkNumber'] ?? null,
+                    ]);
+                }
+            }
+
+            if (!empty($advances)) {
+                foreach ($advances as $adv) {
+                    CaseDepositExpensesAdv::create([
+                        'caseId' => $id,
+                        'expensesName' => $adv['name'] ?? null,
+                        'expensesPrice' => $adv['amount'] ?? null,
+                        'expensesDate' => $adv['date'] ?? null,
+                        'expensesCheck' => $adv['checkNumber'] ?? null,
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Case updated with related data successfully!',
+            ]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+            ], 500);
+        }
+    }
+
+
+
+    public function mainInfo($id)
+    {
+        $case = CourtCase::with([
+                'clients.affidavits',
+                'clients.treatingChart',
+                'clients.negotiatingCharts',
+                'firstParties',
+                'thirdParties',
+                'defenseCounsels',
+                'depositExpensesAdvs'
+            ])->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'case' => $case
+        ]);
+    }
+
+
+
+
 }
 ?>

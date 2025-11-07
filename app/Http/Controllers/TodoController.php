@@ -92,5 +92,52 @@ class TodoController extends Controller
             'completed' => $todo->toDoStatus,
         ]);
     }
+
+    public function destroy($id)
+    {
+        try {
+            $todo = Todo::findOrFail($id);
+            $todo->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Todo deleted successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete todo.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function updateStatus($id)
+    {
+        try {
+            $todo = Todo::findOrFail($id);
+
+            // Define the flow
+            $statusFlow = [
+                'toBeDone' => 'pending',
+                'completed' => 'toBeDone',
+            ];
+
+            $todo->toDoStatus = $statusFlow[$todo->toDoStatus] ;
+
+            $todo->save();
+
+            return response()->json([
+                'success' => true,
+                'newStatus' => $todo->toDoStatus,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
 ?>

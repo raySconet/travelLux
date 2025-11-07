@@ -97,9 +97,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/cases/{caseId}/sections', [SectionController::class, 'index'])->name('sections.index');
     Route::get('sections/show/{id}', [SectionController::class, 'show']);
     Route::post('sections/update/{id}', [SectionController::class, 'update'])->name('sections.update');
+    Route::post('/sections/soft-delete/{id}', [SectionController::class, 'softDelete']);
 
     Route::post('/todos/store', [TodoController::class, 'store'])->name('todos.store');
     Route::post('/todos/toggle-complete', [TodoController::class, 'toggleComplete'])->name('todos.toggleComplete');
+    Route::delete('/todos/{id}', [TodoController::class, 'destroy'])->name('todos.destroy');
+    Route::post('/todos/update-status/{id}', [TodoController::class, 'updateStatus']);
+
+    Route::post('/cases/update-case-info/{id}', [CourtCasesController::class, 'updateCaseInfo'])->name('cases.updateCaseInfo');
+    Route::get('/cases/{caseId}/main-info', [CourtCasesController::class, 'mainInfo'])->name('cases.mainInfo');
+
 
 });
 

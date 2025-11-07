@@ -11,20 +11,11 @@
             <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
                 <div class="p-3 text-gray-900">
 
-                    <form method="post" action="{{ route('profile.update') }}" class=" ">
+                    <form method="post" id="mainForm" action="#" class=" ">
                         @csrf
                         <div class="flex float-right mt-[-5px] mb-[5px]">
-                            <x-primary-btn class="">{{ __('Save') }}</x-primary-btn>
+                            <x-primary-btn id="submitMainForm" class="">{{ __('Save') }}</x-primary-btn>
 
-                            @if (session('status') === 'profile-updated')
-                                <p
-                                    x-data="{ show: true }"
-                                    x-show="show"
-                                    x-transition
-                                    x-init="setTimeout(() => show = false, 2000)"
-                                    class="text-sm text-gray-600"
-                                >{{ __('Saved.') }}</p>
-                            @endif
                         </div>
                         @include('case-info.contact-info')
                         @include('case-info.case-info')
@@ -118,5 +109,71 @@
         <x-primary-btn class="ml-auto" dataId="" id="submitTodoBtn">
             {{ __('Save Section') }}
         </x-primary-btn>
+    </x-slot>
+</x-general-modal>
+
+
+<x-general-modal id="deleteTodoModal">
+    <x-slot name="header">
+        <div class="grid grid-cols-[auto_1fr] items-center gap-2">
+            <i class="fa-solid fa-trash fa-xl text-red-700" ></i>
+            <h2 class="text-xl font-semibold text-gray-800">
+                {{ __('Delete Todo') }}
+            </h2>
+        </div>
+        <i
+            id="closedeleteTodoModal"
+            class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+            role="button"
+            data-bs-dismiss="modal"
+            aria-label="Close">
+        </i>
+    </x-slot>
+
+    <p class="text-md" >Are you sure you want to Delete this todo?</p>
+
+    <x-slot name="footer">
+        <div class="flex justify-end ">
+            <x-primary-btn class="mr-2" dataId="" id="dontDeleteTodoBtn">
+                {{ __('No') }}
+            </x-primary-btn>
+
+            <x-primary-btn class=" bg-red-700 " dataId="" id="deleteTodoBtn">
+                {{ __('Yes') }}
+            </x-primary-btn>
+        </div>
+    </x-slot>
+</x-general-modal>
+
+
+<x-general-modal id="deleteSectionModal">
+    <x-slot name="header">
+        <div class="grid grid-cols-[auto_1fr] items-center gap-2">
+            <i class="fa-solid fa-trash fa-xl text-red-700" ></i>
+            <h2 class="text-xl font-semibold text-gray-800">
+                {{ __('Delete Section') }}
+            </h2>
+        </div>
+        <i
+            id="closeDeleteSectionModal"
+            class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+            role="button"
+            data-bs-dismiss="modal"
+            aria-label="Close">
+        </i>
+    </x-slot>
+
+    <p class="text-md" >Are you sure you want to Delete this Section?</p>
+
+    <x-slot name="footer">
+        <div class="flex justify-end ">
+            <x-primary-btn class="mr-2" dataId="" id="dontDeleteSectionBtn">
+                {{ __('No') }}
+            </x-primary-btn>
+
+            <x-primary-btn class=" bg-red-700 " dataId="" id="deleteSectionBtn">
+                {{ __('Yes') }}
+            </x-primary-btn>
+        </div>
     </x-slot>
 </x-general-modal>

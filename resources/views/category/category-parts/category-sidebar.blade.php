@@ -1,5 +1,5 @@
 <div class="bg-white sm:rounded-lg relative">
-    <div class="overflow-y-auto px-7">
+    <div class="overflow-y-auto overflow-x-hidden px-7">
         <x-category-components.category-btn id="openDrawer">
                 <i class="fa-solid fa-chevron-right"></i>
         </x-category-components.category-btn>

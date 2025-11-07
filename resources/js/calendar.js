@@ -559,11 +559,16 @@ console.log('checkedOrder before limit check:', checkedOrder);
     });
 
     // Optional: Close when clicking outside modal content
-    $('#addEventCaseModal').on('click', function(e) {
-        if ($(e.target).is('#addEventCaseModal')) {
+    $(document).on('click', '.modal', function (e) {
+        if ($(e.target).is(this)) {
             $(this).addClass('hidden');
         }
     });
+    // $('#addEventCaseModal').on('click', function(e) {
+    //     if ($(e.target).is('#addEventCaseModal')) {
+    //         $(this).addClass('hidden');
+    //     }
+    // });
 
     $('#fromDate').on('change', function () {
         const fromPicker = $(this)[0]._flatpickr;
@@ -674,6 +679,11 @@ console.log('checkedOrder before limit check:', checkedOrder);
                 $('#modalSuccessContent').html(response.message);
                 $('#successModal').removeClass('hidden');
                 refreshCalendar();
+
+                // Hide all modals after 2 seconds (success)
+                setTimeout(() => {
+                    $('#successModal').addClass("hidden");
+                }, 2000);
             },
             error: function (xhr) {
                 if (xhr.status) {
@@ -1156,7 +1166,12 @@ console.log('checkedOrder before limit check:', checkedOrder);
         }
 
         const targetTd = $dropTarget.closest('td');
-        const targetDate = targetTd.data('date') || null;
+        const targetDate = targetTd.attr('data-date') || null;
+        console.log('dateeeeee', targetDate);
+        // console.log('targetTd', targetTd.get(0));
+        // console.log('targetTd.data("date")', targetTd.data('date'));
+        // console.log('targetTd.attr("data-date")', targetTd.attr('data-date'));
+
 
         // Weekly view: Enforce same-date restriction
         // const isWeekly = targetTableId === 'weeklyViewTable' || targetTableId === 'weeklyViewTableHidden';
@@ -1191,6 +1206,7 @@ console.log('checkedOrder before limit check:', checkedOrder);
             } else {
                 draggedEvent.appendTo(appendTarget);
             }
+
             // Cleanup
             draggedEvent = null;
             sourceTable = null;
@@ -1907,10 +1923,11 @@ function buildWeeklyView(inputDay = null, inputMonth = null, inputYear = null) {
         if (userRow1) {
             const eventsForDate = userRow1.events.filter(e => e.date === isoDate);
             const eventsToShow = eventsForDate.slice(0, maxEventsToShowUser1);
+            console.log('Date:', isoDate, 'Events:', eventsForDate);
             // const eventsForDate = userRow1.events.filter(e => e.date === isoDate);
             if (eventsToShow.length) {
                 eventsToShow.forEach(event => {
-                    console.log(event.editable);
+                    // console.log(event.editable);
                     const iconPencil =  event.editable ? `
                         <div class="iconPencil absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                             <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -2262,8 +2279,14 @@ function buildMonthlyCalendarDays(inputMonth = null, inputYear = null) {
 
         // Fill days from next month if any cells left
         let nextMonthDay = 1;
+        const nextMonth = month === 11 ? 0 : month + 1; // added
+        const nextYear = month === 11 ? year + 1 : year; // added
+
         while (tdIndex < $tds.length) {
-            $tds.eq(tdIndex).html('<span class="font-bold text-gray-500">' + nextMonthDay + '</span>'); // muted color for next month days
+            const nextDateStr = `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(nextMonthDay).padStart(2, '0')}`; // added
+            $tds.eq(tdIndex)
+                .attr('data-date', nextDateStr) // added
+                .html('<span class="font-bold text-gray-500">' + nextMonthDay + '</span>'); // muted color for next month days
             nextMonthDay++;
             tdIndex++;
         }
@@ -2596,7 +2619,7 @@ function getData(ids, callback, eventCaseId = null, eventTypeId = null) {
     // console.log("Visible range:", visibleStartDate, "to", visibleEndDate);
     const startDateStr = visibleStartDate.toISOString().split('T')[0];
     const endDateStr = visibleEndDate.toISOString().split('T')[0];
-    // console.log("Fetching data from", startDateStr, "to", endDateStr);
+    console.log("Fetching data from", startDateStr, "to", endDateStr);
     let endpoint = dataType === 'cases' ? '/getCases' : dataType === 'events' ? '/getEvents' : '/getEventsNCases';
 
     if(eventCaseId && eventTypeId) {
@@ -2741,10 +2764,10 @@ function getMonthWeekBoundaries(year, month) {
     const lastOfMonth = new Date(year, month, 0);      // Last day of month
 
     const startOfFirstWeek = new Date(firstOfMonth);
-    startOfFirstWeek.setDate(firstOfMonth.getDate() - firstOfMonth.getDay());
+    startOfFirstWeek.setDate(firstOfMonth.getDate() - firstOfMonth.getDay() + 1); // added +1
 
     const endOfLastWeek = new Date(lastOfMonth);
-    endOfLastWeek.setDate(lastOfMonth.getDate() + (6 - lastOfMonth.getDay()));
+    endOfLastWeek.setDate(lastOfMonth.getDate() + (6 - lastOfMonth.getDay()) + 1); // added +1
 
     return {
         visibleStartDate: startOfFirstWeek,
@@ -2932,6 +2955,11 @@ function submitEditEventCase(actionUrl, method) {
             $('#modalSuccessContent').html(response.message);
             $('#successModal').removeClass('hidden');
             refreshCalendar();
+
+            // Hide all modals after 2 seconds (success)
+            setTimeout(() => {
+                $('#successModal').addClass("hidden");
+            }, 2000);
         },
         error: function (xhr) {
             if (xhr.status === 422 && xhr.responseJSON?.errors) {
@@ -2962,11 +2990,19 @@ function submitEditEventCase(actionUrl, method) {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
                 $('#addEventCaseModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             } else {
                 // Fallback error message
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
                 $('#addEventCaseModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             }
         },
         complete: function () {
@@ -3008,6 +3044,11 @@ function deleteEditEventCase(actionUrl, method) {
             $('#modalSuccessContent').html(response.message);
             $('#successModal').removeClass('hidden');
             refreshCalendar();
+
+            // Hide all modals after 2 seconds (success)
+            setTimeout(() => {
+                $('#successModal').addClass("hidden");
+            }, 2000);
         },
         error: function (xhr) {
             if (xhr.status === 422 && xhr.responseJSON?.errors) {
@@ -3038,11 +3079,21 @@ function deleteEditEventCase(actionUrl, method) {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
                 $('#deleteConfirmModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             } else {
                 // Fallback error message
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
                 $('#deleteConfirmModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             }
         },
         complete: function () {
@@ -3098,14 +3149,26 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess, n
             if (xhr.status === 403 && xhr.responseJSON?.error) {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
                 $('#errorModal').removeClass('hidden');
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             } else if (xhr.status === 422 && xhr.responseJSON?.error) {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${xhr.responseJSON.error}</p>`);
                 $('#errorModal').removeClass('hidden');
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             } else {
                 // Fallback error message
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">An unexpected error occurred.</p>`);
                 $('#editCategoryModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             }
         }
     });

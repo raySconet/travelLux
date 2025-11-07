@@ -5,6 +5,10 @@ $(document).ready(function() {
     $('input[id="searchByName"]').on('keyup', filterUsers);
     filterUsers();
 
+    $('#addUserModal div').removeClass('max-w-2xl').addClass('max-w-xl');
+    $('#assignViewAccessModal div').removeClass('max-w-2xl').addClass('max-w-xl');
+    $('#editUserModal div').removeClass('max-w-2xl').addClass('max-w-xl');
+
     $('#closeErrorModal').on('click', function() {
         $('#errorModal').addClass('hidden');
     });
@@ -39,6 +43,19 @@ $(document).ready(function() {
 
         $form.find('.input-error-text').remove();
         $form.find('.border-red-500').removeClass('border-red-500');
+    });
+
+    $(document).on('click', '.modal', function (e) {
+        if ($(e.target).is(this)) {
+            $(this).addClass('hidden');
+
+            // Check which modal it is and reset the correct form
+            if (this.id === 'addUserModal') {
+                resetUserForm($('#addUserForm'));
+            } else if (this.id === 'editUserModal') {
+                resetUserForm($('#editUserForm'));
+            }
+        }
     });
 
     $(document).on('change', 'input[type=radio][name^="permissions"]', function() {
@@ -93,11 +110,21 @@ $(document).ready(function() {
                 }
                 $('#successModal').removeClass('hidden');
                 changedPermissions = {};
+
+                // Hide all modals after 2 seconds (success)
+                setTimeout(() => {
+                    $('#successModal').addClass("hidden");
+                }, 2000);
             },
             error: function(xhr) {
                 const msg = xhr.responseJSON?.message || 'Something went wrong.';
                 $('#modalErrorContent').html(`<p>${msg}</p>`);
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             },
             complete: function() {
                 // refreshUserRows();
@@ -127,12 +154,22 @@ $(document).ready(function() {
                 // reapplyUserRowStriping();
                 $('#modalSuccessContent').html(response.message);
                 $('#successModal').removeClass('hidden');
+
+                // Hide all modals after 2 seconds (success)
+                setTimeout(() => {
+                    $('#successModal').addClass("hidden");
+                }, 2000);
             },
             error: function(xhr) {
                 const msg = xhr.responseJSON?.message || 'An unexpected error occurred.';
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${msg}</p>`);
                 $('#deleteUserConfirmModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             },
         });
     });
@@ -156,6 +193,11 @@ $(document).ready(function() {
                 refreshUserRows();
                 $('#modalSuccessContent').html('<p class="text-gray-900 text-sm">User added successfully.</p>');
                 $('#successModal').removeClass('hidden');
+
+                // Hide all modals after 2 seconds (success)
+                setTimeout(() => {
+                    $('#successModal').addClass("hidden");
+                }, 2000);
             },
             error: function(xhr) {
                 if (xhr.status === 422 && xhr.responseJSON?.errors) {
@@ -369,6 +411,11 @@ $(document).ready(function() {
                 refreshUserRows();
                 $('#modalSuccessContent').html('<p class="text-gray-900 text-sm">View access assigned successfully.</p>');
                 $('#successModal').removeClass('hidden');
+
+                // Hide all modals after 2 seconds (success)
+                setTimeout(() => {
+                    $('#successModal').addClass("hidden");
+                }, 2000);
             },
             error: function(xhr) {
                 let errorMsg = 'An unexpected error occurred.';
@@ -380,6 +427,11 @@ $(document).ready(function() {
                 $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">${errorMsg}</p>`);
                 $('#assignViewAccessModal').addClass('hidden');
                 $('#errorModal').removeClass('hidden');
+
+                // Hide all modals after 3 seconds (error)
+                setTimeout(() => {
+                    $('#errorModal').addClass("hidden");
+                }, 3000);
             },
             complete: function() {
                 $('#submitAssignViewAccessBtn').removeAttr('data-user-id');
@@ -387,6 +439,12 @@ $(document).ready(function() {
         });
     });
 });
+
+function resetUserForm($form) {
+    $form[0].reset();
+    $form.find('.input-error-text').remove();
+    $form.find('.border-red-500').removeClass('border-red-500');
+}
 
 function reapplyUserRowStriping() {
     $('.user-row:visible').each(function(index) {
@@ -408,6 +466,11 @@ function refreshUserRows() {
         error: function() {
             $('#modalErrorContent').html(`<p class="text-gray-800 text-sm">Failed to refresh user list.</p>`);
             $('#errorModal').removeClass('hidden');
+
+            // Hide all modals after 3 seconds (error)
+            setTimeout(() => {
+                $('#errorModal').addClass("hidden");
+            }, 3000);
         }
     });
 }

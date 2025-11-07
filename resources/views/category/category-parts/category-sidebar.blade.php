@@ -5,7 +5,7 @@
         </x-category-components.category-btn>
 
         <div id="sidebarDrawer"
-            class="absolute top-0 left-0 w-full bg-white z-10 transform transition-transform duration-300 ease-in-out max-h-[900px] overflow-y-auto px-3"> {{-- removed -translate-x-full --}}
+            class="absolute top-0 left-0 w-full bg-white z-10 transform transition-transform duration-300 ease-in-out max-h-[900px] px-3"> {{-- removed -translate-x-full overflow-y-auto --}}
 
             <div class="flex justify-end">
                 <x-category-components.category-btn id="closeDrawer">

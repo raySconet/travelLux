@@ -7,7 +7,7 @@ $(document).ready(() => {
     });
 
     $('#openDrawer').on('click', function () {
-        $('#sidebarDrawer').removeClass('-translate-x-full');
+        $('#sidebarDrawer').removeClass('-translate-x-full left-[-30px]').addClass('left-0');
 
         $('#categoryViewSection')
             .removeClass('grid-cols-1 xl:grid-cols-[100px_1fr]')
@@ -25,7 +25,7 @@ $(document).ready(() => {
     });
 
     $('#closeDrawer').on('click', function () {
-        $('#sidebarDrawer').addClass('-translate-x-full');
+        $('#sidebarDrawer').addClass('-translate-x-full left-[-30px]').removeClass('left-0');
 
         setTimeout(function () {
             $('#categoryViewSection')

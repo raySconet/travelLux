@@ -253,7 +253,7 @@ class EventController extends Controller
             // 'date_to' => $toDateCarbon->format('Y-m-d H:i:s'),
             'date_from' => $fromDate,
             'date_to' => $toDate,
-            'all_day' => $isAllDay ? '1' : '0',
+            'all_day' => $isAllDay ? 1 : 0,
         ]);
 
         return response()->json([

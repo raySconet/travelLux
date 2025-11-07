@@ -605,23 +605,58 @@ $(document).ready(() => {
     });
 
     $('#allDay').on('change', function() {
+        // if ($(this).is(':checked')) {
+        //     flatpickr(".datetimepicker", {
+        //         enableTime: false,
+        //         dateFormat: "m-d-Y",
+        //         defaultDate: new Date(),
+        //     });
+        // } else {
+        //     flatpickr(".datetimepicker", {
+        //         enableTime: true,
+        //         dateFormat: "m-d-Y H:i",
+        //         time_24hr: true,
+        //         defaultDate: new Date(),
+        //     });
+        // }
+        var fpFrom = $('.datetimepicker').eq(0)[0]._flatpickr;
+        var fpTo   = $('.datetimepicker').eq(1)[0]._flatpickr;
+
+        // Current time
+        var now = new Date();
+
         if ($(this).is(':checked')) {
-            flatpickr(".datetimepicker", {
-                enableTime: false,
-                dateFormat: "m-d-Y",
-                defaultDate: new Date(),
-            });
+            // All-day: disable time, keep chosen day
+            if (fpFrom) {
+                fpFrom.set('enableTime', false);
+                fpFrom.set('dateFormat', 'm-d-Y');
+                fpFrom.setDate(fpFrom.selectedDates[0], false);
+            }
+            if (fpTo) {
+                fpTo.set('enableTime', false);
+                fpTo.set('dateFormat', 'm-d-Y');
+                fpTo.setDate(fpTo.selectedDates[0], false);
+            }
         } else {
-            flatpickr(".datetimepicker", {
-                enableTime: true,
-                dateFormat: "m-d-Y H:i",
-                time_24hr: true,
-                defaultDate: new Date(),
-            });
+            // Date + time: enable time, set current time but keep the day
+            if (fpFrom && fpFrom.selectedDates[0]) {
+                var fromDate = new Date(fpFrom.selectedDates[0]);
+                fromDate.setHours(now.getHours(), now.getMinutes());
+                fpFrom.set('enableTime', true);
+                fpFrom.set('dateFormat', 'm-d-Y H:i');
+                fpFrom.set('time_24hr', true);
+                fpFrom.setDate(fromDate, false);
+            }
+            if (fpTo && fpTo.selectedDates[0]) {
+                var toDate = new Date(fpTo.selectedDates[0]);
+                toDate.setHours(now.getHours(), now.getMinutes());
+                fpTo.set('enableTime', true);
+                fpTo.set('dateFormat', 'm-d-Y H:i');
+                fpTo.set('time_24hr', true);
+                fpTo.setDate(toDate, false);
+            }
         }
     });
-
-
 
     $('#closeErrorModal').on('click', function() {
         $('#errorModal').addClass('hidden');

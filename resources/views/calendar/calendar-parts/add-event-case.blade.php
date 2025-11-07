@@ -165,6 +165,18 @@
         />
     </div>
 
+    <div class="m-0 allDaySection flex items-center">
+        <input
+            id="allDay"
+            name="allDay"
+            type="checkbox"
+            class="h-4 w-4 text-indigo-600 border-gray-300 rounded cursor-pointer"
+        >
+        <label for="allDay" class="ml-2 text-gray-700 cursor-pointer">
+            All Day Event
+        </label>
+    </div>
+
     <div id="userFieldsContainer" class="hidden">
         <x-input-label
             for="user"

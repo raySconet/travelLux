@@ -124,7 +124,7 @@ class EventCourtCaseController extends Controller
 
         // Fetch events
         $events = Event::with(['categorie:id,categoryName,color', 'user:id,name'])
-            ->select(['id', 'atty_initials', 'stage_of_process', 'client_name', 'user_id', 'categoryId', 'date_from', 'date_to'])
+            ->select(['id', 'atty_initials', 'stage_of_process', 'client_name', 'user_id', 'categoryId', 'date_from', 'date_to', 'all_day'])
             ->whereIn('user_id', $userIds)
             ->where('isDeleted', 0)
             ->whereBetween('date_from', [$startDate, $endDate])
@@ -174,6 +174,7 @@ class EventCourtCaseController extends Controller
                 'categorie' => null,
                 'date_from' => null,
                 'date_to' => null,
+                'all_day' => null,
                 'editable' => false,
                 'user' => (object)[
                     'id' => $user->id,

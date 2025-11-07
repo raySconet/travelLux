@@ -604,6 +604,25 @@ $(document).ready(() => {
         }, 0);
     });
 
+    $('#allDay').on('change', function() {
+        if ($(this).is(':checked')) {
+            flatpickr(".datetimepicker", {
+                enableTime: false,
+                dateFormat: "m-d-Y",
+                defaultDate: new Date(),
+            });
+        } else {
+            flatpickr(".datetimepicker", {
+                enableTime: true,
+                dateFormat: "m-d-Y H:i",
+                time_24hr: true,
+                defaultDate: new Date(),
+            });
+        }
+    });
+
+
+
     $('#closeErrorModal').on('click', function() {
         $('#errorModal').addClass('hidden');
     });
@@ -905,29 +924,6 @@ $(document).ready(() => {
             </div>
         `);
 
-        // getData(null, function (err, data) {
-            //     if (err) {
-            //         $('#modalErrorContent').text(err.error);
-            //         $('#errorModal').removeClass('hidden');
-            //         return;
-            //     }
-
-            //     const dateFrom = `${formatDateToMMDDYYYY(eventCaseEditData.date_from)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_from) : ''}`;
-            //     const dateTo = `${formatDateToMMDDYYYY(eventCaseEditData.date_to)} ${eventType === 'event' ? formatTimeHHMM(eventCaseEditData.date_to) : ''}`;
-
-            //     $('input[name="title"]').val(eventCaseEditData.title);
-            //     $('input[name="fromDate"]').val(dateFrom);
-            //     $('input[name="toDate"]').val(dateTo);
-            //     $('select[name="category"]').val(eventCaseEditData.categoryId);
-
-            //     if(eventType === 'case') {
-            //         const userIds = (eventCaseEditData.users || []).map(u => u.id.toString());
-            //         $('#userSelect').val(userIds).trigger('change');
-            //     }
-            //     // console.log($('#addEventCaseForm').serialize());
-            //     $('#addEventCaseModal').removeClass('hidden');
-        // }, eventCaseId);
-
         getData(null, function (err, data) {
             if (err) {
                 $('#modalErrorContent').text(err.error || 'Error loading data');
@@ -980,6 +976,9 @@ $(document).ready(() => {
             $('input[name="fromDate"]').val(dateFrom);
             $('input[name="toDate"]').val(dateTo);
             $categorySelect.val(eventCaseEditData.categoryId);
+            if (eventCaseEditData.all_day) {
+                $('#allDay').prop('checked', true).trigger('change');
+            }
 
             const fromFlatpickr = $('input[name="fromDate"]')[0]._flatpickr; // added
             const toFlatpickr = $('input[name="toDate"]')[0]._flatpickr; // added
@@ -1446,8 +1445,8 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             const eventsToShow = eventsToday.slice(0, maxEventsToShowUser1);
             eventsToShow.forEach(event => {
-                // console.log('event::', event);
-                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
+                console.log('event::', event);
+                const timeRange = event.all_day ? `<span>~ All Day Event</span>` : event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1516,7 +1515,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             const eventsToShowUser1 = eventsUser1.slice(0, maxEventsToShowUser1);
             eventsToShowUser1.forEach(event => {
-                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
+                const timeRange = event.all_day ? `<span>~ All Day Event</span>` : event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1568,7 +1567,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             const eventsToShowUser2 = eventsUser2.slice(0, maxEventsToShowUser1);
             eventsToShowUser2.forEach(event => {
-                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
+                const timeRange = event.all_day ? `<span>~ All Day Event</span>` : event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -1654,7 +1653,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
                     return;
                 }
 
-                const timeRange = event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
+                const timeRange = event.all_day ? `<span>~ All Day Event</span>` : event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">
                         <i class="fa-solid fa-pen-to-square shadow-lg" style="color: #eaeef2;"></i>
@@ -2072,6 +2071,7 @@ function getEventsForDate(eventsData) {
                 date: dateStr,
                 from: fromTime,
                 to: toTime,
+                all_day: data.all_day,
                 color,
                 user: userName,
                 type: isCase ? 'case' : 'event',
@@ -2433,6 +2433,7 @@ function updateUserSelectMode() {
     $userSelect.data('selectedValues', selectedValues);
 
     if (selectedType === 'case') {
+        $('.allDaySection').addClass('hidden');
         $.ajax({
             url: '/user/can-create-case',
             method: 'GET',
@@ -2505,6 +2506,7 @@ function updateUserSelectMode() {
         });
         $userSelect.val(null);
     } else {
+        $('.allDaySection').removeClass('hidden');
         $userFieldsContainer.addClass('hidden');
         flatpickr(".datetimepicker", {
             enableTime: true,

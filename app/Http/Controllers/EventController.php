@@ -62,7 +62,7 @@ class EventController extends Controller
                 'categorie:id,categoryName,color',
                 'user:id,name'
             ])
-                ->select(['id', 'atty_initials', 'stage_of_process', 'client_name', 'user_id', 'categoryId', 'date_from', 'date_to'])
+                ->select(['id', 'atty_initials', 'stage_of_process', 'client_name', 'user_id', 'categoryId', 'date_from', 'date_to', 'all_day'])
                 ->where('id', $eventId)
                 ->where('isDeleted', 0)
                 ->first();
@@ -116,7 +116,7 @@ class EventController extends Controller
         }
 
         $events = Event::with(['categorie:id,categoryName,color', 'user:id,name'])
-            ->select(['id', 'atty_initials', 'stage_of_process', 'client_name', 'user_id', 'categoryId', 'date_from', 'date_to'])
+            ->select(['id', 'atty_initials', 'stage_of_process', 'client_name', 'user_id', 'categoryId', 'date_from', 'date_to', 'all_day'])
             ->whereIn('user_id', $userIds)
             ->where('isDeleted', 0)
             ->whereBetween('date_from', [$startDate, $endDate])
@@ -152,6 +152,7 @@ class EventController extends Controller
                 'categoryId' => null,
                 'date_from' => null,
                 'date_to' => null,
+                'all_day' => null,
                 'categorie' => null,
                 'user' => (object)[
                     'id' => $user->id,
@@ -176,29 +177,70 @@ class EventController extends Controller
             'toDate' => $toDateRaw,
         ]);
 
-        // Validate input dates in correct format
-        $request->validate([
+        // // Validate input dates in correct format
+        // $request->validate([
+        //     'atty_initials' => 'required|string|max:255',
+        //     'type' => 'required|in:event',
+        //     'fromDate' => ['required', 'date_format:m-d-Y H:i'],
+        //     'toDate' => ['required', 'date_format:m-d-Y H:i', 'after:fromDate'],
+        //     'category' => ['required','not_in:-1' , 'exists:categories,id'],
+        //     // 'user' => 'required|exists:users,id',
+        // ], [
+        //     'category.not_in' => 'The Category field is required.',
+        //     'toDate.after' => 'The "To Date" must be later than the "From Date".',
+        // ]);
+
+        // // Convert to Carbon date for saving
+        // $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'));
+        // $toDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('toDate'));
+
+        // // Conflict check
+        // if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon)) {
+        //     throw ValidationException::withMessages([
+        //         'fromDate' => ['You already have an event during this time.'],
+        //         'toDate' => ['You already have an event during this time.'],
+        //     ]);
+        // }
+
+        // Check if "All Day Event" checkbox is checked
+        $isAllDay = $request->has('allDay') && $request->boolean('allDay');
+
+        // Base validation
+        $rules = [
             'atty_initials' => 'required|string|max:255',
             'type' => 'required|in:event',
-            'fromDate' => ['required', 'date_format:m-d-Y H:i'],
-            'toDate' => ['required', 'date_format:m-d-Y H:i', 'after:fromDate'],
-            'category' => ['required','not_in:-1' , 'exists:categories,id'],
-            // 'user' => 'required|exists:users,id',
-        ], [
+            'category' => ['required','not_in:-1', 'exists:categories,id'],
+        ];
+
+        // Use different date formats based on "all day"
+        if ($isAllDay) {
+            $rules['fromDate'] = ['required', 'date_format:m-d-Y'];
+            $rules['toDate']   = ['required', 'date_format:m-d-Y', 'after_or_equal:fromDate'];
+        } else {
+            $rules['fromDate'] = ['required', 'date_format:m-d-Y H:i'];
+            $rules['toDate']   = ['required', 'date_format:m-d-Y H:i', 'after:fromDate'];
+        }
+
+        $request->validate($rules, [
             'category.not_in' => 'The Category field is required.',
             'toDate.after' => 'The "To Date" must be later than the "From Date".',
         ]);
 
-        // Convert to Carbon date for saving
-        $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'));
-        $toDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('toDate'));
+        // Parse dates
+        if ($isAllDay) {
+            $fromDate = \Carbon\Carbon::createFromFormat('m-d-Y', $request->input('fromDate'))->format('Y-m-d');
+            $toDate   = \Carbon\Carbon::createFromFormat('m-d-Y', $request->input('toDate'))->format('Y-m-d');
+        } else {
+            $fromDate = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'))->format('Y-m-d H:i:s');
+            $toDate   = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('toDate'))->format('Y-m-d H:i:s');
 
-        // Conflict check
-        if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon)) {
-            throw ValidationException::withMessages([
-                'fromDate' => ['You already have an event during this time.'],
-                'toDate' => ['You already have an event during this time.'],
-            ]);
+            // Only check for time conflict if NOT all-day
+            if ($this->hasTimeConflict(auth()->id(), $fromDate, $toDate)) {
+                throw ValidationException::withMessages([
+                    'fromDate' => ['You already have an event during this time.'],
+                    'toDate' => ['You already have an event during this time.'],
+                ]);
+            }
         }
 
         $event = Event::create([
@@ -207,8 +249,11 @@ class EventController extends Controller
             'client_name' => $request['client_name'],
             'user_id' => auth()->id(),
             'categoryId' => $request['category'],
-            'date_from' => $fromDateCarbon->format('Y-m-d H:i:s'),
-            'date_to' => $toDateCarbon->format('Y-m-d H:i:s'),
+            // 'date_from' => $fromDateCarbon->format('Y-m-d H:i:s'),
+            // 'date_to' => $toDateCarbon->format('Y-m-d H:i:s'),
+            'date_from' => $fromDate,
+            'date_to' => $toDate,
+            'all_day' => $isAllDay ? '1' : '0',
         ]);
 
         return response()->json([
@@ -236,49 +281,88 @@ class EventController extends Controller
             'toDate' => $toDateRaw,
         ]);
 
-        $request->validate([
+        // $request->validate([
+        //     'atty_initials' => 'required|string|max:255',
+        //     'type' => 'required|in:event',
+        //     'fromDate' => ['required', 'date_format:m-d-Y H:i'],
+        //     'toDate' => ['required', 'date_format:m-d-Y H:i', 'after:fromDate'],
+        //     'category' => ['required','not_in:-1' , 'exists:categories,id'],
+        // ], [
+        //     'category.not_in' => 'The Category field is required.',
+        //     'toDate.after' => 'The "To Date" must be later than the "From Date".',
+        // ]);
+
+        // $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'));
+        // $toDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('toDate'));
+
+        // // Only check for conflict if dates were changed
+        // $existingFrom = \Carbon\Carbon::parse($event->date_from)->format('Y-m-d H:i');
+        // $existingTo = \Carbon\Carbon::parse($event->date_to)->format('Y-m-d H:i');
+        // $newFrom = $fromDateCarbon->format('Y-m-d H:i');
+        // $newTo = $toDateCarbon->format('Y-m-d H:i');
+
+        // if ($existingFrom !== $newFrom || $existingTo !== $newTo) {
+        //     if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon, $event->id)) {
+        //         throw ValidationException::withMessages([
+        //             'fromDate' => ['You already have an event during this time.'],
+        //             'toDate' => ['You already have an event during this time.'],
+        //         ]);
+        //     }
+        // }
+        // Check if "All Day Event" checkbox is checked
+        $isAllDay = $request->has('allDay') && $request->boolean('allDay');
+
+        // Base validation
+        $rules = [
             'atty_initials' => 'required|string|max:255',
             'type' => 'required|in:event',
-            'fromDate' => ['required', 'date_format:m-d-Y H:i'],
-            'toDate' => ['required', 'date_format:m-d-Y H:i', 'after:fromDate'],
-            'category' => ['required','not_in:-1' , 'exists:categories,id'],
-        ], [
+            'category' => ['required','not_in:-1', 'exists:categories,id'],
+        ];
+
+        // Different date formats based on all-day
+        if ($isAllDay) {
+            $rules['fromDate'] = ['required', 'date_format:m-d-Y'];
+            $rules['toDate']   = ['required', 'date_format:m-d-Y', 'after_or_equal:fromDate'];
+        } else {
+            $rules['fromDate'] = ['required', 'date_format:m-d-Y H:i'];
+            $rules['toDate']   = ['required', 'date_format:m-d-Y H:i', 'after:fromDate'];
+        }
+
+        $request->validate($rules, [
             'category.not_in' => 'The Category field is required.',
             'toDate.after' => 'The "To Date" must be later than the "From Date".',
         ]);
 
-        $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'));
-        $toDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('toDate'));
+        // Parse dates
+        if ($isAllDay) {
+            $fromDate = \Carbon\Carbon::createFromFormat('m-d-Y', $request->input('fromDate'))->format('Y-m-d');
+            $toDate   = \Carbon\Carbon::createFromFormat('m-d-Y', $request->input('toDate'))->format('Y-m-d');
+        } else {
+            $fromDate = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('fromDate'))->format('Y-m-d H:i:s');
+            $toDate   = \Carbon\Carbon::createFromFormat('m-d-Y H:i', $request->input('toDate'))->format('Y-m-d H:i:s');
 
-        // Only check for conflict if dates were changed
-        $existingFrom = \Carbon\Carbon::parse($event->date_from)->format('Y-m-d H:i');
-        $existingTo = \Carbon\Carbon::parse($event->date_to)->format('Y-m-d H:i');
-        $newFrom = $fromDateCarbon->format('Y-m-d H:i');
-        $newTo = $toDateCarbon->format('Y-m-d H:i');
-
-        if ($existingFrom !== $newFrom || $existingTo !== $newTo) {
-            if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon, $event->id)) {
-                throw ValidationException::withMessages([
-                    'fromDate' => ['You already have an event during this time.'],
-                    'toDate' => ['You already have an event during this time.'],
-                ]);
+            // Only check for time conflict if NOT all-day
+            if ($fromDate !== \Carbon\Carbon::parse($event->date_from)->format('Y-m-d H:i:s') ||
+                $toDate !== \Carbon\Carbon::parse($event->date_to)->format('Y-m-d H:i:s')) {
+                if ($this->hasTimeConflict(auth()->id(), $fromDate, $toDate, $event->id)) {
+                    throw ValidationException::withMessages([
+                        'fromDate' => ['You already have an event during this time.'],
+                        'toDate' => ['You already have an event during this time.'],
+                    ]);
+                }
             }
         }
-        // // Conflict check
-        // if ($this->hasTimeConflict(auth()->id(), $fromDateCarbon, $toDateCarbon, $event->id)) {
-        //     throw ValidationException::withMessages([
-        //         'fromDate' => ['You already have an event during this time.'],
-        //         'toDate' => ['You already have an event during this time.'],
-        //     ]);
-        // }
 
         $event->update([
             'atty_initials' => $request->input('atty_initials'),
             'stage_of_process' => $request->input('stage_of_process'),
             'client_name' => $request->input('client_name'),
             'categoryId' => $request->input('category'),
-            'date_from' => $fromDateCarbon->format('Y-m-d H:i:s'),
-            'date_to' => $toDateCarbon->format('Y-m-d H:i:s'),
+            // 'date_from' => $fromDateCarbon->format('Y-m-d H:i:s'),
+            // 'date_to' => $toDateCarbon->format('Y-m-d H:i:s'),
+            'date_from' => $fromDate,
+            'date_to' => $toDate,
+            'all_day' => $isAllDay ? '1' : '0',
         ]);
 
         return response()->json([

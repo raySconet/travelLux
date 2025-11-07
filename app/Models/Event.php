@@ -19,6 +19,7 @@ class Event extends Model
         'categoryId',
         'date_from',
         'date_to',
+        'all_day',
         'isDeleted',
     ];
 

@@ -190,6 +190,8 @@ $(document).ready(function() {
             success: function(response) {
                 $('#addUserModal').addClass('hidden');
                 form[0].reset();
+                form.find('.input-error-text').remove(); // added
+                form.find('.border-red-500').removeClass('border-red-500'); // added
                 refreshUserRows();
                 $('#modalSuccessContent').html('<p class="text-gray-900 text-sm">User added successfully.</p>');
                 $('#successModal').removeClass('hidden');

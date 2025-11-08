@@ -228,7 +228,7 @@ $(document).ready(function() {
     $(document).on('click', '.editUserBtn', function(e) {
         e.preventDefault();
         const userId = $(this).data('user-id');
-        console.log("Edit button clicked for user ID:", userId);
+        // console.log("Edit button clicked for user ID:", userId);
 
         getUserData(userId, function(err, user) {
             if (err) {
@@ -240,6 +240,8 @@ $(document).ready(function() {
             // $('#editUserId').val(user.id);
             $('#edit_name').val(user.name);
             $('#edit_email').val(user.email);
+            $('#edit_password').val("");
+            $('#edit_password_confirmation').val("");
 
             $('#editUserModal').removeClass('hidden');
         });
@@ -261,6 +263,13 @@ $(document).ready(function() {
             success: function(response) {
                 refreshUserRows();
                 $('#editUserModal').addClass('hidden');
+                $('#modalSuccessContent').html('<p class="text-gray-900 text-sm">User updated successfully.</p>');
+                $('#successModal').removeClass('hidden');
+
+                // Hide success modal after 2 seconds
+                setTimeout(() => {
+                    $('#successModal').addClass('hidden');
+                }, 2000);
             },
             error: function(xhr) {
                 if (xhr.status === 422 && xhr.responseJSON?.errors) {

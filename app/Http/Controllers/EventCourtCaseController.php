@@ -127,6 +127,10 @@ class EventCourtCaseController extends Controller
             ->select(['id', 'atty_initials', 'stage_of_process', 'client_name', 'user_id', 'categoryId', 'date_from', 'date_to', 'all_day'])
             ->whereIn('user_id', $userIds)
             ->where('isDeleted', 0)
+            // ->where(function ($q) use ($userIds) {
+            //     $q->whereIn('user_id', $userIds)
+            //     ->orWhere('all_day', 1); // 👈 include all-day events for everyone
+            // })
             ->whereBetween('date_from', [$startDate, $endDate])
             ->get();
 

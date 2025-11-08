@@ -152,7 +152,7 @@ $(document).ready(() => {
                                     ` : ''}
                                 </div>
                             </div>
-                            <p class="text-sm text-gray-600">${event.from || 'All Day'} ${event.to ? `– ${event.to}` : ''}</p>
+                            <p class="text-sm text-gray-600">${event.all_day ? `<span>All Day Event</span>` : event.from && event.to ? `${event.from} – ${event.to}` : 'All Day'}</p>
                         </div>
                     </div>
                 `;
@@ -1011,8 +1011,10 @@ $(document).ready(() => {
             $('input[name="fromDate"]').val(dateFrom);
             $('input[name="toDate"]').val(dateTo);
             $categorySelect.val(eventCaseEditData.categoryId);
-            if (eventCaseEditData.all_day) {
+            if (eventCaseEditData.all_day && eventType === 'event') {
                 $('#allDay').prop('checked', true).trigger('change');
+            } else if (!eventCaseEditData.all_day && eventType === 'event') {
+                $('#allDay').prop('checked', false).trigger('change');
             }
 
             const fromFlatpickr = $('input[name="fromDate"]')[0]._flatpickr; // added
@@ -1480,7 +1482,7 @@ function buildDailyView(inputDay = null, inputMonth = null, inputYear = null) {
         } else {
             const eventsToShow = eventsToday.slice(0, maxEventsToShowUser1);
             eventsToShow.forEach(event => {
-                console.log('event::', event);
+                // console.log('event::', event);
                 const timeRange = event.all_day ? `<span>~ All Day Event</span>` : event.from && event.to ? `<span>~ ${event.from} - ${event.to}</span>` : '';
                 const iconPencil = event.editable ? `
                     <div class="iconPencil absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${event.id}" data-type="${event.type}">

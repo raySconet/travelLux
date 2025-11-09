@@ -1046,6 +1046,8 @@ $(document).ready(() => {
         if (eventType === 'case') {
             $('input[name="type"][value="case"]').prop('checked', true);
             updateUserSelectMode();
+        } else {
+            updateUserSelectMode();
         }
         // console.log($('#addEventCaseForm').serialize());
     });

@@ -139,5 +139,39 @@ class TodoController extends Controller
             ], 500);
         }
     }
+
+
+    public function edit($id)
+    {
+        $todo = Todo::findOrFail($id);
+        return response()->json($todo);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $todo = Todo::findOrFail($id);
+        $inputDate = $request->input('todoDate');
+
+        // Only parse if date is provided
+        if ($inputDate) {
+            try {
+                $fromDateCarbon = \Carbon\Carbon::createFromFormat('m-d-Y', $inputDate);
+                $formattedDate = $fromDateCarbon->format('Y-m-d');
+            } catch (\Exception $e) {
+                // fallback if the format is wrong or empty
+                $formattedDate = null;
+            }
+        } else {
+            $formattedDate = null;
+        }
+
+        $todo->update([
+            'title' => $request->todoTitle,
+            'description' => $request->todoDescription,
+            'completeDate' => $formattedDate,
+        ]);
+
+        return response()->json(['success' => true, 'todo' => $todo]);
+    }
 }
 ?>

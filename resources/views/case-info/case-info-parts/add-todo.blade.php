@@ -9,6 +9,7 @@
             class="mb-1"
             />
             <input type="hidden" name="sectionId" id="sectionId" value="">
+            <input type="hidden" name="todoId" id="todoId" value="">
             <x-text-input
                 id="todoTitle"
                 name="todoTitle"

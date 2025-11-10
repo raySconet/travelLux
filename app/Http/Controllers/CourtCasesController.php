@@ -722,14 +722,14 @@ class CourtCasesController extends Controller
                 }
             }
 
-            if (!empty($advances)) {
-                foreach ($advances as $adv) {
+            if (!empty($expenses)) {
+                foreach ($expenses as $exp) {
                     CaseDepositExpensesAdv::create([
                         'caseId' => $id,
-                        'expensesName' => $adv['name'] ?? null,
-                        'expensesPrice' => $adv['amount'] ?? null,
-                        'expensesDate' => $adv['date'] ?? null,
-                        'expensesCheck' => $adv['checkNumber'] ?? null,
+                        'expensesName' => $exp['name'] ?? null,
+                        'expensesPrice' => $exp['amount'] ?? null,
+                        'expensesDate' => $exp['date'] ?? null,
+                        'expensesCheck' => $exp['checkNumber'] ?? null,
                     ]);
                 }
             }
@@ -790,7 +790,19 @@ class CourtCasesController extends Controller
         ]);
     }
 
+    public function saveTextarea(Request $request)
+    {
+        $request->validate([
+            'text' => 'nullable|string',
+            'case_id' => 'required|integer|exists:court_cases,id'
+        ]);
 
+        $case = CourtCase::find($request->case_id);
+        $case->todoNote = $request->text; // example column
+        $case->save();
+
+        return response()->json(['success' => true]);
+    }
 
 
 }

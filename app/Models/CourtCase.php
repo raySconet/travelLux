@@ -59,7 +59,8 @@ class CourtCase extends Model
         'statutoryLiens',
         'otherLiensSubrogationInterests',
         'disbursal',
-        'checks'
+        'checks',
+        "todoNote"
     ];
 
     // Relationships

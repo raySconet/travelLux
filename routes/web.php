@@ -105,10 +105,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/todos/toggle-complete', [TodoController::class, 'toggleComplete'])->name('todos.toggleComplete');
     Route::delete('/todos/{id}', [TodoController::class, 'destroy'])->name('todos.destroy');
     Route::post('/todos/update-status/{id}', [TodoController::class, 'updateStatus']);
+    Route::get('/todos/{id}/edit', [TodoController::class, 'edit'])->name('todos.edit');
+    Route::put('/todos/{id}', [TodoController::class, 'update'])->name('todos.update');
 
     Route::post('/cases/update-case-info/{id}', [CourtCasesController::class, 'updateCaseInfo'])->name('cases.updateCaseInfo');
     Route::get('/cases/{caseId}/main-info', [CourtCasesController::class, 'mainInfo'])->name('cases.mainInfo');
-
+    Route::post('/save-textarea', [CourtCasesController::class, 'saveTextarea']);
 
 
     Route::get('/insurance', [InsuranceController::class, 'index'])->name('insurance.index');

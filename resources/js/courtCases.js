@@ -384,8 +384,17 @@ $(document).ready(() => {
 
     // todo modal
     $(document).on('click', '.addNewToDo', function () {
+        flatpickr(".datetimepicker", {
+            enableTime: false,
+            dateFormat: "m-d-Y",
+            defaultDate: new Date(),
+        });
         let sectionId = null;
         sectionId = $(this).parent().attr('dataId');
+        $("#todoTitle").val("");
+        $("#todoDescription").val("");
+        $("#todoId").val("");
+
         $('#sectionId').val(sectionId);
         $('#addTodoModal').removeClass('hidden');
     });
@@ -401,24 +410,24 @@ $(document).ready(() => {
         }
     });
 
-    $(document).on('click', '#submitTodoBtn', function () {
-        $.ajax({
-            type: 'POST',
-            url: `todos/store`,
-            data: $('#addTodoForm').serialize(),
-            dataType: 'json',
-            success: function (response) {
-                $("#addTodoForm")[0].reset();
-                $('#addTodoModal').addClass('hidden');
-                getSectionsAndTodos();
-            },
-            error: function (xhr) {
-                console.error('Error:', xhr.responseText);
-            },
-            complete: function () {
-            }
-        });
-    });
+    // $(document).on('click', '#submitTodoBtn', function () {
+    //     $.ajax({
+    //         type: 'POST',
+    //         url: `todos/store`,
+    //         data: $('#addTodoForm').serialize(),
+    //         dataType: 'json',
+    //         success: function (response) {
+    //             $("#addTodoForm")[0].reset();
+    //             $('#addTodoModal').addClass('hidden');
+    //             getSectionsAndTodos();
+    //         },
+    //         error: function (xhr) {
+    //             console.error('Error:', xhr.responseText);
+    //         },
+    //         complete: function () {
+    //         }
+    //     });
+    // });
 
     let editingSectionId = null;
     $(document).on('click', '.editTodoSection', function () {
@@ -726,7 +735,7 @@ $(document).ready(() => {
         formData += '&expenses=' + encodeURIComponent(JSON.stringify(expenses));
         formData += '&advances=' + encodeURIComponent(JSON.stringify(advances));
         formData += '&deposits=' + encodeURIComponent(JSON.stringify(deposits));
-        let  caseId = 1;
+        let  caseId = $("#hiddenCaseId").val();
         $.ajax({
             type: 'POST',
             url: `/cases/update-case-info/${caseId}`,
@@ -742,6 +751,97 @@ $(document).ready(() => {
         });
         return false;
     });
+
+
+
+
+    let typingTimer;
+    const doneTypingInterval = 2000; // 2 seconds
+
+    $('#displayTodoNoteHere').on('input', function() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(saveTextarea, doneTypingInterval);
+    });
+
+    function saveTextarea() {
+        const text = $('#displayTodoNoteHere').val();
+        const caseId = $('#hiddenCaseId').val();
+
+        $.ajax({
+            url: '/save-textarea', // Laravel route
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                text: text,
+                case_id: caseId
+            },
+            success: function(response) {
+                $('#status').text('Saved!').fadeIn().delay(1000).fadeOut();
+            },
+            error: function(xhr) {
+                $('#status').text('Error saving').fadeIn().delay(2000).fadeOut();
+            }
+        });
+    }
+
+
+    $(document).on('click', '.editTodoBtn', function () {
+        const todoId = $(this).data('id');
+
+        $.ajax({
+            url: `/todos/${todoId}/edit`,
+            type: 'GET',
+            success: function (todo) {
+                // Fill form with fetched data
+                $('#todoId').val(todo.id);
+                $('#todoTitle').val(todo.title);
+                $('#todoDate').val(formatDateMDY(todo.completeDate));
+                $('#todoDescription').val(todo.description);
+                $('#sectionId').val(todo.sectionId);
+
+
+                // Open the modal
+                $('#addTodoModal').removeClass('hidden');
+
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+
+            }
+        });
+    });
+
+   $(document).on('click', '#submitTodoBtn', function (e) {
+        e.preventDefault();
+
+        let todoId = $('#todoId').val(); // hidden field for edit mode
+        let formData = $('#addTodoForm').serialize();
+
+        // ✅ Use the right Laravel route depending on create or update
+        let url = todoId ? `/todos/${todoId}` : `/todos/store`;
+        let method = todoId ? 'PUT' : 'POST';
+
+        $.ajax({
+            url: url,
+            type: method,
+            data: formData,
+            success: function (response) {
+                $('#addTodoModal').addClass('hidden');
+
+                // ✅ Reset form
+                $('#addTodoForm')[0].reset();
+
+                getSectionsAndTodos();
+
+
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+
+            }
+        });
+    });
+
 
 // ----------------End-----------------//
 })
@@ -793,7 +893,12 @@ function getSectionsAndTodos() {
                                                 <div class="2xl:col-span-1 flex flex-col ">
                                                     <button title="Mark task as complete" data-id="${todo.id}" class="incompleteButton buttonClickForComplete">
                                                         <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
-                                                    </button>`;
+                                                    </button>
+                                                    <button class="editTodoBtn" style="margin-top:5px; cursor:pointer;" data-id="${todo.id}">
+                                                        <i class="fa fa-pen"></i>
+                                                    </button>
+                                                    `;
+
                                 html += `       </div>
                                                 <div class="2xl:col-span-10 flex flex-col ">`;
                                                     if (todo.title != null && todo.title != 'NULL' && todo.title != '') {
@@ -835,6 +940,9 @@ function getSectionsAndTodos() {
                                                 <button title="Mark task as complete" data-id="${todo.id}" class="incompleteButton buttonClickForComplete">
                                                     <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
                                                 </button>
+                                                <button class="editTodoBtn" style="margin-top:5px; cursor:pointer;" data-id="${todo.id}">
+                                                    <i class="fa fa-pen"></i>
+                                                </button>
                                             </div>
                                             <div class="2xl:col-span-11 flex flex-col ">
                                                 <p style="color:#a22323 !important;" >${todo.title ?? ''}</p>
@@ -874,6 +982,9 @@ function getSectionsAndTodos() {
                                         <div class="2xl:col-span-1 flex flex-col">
                                             <button title="Mark task as complete" data-id="${todo.id}" class="completeButton">
                                                 <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
+                                            </button>
+                                            <button class="editTodoBtn" style="margin-top:5px; cursor:pointer;" data-id="${todo.id}">
+                                                <i class="fa fa-pen"></i>
                                             </button>
                                         </div>
                                         <div class="2xl:col-span-11 flex flex-col">`;
@@ -918,6 +1029,8 @@ function getCaseInfoMainData() {
             console.log(response);
             if (response.success) {
                 let caseData = response.case;
+
+                $("#displayTodoNoteHere").val(caseData.todoNote || '');
 
                 $("#referralChiro").val(caseData.referralChiro || '');
                 $("#doi").val(caseData.doi || '');
@@ -1016,6 +1129,7 @@ function getCaseInfoMainData() {
                         expenseAdded = true;
                     }
                 });
+
                 if (!expenseAdded) {
                     let newExpense = expensesTemplate.clone();
                     expensesContainer.append(newExpense);
@@ -1037,6 +1151,7 @@ function getCaseInfoMainData() {
                         advanceAdded = true;
                     }
                 });
+
                 if (!advanceAdded) {
                     let newAdvances = advancesTemplate.clone();
                     advancesContainer.append(newAdvances);
@@ -1122,8 +1237,16 @@ function getCaseInfoMainData() {
                     if (third.third_party_tel) new3p.find('.threePTel').val(third.third_party_tel);
                     if (third.third_party_email) new3p.find('.threeEmail').val(third.third_party_email);
                     if (third.third_party_fax) new3p.find('.threeFax').val(third.third_party_fax);
-                    if(third_parties.length == 1 ){
-                    }else{
+                    const isEmptyThird = [
+                        third.third_party_name,
+                        third.third_party_claim,
+                        third.third_party_adjuster,
+                        third.third_party_tel,
+                        third.third_party_email,
+                        third.third_party_fax
+                    ].every(field => field === null || field === undefined || field === '');
+
+                    if (!isEmptyThird || third_parties.length > 1) {
                         new3p.find('.hidden').removeClass('hidden'); // show hidden fields
                     }
 
@@ -1159,10 +1282,21 @@ function getCaseInfoMainData() {
                     if (first.tel) new1p.find('.onePTel').val(first.tel);
                     if (first.fax) new1p.find('.onePFax').val(first.fax);
                     if (first.email) new1p.find('.onePEmail').val(first.email);
-                    if(first_parties.length == 1 ){
-                    }else{
-                        new1p.find('.hidden').removeClass('hidden');
+
+
+                    const isEmptyFirst = [
+                        first.name,
+                        first.claim,
+                        first.adjuster,
+                        first.tel,
+                        first.fax,
+                        first.email
+                    ].every(field => field === null || field === undefined || field === '');
+
+                    if (!isEmptyFirst || third_parties.length > 1) {
+                        new1p.find('.hidden').removeClass('hidden'); // show hidden fields
                     }
+
 
                     if (index === first_parties.length - 1) {
                         new1p.find('.addClientInfoButtonFor1p')
@@ -1196,10 +1330,20 @@ function getCaseInfoMainData() {
                     if (def.defense_email) newDef.find('.defenseCounselEmail').val(def.defense_email);
                     if (def.defense_fax) newDef.find('.defenseCounselFax').val(def.defense_fax);
 
-                    if(defense_counsels.length == 1 ){
-                    }else{
-                        newDef.find('.hidden').removeClass('hidden');
+
+                    const isEmptyDef = [
+                        def.defense_name,
+                        def.defense_attorney,
+                        def.defense_address,
+                        def.defense_tel,
+                        def.defense_email,
+                        def.defense_fax
+                    ].every(field => field === null || field === undefined || field === '');
+
+                    if (!isEmptyDef || defense_counsels.length > 1) {
+                        newDef.find('.hidden').removeClass('hidden'); // show hidden fields
                     }
+
 
                     if (index === defense_counsels.length - 1) {
                         newDef.find('.addClientInfoButtonForDefense')

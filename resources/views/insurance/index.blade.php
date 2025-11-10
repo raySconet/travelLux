@@ -46,7 +46,7 @@
 
     <!-- Modal -->
     <div id="insuranceModal"
-        class="hidden fixed inset-0 bg-gray-100 bg-opacity-10 flex items-center justify-center">
+        class="hidden fixed inset-0 bg-black-100/30 bg-opacity-10 flex items-center justify-center">
         <div class="bg-white p-6 rounded shadow-lg w-[400px]">
             <h3 class="text-xl mb-4" id="modalTitle">Add Insurance</h3>
 

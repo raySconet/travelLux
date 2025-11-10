@@ -3195,3 +3195,473 @@ function updateItemUser(itemType, itemId, currentUserId, newUserId, onSuccess, n
     });
 }
 
+
+
+
+//------------------------Functions---------------------//
+function getCaseInfoMainData(caseId) {
+
+    $.ajax({
+        url: '/cases/' + caseId + '/main-info',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+
+            console.log(response);
+            if (response.success) {
+                let caseData = response.case;
+
+                $("#referralChiro").val(caseData.referralChiro || '');
+                $("#doi").val(caseData.doi || '');
+                $("#facts").val(caseData.facts || '');
+                $("#injuries").val(caseData.injuries || '');
+                $("#chiro").val(caseData.chiro || '');
+                $("#policeReport").val(caseData.policeReport || '');
+                $("#photos").val(caseData.photos || '');
+                $("#propertyDesctiption").val(caseData.propertyDesctiption || '');
+                $("#3pLiability").val(caseData['3pLiability'] || '');
+                $("#3pCoverage").val(caseData['3pCoverage'] || '');
+                $("#3pLiabilityLimit").val(caseData['3pLiabilityLimit'] || '');
+                $("#1pCoverageLimits").val(caseData['1pCoverageLimits'] || '');
+                $("#preExistingInjuries").val(caseData['preExistingInjuries'] || '');
+
+
+                $("#caseInfoStyle").val(caseData['caseInfoStyle'] || '');
+                $("#causeNumber").val(caseData['causeNumber'] || '');
+                $("#courtCounty").val(caseData['courtCounty'] || '');
+                $("#recordsServed").val(caseData['recordsServed'] || '');
+                $("#filed").val(caseData['filed'] || '');
+                $("#served").val(caseData['served'] || '');
+                $("#answer").val(caseData['answer'] || '');
+                $("#expertDesignationDeadlinesP").val(caseData['expertDesignationDeadlinesP'] || '');
+                $("#discoveryResponsesP").val(caseData['discoveryResponsesP'] || '');
+                $("#discoveryResponsesD").val(caseData['discoveryResponsesD'] || '');
+                $("#discoveryPeriodEnds").val(caseData['discoveryPeriodEnds'] || '');
+                $("#expertDesignationDeadlinesD").val(caseData['expertDesignationDeadlinesD'] || '');
+                $("#deposP").val(caseData['deposP'] || '');
+                $("#deposD").val(caseData['deposD'] || '');
+                $("#docketCall").val(caseData['docketCall'] || '');
+                $("#billingServedDate").val(caseData['billingServedDate'] || '');
+                $("#noticeFiledDate").val(caseData['noticeFiledDate'] || '');
+                $("#trial").val(caseData['trial'] || '');
+
+                $("#firstpPermissionToRelease").val(caseData['firstpPermissionToRelease'] || '');
+                $("#thirdpRelease").val(caseData['thirdpRelease'] || '');
+                $("#firstpRelease").val(caseData['firstpRelease'] || '');
+                $("#pip").val(caseData['pip'] || '');
+                $("#statutoryLiens").val(caseData['statutoryLiens'] || '');
+                $("#otherLiensSubrogationInterests").val(caseData['otherLiensSubrogationInterests'] || '');
+                $("#disbursal").val(caseData['disbursal'] || '');
+                $("#checks").val(caseData['checks'] || '');
+
+
+                // --- deposits ---
+                const depositTemplate = $('.DepositsToDuplicate').first();
+                const depositContainer = $('.appendDuplicatesForDeposits');
+                depositContainer.empty(); // clear previous if needed
+
+                const expensesTemplate = $('.expensesToDuplicate').first();
+                const expensesContainer = $('.appendDuplicatesForExpenses');
+                expensesContainer.empty(); // clear previous if needed
+
+                const advancesTemplate = $('.advancesToDuplicate').first();
+                const advancesContainer = $('.appendDuplicatesForAdvances');
+                advancesContainer.empty(); // clear previous if needed
+
+                caseData.deposit_expenses_advs?.forEach((deposit, index) => {
+                    let newDeposit = depositTemplate.clone();
+                    if( deposit.depositPrice === null && deposit.depositName === null && deposit.depositDate === null && deposit.depositCheckNumber === null ){
+                        return; // skip empty deposits
+                    }else{
+                        newDeposit.find('.depositsAmount').val(deposit.depositPrice || '');
+                        newDeposit.find('.deposistsName').val(deposit.depositName || '');
+                        newDeposit.find('.depositsDate').val(deposit.depositDate || '');
+                        newDeposit.find('.depositsCheckNumber').val(deposit.depositCheckNumber || '');
+
+
+                            newDeposit.find('.addButtonForDeposits').addClass('removeClientInfoButtonForDeposits bg-[#a51a1a]')
+                            .removeClass('addButtonForDeposits bg-[#14548d]')
+                            .children()
+                            .removeClass('fa-plus')
+                            .addClass('fa-minus');
+                        depositContainer.append(newDeposit);
+
+                    }
+
+                });
+
+                caseData.deposit_expenses_advs?.forEach((deposit, index) => {
+                    let newExpense = expensesTemplate.clone();
+                    if( deposit.expensesName === null && deposit.expensesPrice === null && deposit.expensesDate === null && deposit.expensesCheck === null ){
+                        return; // skip empty deposits
+                    }else{
+                        newExpense.find('.expensesName').val(deposit.expensesName || '');
+                        newExpense.find('.expensesPrice').val(deposit.expensesPrice || '');
+                        newExpense.find('.expensesDate').val(deposit.expensesDate || '');
+                        newExpense.find('.expensesCheck').val(deposit.expensesCheck || '');
+
+
+                            newExpense.find('.addButtonForExpenses').addClass('removeClientInfoButtonForExpenses bg-[#a51a1a]')
+                            .removeClass('addButtonForExpenses bg-[#14548d]')
+                            .children()
+                            .removeClass('fa-plus')
+                            .addClass('fa-minus');
+                        expensesContainer.append(newExpense);
+                    }
+                });
+
+                caseData.deposit_expenses_advs?.forEach((deposit, index) => {
+
+                    let newAdvances = advancesTemplate.clone();
+                    if( deposit.advancesAmount === null && deposit.advancesName === null && deposit.advancesDate === null && deposit.advancesCheckNumber === null ){
+                        return; // skip empty deposits
+                    }else{
+                        newAdvances.find('.advancesAmount').val(deposit.advancesAmount || '');
+                        newAdvances.find('.advancesName').val(deposit.advancesName || '');
+                        newAdvances.find('.advancesDate').val(deposit.advancesDate || '');
+                        newAdvances.find('.advancesCheckNumber').val(deposit.advancesCheckNumber || '');
+
+                            newAdvances.find('.addButtonForAdvances').addClass('removeClientInfoButtonForAdvances bg-[#a51a1a]')
+                            .removeClass('addButtonForAdvances bg-[#14548d]')
+                            .children()
+                            .removeClass('fa-plus')
+                            .addClass('fa-minus');
+                        advancesContainer.append(newAdvances);
+                    }
+
+
+
+                    // if (index === caseData.deposit_expenses_advs.length - 1) {
+
+                    // }else{
+                    //     newDeposit.find('.addButtonForDeposits').addClass('removeClientInfoButtonForDeposits bg-[#a51a1a]')
+                    //     .removeClass('addButtonForDeposits bg-[#14548d]')
+                    //     .children()
+                    //     .removeClass('fa-plus')
+                    //     .addClass('fa-minus');
+                    // }
+
+
+
+                });
+
+                // --- After filling all deposits/expenses/advances ---
+                function updateAddButtons(container, addButtonClass, removeButtonClass) {
+                    container.find(`.${addButtonClass}, .${removeButtonClass}`).each(function(index, el) {
+                        const $btn = $(el);
+                        $btn.removeClass(removeButtonClass + ' bg-[#a51a1a]')
+                            .addClass(addButtonClass + ' bg-[#14548d]')
+                            .children().removeClass('fa-minus').addClass('fa-plus');
+                    });
+                    // Make only the last one an "add" button
+                    const $last = container.children().last().find(`.${addButtonClass}`);
+                    $last.removeClass(removeButtonClass + ' bg-[#a51a1a]')
+                        .addClass(addButtonClass + ' bg-[#14548d]')
+                        .children().removeClass('fa-minus').addClass('fa-plus');
+                    // Make all others "remove"
+                    container.children().not(':last').find(`.${addButtonClass}`).each(function() {
+                        $(this).addClass(removeButtonClass + ' bg-[#a51a1a]')
+                            .removeClass(addButtonClass + ' bg-[#14548d]')
+                            .children().removeClass('fa-plus').addClass('fa-minus');
+                    });
+                }
+
+                // Update buttons for each container
+                updateAddButtons(depositContainer, 'addButtonForDeposits', 'removeClientInfoButtonForDeposits');
+                updateAddButtons(expensesContainer, 'addButtonForExpenses', 'removeClientInfoButtonForExpenses');
+                updateAddButtons(advancesContainer, 'addButtonForAdvances', 'removeClientInfoButtonForAdvances');
+
+                // --- CLIENTS ---
+                const clientTemplate = $('.clientToDuplicate').first();
+                const clientContainer = $('.appendDuplicates');
+                clientContainer.empty(); // clear previous if needed
+
+                caseData.clients?.forEach((client, index) => {
+                    let newClient = clientTemplate.clone().removeAttr('id').attr('data-client', index + 1);
+                    newClient.find('.clientNameInput').val(client.client_name || '');
+                    newClient.find('.clientTel').val(client.client_tel || '');
+                    newClient.find('.clientEmail').val(client.client_email || '');
+                    newClient.find('.clientAddress').val(client.client_address || '');
+                    newClient.find('.clientDob').val(client.client_dob || '');
+                    newClient.find('.clientSsn').val(client.client_ssn || '');
+                    if (index === caseData.clients.length - 1) {
+
+                    }else{
+                        newClient.find('.addClientInfoButton').addClass('removeClientInfoButton bg-[#a51a1a]')
+                            .removeClass('addClientInfoButton bg-[#14548d]')
+                            .children()
+                            .removeClass('fa-plus')
+                            .addClass('fa-minus');
+                    }
+
+                    clientContainer.append(newClient);
+                });
+
+                // --- 3P ---
+                const threePTemplate = $('.threePToDuplicate').first();
+                const threePContainer = $('.appendDuplicatesFor3p');
+                threePContainer.empty();
+
+                caseData.third_parties?.forEach((third, index) => {
+                    let new3p = threePTemplate.clone().removeAttr('id');
+                    new3p.find('.threePName').val(third.third_party_name || '');
+                    new3p.find('.threeClaim').val(third.third_party_claim || '');
+                    new3p.find('.threePBiAdjuster').val(third.third_party_adjuster || '');
+                    new3p.find('.threePTel').val(third.third_party_tel || '');
+                    new3p.find('.threeEmail').val(third.third_party_email || '');
+                    new3p.find('.threeFax').val(third.third_party_fax || '');
+
+                    new3p.find('.hidden').removeClass('hidden'); // show hidden fields
+
+                     if (index === caseData.third_parties.length - 1) {
+
+                    }else{
+                        new3p.find('.addClientInfoButtonFor3p').addClass('removeClientInfoButtonFor3p  bg-[#a51a1a]')
+                            .removeClass('addClientInfoButtonFor3p bg-[#14548d]')
+                            .children()
+                            .removeClass('fa-plus')
+                            .addClass('fa-minus');
+                    }
+
+                    threePContainer.append(new3p);
+                });
+
+                // --- 1P ---
+                const firstPTemplate = $('.firstPToDuplicate').first();
+                const firstPContainer = $('.appendDuplicatesFor1p');
+                firstPContainer.empty();
+
+                caseData.first_parties?.forEach((first, index) => {
+                    let new1p = firstPTemplate.clone().removeAttr('id');
+                    new1p.find('.onePName').val(first.name || '');
+                    new1p.find('.onePClaim').val(first.claim || '');
+                    new1p.find('.onePBiAdjuster').val(first.adjuster || '');
+                    new1p.find('.onePTel').val(first.tel || '');
+                    new1p.find('.onePFax').val(first.fax || '');
+                    new1p.find('.onePEmail').val(first.email || '');
+
+                    new1p.find('.hidden').removeClass('hidden');
+                    if (index === caseData.first_parties.length - 1) {
+
+                    }else{
+                        new1p.find('.addClientInfoButtonFor1p').addClass('removeClientInfoButtonFor1p   bg-[#a51a1a]')
+                            .removeClass('addClientInfoButtonFor1p bg-[#14548d]')
+                            .children()
+                            .removeClass('fa-plus')
+                            .addClass('fa-minus');
+                    }
+
+                    firstPContainer.append(new1p);
+                });
+
+                // --- DEFENSE COUNSEL ---
+                const defenseTemplate = $('.defenseToDuplicate').first();
+                const defenseContainer = $('.appendDuplicatesForDefense');
+                defenseContainer.empty();
+
+                caseData.defense_counsels?.forEach((def , index) => {
+                    let newDef = defenseTemplate.clone().removeAttr('id');
+                    newDef.find('.defenseCounselName').val(def.defense_name || '');
+                    newDef.find('.defenseCounselAttorney').val(def.defense_attorney || '');
+                    newDef.find('.defenseCounselAddress').val(def.defense_address || '');
+                    newDef.find('.defenseCounselTel').val(def.defense_tel || '');
+                    newDef.find('.defenseCounselEmail').val(def.defense_email || '');
+                    newDef.find('.defenseCounselFax').val(def.defense_fax || '');
+
+                    newDef.find('.hidden').removeClass('hidden');
+
+                    if (index === caseData.defense_counsels.length - 1) {
+
+                    }else{
+                        newDef.find('.addClientInfoButtonForDefense').addClass('removeClientInfoButtonForDefense  bg-[#a51a1a]')
+                            .removeClass('addClientInfoButtonForDefense bg-[#14548d]')
+                            .children()
+                            .removeClass('fa-plus')
+                            .addClass('fa-minus');
+                    }
+                    defenseContainer.append(newDef);
+                });
+
+
+
+                // --- TREATING CHARTS ---
+                const treatingTemplate = $('.treatingToDuplicate').first();
+                const treatingContainer = $('.treatingAppendDuplicates');
+                treatingContainer.empty();
+
+                if (caseData.clients && caseData.clients.length > 0) {
+                    caseData.clients.forEach((client, index) => {
+                        const treating = client.treating_chart || client.treatingChart; // depending on backend key naming
+                        const clientName = client.client_name || `Client ${index + 1}`;
+
+                        // Clone template and prepare
+                        let newTreating = treatingTemplate.clone().removeAttr('id').attr('data-client', index + 1);
+
+                        // Set name label
+                        newTreating.find('.treatingName p').text(`${clientName} - Treating Chart`);
+
+                        // Fill treating chart data (if exists)
+                        newTreating.find('.ems').val(treating?.ems || '');
+                        newTreating.find('.hospital').val(treating?.hospital || '');
+                        newTreating.find('.chiropractor').val(treating?.chiropractor || '');
+                        newTreating.find('.pcpmd').val(treating?.pcpOrMd || '');
+                        newTreating.find('.mriAndResults').val(treating?.mriAndResults || '');
+                        newTreating.find('.painManagement').val(treating?.painManagement || '');
+                        newTreating.find('.orthoOrSurgery').val(treating?.orthoOrSurgery || '');
+
+                        newTreating.removeClass('hidden');
+
+
+                        // Add to container
+                        treatingContainer.append(newTreating);
+                    });
+                }
+
+
+                // --- AFFIDAVIT CHART ---
+                const affidavitTemplate = $('.affidavitToDuplicate').first();
+                const affidavitContainer = $('.affidavitAppendDuplicates');
+                affidavitContainer.empty();
+
+                if (caseData.clients && caseData.clients.length > 0) {
+                    caseData.clients.forEach((client, index) => {
+                        const clientName = client.client_name || `Client ${index + 1}`;
+                        const affidavits = client.affidavits || client.affidavit_chart || [];
+
+                        // Clone the entire affidavit block (for one client)
+                        let newAffidavit = affidavitTemplate.clone()
+                            .removeAttr('id')
+                            .attr('data-client', index + 1);
+
+                        // Update header title
+                        newAffidavit.find('.affidavitName p').text(`${clientName} - Affidavit Chart`);
+
+                        // The inner grid (that repeats per affidavit entry)
+                        const innerGridContainer = newAffidavit.find('.toduplicatehere').parent().first();
+                        const innerGridTemplate = innerGridContainer.find('.toduplicatehere').first().clone(); // clone first row as template
+                        innerGridContainer.empty(); // clear old contents
+
+                        // Loop through this client's affidavits
+                        if (affidavits.length > 0) {
+                            affidavits.forEach((aff, i) => {
+                                let newRow = innerGridTemplate.clone();
+
+                                newRow.find('.providerName').val(aff?.providerName || '');
+                                newRow.find('.dateOrdered').val(aff?.dateOrdered || '');
+                                newRow.find('.dateReceivedMr').val(aff?.dateReceivedMr || '');
+                                newRow.find('.dateReceivedBr').val(aff?.dateReceivedBr || '');
+                                newRow.find('.affidavitDateServed').val(aff?.dateServed || '');
+                                newRow.find('.affidavitNoticeFiled').val(aff?.noticeFilled || '');
+                                newRow.find('.mriAndResults').val(aff?.mri_and_results || '');
+                                newRow.find('.controverted').val(aff?.controverted || '');
+
+                                if (i === affidavits.length - 1) {
+
+                                }else{
+                                    newRow.find('.addAffidavitButton').addClass('removeClientInfoButtonForAffidavit  bg-[#a51a1a]')
+                                        .removeClass('addAffidavitButton bg-[#14548d]')
+                                        .children()
+                                        .removeClass('fa-plus')
+                                        .addClass('fa-minus');
+                                }
+
+                                innerGridContainer.append(newRow);
+                            });
+                        } else {
+                            // If no affidavit data, append one empty row
+                            innerGridContainer.append(innerGridTemplate.clone());
+                        }
+
+                        // Make visible and append to container
+                        newAffidavit.removeClass('hidden');
+                        affidavitContainer.append(newAffidavit);
+                    });
+                }
+
+
+                // --- NEGOTIATION CHART ---
+                const negotiationTemplate = $('.negotiationToDuplicate').first();
+                const negotiationContainer = $('.negotiationAppendDuplicates');
+                negotiationContainer.empty();
+
+                if (caseData.clients && caseData.clients.length > 0) {
+                    caseData.clients.forEach((client, index) => {
+                        const clientName = client.client_name || `Client ${index + 1}`;
+                        const negotiation = client.negotiating_charts || {};
+
+                        // Clone negotiation block per client
+                        let newNegotiation = negotiationTemplate.clone()
+                            .removeAttr('id')
+                            .attr('data-client', index + 1);
+
+                        // Header (client name)
+                        newNegotiation.find('.negotiationName p').text(`${clientName} - Negotiation Chart`);
+
+
+
+                        // Now handle the nested bottom grid (multiple sub negotiations)
+                        const subGridContainer = newNegotiation.find('.negotiationSubToDuplicate').parent().first();
+                        const subGridTemplate = newNegotiation.find('.negotiationSubToDuplicate').first().clone();
+                        subGridContainer.empty();
+
+                        if (negotiation.length > 0) {
+
+                            negotiation.forEach((sub, i ) => {
+                                let newSub = subGridTemplate.clone();
+                                if(sub.medsTotal != undefined && sub.medsTotal != null  && sub.medsTotal != ''){
+                                    newNegotiation.find('.medsTotal').val(sub.medsTotal);
+                                }
+                                if(sub.medsPviTotal != undefined && sub.medsPviTotal != null  && sub.medsPviTotal != ''){
+                                    newNegotiation.find('.medsPviTotal').val(sub?.medsPviTotal);
+                                }
+                                if(sub.negotiationLastOffer != undefined && sub.negotiationLastOffer != null  && sub.negotiationLastOffer != ''){
+                                    newNegotiation.find('.negotiationLastOffer').val(sub?.negotiationLastOffer);
+                                }
+                                if(sub.negotiationLastOfferDate != undefined && sub.negotiationLastOfferDate != null  && sub.negotiationLastOfferDate != ''){
+                                    newNegotiation.find('.negotiationLastOfferDate').val(sub?.negotiationLastOfferDate);
+                                }
+                                if(sub.negotiationLastDemand != undefined && sub.negotiationLastDemand != null  && sub.negotiationLastDemand != ''){
+                                    newNegotiation.find('.negotiationLastDemand').val(sub?.negotiationLastDemand);
+                                }
+                                if(sub.negotiationLastDemandDate != undefined && sub.negotiationLastDemandDate != null  && sub.negotiationLastDemandDate != ''){
+                                    newNegotiation.find('.negotiationLastDemandDate').val(sub?.negotiationLastDemandDate);
+                                }
+                                if(sub.physicalPainMentalAnguishText != undefined && sub.physicalPainMentalAnguishText != null  && sub.physicalPainMentalAnguishText != ''){
+                                    newNegotiation.find('.physicalPainMentalAnguishText').val(sub?.physicalPainMentalAnguishText);
+                                }
+
+                                if (i === negotiation.length - 1) {
+
+                                }else{
+                                    newSub.find('.addButtonForNegotiation').addClass('removeClientInfoButtonForNegotiation   bg-[#a51a1a]')
+                                        .removeClass('addButtonForNegotiation bg-[#14548d]')
+                                        .children()
+                                        .removeClass('fa-plus')
+                                        .addClass('fa-minus');
+                                }
+                                if((sub.negotiationNameBottom != undefined && sub.negotiationNameBottom != null  && sub.negotiationNameBottom != '') || (sub.negotiationDateBottom != undefined && sub.negotiationDateBottom != null  && sub.negotiationDateBottom != '') || (sub.negotiationAmountBottom != undefined && sub.negotiationAmountBottom != null  && sub.negotiationAmountBottom != '')  || (i == 0 && negotiation.length  == 1 )){
+                                    newSub.find('.negotiationNameBottom').val(sub?.negotiationNameBottom || '');
+                                    newSub.find('.negotiationDateBottom').val(sub?.negotiationDateBottom || '');
+                                    newSub.find('.negotiationAmountBottom').val(sub?.negotiationAmountBottom || '');
+                                    subGridContainer.append(newSub);
+                                }
+                            });
+                        } else {
+                            subGridContainer.append(subGridTemplate.clone());
+                        }
+
+                        newNegotiation.removeClass('hidden');
+                        negotiationContainer.append(newNegotiation);
+                    });
+                }
+
+
+
+
+            }
+        },
+        error: function(xhr) {
+            console.error('Error:', xhr.responseText);
+        }
+    });
+}

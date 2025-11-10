@@ -31,7 +31,35 @@ class CourtCase extends Model
         '3pCoverage',
         '3pLiabilityLimit',
         '1pCoverageLimits',
-        'isDeleted'
+        'isDeleted',
+        // 🆕 Added fields from your case info section
+        'caseInfoStyle',
+        'causeNumber',
+        'courtCounty',
+        'recordsServed',
+        'filed',
+        'served',
+        'answer',
+        'expertDesignationDeadlinesP',
+        'discoveryResponsesP',
+        'discoveryResponsesD',
+        'discoveryPeriodEnds',
+        'expertDesignationDeadlinesD',
+        'deposP',
+        'deposD',
+        'docketCall',
+        'billingServedDate',
+        'noticeFiledDate',
+        'trial',
+
+        'firstpPermissionToRelease',
+        'thirdpRelease',
+        'firstpRelease',
+        'pip',
+        'statutoryLiens',
+        'otherLiensSubrogationInterests',
+        'disbursal',
+        'checks'
     ];
 
     // Relationships

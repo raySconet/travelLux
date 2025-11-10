@@ -25,7 +25,7 @@
                 <p>Norma - Affidavit Chart </p>
             </x-case-components.col>
             <x-case-components.col class="2xl:col-span-13">
-                <div class= "grid grid-cols-1 2xl:grid-cols-13 gap-2 w-full " >
+                <div class= "grid grid-cols-1 toduplicatehere  2xl:grid-cols-13 gap-2 w-full " >
 
                     <x-case-components.col class="2xl:col-span-2">
                         <div >

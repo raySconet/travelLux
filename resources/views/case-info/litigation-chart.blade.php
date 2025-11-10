@@ -115,8 +115,8 @@
 
             <x-case-components.col class="2xl:col-span-2">
                 <div >
-                    <x-input-label for="expertDesignationDeadlinesP" :value="__('Expert Designation Deadlines P ')" />
-                    <x-text-input id="expertDesignationDeadlinesP"  placeholder="00/00/00"  name="expertDesignationDeadlinesP" type="text" class="mt-1" :value="old('name')"   autofocus autocomplete="expertDesignationDeadlinesP" />
+                    <x-input-label for="expertDesignationDeadlinesD" :value="__('Expert Designation Deadlines D ')" />
+                    <x-text-input id="expertDesignationDeadlinesD"  placeholder="00/00/00"  name="expertDesignationDeadlinesD" type="text" class="mt-1" :value="old('name')"   autofocus autocomplete="expertDesignationDeadlinesD" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>

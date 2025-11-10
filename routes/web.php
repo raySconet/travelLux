@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\TodoController;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Controllers\InsuranceController;
+
 
 Route::get('/', function () {
     return view('auth/login');
@@ -107,6 +109,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/cases/update-case-info/{id}', [CourtCasesController::class, 'updateCaseInfo'])->name('cases.updateCaseInfo');
     Route::get('/cases/{caseId}/main-info', [CourtCasesController::class, 'mainInfo'])->name('cases.mainInfo');
 
+
+
+    Route::get('/insurance', [InsuranceController::class, 'index'])->name('insurance.index');
+    Route::post('/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
+    Route::put('/insurance/{id}', [InsuranceController::class, 'update'])->name('insurance.update');
+    Route::delete('/insurance/{id}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
 
 });
 

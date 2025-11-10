@@ -53,18 +53,18 @@
     <x-case-components.grid class="2xl:grid-cols-12 mt-2">
         <x-case-components.col class="2xl:col-span-4 ">
             <x-input-label for="policeReport" :value="__('Police Report')" />
-            <x-text-input  name="policeReport"  placeholder="Depth/Case# / In efile / None" type="text" class="mt-1  text-center"  :value="old('policeReport')"   autofocus autocomplete="Email" />
+            <x-text-input  id="policeReport" name="policeReport"  placeholder="Depth/Case# / In efile / None" type="text" class="mt-1  text-center"  :value="old('policeReport')"   autofocus autocomplete="Email" />
             <x-input-error class="mt-2" :messages="$errors->get('policeReport')" />
         </x-case-components.col>
 
         <x-case-components.col class="2xl:col-span-4 ">
             <x-input-label for="photos" :value="__('Photos')" />
-            <x-text-input  name="photos"  placeholder="TBD / In efile" type="text" class="mt-1  text-center"  :value="old('name')"   autofocus autocomplete="photos" />
+            <x-text-input id="photos" name="photos"  placeholder="TBD / In efile" type="text" class="mt-1  text-center"  :value="old('name')"   autofocus autocomplete="photos" />
             <x-input-error class="mt-2" :messages="$errors->get('photos')" />
         </x-case-components.col>
         <x-case-components.col class="2xl:col-span-4 ">
             <x-input-label for="propertyDesctiption" :value="__('PropertyDesctiption')" />
-            <x-text-input  name="propertyDesctiption"  placeholder="Low / Okay / Good / Very Good" type="text" class="mt-1  text-center"  :value="old('name')"   autofocus autocomplete="propertyDesctiption" />
+            <x-text-input id="propertyDesctiption" name="propertyDesctiption"  placeholder="Low / Okay / Good / Very Good" type="text" class="mt-1  text-center"  :value="old('name')"   autofocus autocomplete="propertyDesctiption" />
             <x-input-error class="mt-2" :messages="$errors->get('propertyDesctiption')" />
         </x-case-components.col>
     </x-case-components.grid>
@@ -79,23 +79,23 @@
 
         <x-case-components.col class="2xl:col-span-3 ">
             <x-input-label for="3pLiability" :value="__('3P Liability')" />
-            <x-text-input  name="3pLiability" placeholder="TBD" type="text" class="mt-1  text-center"  :value="old('3pLiability')"   autofocus autocomplete="Email" />
+            <x-text-input id="3pLiability" name="3pLiability" placeholder="TBD" type="text" class="mt-1  text-center"  :value="old('3pLiability')"   autofocus autocomplete="Email" />
             <x-input-error class="mt-2" :messages="$errors->get('3pLiability')" />
         </x-case-components.col>
 
         <x-case-components.col class="2xl:col-span-3 ">
             <x-input-label for="3pCoverage" :value="__('3P Coverage')" />
-            <x-text-input  name="3pCoverage" placeholder="TDB" type="text" class="mt-1  text-center"  :value="old('name')"   autofocus autocomplete="3pCoverage" />
+            <x-text-input  name="3pCoverage" id="3pCoverage" placeholder="TDB" type="text" class="mt-1  text-center"  :value="old('name')"   autofocus autocomplete="3pCoverage" />
             <x-input-error class="mt-2" :messages="$errors->get('3pCoverage')" />
         </x-case-components.col>
         <x-case-components.col class="2xl:col-span-3 ">
             <x-input-label for="3pLiabilityLimit" :value="__('3P Liability Limits')" />
-            <x-text-input  name="3pLiabilityLimit" placeholder="$00K/ $00K OR WND" type="text" class="mt-1  text-center"  :value="old('name')"   autofocus autocomplete="3pLiabilityLimit" />
+            <x-text-input  name="3pLiabilityLimit" id="3pLiabilityLimit" placeholder="$00K/ $00K OR WND" type="text" class="mt-1  text-center"  :value="old('name')"   autofocus autocomplete="3pLiabilityLimit" />
             <x-input-error class="mt-2" :messages="$errors->get('3pLiabilityLimit')" />
         </x-case-components.col>
         <x-case-components.col class="2xl:col-span-3 ">
             <x-input-label for="1pCoverageLimits" :value="__('1P Coverage Limits')" />
-            <x-text-input  name="1pCoverageLimits" placeholder="$00,000.00 or REJ" type="text" class="mt-1  text-center"  :value="old('name')"   autofocus autocomplete="1pCoverageLimits" />
+            <x-text-input  name="1pCoverageLimits" id="1pCoverageLimits" placeholder="$00,000.00 or REJ" type="text" class="mt-1  text-center"  :value="old('name')"   autofocus autocomplete="1pCoverageLimits" />
             <x-input-error class="mt-2" :messages="$errors->get('1pCoverageLimits')" />
         </x-case-components.col>
     </x-case-components.grid>

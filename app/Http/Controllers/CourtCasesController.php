@@ -514,7 +514,6 @@ class CourtCasesController extends Controller
         try {
             // 1️⃣ Find the existing case
             $case = CourtCase::findOrFail($id);
-
             // 2️⃣ Update case main data
             $case->update([
                 'referralChiro' => $request->referralChiro,
@@ -530,6 +529,34 @@ class CourtCasesController extends Controller
                 '3pCoverage' => $request['3pCoverage'],
                 '3pLiabilityLimit' => $request['3pLiabilityLimit'],
                 '1pCoverageLimits' => $request['1pCoverageLimits'],
+
+                'caseInfoStyle' => $request->caseInfoStyle,
+                'causeNumber' => $request->causeNumber,
+                'courtCounty' => $request->courtCounty,
+                'recordsServed' => $request->recordsServed,
+                'filed' => $request->filed,
+                'served' => $request->served,
+                'answer' => $request->answer,
+                'expertDesignationDeadlinesP' => $request->expertDesignationDeadlinesP,
+                'discoveryResponsesP' => $request->discoveryResponsesP,
+                'discoveryResponsesD' => $request->discoveryResponsesD,
+                'discoveryPeriodEnds' => $request->discoveryPeriodEnds,
+                'expertDesignationDeadlinesD' => $request->expertDesignationDeadlinesD,
+                'deposP' => $request->deposP,
+                'deposD' => $request->deposD,
+                'docketCall' => $request->docketCall,
+                'billingServedDate' => $request->billingServedDate,
+                'noticeFiledDate' => $request->noticeFiledDate,
+                'trial' => $request->trial,
+
+                'firstpPermissionToRelease' => $request->firstpPermissionToRelease,
+                'thirdpRelease' => $request->thirdpRelease,
+                'firstpRelease' => $request->firstpRelease,
+                'pip' => $request->pip,
+                'statutoryLiens' => $request->statutoryLiens,
+                'otherLiensSubrogationInterests' => $request->otherLiensSubrogationInterests,
+                'disbursal' => $request->disbursal,
+                'checks' => $request->checks
                 // add any other fields from your form
             ]);
 
@@ -589,8 +616,8 @@ class CourtCasesController extends Controller
                                 'ems' => $treating['ems'] ?? null,
                                 'hospital' => $treating['hospital'] ?? null,
                                 'chiropractor' => $treating['chiropractor'] ?? null,
-                                'pcpmd' => $treating['pcpmd'] ?? null,
-                                'mriAndResults' => $treating['treatingmriAndResults'] ?? null,
+                                'pcpOrMd' => $treating['pcpmd'] ?? null,
+                                'mriAndResults' => $treating['mriAndResults'] ?? null,
                                 'painManagement' => $treating['painManagement'] ?? null,
                                 'orthoOrSurgery' => $treating['orthoOrSurgery'] ?? null
                             ]);
@@ -729,13 +756,32 @@ class CourtCasesController extends Controller
     public function mainInfo($id)
     {
         $case = CourtCase::with([
-                'clients.affidavits',
-                'clients.treatingChart',
-                'clients.negotiatingCharts',
-                'firstParties',
-                'thirdParties',
-                'defenseCounsels',
-                'depositExpensesAdvs'
+                'clients' => function ($q) {
+                    $q->orderBy('id', 'asc')
+                    ->with([
+                        'affidavits' => function ($q2) {
+                            $q2->orderBy('id', 'asc');
+                        },
+                        'treatingChart' => function ($q3) {
+                            $q3->orderBy('id', 'asc');
+                        },
+                        'negotiatingCharts' => function ($q4) {
+                            $q4->orderBy('id', 'asc');
+                        }
+                    ]);
+                },
+                'firstParties' => function ($q) {
+                    $q->orderBy('id', 'asc');
+                },
+                'thirdParties' => function ($q) {
+                    $q->orderBy('id', 'asc');
+                },
+                'defenseCounsels' => function ($q) {
+                    $q->orderBy('id', 'asc');
+                },
+                'depositExpensesAdvs' => function ($q) {
+                    $q->orderBy('id', 'asc');
+                },
             ])->findOrFail($id);
 
         return response()->json([

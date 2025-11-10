@@ -63,7 +63,6 @@
             </x-case-components.col>
 
             <x-case-components.col class="2xl:col-span-12">
-
                 <div class= "grid grid-cols-1 2xl:grid-cols-12 gap-2 w-full negotiationSubToDuplicate" data-client="1">
                     <x-case-components.col class="2xl:col-span-4">
                         <div>

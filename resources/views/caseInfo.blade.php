@@ -4,6 +4,7 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Case Info') }}
         </h2>
+        <input type="hidden" id="hiddenCaseId">
     </x-slot>
 
     <div class="text-gray-900 px-3 py-3 grid grid-cols-1 2xl:grid-cols-14 gap-2">

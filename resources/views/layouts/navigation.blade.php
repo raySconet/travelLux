@@ -22,12 +22,14 @@
                     <x-nav-link :href="route('calendar')" :active="request()->routeIs('calendar')">
                         {{ __('Calendar') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('caseInfo')" :active="request()->routeIs('caseInfo')">
+                    {{-- <x-nav-link :href="route('caseInfo')" :active="request()->routeIs('caseInfo')">
                         {{ __('Case Info') }}
-                    </x-nav-link>
+                    </x-nav-link> --}}
+                    @if ($user && $user->isSuperAdmin())
                     <x-nav-link :href="route('insurance.index')" :active="request()->routeIs('insurance.index')">
                         {{ __('Insurance') }}
                     </x-nav-link>
+                    @endif
                 </div>
             </div>
 

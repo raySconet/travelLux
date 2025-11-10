@@ -1,4 +1,7 @@
 $(document).ready(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const caseId = urlParams.get('caseId');
+    $("#hiddenCaseId").val(caseId);
     getSectionsAndTodos();
     getCaseInfoMainData() ;
     flatpickr(".datetimepicker", {
@@ -339,10 +342,15 @@ $(document).ready(() => {
         if(editingSectionId) {
             url = `/sections/update/${editingSectionId}`; // if editing, call update route
         }
+        let formData = $('#addManageSectionForm').serialize();
+        let caseId = $("#hiddenCaseId").val();
+
+        // Append caseId to the serialized form data
+        formData += `&caseId=${encodeURIComponent(caseId)}`;
         $.ajax({
             type: 'POST',
             url: url,
-            data: $('#addManageSectionForm').serialize(),
+            data: formData,
             dataType: 'json',
             success: function (response) {
                 $("#todoSectionTitle").val("");
@@ -744,7 +752,7 @@ $(document).ready(() => {
 //------------------------Functions---------------------//
 function getSectionsAndTodos() {
 
-    let caseId = "1";
+    let caseId = $("#hiddenCaseId").val();
     $.ajax({
         url: '/cases/' + caseId + '/sections',
         type: 'GET',
@@ -764,13 +772,13 @@ function getSectionsAndTodos() {
                 `;
                 sections.forEach(section => {
                     html += `<div class="  mt-3 "  style="color: ${section.categorie.color}">`;
-                    html += `<h2  class="text-lg text-center" dataId="${section.id}" >${section.title}
+                    html += `<h2  class="text-lg text-center" dataId="${section.id}" >${section.title ? section.title : ''}
                                 <i class="fa-regular editTodoSection fa-pen-to-square"  title ="Edit Section" style="margin-left:10px; cursor:pointer;"></i>
                                 <i class="fa-solid addNewToDo fa-notes-medical" title ="Add New todo" style="margin-left:10px; cursor:pointer;"></i>
                                 <i class="fa-solid fa-xmark deleteSectionBtn" data-id="${section.id}" title="Delete Section" style="margin-left:10px;cursor:pointer;  vertical-align:top; margin-top:4px"></i>
 
                             </h2>`;
-                    html += `<p class="mb-1 text-md  ">${section.description}</p>`;
+                    html += `<p class="mb-1 text-md  ">${section.description  ? section.description : ''}</p>`;
 
                     // Todos inside this section
                     if (section.todos && section.todos.length > 0) {
@@ -897,10 +905,10 @@ function getSectionsAndTodos() {
     });
 }
 
-//------------------------Functions---------------------//
-function getCaseInfoMainData(caseId) {
+// //------------------------Functions---------------------//
+function getCaseInfoMainData() {
+    let caseId = $("#hiddenCaseId").val();
 
-    let caseId = "1";
     $.ajax({
         url: '/cases/' + caseId + '/main-info',
         type: 'GET',
@@ -955,95 +963,84 @@ function getCaseInfoMainData(caseId) {
                 $("#checks").val(caseData['checks'] || '');
 
 
-                // --- deposits ---
+               // --- DEPOSITS / EXPENSES / ADVANCES ---
                 const depositTemplate = $('.DepositsToDuplicate').first();
                 const depositContainer = $('.appendDuplicatesForDeposits');
-                depositContainer.empty(); // clear previous if needed
+                depositContainer.empty();
 
                 const expensesTemplate = $('.expensesToDuplicate').first();
                 const expensesContainer = $('.appendDuplicatesForExpenses');
-                expensesContainer.empty(); // clear previous if needed
+                expensesContainer.empty();
 
                 const advancesTemplate = $('.advancesToDuplicate').first();
                 const advancesContainer = $('.appendDuplicatesForAdvances');
-                advancesContainer.empty(); // clear previous if needed
+                advancesContainer.empty();
 
-                caseData.deposit_expenses_advs?.forEach((deposit, index) => {
-                    let newDeposit = depositTemplate.clone();
-                    if( deposit.depositPrice === null && deposit.depositName === null && deposit.depositDate === null && deposit.depositCheckNumber === null ){
-                        return; // skip empty deposits
-                    }else{
-                        newDeposit.find('.depositsAmount').val(deposit.depositPrice || '');
-                        newDeposit.find('.deposistsName').val(deposit.depositName || '');
-                        newDeposit.find('.depositsDate').val(deposit.depositDate || '');
-                        newDeposit.find('.depositsCheckNumber').val(deposit.depositCheckNumber || '');
+                const depositsData = caseData.deposit_expenses_advs || [{}];
 
-
-                            newDeposit.find('.addButtonForDeposits').addClass('removeClientInfoButtonForDeposits bg-[#a51a1a]')
-                            .removeClass('addButtonForDeposits bg-[#14548d]')
-                            .children()
-                            .removeClass('fa-plus')
-                            .addClass('fa-minus');
+                // --- Deposits ---
+                let depositAdded = false;
+                depositsData.forEach(item => {
+                    if (item.depositPrice || item.depositName || item.depositDate || item.depositCheckNumber) {
+                        let newDeposit = depositTemplate.clone();
+                        newDeposit.find('.depositsAmount').val(item.depositPrice || '');
+                        newDeposit.find('.deposistsName').val(item.depositName || '');
+                        newDeposit.find('.depositsDate').val(item.depositDate || '');
+                        newDeposit.find('.depositsCheckNumber').val(item.depositCheckNumber || '');
+                        newDeposit.find('.addButtonForDeposits')
+                            .removeClass('bg-[#14548d]').addClass('removeClientInfoButtonForDeposits bg-[#a51a1a]')
+                            .children().removeClass('fa-plus').addClass('fa-minus');
                         depositContainer.append(newDeposit);
-
+                        depositAdded = true;
                     }
-
                 });
+                // If no deposits, append one empty row
+                if (!depositAdded) {
+                    let newDeposit = depositTemplate.clone();
+                    depositContainer.append(newDeposit);
+                }
 
-                caseData.deposit_expenses_advs?.forEach((deposit, index) => {
-                    let newExpense = expensesTemplate.clone();
-                    if( deposit.expensesName === null && deposit.expensesPrice === null && deposit.expensesDate === null && deposit.expensesCheck === null ){
-                        return; // skip empty deposits
-                    }else{
-                        newExpense.find('.expensesName').val(deposit.expensesName || '');
-                        newExpense.find('.expensesPrice').val(deposit.expensesPrice || '');
-                        newExpense.find('.expensesDate').val(deposit.expensesDate || '');
-                        newExpense.find('.expensesCheck').val(deposit.expensesCheck || '');
-
-
-                            newExpense.find('.addButtonForExpenses').addClass('removeClientInfoButtonForExpenses bg-[#a51a1a]')
-                            .removeClass('addButtonForExpenses bg-[#14548d]')
-                            .children()
-                            .removeClass('fa-plus')
-                            .addClass('fa-minus');
+                // --- Expenses ---
+                let expenseAdded = false;
+                depositsData.forEach(item => {
+                    if (item.expensesName || item.expensesPrice || item.expensesDate || item.expensesCheck) {
+                        let newExpense = expensesTemplate.clone();
+                        newExpense.find('.expensesName').val(item.expensesName || '');
+                        newExpense.find('.expensesPrice').val(item.expensesPrice || '');
+                        newExpense.find('.expensesDate').val(item.expensesDate || '');
+                        newExpense.find('.expensesCheck').val(item.expensesCheck || '');
+                        newExpense.find('.addButtonForExpenses')
+                            .removeClass('bg-[#14548d]').addClass('removeClientInfoButtonForExpenses bg-[#a51a1a]')
+                            .children().removeClass('fa-plus').addClass('fa-minus');
                         expensesContainer.append(newExpense);
+                        expenseAdded = true;
                     }
                 });
+                if (!expenseAdded) {
+                    let newExpense = expensesTemplate.clone();
+                    expensesContainer.append(newExpense);
+                }
 
-                caseData.deposit_expenses_advs?.forEach((deposit, index) => {
-
-                    let newAdvances = advancesTemplate.clone();
-                    if( deposit.advancesAmount === null && deposit.advancesName === null && deposit.advancesDate === null && deposit.advancesCheckNumber === null ){
-                        return; // skip empty deposits
-                    }else{
-                        newAdvances.find('.advancesAmount').val(deposit.advancesAmount || '');
-                        newAdvances.find('.advancesName').val(deposit.advancesName || '');
-                        newAdvances.find('.advancesDate').val(deposit.advancesDate || '');
-                        newAdvances.find('.advancesCheckNumber').val(deposit.advancesCheckNumber || '');
-
-                            newAdvances.find('.addButtonForAdvances').addClass('removeClientInfoButtonForAdvances bg-[#a51a1a]')
-                            .removeClass('addButtonForAdvances bg-[#14548d]')
-                            .children()
-                            .removeClass('fa-plus')
-                            .addClass('fa-minus');
+                // --- Advances ---
+                let advanceAdded = false;
+                depositsData.forEach(item => {
+                    if (item.advancesAmount || item.advancesName || item.advancesDate || item.advancesCheckNumber) {
+                        let newAdvances = advancesTemplate.clone();
+                        newAdvances.find('.advancesAmount').val(item.advancesAmount || '');
+                        newAdvances.find('.advancesName').val(item.advancesName || '');
+                        newAdvances.find('.advancesDate').val(item.advancesDate || '');
+                        newAdvances.find('.advancesCheckNumber').val(item.advancesCheckNumber || '');
+                        newAdvances.find('.addButtonForAdvances')
+                            .removeClass('bg-[#14548d]').addClass('removeClientInfoButtonForAdvances bg-[#a51a1a]')
+                            .children().removeClass('fa-plus').addClass('fa-minus');
                         advancesContainer.append(newAdvances);
+                        advanceAdded = true;
                     }
-
-
-
-                    // if (index === caseData.deposit_expenses_advs.length - 1) {
-
-                    // }else{
-                    //     newDeposit.find('.addButtonForDeposits').addClass('removeClientInfoButtonForDeposits bg-[#a51a1a]')
-                    //     .removeClass('addButtonForDeposits bg-[#14548d]')
-                    //     .children()
-                    //     .removeClass('fa-plus')
-                    //     .addClass('fa-minus');
-                    // }
-
-
-
                 });
+                if (!advanceAdded) {
+                    let newAdvances = advancesTemplate.clone();
+                    advancesContainer.append(newAdvances);
+                }
 
                 // --- After filling all deposits/expenses/advances ---
                 function updateAddButtons(container, addButtonClass, removeButtonClass) {
@@ -1074,24 +1071,36 @@ function getCaseInfoMainData(caseId) {
                 // --- CLIENTS ---
                 const clientTemplate = $('.clientToDuplicate').first();
                 const clientContainer = $('.appendDuplicates');
-                clientContainer.empty(); // clear previous if needed
+                clientContainer.empty();
 
-                caseData.clients?.forEach((client, index) => {
+                // Use actual clients or a single empty placeholder
+                const clients = (caseData.clients && caseData.clients.length > 0) ? caseData.clients : [{}];
+
+                clients.forEach((client, index) => {
                     let newClient = clientTemplate.clone().removeAttr('id').attr('data-client', index + 1);
-                    newClient.find('.clientNameInput').val(client.client_name || '');
-                    newClient.find('.clientTel').val(client.client_tel || '');
-                    newClient.find('.clientEmail').val(client.client_email || '');
-                    newClient.find('.clientAddress').val(client.client_address || '');
-                    newClient.find('.clientDob').val(client.client_dob || '');
-                    newClient.find('.clientSsn').val(client.client_ssn || '');
-                    if (index === caseData.clients.length - 1) {
 
-                    }else{
-                        newClient.find('.addClientInfoButton').addClass('removeClientInfoButton bg-[#a51a1a]')
+                    // Fill fields only if there is actual data
+                    if (client.client_name) newClient.find('.clientNameInput').val(client.client_name);
+                    if (client.client_tel) newClient.find('.clientTel').val(client.client_tel);
+                    if (client.client_email) newClient.find('.clientEmail').val(client.client_email);
+                    if (client.client_address) newClient.find('.clientAddress').val(client.client_address);
+                    if (client.client_dob) newClient.find('.clientDob').val(client.client_dob);
+                    if (client.client_ssn) newClient.find('.clientSsn').val(client.client_ssn);
+
+                    // Remove hidden so the + button shows
+                    newClient.removeClass('hidden');
+
+                    // Only last row is "add" button; all others are "remove"
+                    if (index === clients.length - 1) {
+                        newClient.find('.addClientInfoButton')
+                            .removeClass('removeClientInfoButton bg-[#a51a1a]')
+                            .addClass('addClientInfoButton bg-[#14548d]')
+                            .children().removeClass('fa-minus').addClass('fa-plus');
+                    } else {
+                        newClient.find('.addClientInfoButton')
+                            .addClass('removeClientInfoButton bg-[#a51a1a]')
                             .removeClass('addClientInfoButton bg-[#14548d]')
-                            .children()
-                            .removeClass('fa-plus')
-                            .addClass('fa-minus');
+                            .children().removeClass('fa-plus').addClass('fa-minus');
                     }
 
                     clientContainer.append(newClient);
@@ -1102,25 +1111,33 @@ function getCaseInfoMainData(caseId) {
                 const threePContainer = $('.appendDuplicatesFor3p');
                 threePContainer.empty();
 
-                caseData.third_parties?.forEach((third, index) => {
+                const third_parties = (caseData.third_parties && caseData.third_parties.length > 0) ? caseData.third_parties : [{}];
+
+                third_parties.forEach((third, index) => {
                     let new3p = threePTemplate.clone().removeAttr('id');
-                    new3p.find('.threePName').val(third.third_party_name || '');
-                    new3p.find('.threeClaim').val(third.third_party_claim || '');
-                    new3p.find('.threePBiAdjuster').val(third.third_party_adjuster || '');
-                    new3p.find('.threePTel').val(third.third_party_tel || '');
-                    new3p.find('.threeEmail').val(third.third_party_email || '');
-                    new3p.find('.threeFax').val(third.third_party_fax || '');
 
-                    new3p.find('.hidden').removeClass('hidden'); // show hidden fields
-
-                     if (index === caseData.third_parties.length - 1) {
-
+                    if (third.third_party_name) new3p.find('.threePName').val(third.third_party_name);
+                    if (third.third_party_claim) new3p.find('.threeClaim').val(third.third_party_claim);
+                    if (third.third_party_adjuster) new3p.find('.threePBiAdjuster').val(third.third_party_adjuster);
+                    if (third.third_party_tel) new3p.find('.threePTel').val(third.third_party_tel);
+                    if (third.third_party_email) new3p.find('.threeEmail').val(third.third_party_email);
+                    if (third.third_party_fax) new3p.find('.threeFax').val(third.third_party_fax);
+                    if(third_parties.length == 1 ){
                     }else{
-                        new3p.find('.addClientInfoButtonFor3p').addClass('removeClientInfoButtonFor3p  bg-[#a51a1a]')
+                        new3p.find('.hidden').removeClass('hidden'); // show hidden fields
+                    }
+
+                    if (index === third_parties.length - 1) {
+                        // last row: + button stays
+                        new3p.find('.addClientInfoButtonFor3p')
+                            .removeClass('removeClientInfoButtonFor3p bg-[#a51a1a]')
+                            .addClass('addClientInfoButtonFor3p bg-[#14548d]')
+                            .children().removeClass('fa-minus').addClass('fa-plus');
+                    } else {
+                        new3p.find('.addClientInfoButtonFor3p')
+                            .addClass('removeClientInfoButtonFor3p bg-[#a51a1a]')
                             .removeClass('addClientInfoButtonFor3p bg-[#14548d]')
-                            .children()
-                            .removeClass('fa-plus')
-                            .addClass('fa-minus');
+                            .children().removeClass('fa-plus').addClass('fa-minus');
                     }
 
                     threePContainer.append(new3p);
@@ -1131,24 +1148,32 @@ function getCaseInfoMainData(caseId) {
                 const firstPContainer = $('.appendDuplicatesFor1p');
                 firstPContainer.empty();
 
-                caseData.first_parties?.forEach((first, index) => {
+                const first_parties = (caseData.first_parties && caseData.first_parties.length > 0) ? caseData.first_parties : [{}];
+
+                first_parties.forEach((first, index) => {
                     let new1p = firstPTemplate.clone().removeAttr('id');
-                    new1p.find('.onePName').val(first.name || '');
-                    new1p.find('.onePClaim').val(first.claim || '');
-                    new1p.find('.onePBiAdjuster').val(first.adjuster || '');
-                    new1p.find('.onePTel').val(first.tel || '');
-                    new1p.find('.onePFax').val(first.fax || '');
-                    new1p.find('.onePEmail').val(first.email || '');
 
-                    new1p.find('.hidden').removeClass('hidden');
-                    if (index === caseData.first_parties.length - 1) {
-
+                    if (first.name) new1p.find('.onePName').val(first.name);
+                    if (first.claim) new1p.find('.onePClaim').val(first.claim);
+                    if (first.adjuster) new1p.find('.onePBiAdjuster').val(first.adjuster);
+                    if (first.tel) new1p.find('.onePTel').val(first.tel);
+                    if (first.fax) new1p.find('.onePFax').val(first.fax);
+                    if (first.email) new1p.find('.onePEmail').val(first.email);
+                    if(first_parties.length == 1 ){
                     }else{
-                        new1p.find('.addClientInfoButtonFor1p').addClass('removeClientInfoButtonFor1p   bg-[#a51a1a]')
+                        new1p.find('.hidden').removeClass('hidden');
+                    }
+
+                    if (index === first_parties.length - 1) {
+                        new1p.find('.addClientInfoButtonFor1p')
+                            .removeClass('removeClientInfoButtonFor1p bg-[#a51a1a]')
+                            .addClass('addClientInfoButtonFor1p bg-[#14548d]')
+                            .children().removeClass('fa-minus').addClass('fa-plus');
+                    } else {
+                        new1p.find('.addClientInfoButtonFor1p')
+                            .addClass('removeClientInfoButtonFor1p bg-[#a51a1a]')
                             .removeClass('addClientInfoButtonFor1p bg-[#14548d]')
-                            .children()
-                            .removeClass('fa-plus')
-                            .addClass('fa-minus');
+                            .children().removeClass('fa-plus').addClass('fa-minus');
                     }
 
                     firstPContainer.append(new1p);
@@ -1159,26 +1184,35 @@ function getCaseInfoMainData(caseId) {
                 const defenseContainer = $('.appendDuplicatesForDefense');
                 defenseContainer.empty();
 
-                caseData.defense_counsels?.forEach((def , index) => {
+                const defense_counsels = (caseData.defense_counsels && caseData.defense_counsels.length > 0) ? caseData.defense_counsels : [{}];
+
+                defense_counsels.forEach((def, index) => {
                     let newDef = defenseTemplate.clone().removeAttr('id');
-                    newDef.find('.defenseCounselName').val(def.defense_name || '');
-                    newDef.find('.defenseCounselAttorney').val(def.defense_attorney || '');
-                    newDef.find('.defenseCounselAddress').val(def.defense_address || '');
-                    newDef.find('.defenseCounselTel').val(def.defense_tel || '');
-                    newDef.find('.defenseCounselEmail').val(def.defense_email || '');
-                    newDef.find('.defenseCounselFax').val(def.defense_fax || '');
 
-                    newDef.find('.hidden').removeClass('hidden');
+                    if (def.defense_name) newDef.find('.defenseCounselName').val(def.defense_name);
+                    if (def.defense_attorney) newDef.find('.defenseCounselAttorney').val(def.defense_attorney);
+                    if (def.defense_address) newDef.find('.defenseCounselAddress').val(def.defense_address);
+                    if (def.defense_tel) newDef.find('.defenseCounselTel').val(def.defense_tel);
+                    if (def.defense_email) newDef.find('.defenseCounselEmail').val(def.defense_email);
+                    if (def.defense_fax) newDef.find('.defenseCounselFax').val(def.defense_fax);
 
-                    if (index === caseData.defense_counsels.length - 1) {
-
+                    if(defense_counsels.length == 1 ){
                     }else{
-                        newDef.find('.addClientInfoButtonForDefense').addClass('removeClientInfoButtonForDefense  bg-[#a51a1a]')
-                            .removeClass('addClientInfoButtonForDefense bg-[#14548d]')
-                            .children()
-                            .removeClass('fa-plus')
-                            .addClass('fa-minus');
+                        newDef.find('.hidden').removeClass('hidden');
                     }
+
+                    if (index === defense_counsels.length - 1) {
+                        newDef.find('.addClientInfoButtonForDefense')
+                            .removeClass('removeClientInfoButtonForDefense bg-[#a51a1a]')
+                            .addClass('addClientInfoButtonForDefense bg-[#14548d]')
+                            .children().removeClass('fa-minus').addClass('fa-plus');
+                    } else {
+                        newDef.find('.addClientInfoButtonForDefense')
+                            .addClass('removeClientInfoButtonForDefense bg-[#a51a1a]')
+                            .removeClass('addClientInfoButtonForDefense bg-[#14548d]')
+                            .children().removeClass('fa-plus').addClass('fa-minus');
+                    }
+
                     defenseContainer.append(newDef);
                 });
 
@@ -1189,94 +1223,79 @@ function getCaseInfoMainData(caseId) {
                 const treatingContainer = $('.treatingAppendDuplicates');
                 treatingContainer.empty();
 
-                if (caseData.clients && caseData.clients.length > 0) {
-                    caseData.clients.forEach((client, index) => {
-                        const treating = client.treating_chart || client.treatingChart; // depending on backend key naming
-                        const clientName = client.client_name || `Client ${index + 1}`;
+                const clientsForTreating = (caseData.clients && caseData.clients.length > 0) ? caseData.clients : [{}];
 
-                        // Clone template and prepare
-                        let newTreating = treatingTemplate.clone().removeAttr('id').attr('data-client', index + 1);
+                clientsForTreating.forEach((client, index) => {
+                    const treating = client.treating_chart || client.treatingChart || {};
+                    const clientName = client.client_name || `Client ${index + 1}`;
 
-                        // Set name label
-                        newTreating.find('.treatingName p').text(`${clientName} - Treating Chart`);
+                    let newTreating = treatingTemplate.clone().removeAttr('id').attr('data-client', index + 1);
 
-                        // Fill treating chart data (if exists)
-                        newTreating.find('.ems').val(treating?.ems || '');
-                        newTreating.find('.hospital').val(treating?.hospital || '');
-                        newTreating.find('.chiropractor').val(treating?.chiropractor || '');
-                        newTreating.find('.pcpmd').val(treating?.pcpOrMd || '');
-                        newTreating.find('.mriAndResults').val(treating?.mriAndResults || '');
-                        newTreating.find('.painManagement').val(treating?.painManagement || '');
-                        newTreating.find('.orthoOrSurgery').val(treating?.orthoOrSurgery || '');
+                    newTreating.find('.treatingName p').text(`${clientName} - Treating Chart`);
 
-                        newTreating.removeClass('hidden');
+                    newTreating.find('.ems').val(treating?.ems || '');
+                    newTreating.find('.hospital').val(treating?.hospital || '');
+                    newTreating.find('.chiropractor').val(treating?.chiropractor || '');
+                    newTreating.find('.pcpmd').val(treating?.pcpOrMd || '');
+                    newTreating.find('.mriAndResults').val(treating?.mriAndResults || '');
+                    newTreating.find('.painManagement').val(treating?.painManagement || '');
+                    newTreating.find('.orthoOrSurgery').val(treating?.orthoOrSurgery || '');
 
-
-                        // Add to container
-                        treatingContainer.append(newTreating);
-                    });
-                }
-
+                    newTreating.removeClass('hidden');
+                    treatingContainer.append(newTreating);
+                });
 
                 // --- AFFIDAVIT CHART ---
                 const affidavitTemplate = $('.affidavitToDuplicate').first();
                 const affidavitContainer = $('.affidavitAppendDuplicates');
                 affidavitContainer.empty();
 
-                if (caseData.clients && caseData.clients.length > 0) {
-                    caseData.clients.forEach((client, index) => {
-                        const clientName = client.client_name || `Client ${index + 1}`;
-                        const affidavits = client.affidavits || client.affidavit_chart || [];
+                const clientsForAffidavit = (caseData.clients && caseData.clients.length > 0) ? caseData.clients : [{}];
 
-                        // Clone the entire affidavit block (for one client)
-                        let newAffidavit = affidavitTemplate.clone()
-                            .removeAttr('id')
-                            .attr('data-client', index + 1);
+                clientsForAffidavit.forEach((client, index) => {
+                    const clientName = client.client_name || `Client ${index + 1}`;
+                    const affidavits = client.affidavits || client.affidavit_chart || [];
 
-                        // Update header title
-                        newAffidavit.find('.affidavitName p').text(`${clientName} - Affidavit Chart`);
+                    let newAffidavit = affidavitTemplate.clone()
+                        .removeAttr('id')
+                        .attr('data-client', index + 1);
 
-                        // The inner grid (that repeats per affidavit entry)
-                        const innerGridContainer = newAffidavit.find('.toduplicatehere').parent().first();
-                        const innerGridTemplate = innerGridContainer.find('.toduplicatehere').first().clone(); // clone first row as template
-                        innerGridContainer.empty(); // clear old contents
+                    newAffidavit.find('.affidavitName p').text(`${clientName} - Affidavit Chart`);
 
-                        // Loop through this client's affidavits
-                        if (affidavits.length > 0) {
-                            affidavits.forEach((aff, i) => {
-                                let newRow = innerGridTemplate.clone();
+                    const innerGridContainer = newAffidavit.find('.toduplicatehere').parent().first();
+                    const innerGridTemplate = innerGridContainer.find('.toduplicatehere').first().clone();
+                    innerGridContainer.empty();
 
-                                newRow.find('.providerName').val(aff?.providerName || '');
-                                newRow.find('.dateOrdered').val(aff?.dateOrdered || '');
-                                newRow.find('.dateReceivedMr').val(aff?.dateReceivedMr || '');
-                                newRow.find('.dateReceivedBr').val(aff?.dateReceivedBr || '');
-                                newRow.find('.affidavitDateServed').val(aff?.dateServed || '');
-                                newRow.find('.affidavitNoticeFiled').val(aff?.noticeFilled || '');
-                                newRow.find('.mriAndResults').val(aff?.mri_and_results || '');
-                                newRow.find('.controverted').val(aff?.controverted || '');
+                    if (affidavits.length > 0) {
+                        affidavits.forEach((aff, i) => {
+                            let newRow = innerGridTemplate.clone();
 
-                                if (i === affidavits.length - 1) {
+                            newRow.find('.providerName').val(aff?.providerName || '');
+                            newRow.find('.dateOrdered').val(aff?.dateOrdered || '');
+                            newRow.find('.dateReceivedMr').val(aff?.dateReceivedMr || '');
+                            newRow.find('.dateReceivedBr').val(aff?.dateReceivedBr || '');
+                            newRow.find('.affidavitDateServed').val(aff?.dateServed || '');
+                            newRow.find('.affidavitNoticeFiled').val(aff?.noticeFilled || '');
+                            newRow.find('.mriAndResults').val(aff?.mri_and_results || '');
+                            newRow.find('.controverted').val(aff?.controverted || '');
 
-                                }else{
-                                    newRow.find('.addAffidavitButton').addClass('removeClientInfoButtonForAffidavit  bg-[#a51a1a]')
-                                        .removeClass('addAffidavitButton bg-[#14548d]')
-                                        .children()
-                                        .removeClass('fa-plus')
-                                        .addClass('fa-minus');
-                                }
+                            if (i !== affidavits.length - 1) {
+                                newRow.find('.addAffidavitButton')
+                                    .addClass('removeClientInfoButtonForAffidavit bg-[#a51a1a]')
+                                    .removeClass('addAffidavitButton bg-[#14548d]')
+                                    .children().removeClass('fa-plus').addClass('fa-minus');
+                            }
 
-                                innerGridContainer.append(newRow);
-                            });
-                        } else {
-                            // If no affidavit data, append one empty row
-                            innerGridContainer.append(innerGridTemplate.clone());
-                        }
+                            innerGridContainer.append(newRow);
+                        });
+                    } else {
+                        // Append one empty row if no affidavits
+                        innerGridContainer.append(innerGridTemplate.clone());
+                    }
 
-                        // Make visible and append to container
-                        newAffidavit.removeClass('hidden');
-                        affidavitContainer.append(newAffidavit);
-                    });
-                }
+                    newAffidavit.removeClass('hidden');
+                    affidavitContainer.append(newAffidavit);
+                });
 
 
                 // --- NEGOTIATION CHART ---
@@ -1284,77 +1303,55 @@ function getCaseInfoMainData(caseId) {
                 const negotiationContainer = $('.negotiationAppendDuplicates');
                 negotiationContainer.empty();
 
-                if (caseData.clients && caseData.clients.length > 0) {
-                    caseData.clients.forEach((client, index) => {
-                        const clientName = client.client_name || `Client ${index + 1}`;
-                        const negotiation = client.negotiating_charts || {};
+                // Ensure we have at least one "client" to render
+                const clientsForNegotiation = (caseData.clients && caseData.clients.length > 0) ? caseData.clients : [{}];
 
-                        // Clone negotiation block per client
-                        let newNegotiation = negotiationTemplate.clone()
-                            .removeAttr('id')
-                            .attr('data-client', index + 1);
+                clientsForNegotiation.forEach((client, index) => {
+                    const clientName = client.client_name || `Client ${index + 1}`;
+                    const negotiation = client.negotiating_charts || [{}]; // at least one sub negotiation if empty
 
-                        // Header (client name)
-                        newNegotiation.find('.negotiationName p').text(`${clientName} - Negotiation Chart`);
+                    let newNegotiation = negotiationTemplate.clone()
+                        .removeAttr('id')
+                        .attr('data-client', index + 1);
 
+                    newNegotiation.find('.negotiationName p').text(`${clientName} - Negotiation Chart`);
 
+                    const subGridContainer = newNegotiation.find('.negotiationSubToDuplicate').parent().first();
+                    const subGridTemplate = newNegotiation.find('.negotiationSubToDuplicate').first().clone();
+                    subGridContainer.empty();
 
-                        // Now handle the nested bottom grid (multiple sub negotiations)
-                        const subGridContainer = newNegotiation.find('.negotiationSubToDuplicate').parent().first();
-                        const subGridTemplate = newNegotiation.find('.negotiationSubToDuplicate').first().clone();
-                        subGridContainer.empty();
+                    negotiation.forEach((sub, i) => {
+                        let newSub = subGridTemplate.clone();
 
-                        if (negotiation.length > 0) {
+                        newNegotiation.find('.medsTotal').val(sub?.medsTotal || '');
+                        newNegotiation.find('.medsPviTotal').val(sub?.medsPviTotal || '');
+                        newNegotiation.find('.negotiationLastOffer').val(sub?.negotiationLastOffer || '');
+                        newNegotiation.find('.negotiationLastOfferDate').val(sub?.negotiationLastOfferDate || '');
+                        newNegotiation.find('.negotiationLastDemand').val(sub?.negotiationLastDemand || '');
+                        newNegotiation.find('.negotiationLastDemandDate').val(sub?.negotiationLastDemandDate || '');
+                        newNegotiation.find('.physicalPainMentalAnguishText').val(sub?.physicalPainMentalAnguishText || '');
 
-                            negotiation.forEach((sub, i ) => {
-                                let newSub = subGridTemplate.clone();
-                                if(sub.medsTotal != undefined && sub.medsTotal != null  && sub.medsTotal != ''){
-                                    newNegotiation.find('.medsTotal').val(sub.medsTotal);
-                                }
-                                if(sub.medsPviTotal != undefined && sub.medsPviTotal != null  && sub.medsPviTotal != ''){
-                                    newNegotiation.find('.medsPviTotal').val(sub?.medsPviTotal);
-                                }
-                                if(sub.negotiationLastOffer != undefined && sub.negotiationLastOffer != null  && sub.negotiationLastOffer != ''){
-                                    newNegotiation.find('.negotiationLastOffer').val(sub?.negotiationLastOffer);
-                                }
-                                if(sub.negotiationLastOfferDate != undefined && sub.negotiationLastOfferDate != null  && sub.negotiationLastOfferDate != ''){
-                                    newNegotiation.find('.negotiationLastOfferDate').val(sub?.negotiationLastOfferDate);
-                                }
-                                if(sub.negotiationLastDemand != undefined && sub.negotiationLastDemand != null  && sub.negotiationLastDemand != ''){
-                                    newNegotiation.find('.negotiationLastDemand').val(sub?.negotiationLastDemand);
-                                }
-                                if(sub.negotiationLastDemandDate != undefined && sub.negotiationLastDemandDate != null  && sub.negotiationLastDemandDate != ''){
-                                    newNegotiation.find('.negotiationLastDemandDate').val(sub?.negotiationLastDemandDate);
-                                }
-                                if(sub.physicalPainMentalAnguishText != undefined && sub.physicalPainMentalAnguishText != null  && sub.physicalPainMentalAnguishText != ''){
-                                    newNegotiation.find('.physicalPainMentalAnguishText').val(sub?.physicalPainMentalAnguishText);
-                                }
-
-                                if (i === negotiation.length - 1) {
-
-                                }else{
-                                    newSub.find('.addButtonForNegotiation').addClass('removeClientInfoButtonForNegotiation   bg-[#a51a1a]')
-                                        .removeClass('addButtonForNegotiation bg-[#14548d]')
-                                        .children()
-                                        .removeClass('fa-plus')
-                                        .addClass('fa-minus');
-                                }
-                                if((sub.negotiationNameBottom != undefined && sub.negotiationNameBottom != null  && sub.negotiationNameBottom != '') || (sub.negotiationDateBottom != undefined && sub.negotiationDateBottom != null  && sub.negotiationDateBottom != '') || (sub.negotiationAmountBottom != undefined && sub.negotiationAmountBottom != null  && sub.negotiationAmountBottom != '')  || (i == 0 && negotiation.length  == 1 )){
-                                    newSub.find('.negotiationNameBottom').val(sub?.negotiationNameBottom || '');
-                                    newSub.find('.negotiationDateBottom').val(sub?.negotiationDateBottom || '');
-                                    newSub.find('.negotiationAmountBottom').val(sub?.negotiationAmountBottom || '');
-                                    subGridContainer.append(newSub);
-                                }
-                            });
-                        } else {
-                            subGridContainer.append(subGridTemplate.clone());
+                        if (i !== negotiation.length - 1) {
+                            newSub.find('.addButtonForNegotiation')
+                                .addClass('removeClientInfoButtonForNegotiation bg-[#a51a1a]')
+                                .removeClass('addButtonForNegotiation bg-[#14548d]')
+                                .children()
+                                .removeClass('fa-plus')
+                                .addClass('fa-minus');
                         }
 
-                        newNegotiation.removeClass('hidden');
-                        negotiationContainer.append(newNegotiation);
+                        // Populate bottom row fields if any exist, or always show first row if only one
+                        if ((sub.negotiationNameBottom || sub.negotiationDateBottom || sub.negotiationAmountBottom) || (i === 0 && negotiation.length === 1)) {
+                            newSub.find('.negotiationNameBottom').val(sub?.negotiationNameBottom || '');
+                            newSub.find('.negotiationDateBottom').val(sub?.negotiationDateBottom || '');
+                            newSub.find('.negotiationAmountBottom').val(sub?.negotiationAmountBottom || '');
+                            subGridContainer.append(newSub);
+                        }
                     });
-                }
 
+                    newNegotiation.removeClass('hidden');
+                    negotiationContainer.append(newNegotiation);
+                });
 
 
 

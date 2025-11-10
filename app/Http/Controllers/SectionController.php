@@ -69,7 +69,7 @@ class SectionController extends Controller
                 'title' => $request->todoSectionTitle ?? null,
                 'description' => $request->sectionDescription ?? null,
                 'categoryId' => $request->todoSectionCategory ,
-                'caseId' => '1',
+                'caseId' => $request->caseId,
             ]);
 
              return response()->json([

@@ -59,16 +59,7 @@ $(document).ready(() => {
         $modal.removeClass('hidden');
     });
 
-    // Delete button (optional)
-    $('.deleteBtn').click(function() {
-        if(confirm('Are you sure you want to delete this insurance?')) {
-            const id = $(this).data('id');
-            $(this).closest('tr').remove();
 
-            // optional AJAX DELETE to backend
-            console.log('Delete insurance with ID:', id);
-        }
-    });
 
     // Submit form via AJAX
     $form.submit(function(e) {
@@ -107,7 +98,6 @@ $(document).ready(() => {
                 success: function(response) {
                     if(response.success) {
                         $tr.remove(); // remove row from table
-                        alert('Insurance deleted successfully.');
                     }
                 },
                 error: function(xhr) {

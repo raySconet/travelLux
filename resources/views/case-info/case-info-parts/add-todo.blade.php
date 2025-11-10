@@ -2,6 +2,23 @@
     @csrf
 
     <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12 sm:col-span-12">
+            <x-input-label
+            for="completedBy"
+            :value="__('Completed By')"
+            class="mb-1"
+            />
+            <x-text-input
+                id="completedBy"
+                name="completedBy"
+                type="text"
+                class="block w-full"
+                :value="old('Completed By')"
+                required
+                autocomplete="completedBy"
+            />
+            <div id="errorCategoryName" class="text-sm text-red-600 space-y-1 "></div>
+        </div>
         <div class="col-span-12 sm:col-span-6">
             <x-input-label
             for="todoTitle"

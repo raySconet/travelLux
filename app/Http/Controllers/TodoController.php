@@ -82,6 +82,9 @@ class TodoController extends Controller
             'completed' => 'completed',
         ];
         $todo->toDoStatus = $statusFlow[$todo->toDoStatus] ?? 'pending';
+        $user = auth()->user();
+
+        $todo->completedBy = $user->name;
         if ($todo->toDoStatus === 'completed') {
             $todo->completeDate = now();
         }
@@ -169,6 +172,7 @@ class TodoController extends Controller
             'title' => $request->todoTitle,
             'description' => $request->todoDescription,
             'completeDate' => $formattedDate,
+            'completedBy' => $request->completedBy,
         ]);
 
         return response()->json(['success' => true, 'todo' => $todo]);

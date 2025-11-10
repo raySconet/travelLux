@@ -742,7 +742,8 @@ $(document).ready(() => {
             data: formData,
             dataType: 'json',
             success: function (response) {
-                alert('Case updated successfully!');},
+                // alert('Case updated successfully!');
+            },
             error: function (xhr) {
                 console.error('Error:', xhr.responseText);
             },
@@ -798,6 +799,7 @@ $(document).ready(() => {
                 $('#todoDate').val(formatDateMDY(todo.completeDate));
                 $('#todoDescription').val(todo.description);
                 $('#sectionId').val(todo.sectionId);
+                $('#completedBy').val(todo.completedBy);
 
 
                 // Open the modal
@@ -936,6 +938,10 @@ function getSectionsAndTodos() {
                         todayHtml += `
                                     <div  class=" mt-1" >
                                         <div class="grid grid-cols-1 2xl:grid-cols-14 gap-4 w-full">
+                                            <div class="2xl:col-span-14 flex flex-col ">
+                                                <p style="color:#a22323 !important; margin-bottom:-15px;" >${todo.completedBy ?? ''}</p>
+                                            </div>
+
                                             <div class="2xl:col-span-1 flex flex-col ">
                                                 <button title="Mark task as complete" data-id="${todo.id}" class="incompleteButton buttonClickForComplete">
                                                     <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
@@ -979,6 +985,10 @@ function getSectionsAndTodos() {
                         completedHtml += `
                                 <div class="mt-1">
                                     <div class="grid grid-cols-1 2xl:grid-cols-14 gap-4 w-full">
+                                        <div class="2xl:col-span-14 flex flex-col ">
+                                            <p style="color:#a22323 !important; margin-bottom:-15px;" >${todo.completedBy ?? ''}</p>
+                                        </div>
+
                                         <div class="2xl:col-span-1 flex flex-col">
                                             <button title="Mark task as complete" data-id="${todo.id}" class="completeButton">
                                                 <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
@@ -1465,16 +1475,30 @@ function getCaseInfoMainData() {
                     subGridContainer.empty();
 
                     negotiation.forEach((sub, i) => {
+
+                        if(sub.medsTotal != null && sub.medsTotal != undefined){
+                            newNegotiation.find('.medsTotal').val(sub.medsTotal);
+                        }
+                        if(sub.medsPviTotal != null && sub.medsPviTotal != undefined){
+                            newNegotiation.find('.medsPviTotal').val(sub?.medsPviTotal);
+                        }
+                        if(sub.negotiationLastOffer != null && sub.negotiationLastOffer != undefined){
+                            newNegotiation.find('.negotiationLastOffer').val(sub?.negotiationLastOffer);
+                        }
+                        if(sub.negotiationLastOfferDate != null && sub.negotiationLastOfferDate != undefined){
+                            newNegotiation.find('.negotiationLastOfferDate').val(sub?.negotiationLastOfferDate);
+                        }
+                        if(sub.negotiationLastDemand != null && sub.negotiationLastDemand != undefined){
+                            newNegotiation.find('.negotiationLastDemand').val(sub?.negotiationLastDemand);
+                        }
+                        if(sub.negotiationLastDemandDate != null && sub.negotiationLastDemandDate != undefined){
+                            newNegotiation.find('.negotiationLastDemandDate').val(sub?.negotiationLastDemandDate);
+                        }
+                        if(sub.physicalPainMentalAnguishText != null && sub.physicalPainMentalAnguishText != undefined){
+                            newNegotiation.find('.physicalPainMentalAnguishText').val(sub?.physicalPainMentalAnguishText);
+                        }
+
                         let newSub = subGridTemplate.clone();
-
-                        newNegotiation.find('.medsTotal').val(sub?.medsTotal || '');
-                        newNegotiation.find('.medsPviTotal').val(sub?.medsPviTotal || '');
-                        newNegotiation.find('.negotiationLastOffer').val(sub?.negotiationLastOffer || '');
-                        newNegotiation.find('.negotiationLastOfferDate').val(sub?.negotiationLastOfferDate || '');
-                        newNegotiation.find('.negotiationLastDemand').val(sub?.negotiationLastDemand || '');
-                        newNegotiation.find('.negotiationLastDemandDate').val(sub?.negotiationLastDemandDate || '');
-                        newNegotiation.find('.physicalPainMentalAnguishText').val(sub?.physicalPainMentalAnguishText || '');
-
                         if (i !== negotiation.length - 1) {
                             newSub.find('.addButtonForNegotiation')
                                 .addClass('removeClientInfoButtonForNegotiation bg-[#a51a1a]')

@@ -57,7 +57,7 @@
                     placeholder="Sprain/Strain, limited movement, broken bones, surgery etc.
                         Can’t pick up kids, afraid of driving now, can’t work out anymore, missed vacation etc.
                         Drunk driver, car totaled, great client."
-                        class="mt-1   text-center" :value="old('name')"   autofocus autocomplete="physicalPainMentalAnguishText" />
+                        class="mt-1  physicalPainMentalAnguishText text-center" :value="old('name')"   autofocus autocomplete="physicalPainMentalAnguishText" />
                     <x-input-error class="mt-2" :messages="$errors->get('name')" />
                 </div>
             </x-case-components.col>

@@ -14,6 +14,7 @@ class Todo extends Model
         'completeDate',
         'toDoStatus',
         'sectionId',
+        'completedBy',
     ];
 
     // Each todo belongs to one section

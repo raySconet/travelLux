@@ -195,4 +195,6 @@ class User extends Authenticatable
         return $this->belongsToMany(
             User::class,'user_assignments','assigned_id','user_id')->wherePivot('isDeleted', false);
     }
+
+
 }

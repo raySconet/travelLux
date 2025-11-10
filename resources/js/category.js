@@ -111,7 +111,7 @@ $(document).ready(() => {
             const hex = color.toHexString();
             $('.colorBox').css('background-color', hex);     // Update square visually
             $('.colorInput').val(hex);                       // Store value (optional)
-            console.log("Selected color:", hex);
+            // console.log("Selected color:", hex);
             },
             move: function(color) {
             // Live update while dragging
@@ -187,7 +187,7 @@ $(document).ready(() => {
         const hex = color.toHexString();
         $('.colorBox').css('background-color', hex);     // Update square visually
         $('.colorInput').val(hex);                       // Store value (optional)
-        console.log("Selected color:", hex);
+        // console.log("Selected color:", hex);
         },
         move: function(color) {
         // Live update while dragging
@@ -301,7 +301,7 @@ $(document).ready(() => {
         $('.colorBox').removeClass('border border-red-500');
 
         const categoryId = $(this).data('id');
-        console.log("ssss", categoryId);
+        // console.log("ssss", categoryId);
 
         $.ajax({
             headers: {
@@ -314,7 +314,7 @@ $(document).ready(() => {
             },
             dataType: 'json',
             success: function (response) {
-                console.log(response); // still useful for debugging
+                // console.log(response); // still useful for debugging
 
                 const category = response[0]; // Get the first (and presumably only) category
 
@@ -351,7 +351,7 @@ $(document).ready(() => {
                         const hex = color.toHexString();
                         $('.colorBox').css('background-color', hex);     // Update square visually
                         $('.colorInput').val(hex);                       // Store value (optional)
-                        console.log("Selected color:", hex);
+                        // console.log("Selected color:", hex);
                         },
                         move: function(color) {
                         // Live update while dragging
@@ -402,7 +402,7 @@ $(document).ready(() => {
         e.stopPropagation();
 
         const categoryId = $(this).data('id');
-        console.log(categoryId);
+        // console.log(categoryId);
 
         let actionUrl = '/category/delete';
         let method = 'POST';
@@ -441,7 +441,7 @@ function getEventsCases(callback) {
         data: { user_id: userId },
         method: 'GET',
         success: function (response) {
-            console.log(response);
+            // console.log(response);
             if (typeof callback === 'function') {
                 callback(response.categories, response.permissions);
             }
@@ -462,7 +462,7 @@ function getEventsCases(callback) {
 function renderEventCases(categories, permissions) {
     const container = $("#categoryLayoutContent");
     container.empty();
-    console.log(categories, permissions);
+    // console.log(categories, permissions);
 
     categories.forEach(category => {
         const itemCount = category.items.length;
@@ -570,7 +570,7 @@ function getUsers(callback) {
         url: '/getUsers',
         method: 'GET',
         success: function (response) {
-            console.log('Users response:', response);
+            // console.log('Users response:', response);
             let users = response.users || [];
             const authUserId = response.auth_user_id;
             const assignedUserIds = response.assigned_user_ids || [];

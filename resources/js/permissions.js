@@ -256,8 +256,8 @@ $(document).ready(function() {
 
         const userId = $(this).attr('data-edit-user-id');
         const form = $('#editUserForm');
-        console.log("Form data to be submitted:", form.serialize());
-        console.log("Submitting edit for user ID:", userId);
+        // console.log("Form data to be submitted:", form.serialize());
+        // console.log("Submitting edit for user ID:", userId);
         $.ajax({
             url: `/users/${userId}/update`,
             type: 'POST',
@@ -400,8 +400,8 @@ $(document).ready(function() {
         const form = $('#assignViewAccessForm');
         const formData  = form.serialize();
         const selectedSet = $('#assignUserSelect').data('assignSelectedValues');
-        console.log(formData);
-        console.log(selectedSet, $(this).attr('data-user-id')); // Should output array of selected user IDs
+        // console.log(formData);
+        // console.log(selectedSet, $(this).attr('data-user-id')); // Should output array of selected user IDs
 
         $.ajax({
             headers: {

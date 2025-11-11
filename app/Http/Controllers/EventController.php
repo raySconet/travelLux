@@ -428,28 +428,56 @@ class EventController extends Controller
 
         $event = Event::find($eventId);
 
+        // if ($newDate) {
+        //     $newDate = \Carbon\Carbon::parse($newDate);
+
+        //     // Extract original time components
+        //     $originalFrom = \Carbon\Carbon::parse($event->date_from);
+        //     $originalTo = \Carbon\Carbon::parse($event->date_to);
+
+        //     // Combine new date with original time
+        //     $fromDate = $newDate->copy()->setTimeFrom($originalFrom);
+        //     $toDate = $newDate->copy()->setTimeFrom($originalTo);
+
+        //     // Check for conflicts
+        //     $userId = $newUserId ?? $event->user_id;
+
+        //     if ($this->hasTimeConflict($userId, $fromDate, $toDate, $event->id)) {
+        //         return response()->json([
+        //             'error' => 'The target user already has an event during this time.'
+        //         ], 422);
+        //     }
+
+        //     $event->date_from = $fromDate;
+        //     $event->date_to = $toDate;
+        // }
+
+        // Update event date if provided
         if ($newDate) {
             $newDate = \Carbon\Carbon::parse($newDate);
 
-            // Extract original time components
             $originalFrom = \Carbon\Carbon::parse($event->date_from);
             $originalTo = \Carbon\Carbon::parse($event->date_to);
 
-            // Combine new date with original time
-            $fromDate = $newDate->copy()->setTimeFrom($originalFrom);
-            $toDate = $newDate->copy()->setTimeFrom($originalTo);
+            // Calculate duration in days
+            $durationDays = $originalFrom->diffInDays($originalTo);
 
-            // Check for conflicts
-            $userId = $newUserId ?? $event->user_id;
+            // Shift start and end dates
+            $newFrom = $newDate->copy()->setTimeFrom($originalFrom);
+            $newTo = $newFrom->copy()->addDays($durationDays)->setTimeFrom($originalTo);
 
-            if ($this->hasTimeConflict($userId, $fromDate, $toDate, $event->id)) {
-                return response()->json([
-                    'error' => 'The target user already has an event during this time.'
-                ], 422);
+            // ✅ Only check conflict if NOT all-day
+            if (!$event->all_day) {
+                $userIdToCheck = $newUserId ?? $event->user_id;
+                if ($this->hasTimeConflict($userIdToCheck, $newFrom, $newTo, $event->id)) {
+                    return response()->json([
+                        'error' => 'The target user already has an event during this time.'
+                    ], 422);
+                }
             }
 
-            $event->date_from = $fromDate;
-            $event->date_to = $toDate;
+            $event->date_from = $newFrom;
+            $event->date_to = $newTo;
         }
 
         if($newUserId) {

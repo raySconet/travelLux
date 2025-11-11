@@ -1,6 +1,9 @@
 <section class="mt-1 affidavitChartSection">
     <h2   class="mb-1 mt-1 text-2xl  text-gray-700 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
         {{ __('Affidavit Chart') }}
+        <div class="flex float-right mt-[-5px] mb-[5px]">
+            <x-primary-btn id="submitMainForm" style="height:36px; width:60px; font-size:14px; margin-top:2px;" class="submitMainForm">{{ __('Save') }}</x-primary-btn>
+        </div>
     </h2>
 
 

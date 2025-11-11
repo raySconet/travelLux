@@ -32,10 +32,10 @@
                     <td class="p-2 border">{{ $insurance->tel }}</td>
                     <td class="p-2 border">{{ $insurance->email }}</td>
                     <td class="p-2 border">{{ $insurance->fax }}</td>
-                   <td class="p-2 border flex gap-2">
-                        <button class="editBtn inline-block bg-yellow-600  text-black px-2 py-1 rounded cursor-pointer"
+                   <td class="p-2 border text-center ">
+                        <button class="editBtn inline-block bg-green-800  text-white px-2 py-1 rounded cursor-pointer"
                             data-id="{{ $insurance->id }}">Edit</button>
-                        <button class="deleteBtn inline-block bg-red-600  text-black px-2 py-1 rounded cursor-pointer"
+                        <button class="deleteBtn inline-block bg-red-600 ml-3 text-white px-2 py-1 rounded cursor-pointer"
                             data-id="{{ $insurance->id }}">Delete</button>
                     </td>
                 </tr>

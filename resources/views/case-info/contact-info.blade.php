@@ -68,8 +68,16 @@
                 <x-case-components.grid class="2xl:grid-cols-12   threePToDuplicate" id="">
                     <x-case-components.col class="2xl:col-span-12 hidden">
                         {{-- <x-input-label for="name" :value="__('Name')" /> --}}
-                        <x-text-input  name="threePName" type="text" class="mt-1 threePName placeholder:text-yellow-600 text-center"  placeholder="Insurance Co. Name" :value="old('threePName')"   autofocus autocomplete="threePName" />
-                        <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                        <select
+                            id="threePName"
+                            name="threePName"
+                            class="
+                                block w-full text-center threePName rounded-md mt-2 bg-white placeholder:text-yellow-600 text-center border border-gray-200
+                                cursor-pointer
+                            "
+                            style="height:26px;"
+                        >
+                        </select>
                     </x-case-components.col>
 
                     <x-case-components.col class="2xl:col-span-12 hidden">
@@ -92,15 +100,15 @@
 
                     <x-case-components.col class="2xl:col-span-12 hidden">
                         {{-- <x-input-label for="threeEmail" :value="__('Email')" /> --}}
-                        <x-text-input  name="threeEmail" type="text" class="mt-1 threeEmail placeholder:text-yellow-600 text-center"   placeholder="Email" :value="old('name')"   autofocus autocomplete="threeEmail" />
-                        <x-input-error class="mt-2" :messages="$errors->get('Email')" />
-                    </x-case-components.col>
-                    <x-case-components.col class="2xl:col-span-12 hidden">
-                        {{-- <x-input-label for="threeEmail" :value="__('Email')" /> --}}
                         <x-text-input  name="threeFax" type="text" class="mt-1 threeFax placeholder:text-yellow-600 text-center"   placeholder="Fax" :value="old('name')"   autofocus autocomplete="threeFax" />
                         <x-input-error class="mt-2" :messages="$errors->get('Email')" />
                     </x-case-components.col>
 
+                    <x-case-components.col class="2xl:col-span-12 hidden">
+                        {{-- <x-input-label for="threeEmail" :value="__('Email')" /> --}}
+                        <x-text-input  name="threeEmail" type="text" class="mt-1 threeEmail placeholder:text-yellow-600 text-center"   placeholder="Email" :value="old('name')"   autofocus autocomplete="threeEmail" />
+                        <x-input-error class="mt-2" :messages="$errors->get('Email')" />
+                    </x-case-components.col>
 
 
 
@@ -122,8 +130,17 @@
            <div class="appendDuplicatesFor1p    grid gap-0 space-y-0">
                 <x-case-components.grid  class="2xl:grid-cols-12   gap-0 space-y-0 firstPToDuplicate" id="">
                     <x-case-components.col class="2xl:col-span-12 hidden">
-                        <x-text-input  name="onePName"  placeholder="Insurance Co. Name"  type="text" class="mt-1 onePName placeholder:text-yellow-600 text-center"  :value="old('name')"   autofocus autocomplete="onePName" />
-                        <x-input-error class="mt-2" :messages="$errors->get('name')" />
+
+                        <select
+                            id="onePName"
+                            name="onePName"
+                            class="
+                                block w-full text-center onePName rounded-md mt-2 bg-white placeholder:text-yellow-600 text-center border border-gray-200
+                                cursor-pointer
+                            "
+                            style="height:26px;"
+                        >
+                        </select>
                     </x-case-components.col>
 
                     <x-case-components.col class="2xl:col-span-12 hidden">

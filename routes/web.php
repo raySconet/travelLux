@@ -13,6 +13,7 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\TodoController;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\InsuranceController;
+use App\Http\Controllers\InsuranceCategoryController;
 
 
 Route::get('/', function () {
@@ -117,6 +118,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
     Route::put('/insurance/{id}', [InsuranceController::class, 'update'])->name('insurance.update');
     Route::delete('/insurance/{id}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
+    Route::get('/insurance/{id}/fetch', [InsuranceController::class, 'fetch'])->name('insurance.fetch');
+
+    Route::get('/getCategoriesInsurance', [InsuranceCategoryController::class, 'index']);
 
 });
 

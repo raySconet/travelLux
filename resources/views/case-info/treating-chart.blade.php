@@ -1,8 +1,10 @@
 <section class="mt-1">
     <h2   class="mb-1 mt-1 text-2xl  text-orange-600 text-center border border-[#CCC] p-2 bg-[#eaf1ffd4]">
         {{ __('Treating Chart') }}
+        <div class="flex float-right mt-[-5px] mb-[5px]">
+            <x-primary-btn id="submitMainForm" style="height:36px; width:60px; font-size:14px; margin-top:2px;" class="submitMainForm">{{ __('Save') }}</x-primary-btn>
+        </div>
     </h2>
-
     <div class="treatingAppendDuplicates"  >
         <div class= "grid grid-cols-1 2xl:grid-cols-14 gap-2 w-full text-orange-600 treatingToDuplicate" data-client="1" >
             <x-case-components.col class="2xl:col-span-14 text-xl treatingName text-orange-600 text-center">

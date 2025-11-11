@@ -15,7 +15,7 @@
                     <form method="post" id="mainForm" action="#" class=" ">
                         @csrf
                         <div class="flex float-right mt-[-5px] mb-[5px]">
-                            <x-primary-btn id="submitMainForm" class="">{{ __('Save') }}</x-primary-btn>
+                            <x-primary-btn id="submitMainForm" class="submitMainForm">{{ __('Save') }}</x-primary-btn>
 
                         </div>
                         @include('case-info.contact-info')

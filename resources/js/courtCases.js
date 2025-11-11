@@ -2,8 +2,12 @@ $(document).ready(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const caseId = urlParams.get('caseId');
     $("#hiddenCaseId").val(caseId);
+    drawCategories();
     getSectionsAndTodos();
-    getCaseInfoMainData() ;
+    setTimeout(function(){
+        getCaseInfoMainData() ;
+    },200);
+
     flatpickr(".datetimepicker", {
         enableTime: false,
         dateFormat: "m-d-Y",
@@ -321,7 +325,6 @@ $(document).ready(() => {
     $('#openManageSectionModal').on('click', function() {
         $("#todoSectionTitle").val("");
         $("#sectionDescription").val("");
-        drawCategories();
         $('#addManageSectionsModal').removeClass('hidden');
     });
 
@@ -436,9 +439,6 @@ $(document).ready(() => {
             type: 'GET',
             url: `/sections/show/${editingSectionId}`,
             dataType: 'json',
-            beforeSend: function () {
-                drawCategories() ;
-            },
             success: function (response) {
                 if(response.success) {
                     // Fill the form fields
@@ -582,8 +582,7 @@ $(document).ready(() => {
 
 
 
-
-    $(document).on('click', '#submitMainForm', function () {
+    $(document).on('click', '.submitMainForm', function () {
         // Create empty arrays for each type
         let clients = [];
         let firstParties = [];
@@ -666,36 +665,49 @@ $(document).ready(() => {
         });
 
         $('.firstPToDuplicate').each(function () {
-            firstParties.push({
-                name: $(this).find('.onePName').val(),
-                claim: $(this).find('.onePClaim').val(),
-                adjuster: $(this).find('.onePBiAdjuster').val(),
-                tel: $(this).find('.onePTel').val(),
-                fax: $(this).find('.onePFax').val(),
-                email: $(this).find('.onePEmail').val(),
-            });
+            let data = {
+                name: $(this).find('.onePName').val()?.trim(),
+                claim: $(this).find('.onePClaim').val()?.trim(),
+                adjuster: $(this).find('.onePBiAdjuster').val()?.trim(),
+                tel: $(this).find('.onePTel').val()?.trim(),
+                fax: $(this).find('.onePFax').val()?.trim(),
+                email: $(this).find('.onePEmail').val()?.trim(),
+            };
+
+            // ✅ Only push if at least one field has a value
+            if (Object.values(data).some(val => val !== '' && val !== null && val !== undefined)) {
+                firstParties.push(data);
+            }
         });
 
         $('.threePToDuplicate').each(function () {
-            thirdParties.push({
-                name: $(this).find('.threePName').val(),
-                claim: $(this).find('.threeClaim').val(),
-                adjuster: $(this).find('.threePBiAdjuster').val(),
-                tel: $(this).find('.threePTel').val(),
-                email: $(this).find('.threeEmail').val(),
-                fax: $(this).find('.threeFax').val(),
-            });
+            let data = {
+                name: $(this).find('.threePName').val()?.trim(),
+                claim: $(this).find('.threeClaim').val()?.trim(),
+                adjuster: $(this).find('.threePBiAdjuster').val()?.trim(),
+                tel: $(this).find('.threePTel').val()?.trim(),
+                email: $(this).find('.threeEmail').val()?.trim(),
+                fax: $(this).find('.threeFax').val()?.trim(),
+            };
+
+            if (Object.values(data).some(val => val !== '' && val !== null && val !== undefined)) {
+                thirdParties.push(data);
+            }
         });
 
         $('.defenseToDuplicate').each(function () {
-            defenseCounsels.push({
-                name: $(this).find('.defenseCounselName').val(),
-                attorney: $(this).find('.defenseCounselAttorney').val(),
-                address: $(this).find('.defenseCounselAddress').val(),
-                tel: $(this).find('.defenseCounselTel').val(),
-                email: $(this).find('.defenseCounselEmail').val(),
-                fax: $(this).find('.defenseCounselFax').val(),
-            });
+            let data = {
+                name: $(this).find('.defenseCounselName').val()?.trim(),
+                attorney: $(this).find('.defenseCounselAttorney').val()?.trim(),
+                address: $(this).find('.defenseCounselAddress').val()?.trim(),
+                tel: $(this).find('.defenseCounselTel').val()?.trim(),
+                email: $(this).find('.defenseCounselEmail').val()?.trim(),
+                fax: $(this).find('.defenseCounselFax').val()?.trim(),
+            };
+
+            if (Object.values(data).some(val => val !== '' && val !== null && val !== undefined)) {
+                defenseCounsels.push(data);
+            }
         });
 
         $('.DepositsToDuplicate').each(function () {
@@ -844,6 +856,69 @@ $(document).ready(() => {
         });
     });
 
+
+   $(document).on('change', '.threePName', function (e) {
+        const $this = $(this); // the select that triggered the event
+        const insuranceId = $this.val();
+
+        // Find the parent container of this row
+        const $row = $this.closest('.threePToDuplicate');
+
+        if (!insuranceId) {
+            // Clear fields only in this row
+            $row.find('.threeClaim').val('');
+            return;
+        }
+
+        $.ajax({
+            url: `/insurance/${insuranceId}/fetch`,
+            type: 'GET',
+            success: function(data) {
+                // Fill only fields in this row
+                $row.find('.threeClaim').val(data.claim_number || '');
+                $row.find('.threePBiAdjuster').val(data.bi_adjuster || '');
+                $row.find('.threePTel').val(data.tel || '');
+                $row.find('.threeEmail').val(data.email || '');
+                $row.find('.threeFax').val(data.fax || '');
+            },
+            error: function(xhr) {
+                alert('Failed to fetch insurance details.');
+                console.log(xhr.responseText);
+            }
+        });
+    });
+
+
+    $(document).on('change', '.onePName', function (e) {
+        const $this = $(this); // the select that triggered the event
+        const insuranceId = $this.val();
+
+        // Find the parent container of this row
+        const $row = $this.closest('.firstPToDuplicate');
+
+        if (!insuranceId) {
+            // Clear fields only in this row
+            $row.find('.threeClaim').val('');
+            return;
+        }
+
+        $.ajax({
+            url: `/insurance/${insuranceId}/fetch`,
+            type: 'GET',
+            success: function(data) {
+                // Fill only fields in this row
+                $row.find('.onePClaim').val(data.claim_number || '');
+                $row.find('.onePBiAdjuster').val(data.bi_adjuster || '');
+                $row.find('.onePTel').val(data.tel || '');
+                $row.find('.onePEmail').val(data.email || '');
+                $row.find('.onePFax').val(data.fax || '');
+            },
+            error: function(xhr) {
+                alert('Failed to fetch insurance details.');
+                console.log(xhr.responseText);
+            }
+        });
+    });
 
 // ----------------End-----------------//
 })
@@ -1535,15 +1610,28 @@ function getCaseInfoMainData() {
 function drawCategories() {
     $.ajax({
         type: 'GET',
-        url: "getCategories",
+        url: "getCategoriesInsurance",
         dataType: 'json',
         success: function (data) {
-            // ✅ Process and return list
+            // categories
+            const categories = data.categories;
             const $categorySelect = $('#todoSectionCategory');
             $categorySelect.empty().append('<option value="-1">Select a category</option>');
-            data.forEach(category => {
+            categories.forEach(category => {
                 $categorySelect.append(`<option value="${category.id}">${category.categoryName}</option>`);
             });
+
+            // insurances
+            const insurances = data.insurances || [];
+            const $insuranceSelect = $('.threePName');
+            const $insuranceSelectTwo = $('.onePName');
+            $insuranceSelect.empty().append('<option value="-1">Insurance Co. Name</option>');
+            $insuranceSelectTwo.empty().append('<option value="-1">Insurance Co. Name</option>');
+            insurances.forEach(insurance => {
+                $insuranceSelect.append(`<option value="${insurance.insurance_name}">${insurance.insurance_name}</option>`);
+                $insuranceSelectTwo.append(`<option value="${insurance.insurance_name}">${insurance.insurance_name}</option>`);
+            });
+
         },
         error: function (xhr) {
             console.error(`Error fetching ${dataType}:`, xhr);
@@ -1566,6 +1654,8 @@ function drawCategories() {
         }
     });
 }
+
+
 function formatDateMDY(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);

@@ -80,11 +80,23 @@ $(document).ready(() => {
                 window.location.href = "/insurance";
             },
             error: function(xhr) {
-                alert('Something went wrong. Please check your inputs.');
+                if(xhr.status === 422) {
+                    // Validation error (like duplicate name)
+                    const errors = xhr.responseJSON.errors;
+                    if(errors && errors.insurance_name) {
+                        alert(errors.insurance_name[0]); // show first error
+                    } else {
+                        alert('Validation error. Please check your inputs.');
+                    }
+                } else {
+                    alert('Something went wrong. Please try again.');
+                }
                 console.log(xhr.responseText);
             }
         });
     });
+
+
 
     $('.deleteBtn').click(function() {
         const $tr = $(this).closest('tr');

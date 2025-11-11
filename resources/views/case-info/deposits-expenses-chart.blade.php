@@ -1,6 +1,9 @@
 <section class="mt-1 depositsExpensesSection">
     <h2 class="text-2xl font-medium text-center text-gray-900">
         {{ __(' Deposits / Expenses / Advances') }}
+        <div class="flex float-right mt-[-5px] mb-[5px]">
+            <x-primary-btn id="submitMainForm" style="height:36px; width:60px; font-size:14px; margin-top:2px;" class="submitMainForm">{{ __('Save') }}</x-primary-btn>
+        </div>
     </h2>
 
     <x-case-components.grid class="2xl:grid-cols-12">

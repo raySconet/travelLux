@@ -2,6 +2,9 @@
 
     <h2 class="text-2xl  text-center text-yellow-700">
         {{ __('Contact Info') }}
+        <div class="flex float-right mt-[-5px] mb-[5px]">
+            <x-primary-btn id=""  type="button" style="height:36px; width:60px; font-size:14px; margin-right:20px; background-color:#066606 !important;" class="editContactInfo">{{ __('Edit') }}</x-primary-btn>
+        </div>
     </h2>
 
     <x-case-components.grid class="2xl:grid-cols-12 gap-x-3">

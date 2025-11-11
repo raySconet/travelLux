@@ -434,7 +434,7 @@ $(document).ready(() => {
 
     let editingSectionId = null;
     $(document).on('click', '.editTodoSection', function () {
-       editingSectionId = $(this).parent().attr('dataId');
+        editingSectionId = $(this).parent().attr('dataId');
         $.ajax({
             type: 'GET',
             url: `/sections/show/${editingSectionId}`,
@@ -755,6 +755,27 @@ $(document).ready(() => {
             dataType: 'json',
             success: function (response) {
                 // alert('Case updated successfully!');
+                // getCaseInfoMainData();
+
+                // --- Third Party container ---
+                const container3 = $('.threePToDuplicate');
+                container3.find('.hidden').removeClass('hidden'); // first show everything
+
+                container3.find('input').each(function () {
+                    if (!$(this).val().trim()) {
+                        $(this).closest('div').addClass('hidden'); // hide again if empty
+                    }
+                });
+
+                // --- First Party container ---
+                const container1 = $('.firstPToDuplicate');
+                container1.find('.hidden').removeClass('hidden'); // first show everything
+
+                container1.find('input').each(function () {
+                    if (!$(this).val().trim()) {
+                        $(this).closest('div').addClass('hidden'); // hide again if empty
+                    }
+                });
             },
             error: function (xhr) {
                 console.error('Error:', xhr.responseText);
@@ -825,7 +846,8 @@ $(document).ready(() => {
         });
     });
 
-   $(document).on('click', '#submitTodoBtn', function (e) {
+
+    $(document).on('click', '#submitTodoBtn', function (e) {
         e.preventDefault();
 
         let todoId = $('#todoId').val(); // hidden field for edit mode
@@ -919,6 +941,18 @@ $(document).ready(() => {
             }
         });
     });
+
+
+    $(document).on('click', '.editContactInfo', function () {
+        const container = $('.threePToDuplicate'); // adjust this selector to your block’s wrapper class
+        // Show all previously hidden fields
+        container.find('.hidden').removeClass('hidden');
+
+        const container2 = $('.firstPToDuplicate'); // adjust this selector to your block’s wrapper class
+        // Show all previously hidden fields
+        container2.find('.hidden').removeClass('hidden');
+    });
+
 
 // ----------------End-----------------//
 })
@@ -1335,6 +1369,25 @@ function getCaseInfoMainData() {
                         new3p.find('.hidden').removeClass('hidden'); // show hidden fields
                     }
 
+                    const emailField = new3p.find('.threeEmail').closest('div');
+                    const faxField = new3p.find('.threeFax').closest('div');
+
+                    // EMAIL
+                    if (third.third_party_email && third.third_party_email.trim() !== '') {
+                        new3p.find('.threeEmail').val(third.third_party_email);
+                        emailField.removeClass('hidden');
+                    } else {
+                        emailField.addClass('hidden');
+                    }
+
+                    // FAX
+                    if (third.third_party_fax && third.third_party_fax.trim() !== '') {
+                        new3p.find('.threeFax').val(third.third_party_fax);
+                        faxField.removeClass('hidden');
+                    } else {
+                        faxField.addClass('hidden');
+                    }
+
                     if (index === third_parties.length - 1) {
                         // last row: + button stays
                         new3p.find('.addClientInfoButtonFor3p')
@@ -1382,6 +1435,25 @@ function getCaseInfoMainData() {
                         new1p.find('.hidden').removeClass('hidden'); // show hidden fields
                     }
 
+
+                    const emailField = new1p.find('.onePEmail').closest('div');
+                    const faxField = new1p.find('.onePFax').closest('div');
+
+                    // EMAIL
+                    if (first.email && first.email.trim() !== '') {
+                        new1p.find('.threeEmail').val(first.email);
+                        emailField.removeClass('hidden');
+                    } else {
+                        emailField.addClass('hidden');
+                    }
+
+                    // FAX
+                    if (first.fax && first.fax.trim() !== '') {
+                        new1p.find('.threeFax').val(first.fax);
+                        faxField.removeClass('hidden');
+                    } else {
+                        faxField.addClass('hidden');
+                    }
 
                     if (index === first_parties.length - 1) {
                         new1p.find('.addClientInfoButtonFor1p')
@@ -1625,8 +1697,8 @@ function drawCategories() {
             const insurances = data.insurances || [];
             const $insuranceSelect = $('.threePName');
             const $insuranceSelectTwo = $('.onePName');
-            $insuranceSelect.empty().append('<option value="-1">Insurance Co. Name</option>');
-            $insuranceSelectTwo.empty().append('<option value="-1">Insurance Co. Name</option>');
+            $insuranceSelect.empty().append('<option value="">Insurance Co. Name</option>');
+            $insuranceSelectTwo.empty().append('<option value="">Insurance Co. Name</option>');
             insurances.forEach(insurance => {
                 $insuranceSelect.append(`<option value="${insurance.insurance_name}">${insurance.insurance_name}</option>`);
                 $insuranceSelectTwo.append(`<option value="${insurance.insurance_name}">${insurance.insurance_name}</option>`);

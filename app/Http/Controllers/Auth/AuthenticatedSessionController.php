@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
             'userPermission' => $user->userPermission, // column from users table
         ]);
 
-        return redirect()->intended(route('calendar', absolute: false));
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

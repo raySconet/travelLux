@@ -864,7 +864,7 @@ $(document).ready(() => {
         // Find the parent container of this row
         const $row = $this.closest('.threePToDuplicate');
 
-        if (!insuranceId) {
+        if (!insuranceId || insuranceId == -1) {
             // Clear fields only in this row
             $row.find('.threeClaim').val('');
             return;
@@ -896,7 +896,7 @@ $(document).ready(() => {
         // Find the parent container of this row
         const $row = $this.closest('.firstPToDuplicate');
 
-        if (!insuranceId) {
+        if (!insuranceId || insuranceId == -1) {
             // Clear fields only in this row
             $row.find('.threeClaim').val('');
             return;

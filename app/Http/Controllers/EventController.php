@@ -475,6 +475,7 @@ class EventController extends Controller
     protected function hasTimeConflict($userId, $fromDate, $toDate, $excludeEventId = null) {
         $query = Event::where('user_id', $userId)
             ->where('isDeleted', 0)
+            ->where('all_day', 0)
             ->where(function($q) use ($fromDate, $toDate) {
                 // $q->whereBetween('date_from', [$fromDate, $toDate])
                 // ->orWhereBetween('date_to', [$fromDate, $toDate])

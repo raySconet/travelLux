@@ -33,11 +33,11 @@
         </x-calendar-components.section>
 
         <x-calendar-components.section class="justify-center space-x-2">
-            <x-secondary-btn id="calendarEventTypeFilter" class="activeEventsCases">
+            <x-secondary-btn id="calendarEventTypeFilter">
                 <i class="fa-solid fa-people-group"></i>
                 <span class="ml-2">{{ __('Events') }}</span>
             </x-secondary-btn>
-            <x-secondary-btn id="calendarCases">
+            <x-secondary-btn id="calendarCases" class="activeEventsCases">
                 <i class="fa-solid fa-briefcase"></i>
                 <span class="ml-2">{{ __('Cases') }}</span>
             </x-secondary-btn>

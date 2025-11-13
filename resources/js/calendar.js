@@ -1,7 +1,7 @@
 let currentMonth, currentYear, eventsData = [];
 let checkedOrder = [];
 let currentView = 'Month View'; // global value
-let dataType = 'events'; // or 'cases'
+let dataType = 'cases'; // or 'cases'/events
 let eventCaseEditData = [];
 let draggedEvent = null;
 let sourceTable = null;
@@ -23,6 +23,16 @@ $(document).ready(() => {
     populateMonthYearDropdown();
 
     $('input[name="type"]').on('change', updateUserSelectMode());
+
+    if(dataType === 'cases') {
+        $('#lawyersHeader').html(`
+            <label>Lawyers</label>
+            <label id="selectAllUsersCheckbox" class="ml-2 text-sm font-normal cursor-pointer">
+                <input type="checkbox" id="selectAllLawyers" class="mr-1">
+                <span>All</span>
+            </label>
+        `);
+    }
 
     $(document).on('click', '.sidebar-day-btn-parent', function() {
         const dateStr = $(this).children('.sidebar-day-btn').data('date');

@@ -26,12 +26,9 @@ $(document).ready(() => {
         newClient.find('input, textarea, select').val('');
 
         // Update button appearance
-        $(this)
-            .removeClass("addClientInfoButton bg-[#14548d]")
-            .addClass("removeClientInfoButton bg-[#a51a1a]")
-            .children()
-            .removeClass("fa-plus")
-            .addClass("fa-minus");
+        $(this).parent().html("").append(`<span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer removeClientInfoButton bg-[#a51a1a]" style="margin-top:2px; width:22px; height:22px;">
+                            <i class="fa-solid text-white text-md leading-none fa-minus"></i>
+                        </span>`);
 
         // Add a unique data-id to pair client & treating
         newClient.attr('data-client', clientCounter);
@@ -73,6 +70,8 @@ $(document).ready(() => {
         newAffidavite.find('.affidavitName p').text(`${clientCounter} Affidavit Chart`);
         // Append Negotiation section
         $(".affidavitAppendDuplicates").append(newAffidavite);
+
+        updateClientButtons();
     });
 
 
@@ -89,6 +88,7 @@ $(document).ready(() => {
         $(`.negotiationAppendDuplicates [data-client="${clientId}"]`).remove();
 
         $(`.affidavitAppendDuplicates [data-client="${clientId}"]`).remove();
+        updateClientButtons();
     });
 
 
@@ -757,13 +757,80 @@ $(document).ready(() => {
                 // alert('Case updated successfully!');
                 // getCaseInfoMainData();
 
-                // --- Third Party container ---
+                $('.firstPToDuplicate').each(function () {
+                    const allFirst = $('.firstPToDuplicate');
+                    const data = {
+                        name: $(this).find('.onePName').val()?.trim(),
+                        claim: $(this).find('.onePClaim').val()?.trim(),
+                        adjuster: $(this).find('.onePBiAdjuster').val()?.trim(),
+                        tel: $(this).find('.onePTel').val()?.trim(),
+                        fax: $(this).find('.onePFax').val()?.trim(),
+                        email: $(this).find('.onePEmail').val()?.trim(),
+                    };
+
+                    const isEmpty = !Object.values(data).some(val => val !== '' && val !== null && val !== undefined);
+
+                    if (isEmpty && allFirst.length > 1) {
+                        $(this).remove();
+                    }
+                });
+
+
+                // 🟡 THIRD PARTY
+                $('.threePToDuplicate').each(function () {
+                    const allThird = $('.threePToDuplicate');
+                    const data = {
+                        name: $(this).find('.threePName').val()?.trim(),
+                        claim: $(this).find('.threeClaim').val()?.trim(),
+                        adjuster: $(this).find('.threePBiAdjuster').val()?.trim(),
+                        tel: $(this).find('.threePTel').val()?.trim(),
+                        email: $(this).find('.threeEmail').val()?.trim(),
+                        fax: $(this).find('.threeFax').val()?.trim(),
+                    };
+
+                    const isEmpty = !Object.values(data).some(val => val !== '' && val !== null && val !== undefined);
+
+                    if (isEmpty && allThird.length > 1) {
+                        $(this).remove();
+                    }
+                });
+
+                $('.defenseToDuplicate').each(function () {
+                    const allDefense = $('.defenseToDuplicate'); // all rows
+                    const data = {
+                        name: $(this).find('.defenseCounselName').val()?.trim(),
+                        attorney: $(this).find('.defenseCounselAttorney').val()?.trim(),
+                        address: $(this).find('.defenseCounselAddress').val()?.trim(),
+                        tel: $(this).find('.defenseCounselTel').val()?.trim(),
+                        email: $(this).find('.defenseCounselEmail').val()?.trim(),
+                        fax: $(this).find('.defenseCounselFax').val()?.trim(),
+                    };
+
+                    // ✅ If ALL fields are empty
+                    const isEmpty = !Object.values(data).some(val => val !== '' && val !== null && val !== undefined);
+
+                    if (isEmpty && allDefense.length > 1) {
+                        $(this).remove();
+                    }
+                });
+
+                updateDefenseCounselButtons();
+                updateOnePButtons();
+                updateThreePButtons();
+
                 const container3 = $('.threePToDuplicate');
                 container3.find('.hidden').removeClass('hidden'); // first show everything
 
                 container3.find('input').each(function () {
                     if (!$(this).val().trim()) {
                         $(this).closest('div').addClass('hidden'); // hide again if empty
+                    }
+                });
+
+                // Hide empty selects
+                container3.find('select').each(function () {
+                    if ($(this).val() === "" || $(this).val() === null) {
+                        $(this).closest('div').addClass('hidden'); // hide select if no value
                     }
                 });
 
@@ -776,6 +843,25 @@ $(document).ready(() => {
                         $(this).closest('div').addClass('hidden'); // hide again if empty
                     }
                 });
+
+                container1.find('select').each(function () {
+                    if ($(this).val() === "" || $(this).val() === null) {
+                        $(this).closest('div').addClass('hidden'); // hide select if no value
+                    }
+                });
+
+
+                const container4 = $('.defenseToDuplicate');
+                container4.find('.hidden').removeClass('hidden'); // first show everything
+
+                container4.find('input, textarea').each(function () {
+                    if (!$(this).val().trim()) {
+                        $(this).closest('div').addClass('hidden'); // hide again if empty
+                    }
+                });
+
+
+
             },
             error: function (xhr) {
                 console.error('Error:', xhr.responseText);
@@ -829,7 +915,7 @@ $(document).ready(() => {
                 // Fill form with fetched data
                 $('#todoId').val(todo.id);
                 $('#todoTitle').val(todo.title);
-                $('#todoDate').val(formatDateMDY(todo.completeDate));
+                $('#todoDate').val(formatDateMDYTwo(todo.completeDate));
                 $('#todoDescription').val(todo.description);
                 $('#sectionId').val(todo.sectionId);
                 $('#completedBy').val(todo.completedBy);
@@ -974,12 +1060,6 @@ function getSectionsAndTodos() {
             if (response.success) {
                 let sections = response.sections;
                 let html = `
-                <div class="  mt-3 text-green-800">
-                    <h2  class="text-lg   text-center">Facilitating Settlement</h2>
-                    <p class="mb-1 text-md  ">
-                        Once the insurance company has either paid limits OR made a reasonable settlement offer and they are at their top:
-                    </p>
-
                 `;
                 sections.forEach(section => {
                     html += `<div class="  mt-3 "  style="color: ${section.categorie.color}">`;
@@ -1325,20 +1405,24 @@ function getCaseInfoMainData() {
                     newClient.removeClass('hidden');
 
                     // Only last row is "add" button; all others are "remove"
-                    if (index === clients.length - 1) {
-                        newClient.find('.addClientInfoButton')
-                            .removeClass('removeClientInfoButton bg-[#a51a1a]')
-                            .addClass('addClientInfoButton bg-[#14548d]')
-                            .children().removeClass('fa-minus').addClass('fa-plus');
-                    } else {
-                        newClient.find('.addClientInfoButton')
-                            .addClass('removeClientInfoButton bg-[#a51a1a]')
-                            .removeClass('addClientInfoButton bg-[#14548d]')
-                            .children().removeClass('fa-plus').addClass('fa-minus');
-                    }
+                    // if (index === clients.length - 1) {
+                    //     newClient.find('.addClientInfoButton')
+                    //         .removeClass('removeClientInfoButton bg-[#a51a1a]')
+                    //         .addClass('addClientInfoButton bg-[#14548d]')
+                    //         .children().removeClass('fa-minus').addClass('fa-plus');
+                    //     newClient.find('.addClientInfoButton').parent().append(`<span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer removeClientInfoButton bg-[#a51a1a]" style="margin-top:2px; width:22px; height:22px;">
+                    //             <i class="fa-solid text-white text-md leading-none fa-minus"></i>
+                    //         </span>`);
+                    // } else {
+                    //     newClient.find('.clientButtons').html("").append(`<span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer removeClientInfoButton bg-[#a51a1a]" style="margin-top:2px; width:22px; height:22px;">
+                    //         <i class="fa-solid text-white text-md leading-none fa-minus"></i>
+                    //     </span>`);
+                    // }
 
                     clientContainer.append(newClient);
+
                 });
+                updateClientButtons();
 
                 // --- 3P ---
                 const threePTemplate = $('.threePToDuplicate').first();
@@ -1669,7 +1753,6 @@ function getCaseInfoMainData() {
                 });
 
 
-
             }
         },
         error: function(xhr) {
@@ -1735,4 +1818,141 @@ function formatDateMDY(dateString) {
     const day = date.getDate();
     const year = date.getFullYear();
     return `${month}/${day}/${year}`;
+}
+
+function formatDateMDYTwo(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1; // 0-indexed
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month}-${day}-${year}`;
+}
+// 🔁 Helper: Make sure only last client row has both + and -
+function updateClientButtons() {
+    const clients = $('.clientToDuplicate');
+
+    clients.each(function (index) {
+        const buttonContainer = $(this).find('.clientButtons');
+        buttonContainer.empty();
+
+        // 🧩 CASE 1: Only one client → show only PLUS
+        if (clients.length === 1) {
+            buttonContainer.append(`
+                <span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButton"
+                      style="width:22px; height:22px;">
+                    <i class="fa-solid fa-plus text-white text-md leading-none"></i>
+                </span>
+            `);
+        }
+
+        // 🧩 CASE 2: Last one → show PLUS and MINUS
+        else if (index === clients.length - 1) {
+            buttonContainer.append(`
+                <span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButton"
+                      style="width:22px; height:22px;">
+                    <i class="fa-solid fa-plus text-white text-md leading-none"></i>
+                </span>
+                <span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#a51a1a] removeClientInfoButton"
+                      style="width:22px; height:22px; margin-left:6px;">
+                    <i class="fa-solid fa-minus text-white text-md leading-none"></i>
+                </span>
+            `);
+        }
+
+        // 🧩 CASE 3: Any other → only MINUS
+        else {
+            buttonContainer.append(`
+                <span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#a51a1a] removeClientInfoButton"
+                      style="width:22px; height:22px;">
+                    <i class="fa-solid fa-minus text-white text-md leading-none"></i>
+                </span>
+            `);
+        }
+    });
+}
+
+function updateThreePButtons() {
+    const clients = $('.threePToDuplicate');
+
+    clients.each(function (index) {
+        const buttonContainer = $(this).find('.clientButtonsThreeP');
+        buttonContainer.empty();
+
+        if (index === clients.length - 1) {
+            // Last → both + and -
+            buttonContainer.append(`
+                <span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonFor3p"
+                      style="width:22px; height:22px;">
+                    <i class="fa-solid fa-plus text-white text-md leading-none"></i>
+                </span>
+
+            `);
+        } else {
+            // Others → only -
+            buttonContainer.append(`
+                <span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#a51a1a] removeClientInfoButtonFor3p "
+                      style="width:22px; height:22px;">
+                    <i class="fa-solid fa-minus text-white text-md leading-none"></i>
+                </span>
+            `);
+        }
+    });
+}
+
+
+function updateOnePButtons() {
+    const clients = $('.firstPToDuplicate');
+
+    clients.each(function (index) {
+        const buttonContainer = $(this).find('.clientButtonsOneP');
+        buttonContainer.empty();
+
+        if (index === clients.length - 1) {
+            // Last → both + and -
+            buttonContainer.append(`
+                <span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonFor1p"
+                      style="width:22px; height:22px;">
+                    <i class="fa-solid fa-plus text-white text-md leading-none"></i>
+                </span>
+
+            `);
+        } else {
+            // Others → only -
+            buttonContainer.append(`
+                <span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#a51a1a] removeClientInfoButtonFor1p"
+                      style="width:22px; height:22px;">
+                    <i class="fa-solid fa-minus text-white text-md leading-none"></i>
+                </span>
+            `);
+        }
+    });
+}
+
+function updateDefenseCounselButtons() {
+    const clients = $('.defenseToDuplicate');
+
+    clients.each(function (index) {
+        const buttonContainer = $(this).find('.clientButtonsDefense');
+        buttonContainer.empty();
+
+        if (index === clients.length - 1) {
+            // Last → both + and -
+            buttonContainer.append(`
+                <span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonForDefense"
+                      style="width:22px; height:22px;">
+                    <i class="fa-solid fa-plus text-white text-md leading-none"></i>
+                </span>
+
+            `);
+        } else {
+            // Others → only -
+            buttonContainer.append(`
+                <span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#a51a1a] removeClientInfoButtonForDefense "
+                      style="width:22px; height:22px;">
+                    <i class="fa-solid fa-minus text-white text-md leading-none"></i>
+                </span>
+            `);
+        }
+    });
 }

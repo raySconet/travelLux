@@ -10,7 +10,7 @@
         </h2>
 
     <p class="mb-1 text-md text-gray-600 text-center">
-        Drag & drop the following to dos that are in red into the “To Do:” section of the middle column as the case unfolds.<br>
+        Move the following to dos that are in red into the “To Do:” section of the middle column as the case unfolds.<br>
         (Add/change to do based the situation)
     </p>
 

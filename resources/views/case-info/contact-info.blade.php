@@ -51,11 +51,11 @@
                         <x-input-error class="mt-2" :messages="$errors->get('name')" />
                     </x-case-components.col>
 
-                    <x-case-components.col class="2xl:col-span-12 items-center  mt-2 ">
-                        <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButton" style="margin-top:2px; width:22px; height:22px;">
+                    <div class="flex flex-row 2xl:col-span-12 items-center clientButtons mt-2 gap-2" style="justify-content:center;">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButton" style="margin-top:2px; width:22px; height:22px;">
                             <i class="fa-solid fa-plus text-white text-md leading-none"></i>
-                        </div>
-                    </x-case-components.col>
+                        </span>
+                    </div>
 
                 </x-case-components.grid>
             </div>
@@ -115,7 +115,7 @@
 
 
 
-                    <x-case-components.col class="2xl:col-span-12 items-center mt-2 ">
+                    <x-case-components.col class="2xl:col-span-12 items-center mt-2 clientButtonsThreeP ">
                         <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonFor3p" style="margin-top:2px; width:22px; height:22px;">
                             <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                         </div>
@@ -189,7 +189,7 @@
                         <x-input-error class="mt-2" :messages="$errors->get('name')" />
                     </x-case-components.col> --}}
 
-                    <x-case-components.col class="2xl:col-span-12 items-center  mt-2 ">
+                    <x-case-components.col class="2xl:col-span-12 items-center clientButtonsOneP mt-2 ">
                         <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonFor1p" style="margin-top:2px; width:22px; height:22px;">
                             <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                         </div>
@@ -242,7 +242,7 @@
                         {{-- <x-input-error class="mt-2" :messages="$errors->get('name')" /> --}}
                     </x-case-components.col>
 
-                    <x-case-components.col class="2xl:col-span-12 items-center  mt-2">
+                    <x-case-components.col class="2xl:col-span-12 items-center clientButtonsDefense mt-2">
                         <div class="flex items-center justify-center w-6 h-6 rounded-full cursor-pointer bg-[#14548d] addClientInfoButtonForDefense" style="margin-top:2px; width:22px; height:22px;">
                             <i class="fa-solid fa-plus text-white text-md leading-none"></i>
                         </div>

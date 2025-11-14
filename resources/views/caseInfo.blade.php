@@ -26,8 +26,11 @@
     <div class="text-gray-900 px-3 py-3 grid grid-cols-1 2xl:grid-cols-15 gap-2">
         <div class="2xl:col-span-8 flex flex-col h-full">
             <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
-                <div class="p-3 text-gray-900">
-
+                <div class="p-3 text-gray-900 relative">
+                    <x-primary-btn id="openGeneratePdfModal" class="absolute top-2">
+                        <i class="fa-regular fa-file-pdf"></i>
+                        <span class="ml-2">{{ __('Generate PDF') }}</span>
+                    </x-primary-btn>
                     <form method="post" id="mainForm" action="#" class=" ">
                         @csrf
                         <div class="flex float-right mt-[-5px] mb-[5px]">
@@ -193,3 +196,46 @@
         </div>
     </x-slot>
 </x-general-modal>
+
+<x-general-modal id="generatePdfModal" class="flex">
+
+    <x-slot name="header">
+        <div class="grid grid-cols-[auto_1fr] items-center gap-2">
+            <i class="fa-regular fa-file-pdf fa-xl primary-color" style="color: #14548d;"></i>
+            <h2 class="text-xl font-semibold text-gray-800">
+                {{ __('Generate PDF') }}
+            </h2>
+        </div>
+        <i
+            id="closePdfModal"
+            class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
+            role="button"
+            data-bs-dismiss="modal"
+            aria-label="Close">
+        </i>
+    </x-slot>
+
+    <div class="grid grid-cols-12">
+
+        <label class="flex items-center space-x-2 col-span-6 cursor-pointer">
+            <input type="radio" name="gender" value="male" class="form-radio" checked>
+            <span>Male</span>
+        </label>
+
+        <label class="flex items-center space-x-2 col-span-6 cursor-pointer">
+            <input type="radio" name="gender" value="female" class="form-radio">
+            <span>Female</span>
+        </label>
+
+    </div>
+
+    <x-slot name="footer">
+        <div class="flex justify-end">
+            <x-primary-btn id="generatePdfBtn" class="max-w-[max-content]">
+                Generate
+            </x-primary-btn>
+        </div>
+    </x-slot>
+
+</x-general-modal>
+

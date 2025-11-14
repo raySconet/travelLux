@@ -4,6 +4,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CourtCasesController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventCourtCaseController;
+use App\Http\Controllers\generatePdf;
+use App\Http\Controllers\generatePdfController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserCategoryController;
 use App\Http\Controllers\UserController;
@@ -128,5 +130,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/user/can-create-case', [CourtCasesController::class, 'canCreateCase']);
 Route::post('/update-event-user', [EventController::class, 'updateEventUser']);
 Route::post('/update-case-user', [CourtCasesController::class, 'updateCaseUser']);
+
+Route::get('/generatePDF/{id}', [GeneratePdfController::class, 'generatePdfOne']);
 
 require __DIR__.'/auth.php';

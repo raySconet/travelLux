@@ -3,6 +3,7 @@ $(document).ready(() => {
     const caseId = urlParams.get('caseId');
     $("#hiddenCaseId").val(caseId);
     $("#openGeneratePdfModal").attr('data-case-id', caseId);
+
     drawCategories();
     getSectionsAndTodos();
     setTimeout(function(){
@@ -1105,7 +1106,6 @@ $(document).ready(() => {
 
 
 
-
     $('#openGeneratePdfModal').on('click', function () {
     $('#generatePdfModal').removeClass('hidden');
     });
@@ -1151,8 +1151,6 @@ $(document).ready(() => {
             }
         });
     });
-
-
 
 // ----------------End-----------------//
 })
@@ -1295,7 +1293,7 @@ function getSectionsAndTodos() {
                                         <div class="2xl:col-span-1 flex flex-col">
                                             <button title="Mark task as complete" data-id="${todo.id}" class="completeButton">
                                                 <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
-                                            </button>
+                                            </button>git
                                             <button class="editTodoBtn" style="margin-top:5px; cursor:pointer;" data-id="${todo.id}">
                                                 <i class="fa fa-pen"></i>
                                             </button>

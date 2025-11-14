@@ -1,13 +1,29 @@
 
 <x-app-layout>
     <x-slot name="header" >
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Case Info') }}
-        </h2>
+        <div class="text-gray-900 px-3 py-3 grid grid-cols-1 2xl:grid-cols-12 gap-2">
+            <div class="2xl:col-span-5 flex flex-col h-full">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    {{ __('Case Info') }}
+
+                </h2>
+            </div>
+            <div class="2xl:col-span-4 flex flex-col h-full">
+                    <select
+                            id="mainCaseStage"
+                            name="mainCaseStage"
+                            class="
+                                block w-full text-lg text-center rounded-md bg-white border border-gray-200
+                                cursor-pointer appearance-none bg-no-repeat bg-right
+                            "
+                        >
+                    </select>
+            </div>
+        </div>
         <input type="hidden" id="hiddenCaseId">
     </x-slot>
 
-    <div class="text-gray-900 px-3 py-3 grid grid-cols-1 2xl:grid-cols-14 gap-2">
+    <div class="text-gray-900 px-3 py-3 grid grid-cols-1 2xl:grid-cols-15 gap-2">
         <div class="2xl:col-span-8 flex flex-col h-full">
             <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
                 <div class="p-3 text-gray-900">
@@ -16,7 +32,6 @@
                         @csrf
                         <div class="flex float-right mt-[-5px] mb-[5px]">
                             <x-primary-btn id="submitMainForm" class="submitMainForm">{{ __('Save') }}</x-primary-btn>
-
                         </div>
                         @include('case-info.contact-info')
                         @include('case-info.case-info')
@@ -31,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div class="2xl:col-span-3 flex flex-col h-full ">
+        <div class="2xl:col-span-4 flex flex-col h-full ">
             <div class=" flex flex-col h-full">
                 <div class="bg-white overflow-hidden shadow-xs sm:rounded-lg">
                     <div class="p-2">

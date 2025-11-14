@@ -75,6 +75,23 @@
             <div id="errorCategoryName" class="text-sm text-red-600 space-y-1 "></div>
         </div>
 
+        <div class="col-span-12 sm:col-span-12">
+            <x-input-label
+                for="toDoNoteBox"
+                :value="__('Note Box')"
+                class="mb-1"
+            />
+            <x-text-area
+                id="toDoNoteBox"
+                name="toDoNoteBox"
+                type="text"
+                class="block w-full"
+                :value="old('toDoNoteBox')"
+                required
+                autocomplete="toDoNoteBox"
+            />
+            <div id="errorCategoryName" class="text-sm text-red-600 space-y-1 "></div>
+        </div>
 
     </div>
 </form>

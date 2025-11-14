@@ -32,6 +32,7 @@ class TodoController extends Controller
             $section = Todo::create([
                 'title' => $request->todoTitle ?? null,
                 'description' => $request->todoDescription ?? null,
+                'noteBox' => $request->toDoNoteBox,
                 'completeDate' => $fromDateCarbon->format('Y-m-d') ?? null,
                 'sectionId' => $request->sectionId,
             ]);
@@ -171,6 +172,7 @@ class TodoController extends Controller
         $todo->update([
             'title' => $request->todoTitle,
             'description' => $request->todoDescription,
+            'noteBox' => $request->toDoNoteBox,
             'completeDate' => $formattedDate,
             'completedBy' => $request->completedBy,
         ]);

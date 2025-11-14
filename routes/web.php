@@ -113,6 +113,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/cases/{caseId}/main-info', [CourtCasesController::class, 'mainInfo'])->name('cases.mainInfo');
     Route::post('/save-textarea', [CourtCasesController::class, 'saveTextarea']);
 
+    Route::post('/cases/update-category', [CourtCasesController::class, 'updateCategory']);
 
     Route::get('/insurance', [InsuranceController::class, 'index'])->name('insurance.index');
     Route::post('/insurance', [InsuranceController::class, 'store'])->name('insurance.store');

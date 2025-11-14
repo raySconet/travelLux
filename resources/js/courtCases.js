@@ -7,6 +7,49 @@ $(document).ready(() => {
     setTimeout(function(){
         getCaseInfoMainData() ;
     },200);
+   $('#toDoNoteBox').summernote({
+        height: 200,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+        ]
+    });
+    $('#displayTodoNoteHere').summernote({
+        height: 200,
+        callbacks: {
+            onKeyup: function () {
+                clearTimeout(typingTimer);
+
+                typingTimer = setTimeout(function () {
+                    let content = $('#displayTodoNoteHere').summernote('code');
+                    saveTextarea(content);
+                }, 1500); // 1.5 seconds
+            }
+
+        },
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+        ]
+    });
+    let typingTimer;
+    const doneTypingInterval = 2000; // 2 seconds
+
+    $('#displayTodoNoteHere').on('input', function() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(saveTextarea, doneTypingInterval);
+    });
+
 
     flatpickr(".datetimepicker", {
         enableTime: false,
@@ -580,6 +623,28 @@ $(document).ready(() => {
         });
     });
 
+    $(document).on('change', '#mainCaseStage', function () {
+        const categoryId = $(this).val();
+        const caseId = $('#hiddenCaseId').val();
+        if(!caseId || !categoryId) return;
+
+        $.ajax({
+            url: '/cases/update-category', // route we'll define
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                case_id: caseId,
+                category_id: categoryId
+            },
+            success: function(response) {
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                alert('Error updating case category.');
+            }
+        });
+    });
+
 
 
     $(document).on('click', '.submitMainForm', function () {
@@ -709,6 +774,9 @@ $(document).ready(() => {
                 defenseCounsels.push(data);
             }
         });
+
+
+
 
         $('.DepositsToDuplicate').each(function () {
             deposits.push({
@@ -875,16 +943,10 @@ $(document).ready(() => {
 
 
 
-    let typingTimer;
-    const doneTypingInterval = 2000; // 2 seconds
 
-    $('#displayTodoNoteHere').on('input', function() {
-        clearTimeout(typingTimer);
-        typingTimer = setTimeout(saveTextarea, doneTypingInterval);
-    });
 
-    function saveTextarea() {
-        const text = $('#displayTodoNoteHere').val();
+    function saveTextarea(content) {
+        // const text = $('#displayTodoNoteHere').val();
         const caseId = $('#hiddenCaseId').val();
 
         $.ajax({
@@ -892,7 +954,7 @@ $(document).ready(() => {
             type: 'POST',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content'),
-                text: text,
+                text: content,
                 case_id: caseId
             },
             success: function(response) {
@@ -917,6 +979,7 @@ $(document).ready(() => {
                 $('#todoTitle').val(todo.title);
                 $('#todoDate').val(formatDateMDYTwo(todo.completeDate));
                 $('#todoDescription').val(todo.description);
+                $('#toDoNoteBox').summernote('code', todo.noteBox);
                 $('#sectionId').val(todo.sectionId);
                 $('#completedBy').val(todo.completedBy);
 
@@ -1186,13 +1249,24 @@ function getSectionsAndTodos() {
                                                 <i class="fa fa-pen"></i>
                                             </button>
                                         </div>
-                                        <div class="2xl:col-span-11 flex flex-col">`;
+                                        <div class="2xl:col-span-11 flex flex-col">
+                                        `;
                                             if (todo.title && todo.title !== 'NULL' && todo.title !== '') {
                                                 completedHtml += `<p class="font-semibold">${todo.title}</p>`;
                                             }
                         completedHtml += `
                                             <p style="color:#a22323 !important;">${todo.description}</p>
+                                        `;
+
+                                         if (todo.noteBox && todo.noteBox !== 'NULL' && todo.noteBox !== '') {
+                                                completedHtml += `<p class="">${todo.noteBox}</p>`;
+                                            }
+                        completedHtml += `
                                         </div>
+
+
+
+
                                         <div class="2xl:col-span-1 flex flex-col">
                                             <i class="fa-solid fa-arrow-up arrowToDo " data-id="${todo.id}" title="Go to Todo" style="font-size:16px; cursor:pointer;  vertical-align:top; margin-top:4px"></i>
                                         </div>
@@ -1229,7 +1303,8 @@ function getCaseInfoMainData() {
             if (response.success) {
                 let caseData = response.case;
 
-                $("#displayTodoNoteHere").val(caseData.todoNote || '');
+                $('#displayTodoNoteHere').summernote('code', caseData.todoNote);
+                $("#mainCaseStage").val(caseData.categoryId || '');
 
                 $("#referralChiro").val(caseData.referralChiro || '');
                 $("#doi").val(caseData.doi || '');
@@ -1771,9 +1846,12 @@ function drawCategories() {
             // categories
             const categories = data.categories;
             const $categorySelect = $('#todoSectionCategory');
+            const $mainCaseStage = $('#mainCaseStage');
             $categorySelect.empty().append('<option value="-1">Select a category</option>');
+            $mainCaseStage.empty().append('<option value="-1">Select Stage</option>');
             categories.forEach(category => {
                 $categorySelect.append(`<option value="${category.id}">${category.categoryName}</option>`);
+                $mainCaseStage.append(`<option value="${category.id}">${category.categoryName}</option>`);
             });
 
             // insurances
@@ -1786,6 +1864,8 @@ function drawCategories() {
                 $insuranceSelect.append(`<option value="${insurance.insurance_name}">${insurance.insurance_name}</option>`);
                 $insuranceSelectTwo.append(`<option value="${insurance.insurance_name}">${insurance.insurance_name}</option>`);
             });
+
+
 
         },
         error: function (xhr) {

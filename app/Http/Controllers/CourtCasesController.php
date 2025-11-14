@@ -805,5 +805,20 @@ class CourtCasesController extends Controller
     }
 
 
+    public function updateCategory(Request $request)
+    {
+        $request->validate([
+            'case_id' => 'required|integer|exists:court_cases,id',
+            'category_id' => 'required|integer',
+        ]);
+
+        $courtCase = CourtCase::findOrFail($request->case_id);
+        $courtCase->categoryId = $request->category_id;
+        $courtCase->save();
+
+        return response()->json(['success' => true, 'message' => 'Category updated.']);
+    }
+
+
 }
 ?>

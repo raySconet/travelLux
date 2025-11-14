@@ -115,4 +115,7 @@ class CourtCase extends Model
     {
         return $this->hasMany(CaseDepositExpensesAdv::class, 'caseId', 'id');
     }
+
+
+
 }

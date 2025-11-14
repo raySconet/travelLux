@@ -2,6 +2,7 @@ $(document).ready(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const caseId = urlParams.get('caseId');
     $("#hiddenCaseId").val(caseId);
+    $("#openGeneratePdfModal").attr('data-case-id', caseId);
     drawCategories();
     getSectionsAndTodos();
     setTimeout(function(){
@@ -1038,6 +1039,55 @@ $(document).ready(() => {
         // Show all previously hidden fields
         container2.find('.hidden').removeClass('hidden');
     });
+
+
+
+
+    $('#openGeneratePdfModal').on('click', function () {
+    $('#generatePdfModal').removeClass('hidden');
+    });
+
+    // Close modal
+    $('#closePdfModal').on('click', function () {
+        $('#generatePdfModal').addClass('hidden');
+    });
+
+    // Close when clicking outside the modal content
+    $('#generatePdfModal').on('click', function (e) {
+        if (!$(e.target).closest('#pdfModalContent').length) {
+            $('#generatePdfModal').addClass('hidden');
+        }
+    });
+
+    // AJAX on clicking "Generate"
+    $('#generatePdfBtn').on('click', function () {
+
+        let gender = $('input[name="gender"]:checked').val();
+        let caseId = $('#openGeneratePdfModal').data('case-id'); // <-- GET CASE ID
+
+        if (!gender) {
+            alert('Please select Male or Female');
+            return;
+        }
+
+        $.ajax({
+            url: '/generatePDF/' + caseId,   // <-- SEND CASE ID
+            type: 'GET',
+            data: {
+                gender: gender
+            },
+            success: function (response) {
+                console.log(response);
+                alert('PDF Generated!');
+                $('#generatePdfModal').addClass('hidden');
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                alert('Something went wrong.');
+            }
+        });
+    });
+
 
 
 // ----------------End-----------------//

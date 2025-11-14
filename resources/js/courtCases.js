@@ -1054,8 +1054,9 @@ $(document).ready(() => {
 
     // Close when clicking outside the modal content
     $('#generatePdfModal').on('click', function (e) {
-        if (!$(e.target).closest('#pdfModalContent').length) {
-            $('#generatePdfModal').addClass('hidden');
+        // Only close if the clicked element is the modal itself (the backdrop)
+        if (e.target === this) {
+            $(this).addClass('hidden');
         }
     });
 

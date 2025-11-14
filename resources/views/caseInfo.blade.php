@@ -203,7 +203,7 @@
     <div class="grid grid-cols-12">
 
         <label class="flex items-center space-x-2 col-span-6 cursor-pointer">
-            <input type="radio" name="gender" value="male" class="form-radio">
+            <input type="radio" name="gender" value="male" class="form-radio" checked>
             <span>Male</span>
         </label>
 

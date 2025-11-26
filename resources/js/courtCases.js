@@ -1142,8 +1142,85 @@ $(document).ready(() => {
             },
             success: function (response) {
                 console.log(response);
-                alert('PDF Generated!');
-                $('#generatePdfModal').addClass('hidden');
+
+                let thirdParties = response.case.third_parties;
+                console.log(thirdParties);
+                let name = thirdParties[0].third_party_name;
+                let claim = thirdParties[0].third_party_claim;
+                let clientName = thirdParties[0].third_party_name;
+                let email = thirdParties[0].third_party_email;
+                let date = "August 11, 2025";
+
+                let pdf  = `
+                        <div class="bg-white mx-auto p-10 letter-container text-gray-800" style="font-family:garamond !important; font-size:14px;">
+
+                            <!-- TOP HEADER -->
+                            <div class="flex justify-between items-start mb-8">
+
+                                <!-- LEFT: LOGO -->
+                                <div class="logo-box" style="border-right:solid 1px #CCC;">
+                                    <div class="logo-placeholder">
+                                        NMW
+                                    </div>
+                                </div>
+
+                                <!-- RIGHT: ADDRESS BLOCK -->
+                                <div class="text-right grey-text leading-tight">
+                                    <p class="font-semibold">3 GREENWAY PLAZA, STE 1575</p>
+                                    <p>HOUSTON, TEXAS 77046</p>
+                                    <p>TELEPHONE: (713) 714-2563</p>
+                                    <p>FACSIMILE: (832) 219-1025</p>
+                                </div>
+                            </div>
+
+                            <!-- DATE -->
+                            <p class="mt-8 mb-6 text-center grey-text" ><b>November 17, 2025</b></p>
+
+                            <!-- VIA EMAIL -->
+                            <p class="mb-6">
+                                <i><span class="font-bold">Via Email:</span> ${email}<br></i>
+                                ${name}
+                            </p>
+
+                            <!-- SUBJECT -->
+                            <div class="mb-6">
+                                <p class="font-bold"><span >Re:</span> Notice of Representation</p>
+                                <p><span class="font-bold">Claim Number:</span>  ${claim}</p>
+                                <p><span class="font-bold">Date of Accident:</span> June 19, 2018</p>
+                                <p><span class="font-bold">My Client:</span>  ${clientName}</p>
+                            </div>
+
+                            <!-- GREETING -->
+                            <p class="mb-4">To Whom It May Concern,</p>
+
+                            <!-- BODY -->
+                            <p class="mb-4" style="text-indent: 30px;">
+                                Please be advised that this office has been employed to represent ${clientName} for bodily injuries he sustained in an automobile accident which occurred on the above date. I have been assigned an undivided interest in ${clientName}’s claim. Due to the negligence of your insured, my client has suffered significant bodily injuries for which he will continue to seek medical attention. I will keep you informed of his progress.
+                            </p>
+
+                            <p class="mb-4" style="text-indent: 30px;">
+                                By way of this letter, I respectfully ask that you please refrain from further communication with my client, as I will be your direct contact regarding this claim from this point forward. The only exception:
+                                <span class="font-bold" style="color:#b90000;">PLEASE COMMUNICATE WITH MY CLIENT REGARDING PROPERTY DAMAGE.</span>
+                            </p>
+
+                            <p class="mb-4" style="text-indent: 30px;">
+                                Please provide our office with any photos in your possession of the vehicles involved in the accident, as well as any damage appraisals or repair estimates for any damage related to the accident. Furthermore, please preserve all photos and documents related to my client’s claim.
+                            </p>
+
+                            <p class="mb-4" style="text-indent: 30px;">
+                                I look forward to receiving your acknowledgement letter in the upcoming days. Also, please send me an acceptance of liability letter upon completion of your investigation. Please feel free to contact my office with any questions or concerns. Thank you.
+                            </p>
+                                <!-- CLOSING -->
+                                <div style="margin-left:60%;">
+                                    <p class="mt-10 mb-16">Sincerely,</p>
+
+                                    <!-- SIGNATURE -->
+                                    <p class="font-bold">Nicholas M. Wills</p>
+                                    <p>Attorney at Law</p>
+                                </div>
+                        </div>`;
+                        $(`body`).html(pdf);
+                        window.print();
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
@@ -1293,7 +1370,7 @@ function getSectionsAndTodos() {
                                         <div class="2xl:col-span-1 flex flex-col">
                                             <button title="Mark task as complete" data-id="${todo.id}" class="completeButton">
                                                 <i class="fas fa-check" style="font-size:10px; color:white; vertical-align:top; margin-top:4px"></i>
-                                            </button>git
+                                            </button>
                                             <button class="editTodoBtn" style="margin-top:5px; cursor:pointer;" data-id="${todo.id}">
                                                 <i class="fa fa-pen"></i>
                                             </button>

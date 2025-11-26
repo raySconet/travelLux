@@ -24,16 +24,9 @@
         <!-- Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @else
+        @endif
 
-        @endif
-           @if(request()->is('calendar') || request()->is('calendar/*')) {{-- added by rony the king  --}}
-            @vite('resources/css/calendar.css')
 
-        @endif
-        @if(request()->is('category') || request()->is('category/*')) {{-- added by rony --}}
-            @vite('resources/css/category.css')
-        @endif
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
@@ -96,13 +89,6 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> {{-- added by rony --}}
 
-        @if(request()->is('calendar') || request()->is('calendar/*')) {{-- added by rony the king  --}}
-            @vite('resources/js/calendar.js')
-        @endif
-
-        @if(request()->is('category') || request()->is('category/*')) {{-- added by rony --}}
-            @vite('resources/js/category.js')
-        @endif
 
         @if(request()->is('caseInfo') || request()->is('caseInfo/*')) {{-- added by rony --}}
             @vite('resources/js/courtCases.js')

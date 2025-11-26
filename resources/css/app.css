@@ -225,3 +225,38 @@ select option {
 .deleteTodoBtn{
     cursor: pointer;
 }
+
+
+
+
+
+
+ .letter-container {
+            max-width: 800px;
+        }
+        .logo-box {
+            width: 140px;
+        }
+        .logo-placeholder {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+@media print {
+    body {
+        -webkit-print-color-adjust: exact; /* Chrome/Safari */
+        print-color-adjust: exact;         /* Firefox */
+    }
+
+    .grey-text {
+        color: grey !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}

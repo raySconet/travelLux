@@ -9,9 +9,9 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('calendar') }}">
+                    {{-- <a href="{{ route('calendar') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
+                    </a> --}}
                 </div>
 
                 <!-- Navigation Links -->
@@ -19,9 +19,7 @@
                     {{-- <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link> --}}
-                    <x-nav-link :href="route('calendar')" :active="request()->routeIs('calendar')">
-                        {{ __('Calendar') }}
-                    </x-nav-link>
+
                     {{-- <x-nav-link :href="route('caseInfo')" :active="request()->routeIs('caseInfo')">
                         {{ __('Case Info') }}
                     </x-nav-link> --}}
@@ -88,12 +86,12 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            {{-- <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
-            </x-responsive-nav-link> --}}
-             <x-responsive-nav-link :href="route('calendar')" :active="request()->routeIs('calendar')"> {{-- added by rony --}}
-                {{ __('Calendar') }}
             </x-responsive-nav-link>
+             {{-- <x-responsive-nav-link :href="route('calendar')" :active="request()->routeIs('calendar')">
+                {{ __('Calendar') }}
+            </x-responsive-nav-link> --}}
         </div>
 
         <!-- Responsive Settings Options -->

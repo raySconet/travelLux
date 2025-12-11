@@ -13,7 +13,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return redirect('/insurance');
+    return redirect('/profile');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

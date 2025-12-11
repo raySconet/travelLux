@@ -28,85 +28,98 @@
 
 
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+    <body class="font-sans "
+        x-data="{ sidebarOpen: true, first: true, second: true, third: true }">
+        @include('layouts.sidebar')
 
-            <!-- Page Heading -->
+
+        <!-- MAIN WRAPPER -->
+        <div class="min-h-screen bg-gray-100 transition-all duration-500"
+            :class="sidebarOpen ? 'md:ml-64' : 'md:ml-0'">
+
+            <!-- TOP NAV (your existing navigation) -->
+            <div class="flex items-center bg-[#f18325]  shadow px-4">
+               <a id="menu-toggle"
+                    @click="sidebarOpen = !sidebarOpen;
+                            first = !first; second = !second; third = !third;"
+                    href="javascript:void(0);"
+                    class="sidebarBtn flex items-center justify-center w-10 h-10">
+                        <div class="menuIcon">
+                            <div class="line1" :class="first ? 'animateFirstLine' : ''"></div>
+                            <div class="line2" :class="second ? 'animateSecondLine' : ''"></div>
+                            <div class="line3" :class="third ? 'animateThirdLine' : ''"></div>
+                        </div>
+                </a>
+
+                @include('layouts.navigation')
+            </div>
+
+            <!-- PAGE HEADING -->
             @isset($header)
-                <header class="bg-white shadow">
+                <header class="shadow text-white mt-2">
                     <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
             @endisset
 
-
-
-
-            <!-- Page Content -->
-            <main>
+            <!-- PAGE CONTENT -->
+            <main class="p-4">
                 {{ $slot }}
             </main>
         </div>
 
+
+        <!-- MODALS (unchanged) -->
         <x-general-modal id="errorModal" class="hidden">
             <x-slot name="header">
                 <div class="grid grid-cols-[auto_1fr] items-center gap-2">
-                    <!-- Triangle with exclamation icon -->
                     <i class="fa-solid fa-triangle-exclamation fa-xl text-yellow-600"></i>
                     <h2 class="text-xl font-semibold text-yellow-700">Attention</h2>
                 </div>
-                <i
-                    id="closeErrorModal"
-                    class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
-                    role="button"
-                    aria-label="Close">
-                </i>
+                <i id="closeErrorModal"
+                class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 cursor-pointer"
+                role="button"></i>
             </x-slot>
-
             <div id="modalErrorContent" class="text-sm text-gray-700 space-y-2"></div>
         </x-general-modal>
 
         <x-general-modal id="successModal" class="hidden">
             <x-slot name="header">
                 <div class="grid grid-cols-[auto_1fr] items-center gap-2">
-                    <!-- Check circle icon -->
                     <i class="fa-solid fa-circle-check fa-xl text-green-600"></i>
                     <h2 class="text-xl font-semibold text-green-700">Success</h2>
                 </div>
-                <i
-                    id="closeSuccessModal"
-                    class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 transition-colors duration-200 cursor-pointer justify-self-end custom-close-icon"
-                    role="button"
-                    aria-label="Close">
-                </i>
+                <i id="closeSuccessModal"
+                class="fa-solid fa-xmark fa-xl text-red-500 hover:text-red-600 cursor-pointer"
+                role="button"></i>
             </x-slot>
-
             <div id="modalSuccessContent" class="text-sm text-gray-700 space-y-2"></div>
         </x-general-modal>
 
+        <!-- EXISTING SCRIPTS (unchanged) -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> {{-- added by rony --}}
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 
-
-        @if(request()->is('caseInfo') || request()->is('caseInfo/*')) {{-- added by rony --}}
+        @if(request()->is('caseInfo') || request()->is('caseInfo/*'))
             @vite('resources/js/courtCases.js')
         @endif
 
-        @if(request()->is('permissions') || request()->is('permissions/*')) {{-- added by rony --}}
+        @if(request()->is('permissions') || request()->is('permissions/*'))
             @vite('resources/js/permissions.js')
         @endif
 
-    <div id="ajaxLoader" class="fixed top-0 left-0 w-full h-full z-50 flex items-center justify-center " style="background-color: rgba(0, 0, 0, 0.1); display:none;">
-        <div class="loader h-12 w-12 border-4 border-t-[#14548d] border-gray-200 rounded-full animate-spin"></div>
-    </div>
+        <div id="ajaxLoader"
+            class="fixed top-0 left-0 w-full h-full z-50 flex items-center justify-center"
+            style="background-color: rgba(0, 0, 0, 0.1); display:none;">
+            <div class="loader h-12 w-12 border-4 border-t-[#14548d] border-gray-200 rounded-full animate-spin"></div>
+        </div>
 
-        {{-- Flatpickr JS --}}
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
 
     </body>
+
 </html>

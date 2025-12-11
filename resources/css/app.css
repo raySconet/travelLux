@@ -2,11 +2,11 @@
 
 body {
     font-family: 'Lato' !important;
-    font-size: 13px ;
+    font-size: 14px ;
 }
 
 body input::placeholder {
-    font-size: 13px ;
+    font-size: 14px ;
 }
 
 select,
@@ -45,49 +45,6 @@ select option {
     border-color: #00000014 !important;
 } */
 
-/* ---------------------- */
-.litigationChartSection input, .litigationChartSection p, .litigationChartSection h2{
-    color:purple !important;
-}
-.litigationChartSection input::placeholder {
-    color:purple !important;
-}
-.litigationChartSection label{
-    color:purple !important;
-}
-
-/* ---------------------- */
-.affidavitChartSection input, .affidavitChartSection p, .affidavitChartSection h2{
-    color:rgb(20, 110, 165) !important;
-}
-.affidavitChartSection input::placeholder{
-    color:rgb(20, 110, 165)  !important;
-}
-.affidavitChartSection label{
-    color:rgb(20, 110, 165)  !important;
-}
-
-/* ---------------------- */
-.facilitatingSettlementSection h2 {
-    color:rgb(147, 204, 140) !important;
-}
-.facilitatingSettlementSection input, .facilitatingSettlementSection p,
-.facilitatingSettlementSection input::placeholder {
-    color:rgb(4, 117, 0)important;
-}
-
-.facilitatingSettlementSection label{
-    color:rgb(4, 117, 0) !important;
-}
-
-/* ---------------------- */
-.depositsExpensesSection h2{
-    color:rgb(122, 90, 1) !important;
-}
-.depositsExpensesSection label, .depositsExpensesSection input, .depositsExpensesSection p,
-.depositsExpensesSection input::placeholder {
-    color:rgb(139, 102, 0) !important;
-}
 
 
 
@@ -259,4 +216,34 @@ select option {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
+}
+
+
+.line1,
+.line2,
+.line3 {
+    margin-top: 4px;
+    height: 3px;
+    width: 18px;
+    background-color: #ffffff;
+    transition: 1.5s;
+}
+
+.animateFirstLine {
+    transform: rotateZ(45deg) translateX(8px) translateY(4px);
+}
+
+.animateSecondLine {
+    transform: translateX(-25px);
+    opacity: 0;
+}
+
+.animateThirdLine {
+    transform: rotateZ(315deg) translateX(6px) translateY(-2px);
+}
+
+.menuIcon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }

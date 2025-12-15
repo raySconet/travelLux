@@ -43,7 +43,7 @@
                     @click="sidebarOpen = !sidebarOpen;
                             first = !first; second = !second; third = !third;"
                     href="javascript:void(0);"
-                    class="sidebarBtn flex items-center justify-center w-10 h-10">
+                    class="sidebarBtn flex items-center justify-center z-100 w-10 h-16">
                         <div class="menuIcon">
                             <div class="line1" :class="first ? 'animateFirstLine' : ''"></div>
                             <div class="line2" :class="second ? 'animateSecondLine' : ''"></div>

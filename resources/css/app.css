@@ -14,7 +14,7 @@ select option {
   font-family: 'Lato', sans-serif !important;
 }
 #addManageSectionsModal select,
- #addManageSectionsModalselect option {
+#addManageSectionsModalselect option {
     height:27px !important
 
 }
@@ -246,4 +246,12 @@ select option {
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+.sidebarA:hover {
+    background: #f5f5f5 !important;
+    color:#f18325 ;
+}
+.sidebarA {
+    padding-left:52px;
 }

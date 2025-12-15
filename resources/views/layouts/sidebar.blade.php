@@ -3,14 +3,14 @@
 @endphp
 <!-- SIDEBAR -->
 <div
-    class="fixed inset-y-0 left-0 bg-white shadow-lg w-64 transform transition-transform duration-500 z-40"
+    class="fixed inset-y-0 left-0 bg-white shadow-lg w-64 transform transition-transform duration-500 z-100"
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
 >
     <div class="p-4.5 border-b bg-[#f18325] text-[#FFF] border-[#CCCCCC] font-semibold text-xl">
         Archer Luxury Travel
     </div>
 
-    <ul class="space-y-3 text-lg text-[#696969]">
+    <ul class="space-y-3 text-md text-[#696969]" style="overflow-y: auto; height:91%;">
         <!-- Administration -->
         <li x-data="{ open: false }">
             <button @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
@@ -21,15 +21,15 @@
                 </span>
             </button>
 
-            <div x-show="open" x-collapse class="ml-10 mt-2 space-y-2">
-                <a href="#" class="block py-1 hover:text-blue-600">System Users </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Timeline Tasks </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Product Configuration </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Agency Profile </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Forms Manager </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Newsletters </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Automated Emails </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Itinerary </a>
+            <div x-show="open" x-collapse class="mt-2 text-sm space-y-2" >
+                <a href="#" class="block py-1  sidebarA">System Users </a>
+                <a href="#" class="block py-1 sidebarA">Timeline Tasks </a>
+                <a href="#" class="block py-1 sidebarA">Product Configuration </a>
+                <a href="#" class="block py-1 sidebarA">Agency Profile </a>
+                <a href="#" class="block py-1 sidebarA">Forms Manager </a>
+                <a href="#" class="block py-1 sidebarA">Newsletters </a>
+                <a href="#" class="block py-1 sidebarA">Automated Emails </a>
+                <a href="#" class="block py-1 sidebarA">Itinerary </a>
             </div>
         </li>
 
@@ -41,10 +41,10 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open" x-collapse class="ml-10 mt-2 space-y-2">
-                <a href="/cases" class="block py-1 hover:text-blue-600">Customer List</a>
-                <a href="#" class="block py-1 hover:text-blue-600">New Customer </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Invite New Customer</a>
+            <div x-show="open" x-collapse class="mt-2 text-sm space-y-2"  >
+                <a href="/cases" class="block py-1 sidebarA">Customer List</a>
+                <a href="#" class="block py-1 sidebarA">New Customer </a>
+                <a href="#" class="block py-1 sidebarA">Invite New Customer</a>
             </div>
         </li>
 
@@ -56,9 +56,9 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open" x-collapse class="ml-10 mt-2 space-y-2">
-                <a href="/clients" class="block py-1 hover:text-blue-600">Current Leads </a>
-                <a href="#" class="block py-1 hover:text-blue-600">New Lead </a>
+            <div x-show="open" x-collapse class="mt-2 text-sm space-y-2"  >
+                <a href="/clients" class="block py-1 sidebarA">Current Leads </a>
+                <a href="#" class="block py-1 sidebarA">New Lead </a>
             </div>
         </li>
 
@@ -70,9 +70,9 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open" x-collapse class="ml-10 mt-2 space-y-2">
-                <a href="/clients" class="block py-1 hover:text-blue-600">Current Reservations </a>
-                <a href="#" class="block py-1 hover:text-blue-600">New Reservation </a>
+            <div x-show="open" x-collapse class="mt-2 text-sm space-y-2"  >
+                <a href="/clients" class="block py-1 sidebarA">Current Reservations </a>
+                <a href="#" class="block py-1 sidebarA">New Reservation </a>
             </div>
         </li>
 
@@ -84,41 +84,41 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open" x-collapse class="ml-10 mt-2 space-y-2">
-                <a href="#" class="block py-1 hover:text-blue-600">Vendor Report </a>
-                <a href="#" class="block py-1 hover:text-blue-600">1099 Report </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Check History </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Current Checks </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Commission Claim </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Commission Not Claimed </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Reservations Not Paid By ALT </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Reservations Paid By ALT </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Unknown Reservations </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Booked Trips by State </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Product Sales by Agent </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Agent Sales by Product </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Total Sales </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Agent Expenses </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Alias Total Sales </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Alias Total Gross Commission</a>
-                <a href="#" class="block py-1 hover:text-blue-600">All Reservations By Date</a>
-                <a href="#" class="block py-1 hover:text-blue-600">All Trips By Travel Date </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Top 15 Expensive Trips </a>
-                <a href="#" class="block py-1 hover:text-blue-600"> Product Sales (With Deposit) by Agent </a>
-                <a href="#" class="block py-1 hover:text-blue-600"> Final Agency Commission </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Agents Report </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Booked Reservations Per Month</a>
-                <a href="#" class="block py-1 hover:text-blue-600">Resleads Report </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Total Commission Report </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Hotel Only Report </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Classic Vacations Report </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Apple Vacations Report </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Travel Impressions Report </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Vacation Express Report </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Expedia Report </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Forms Sent Per Agent </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Rebooking Rate Report</a>
-                <a href="#" class="block py-1 hover:text-blue-600">Sales Report </a>
+            <div x-show="open" x-collapse class="text-sm mt-2 space-y-2"  >
+                <a href="#" class="block py-1 sidebarA">Vendor Report </a>
+                <a href="#" class="block py-1 sidebarA">1099 Report </a>
+                <a href="#" class="block py-1 sidebarA">Check History </a>
+                <a href="#" class="block py-1 sidebarA">Current Checks </a>
+                <a href="#" class="block py-1 sidebarA">Commission Claim </a>
+                <a href="#" class="block py-1 sidebarA">Commission Not Claimed </a>
+                <a href="#" class="block py-1 sidebarA">Reservations Not Paid By ALT </a>
+                <a href="#" class="block py-1 sidebarA">Reservations Paid By ALT </a>
+                <a href="#" class="block py-1 sidebarA">Unknown Reservations </a>
+                <a href="#" class="block py-1 sidebarA">Booked Trips by State </a>
+                <a href="#" class="block py-1 sidebarA">Product Sales by Agent </a>
+                <a href="#" class="block py-1 sidebarA">Agent Sales by Product </a>
+                <a href="#" class="block py-1 sidebarA">Total Sales </a>
+                <a href="#" class="block py-1 sidebarA">Agent Expenses </a>
+                <a href="#" class="block py-1 sidebarA">Alias Total Sales </a>
+                <a href="#" class="block py-1 sidebarA">Alias Total Gross Commission</a>
+                <a href="#" class="block py-1 sidebarA">All Reservations By Date</a>
+                <a href="#" class="block py-1 sidebarA">All Trips By Travel Date </a>
+                <a href="#" class="block py-1 sidebarA">Top 15 Expensive Trips </a>
+                <a href="#" class="block py-1 sidebarA"> Product Sales (With Deposit) by Agent </a>
+                <a href="#" class="block py-1 sidebarA"> Final Agency Commission </a>
+                <a href="#" class="block py-1 sidebarA">Agents Report </a>
+                <a href="#" class="block py-1 sidebarA">Booked Reservations Per Month</a>
+                <a href="#" class="block py-1 sidebarA">Resleads Report </a>
+                <a href="#" class="block py-1 sidebarA">Total Commission Report </a>
+                <a href="#" class="block py-1 sidebarA">Hotel Only Report </a>
+                <a href="#" class="block py-1 sidebarA">Classic Vacations Report </a>
+                <a href="#" class="block py-1 sidebarA">Apple Vacations Report </a>
+                <a href="#" class="block py-1 sidebarA">Travel Impressions Report </a>
+                <a href="#" class="block py-1 sidebarA">Vacation Express Report </a>
+                <a href="#" class="block py-1 sidebarA">Expedia Report </a>
+                <a href="#" class="block py-1 sidebarA">Forms Sent Per Agent </a>
+                <a href="#" class="block py-1 sidebarA">Rebooking Rate Report</a>
+                <a href="#" class="block py-1 sidebarA">Sales Report </a>
             </div>
         </li>
 
@@ -130,12 +130,12 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open" x-collapse class="ml-10 mt-2 space-y-2">
-                <a href="/clients" class="block py-1 hover:text-blue-600">Agent Dashboard </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Overall Task Dashboard </a>
-                <a href="#" class="block py-1 hover:text-blue-600">My Overall Task Dashboard </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Owners Dashboard </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Checking in this Week </a>
+            <div x-show="open" x-collapse class="text-sm mt-2 space-y-2"  >
+                <a href="/clients" class="block py-1 sidebarA">Agent Dashboard </a>
+                <a href="#" class="block py-1 sidebarA">Overall Task Dashboard </a>
+                <a href="#" class="block py-1 sidebarA">My Overall Task Dashboard </a>
+                <a href="#" class="block py-1 sidebarA">Owners Dashboard </a>
+                <a href="#" class="block py-1 sidebarA">Checking in this Week </a>
             </div>
         </li>
 
@@ -148,9 +148,9 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open" x-collapse class="ml-10 mt-2 space-y-2">
-                <a href="/clients" class="block py-1 hover:text-blue-600">Commission Remittances </a>
-                <a href="#" class="block py-1 hover:text-blue-600">Check Writer </a>
+            <div x-show="open" x-collapse class="text-sm mt-2 space-y-2"  >
+                <a href="/clients" class="block py-1 sidebarA">Commission Remittances </a>
+                <a href="#" class="block py-1 sidebarA">Check Writer </a>
             </div>
         </li>
 
@@ -162,8 +162,8 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open" x-collapse class="ml-10 mt-2 space-y-2">
-                <a href="/clients" class="block py-1 hover:text-blue-600">Vendor List </a>
+            <div x-show="open" x-collapse class="text-sm mt-2 space-y-2"  >
+                <a href="/clients" class="block py-1 sidebarA">Vendor List </a>
             </div>
         </li>
 

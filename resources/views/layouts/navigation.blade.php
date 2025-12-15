@@ -2,7 +2,7 @@
     $user = auth()->user();
 @endphp
 
-<nav x-data="{ open: false }" class="bg-[#f18325] " style="float:right; width:100%;">
+<nav x-data="{ open: false }" class="bg-[#f18325] fixed top-0 left-33 w-full z-50" style="float:right; ">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex  h-16 float-right">

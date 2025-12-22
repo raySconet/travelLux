@@ -1,7 +1,7 @@
-@props(['value',  'id' => null, 'class' => ''])
+@props(['for' => '','class' => '',])
 
 <label
-    id="{{ $id }}"
-    {{ $attributes->merge(['class' => 'block  text-gray-700 text-center' . $class]) }}>
-        {{ $value ?? $slot }}
+    for="{{ $for }}"
+    class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-5  peer-focus:top-1 peer-focus:text-sm  {{ $class }}">
+    {{ $slot }}
 </label>

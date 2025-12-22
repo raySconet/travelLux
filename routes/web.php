@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\InsuranceController;
+use App\Http\Controllers\SystemUsersController;
+
 
 
 Route::get('/', function () {
@@ -68,5 +70,11 @@ Route::get('/user/can-create-case', [CourtCasesController::class, 'canCreateCase
 Route::post('/update-event-user', [EventController::class, 'updateEventUser']);
 Route::post('/update-case-user', [CourtCasesController::class, 'updateCaseUser']);
 
+
+Route::get('/system-users', [SystemUsersController::class, 'index'])
+    ->name('system-users.index');
+
+Route::get('/system-users/{user}', [SystemUsersController::class, 'edit'])
+    ->name('system-users.edit');
 
 require __DIR__.'/auth.php';

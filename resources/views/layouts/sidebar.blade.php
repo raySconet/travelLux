@@ -22,14 +22,14 @@
             </button>
 
             <div x-show="open" x-collapse class="mt-2 text-sm space-y-2" >
-                <a href="#" class="block py-1  sidebarA">System Users </a>
-                <a href="#" class="block py-1 sidebarA">Timeline Tasks </a>
-                <a href="#" class="block py-1 sidebarA">Product Configuration </a>
-                <a href="#" class="block py-1 sidebarA">Agency Profile </a>
-                <a href="#" class="block py-1 sidebarA">Forms Manager </a>
-                <a href="#" class="block py-1 sidebarA">Newsletters </a>
-                <a href="#" class="block py-1 sidebarA">Automated Emails </a>
-                <a href="#" class="block py-1 sidebarA">Itinerary </a>
+                <a href="/system-users" class="block py-1  sidebarA">System Users <i class="fas fa-user-circle"></i> </a>
+                <a href="#" class="block py-1 sidebarA">Timeline Tasks <i class="fas fa-clock"></i> </a>
+                <a href="#" class="block py-1 sidebarA">Product Configuration  <i class="fas fa-ship"></i></a>
+                <a href="#" class="block py-1 sidebarA">Agency Profile  <i class="fas fa-id-card"></i> </a>
+                <a href="#" class="block py-1 sidebarA">Forms Manager <i class="fas fa-server"></i></a>
+                <a href="#" class="block py-1 sidebarA">Newsletters <i class="fas fa-envelope-open-text"></i></a>
+                <a href="#" class="block py-1 sidebarA">Automated Emails  <i class="fas fa-envelope"></i></a>
+                <a href="#" class="block py-1 sidebarA">Itinerary <i class="fa fa-plane"></i></a>
             </div>
         </li>
 
@@ -42,9 +42,9 @@
             </button>
 
             <div x-show="open" x-collapse class="mt-2 text-sm space-y-2"  >
-                <a href="/cases" class="block py-1 sidebarA">Customer List</a>
-                <a href="#" class="block py-1 sidebarA">New Customer </a>
-                <a href="#" class="block py-1 sidebarA">Invite New Customer</a>
+                <a href="/cases" class="block py-1 sidebarA">Customer List<i class="fas fa-list"></i></a>
+                <a href="#" class="block py-1 sidebarA">New Customer <i class="fas fa-plus-circle"></i></a>
+                <a href="#" class="block py-1 sidebarA">Invite New Customer <i class="fas fa-envelope-open-text"></i></a>
             </div>
         </li>
 
@@ -57,8 +57,8 @@
             </button>
 
             <div x-show="open" x-collapse class="mt-2 text-sm space-y-2"  >
-                <a href="/clients" class="block py-1 sidebarA">Current Leads </a>
-                <a href="#" class="block py-1 sidebarA">New Lead </a>
+                <a href="/clients" class="block py-1 sidebarA">Current Leads <i class="fas fa-list"></i></a>
+                <a href="#" class="block py-1 sidebarA">New Lead <i class="fas fa-plus-circle"></i></a>
             </div>
         </li>
 
@@ -71,8 +71,8 @@
             </button>
 
             <div x-show="open" x-collapse class="mt-2 text-sm space-y-2"  >
-                <a href="/clients" class="block py-1 sidebarA">Current Reservations </a>
-                <a href="#" class="block py-1 sidebarA">New Reservation </a>
+                <a href="/clients" class="block py-1 sidebarA">Current Reservations <i class="fas fa-list"></i></a>
+                <a href="#" class="block py-1 sidebarA">New Reservation <i class="fas fa-plus-circle"></i></a>
             </div>
         </li>
 
@@ -85,40 +85,40 @@
             </button>
 
             <div x-show="open" x-collapse class="text-sm mt-2 space-y-2"  >
-                <a href="#" class="block py-1 sidebarA">Vendor Report </a>
-                <a href="#" class="block py-1 sidebarA">1099 Report </a>
-                <a href="#" class="block py-1 sidebarA">Check History </a>
-                <a href="#" class="block py-1 sidebarA">Current Checks </a>
-                <a href="#" class="block py-1 sidebarA">Commission Claim </a>
-                <a href="#" class="block py-1 sidebarA">Commission Not Claimed </a>
-                <a href="#" class="block py-1 sidebarA">Reservations Not Paid By ALT </a>
-                <a href="#" class="block py-1 sidebarA">Reservations Paid By ALT </a>
-                <a href="#" class="block py-1 sidebarA">Unknown Reservations </a>
-                <a href="#" class="block py-1 sidebarA">Booked Trips by State </a>
-                <a href="#" class="block py-1 sidebarA">Product Sales by Agent </a>
-                <a href="#" class="block py-1 sidebarA">Agent Sales by Product </a>
-                <a href="#" class="block py-1 sidebarA">Total Sales </a>
-                <a href="#" class="block py-1 sidebarA">Agent Expenses </a>
-                <a href="#" class="block py-1 sidebarA">Alias Total Sales </a>
-                <a href="#" class="block py-1 sidebarA">Alias Total Gross Commission</a>
-                <a href="#" class="block py-1 sidebarA">All Reservations By Date</a>
-                <a href="#" class="block py-1 sidebarA">All Trips By Travel Date </a>
-                <a href="#" class="block py-1 sidebarA">Top 15 Expensive Trips </a>
-                <a href="#" class="block py-1 sidebarA"> Product Sales (With Deposit) by Agent </a>
-                <a href="#" class="block py-1 sidebarA"> Final Agency Commission </a>
-                <a href="#" class="block py-1 sidebarA">Agents Report </a>
-                <a href="#" class="block py-1 sidebarA">Booked Reservations Per Month</a>
-                <a href="#" class="block py-1 sidebarA">Resleads Report </a>
-                <a href="#" class="block py-1 sidebarA">Total Commission Report </a>
-                <a href="#" class="block py-1 sidebarA">Hotel Only Report </a>
-                <a href="#" class="block py-1 sidebarA">Classic Vacations Report </a>
-                <a href="#" class="block py-1 sidebarA">Apple Vacations Report </a>
-                <a href="#" class="block py-1 sidebarA">Travel Impressions Report </a>
-                <a href="#" class="block py-1 sidebarA">Vacation Express Report </a>
-                <a href="#" class="block py-1 sidebarA">Expedia Report </a>
-                <a href="#" class="block py-1 sidebarA">Forms Sent Per Agent </a>
-                <a href="#" class="block py-1 sidebarA">Rebooking Rate Report</a>
-                <a href="#" class="block py-1 sidebarA">Sales Report </a>
+                <a href="#" class="block py-1 sidebarA">Vendor Report <i class="fas fa-building"></i></a>
+                <a href="#" class="block py-1 sidebarA">1099 Report <i class="fas fa-list-alt"></i></a>
+                <a href="#" class="block py-1 sidebarA">Check History <i class="fas fa-history"></i></a>
+                <a href="#" class="block py-1 sidebarA">Current Checks <i class="fas fa-search-dollar"></i></a>
+                <a href="#" class="block py-1 sidebarA">Commission Claim <i class="fas fa-dollar-sign"></i></a>
+                <a href="#" class="block py-1 sidebarA">Commission Not Claimed <i class="fas fa-dollar-sign"></i></a>
+                <a href="#" class="block py-1 sidebarA">Reservations Not Paid By ALT <i class="fas fa-money-check"></i></a>
+                <a href="#" class="block py-1 sidebarA">Reservations Paid By ALT <i class="fas fa-money-bill-alt"></i></a>
+                <a href="#" class="block py-1 sidebarA">Unknown Reservations <i class="fas fa-question"></i></a>
+                <a href="#" class="block py-1 sidebarA">Booked Trips by State <i class="fas fa-flag-usa"></i></a>
+                <a href="#" class="block py-1 sidebarA">Product Sales by Agent <i class="fas fa-poll"></i></a>
+                <a href="#" class="block py-1 sidebarA">Agent Sales by Product <i class="fas fa-poll-h"></i></a>
+                <a href="#" class="block py-1 sidebarA">Total Sales <i class="fas fa-chart-area"></i></a>
+                <a href="#" class="block py-1 sidebarA">Agent Expenses <i class="fas fa-money-check-alt"></i></a>
+                <a href="#" class="block py-1 sidebarA">Alias Total Sales <i class="fas fa-project-diagram"></i></a>
+                <a href="#" class="block py-1 sidebarA">Alias Total Gross Commission <i class="fas fa-chart-pie"></i></a>
+                <a href="#" class="block py-1 sidebarA">All Reservations By Date <i class="fas fa-book-open"></i></a>
+                <a href="#" class="block py-1 sidebarA">All Trips By Travel Date <i class="fas fa-plane-departure"></i></a>
+                <a href="#" class="block py-1 sidebarA">Top 15 Expensive Trips <i class="fas fa-briefcase"></i></a>
+                <a href="#" class="block py-1 sidebarA"> Product Sales (With Deposit) by Agent <i class="fas fa-vote-yea"></i></a>
+                <a href="#" class="block py-1 sidebarA"> Final Agency Commission <i class="fas fa-wifi"></i></a>
+                <a href="#" class="block py-1 sidebarA">Agents Report <i class="fas fa-user-circle"></i></a>
+                <a href="#" class="block py-1 sidebarA">Booked Reservations Per Month <i class="fas fa-list-ol"></i></a>
+                <a href="#" class="block py-1 sidebarA">Resleads Report <i class="fas fa-grip-horizontal"></i></a>
+                <a href="#" class="block py-1 sidebarA">Total Commission Report <i class="fas fa-umbrella"></i></a>
+                <a href="#" class="block py-1 sidebarA">Hotel Only Report <i class="fas fa-hotel"></i></a>
+                <a href="#" class="block py-1 sidebarA">Classic Vacations Report <i class="fas fa-map-pin"></i></a>
+                <a href="#" class="block py-1 sidebarA">Apple Vacations Report <i class="fas fa-apple-alt"></i></a>
+                <a href="#" class="block py-1 sidebarA">Travel Impressions Report <i class="fas fa-plane"></i></a>
+                <a href="#" class="block py-1 sidebarA">Vacation Express Report <i class="fas fa-globe"></i></a>
+                <a href="#" class="block py-1 sidebarA">Expedia Report <i class="fab fa-edge"></i></a>
+                <a href="#" class="block py-1 sidebarA">Forms Sent Per Agent <i class="fas fa-envelope"></i></a>
+                <a href="#" class="block py-1 sidebarA">Rebooking Rate Report <i class="fas fa-percent"></i></a>
+                <a href="#" class="block py-1 sidebarA">Sales Report <i class="fas fa-sign"></i></a>
             </div>
         </li>
 
@@ -131,11 +131,11 @@
             </button>
 
             <div x-show="open" x-collapse class="text-sm mt-2 space-y-2"  >
-                <a href="/clients" class="block py-1 sidebarA">Agent Dashboard </a>
-                <a href="#" class="block py-1 sidebarA">Overall Task Dashboard </a>
-                <a href="#" class="block py-1 sidebarA">My Overall Task Dashboard </a>
-                <a href="#" class="block py-1 sidebarA">Owners Dashboard </a>
-                <a href="#" class="block py-1 sidebarA">Checking in this Week </a>
+                <a href="/clients" class="block py-1 sidebarA">Agent Dashboard <i class="fas fa-compass"></i></a>
+                <a href="#" class="block py-1 sidebarA">Overall Task Dashboard <i class="fas fa-check-double"></i></a>
+                <a href="#" class="block py-1 sidebarA">My Overall Task Dashboard <i class="fas fa-stopwatch"></i></a>
+                <a href="#" class="block py-1 sidebarA">Owners Dashboard <i class="fas fa-map"></i></a>
+                <a href="#" class="block py-1 sidebarA">Checking in this Week <i class="fas fa-calendar-check"></i></a>
             </div>
         </li>
 
@@ -149,8 +149,8 @@
             </button>
 
             <div x-show="open" x-collapse class="text-sm mt-2 space-y-2"  >
-                <a href="/clients" class="block py-1 sidebarA">Commission Remittances </a>
-                <a href="#" class="block py-1 sidebarA">Check Writer </a>
+                <a href="/clients" class="block py-1 sidebarA">Commission Remittances <i class="fas fa-download"></i></a>
+                <a href="#" class="block py-1 sidebarA">Check Writer <i class="fas fa-pen"></i></a>
             </div>
         </li>
 
@@ -163,7 +163,7 @@
             </button>
 
             <div x-show="open" x-collapse class="text-sm mt-2 space-y-2"  >
-                <a href="/clients" class="block py-1 sidebarA">Vendor List </a>
+                <a href="/clients" class="block py-1 sidebarA">Vendor List <i class="fas fa-list"></i></a>
             </div>
         </li>
 

@@ -254,4 +254,48 @@ select option {
 }
 .sidebarA {
     padding-left:52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.sidebarA i{
+    margin-right:10px;
+}
+.topButtonsGroup {
+   display: flex;
+   justify-content: center;
+   margin-bottom: 20px;
+   margin-top: -5px;
+}
+.systemUsersNav {
+   background: #6f6f6f;          
+   display: flex;
+   gap: 2px;                     
+}
+.systemUsersSectionBtn {
+   padding: 5px 14px;
+   font-size: 25px;
+   color:white;
+}
+.systemUsersSectionBtn:hover {
+   background: #e5e5e5;
+}
+.systemUserIconContainer {
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-end;
+}
+
+.systemUserIconContainer button {
+	padding: 2px;
+	margin-left: 7px;
+	background-color: #ffffff;
+	color: #f18325;
+	font-weight: bold;
+}
+
+.systemUserIconContainer button:hover {
+	background-color: #f18325;
+	color: #ffffff;
+	border-color: #f18325;
 }

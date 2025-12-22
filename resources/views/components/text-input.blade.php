@@ -1,7 +1,10 @@
-@props(['disabled' => false,  'id' => null, 'class' => ''])
+@props(['type' => 'text','id' => '', 'name' => '', 'value' => '', 'class' => '', 'placeholder' => ' ', ])
 
 <input
-    @disabled($disabled)
+    type="{{ $type }}"
     id="{{ $id }}"
-    {{ $attributes->merge(['class' => 'border border-[#00000014] p-1.5 h-[27px] outline-none text-center text-sm focus:border-indigo-400 w-full rounded-md shadow-xs ' . $class]) }}
->
+    name="{{ $name }}"
+    value="{{ $value }}"
+    placeholder="{{ $placeholder }}"
+    class="peer w-full border-b focus:outline-none focus:border-[#f18325] pt-5 pb-1 {{ $class }}"
+/>

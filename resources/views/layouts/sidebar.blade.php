@@ -24,20 +24,12 @@
             <div x-show="open" x-collapse class="mt-2 text-sm space-y-2" >
                 <a href="/system-users" class="block py-1  sidebarA">System Users <i class="fas fa-user-circle"></i> </a>
                 <a href="#" class="block py-1 sidebarA">Timeline Tasks <i class="fas fa-clock"></i> </a>
-                <a href="#" class="block py-1 sidebarA">Product Configuration  <i class="fas fa-ship"></i></a>
+                <a href="/productConfiguration" class="block py-1 sidebarA">Product Configuration  <i class="fas fa-ship"></i></a>
                 <a href="#" class="block py-1 sidebarA">Agency Profile  <i class="fas fa-id-card"></i> </a>
                 <a href="#" class="block py-1 sidebarA">Forms Manager <i class="fas fa-server"></i></a>
                 <a href="#" class="block py-1 sidebarA">Newsletters <i class="fas fa-envelope-open-text"></i></a>
                 <a href="#" class="block py-1 sidebarA">Automated Emails  <i class="fas fa-envelope"></i></a>
                 <a href="#" class="block py-1 sidebarA">Itinerary <i class="fa fa-plane"></i></a>
-                <a href="#" class="block py-1  sidebarA">System Users </a>
-                <a href="#" class="block py-1 sidebarA">Timeline Tasks </a>
-                <a href="productConfiguration" class="block py-1 sidebarA">Product Configuration </a>
-                <a href="#" class="block py-1 sidebarA">Agency Profile </a>
-                <a href="#" class="block py-1 sidebarA">Forms Manager </a>
-                <a href="#" class="block py-1 sidebarA">Newsletters </a>
-                <a href="#" class="block py-1 sidebarA">Automated Emails </a>
-                <a href="#" class="block py-1 sidebarA">Itinerary </a>
             </div>
         </li>
 

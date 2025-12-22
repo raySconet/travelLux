@@ -6,13 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\InsuranceController;
+<<<<<<< HEAD
 use App\Http\Controllers\SystemUsersController;
 
 
+=======
+use App\Http\Controllers\productConfigurationController;
+>>>>>>> 338c7c7b1731e47b86d2a393167ca4c39dab31f9
 
 Route::get('/', function () {
     return view('auth/login');
 });
+
 
 Route::get('/dashboard', function () {
     return redirect('/profile');
@@ -71,10 +76,20 @@ Route::post('/update-event-user', [EventController::class, 'updateEventUser']);
 Route::post('/update-case-user', [CourtCasesController::class, 'updateCaseUser']);
 
 
+<<<<<<< HEAD
 Route::get('/system-users', [SystemUsersController::class, 'index'])
     ->name('system-users.index');
 
 Route::get('/system-users/{user}', [SystemUsersController::class, 'edit'])
     ->name('system-users.edit');
+=======
+Route::middleware('auth')->group(function () {
+    Route::get('/productConfiguration', [ProductConfigurationController::class, 'index']);
+    // Route::post('/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
+    // Route::put('/insurance/{id}', [InsuranceController::class, 'update'])->name('insurance.update');
+    // Route::delete('/insurance/{id}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
+    // Route::get('/insurance/{id}/fetch', [InsuranceController::class, 'fetch'])->name('insurance.fetch');
+});
+>>>>>>> 338c7c7b1731e47b86d2a393167ca4c39dab31f9
 
 require __DIR__.'/auth.php';

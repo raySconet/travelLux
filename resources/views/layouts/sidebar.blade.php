@@ -30,6 +30,14 @@
                 <a href="#" class="block py-1 sidebarA">Newsletters <i class="fas fa-envelope-open-text"></i></a>
                 <a href="#" class="block py-1 sidebarA">Automated Emails  <i class="fas fa-envelope"></i></a>
                 <a href="#" class="block py-1 sidebarA">Itinerary <i class="fa fa-plane"></i></a>
+                <a href="#" class="block py-1  sidebarA">System Users </a>
+                <a href="#" class="block py-1 sidebarA">Timeline Tasks </a>
+                <a href="productConfiguration" class="block py-1 sidebarA">Product Configuration </a>
+                <a href="#" class="block py-1 sidebarA">Agency Profile </a>
+                <a href="#" class="block py-1 sidebarA">Forms Manager </a>
+                <a href="#" class="block py-1 sidebarA">Newsletters </a>
+                <a href="#" class="block py-1 sidebarA">Automated Emails </a>
+                <a href="#" class="block py-1 sidebarA">Itinerary </a>
             </div>
         </li>
 

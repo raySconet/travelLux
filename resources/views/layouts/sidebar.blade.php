@@ -24,7 +24,7 @@
             <div x-show="open" x-collapse class="mt-2 text-sm space-y-2" >
                 <a href="#" class="block py-1  sidebarA">System Users </a>
                 <a href="#" class="block py-1 sidebarA">Timeline Tasks </a>
-                <a href="#" class="block py-1 sidebarA">Product Configuration </a>
+                <a href="productConfiguration" class="block py-1 sidebarA">Product Configuration </a>
                 <a href="#" class="block py-1 sidebarA">Agency Profile </a>
                 <a href="#" class="block py-1 sidebarA">Forms Manager </a>
                 <a href="#" class="block py-1 sidebarA">Newsletters </a>

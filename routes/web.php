@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\InsuranceController;
-
+use App\Http\Controllers\productConfigurationController;
 
 Route::get('/', function () {
     return view('auth/login');
 });
+
 
 Route::get('/dashboard', function () {
     return redirect('/profile');
@@ -68,5 +69,13 @@ Route::get('/user/can-create-case', [CourtCasesController::class, 'canCreateCase
 Route::post('/update-event-user', [EventController::class, 'updateEventUser']);
 Route::post('/update-case-user', [CourtCasesController::class, 'updateCaseUser']);
 
+
+Route::middleware('auth')->group(function () {
+    Route::get('/productConfiguration', [ProductConfigurationController::class, 'index']);
+    // Route::post('/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
+    // Route::put('/insurance/{id}', [InsuranceController::class, 'update'])->name('insurance.update');
+    // Route::delete('/insurance/{id}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
+    // Route::get('/insurance/{id}/fetch', [InsuranceController::class, 'fetch'])->name('insurance.fetch');
+});
 
 require __DIR__.'/auth.php';

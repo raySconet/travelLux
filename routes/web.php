@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\SystemUsersController;
+use App\Http\Controllers\TimelineTasksController;
+
 
 
 use App\Http\Controllers\productConfigurationController;
@@ -72,12 +74,11 @@ Route::get('/user/can-create-case', [CourtCasesController::class, 'canCreateCase
 Route::post('/update-event-user', [EventController::class, 'updateEventUser']);
 Route::post('/update-case-user', [CourtCasesController::class, 'updateCaseUser']);
 
+Route::middleware('auth')->group(function () {
+    Route::get('/system-users', [SystemUsersController::class, 'index'])->name('system-users.index');
+    Route::get('/system-users/{user}', [SystemUsersController::class, 'edit'])->name('system-users.edit');
+});
 
-Route::get('/system-users', [SystemUsersController::class, 'index'])
-    ->name('system-users.index');
-
-Route::get('/system-users/{user}', [SystemUsersController::class, 'edit'])
-    ->name('system-users.edit');
 Route::middleware('auth')->group(function () {
     Route::get('/productConfiguration', [ProductConfigurationController::class, 'index']);
     // Route::post('/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
@@ -85,5 +86,8 @@ Route::middleware('auth')->group(function () {
     // Route::delete('/insurance/{id}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
     // Route::get('/insurance/{id}/fetch', [InsuranceController::class, 'fetch'])->name('insurance.fetch');
 });
-
+Route::middleware('auth')->group(function () {
+    Route::get('/timelinetasks', [TimelineTasksController::class, 'index']);
+    Route::get('/timelinetasks/{timelinetask}', [TimelineTasksController::class, 'edit'])->name('timeline-tasks.edit');
+});
 require __DIR__.'/auth.php';

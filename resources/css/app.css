@@ -299,3 +299,19 @@ select option {
 	color: #ffffff;
 	border-color: #f18325;
 }
+.form-input {
+    border: none;
+    border-bottom: 2px solid #bdbdbd;
+    border-radius: 0;
+    padding: 6px 4px;
+    min-width: 100px;
+    background: transparent;
+    color: #000;
+    font-size: 0.8rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-input:focus {
+    border-bottom-color: #f18325;
+}

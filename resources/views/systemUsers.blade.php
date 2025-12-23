@@ -5,7 +5,7 @@
                 {{ __('System Users') }}
             </h2>
 
-            <x-primary-btn><i class="far fa-plus-square"></i>Add User</x-primary-btn>
+            <x-primary-btn class="space-x-2"><i class="far fa-plus-square"></i><span>Add User</span></x-primary-btn>
         </div>
     </x-slot>
 

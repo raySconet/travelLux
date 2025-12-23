@@ -79,6 +79,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/system-users/{user}', [SystemUsersController::class, 'edit'])->name('system-users.edit');
 });
 
+Route::get('/system-users', [SystemUsersController::class, 'index'])
+    ->name('system-users.index');
+
+Route::get('/system-users/{user}', [SystemUsersController::class, 'edit'])
+    ->name('system-users.edit');
 Route::middleware('auth')->group(function () {
     Route::get('/productConfiguration', [ProductConfigurationController::class, 'index']);
     // Route::post('/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
@@ -90,4 +95,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/timelinetasks', [TimelineTasksController::class, 'index']);
     Route::get('/timelinetasks/{timelinetask}', [TimelineTasksController::class, 'edit'])->name('timeline-tasks.edit');
 });
+
 require __DIR__.'/auth.php';

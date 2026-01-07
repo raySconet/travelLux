@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold text-gray-800">
-                {{ __('Timeline Tasks') }}
+        <div class="p-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+            <h2 class=" text-2xl text-gray-500 leading-tight">
+                <i class="fa-solid fa-clock mr-2 text-[#f18325]"></i>{{ __('Timeline Tasks') }}
             </h2>
 
-            <x-primary-btn><i class="far fa-plus-square"></i>Add Task</x-primary-btn>
+            <x-primary-btn  class="flex items-center gap-2"><i class="far fa-plus-square"></i>Add Task</x-primary-btn>
         </div>
     </x-slot>
 

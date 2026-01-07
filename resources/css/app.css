@@ -268,18 +268,29 @@ select option {
    margin-top: -5px;
 }
 .systemUsersNav {
-   background: #6f6f6f;          
-   display: flex;
-   gap: 2px;                     
+    background: #5a6268;
+    display: flex;
+    gap: 2px;
 }
+
 .systemUsersSectionBtn {
-   padding: 5px 14px;
-   font-size: 25px;
-   color:white;
+    padding: 10px 20px;
+    font-size: 15px;
+    color: white;
+    background: transparent;
+    transition: background-color 0.2s ease;
 }
+
+
 .systemUsersSectionBtn:hover {
-   background: #e5e5e5;
+    background: #4f565c;
 }
+
+
+.systemUsersSectionBtn.active {
+    background: #4f565c;
+}
+
 .systemUserIconContainer {
 	display: flex;
 	justify-content: flex-start;

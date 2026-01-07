@@ -25,8 +25,8 @@
                 <a href="/system-users" class="block py-1  sidebarA">System Users <i class="fas fa-user-circle"></i> </a>
                 <a href="/timelinetasks" class="block py-1 sidebarA">Timeline Tasks <i class="fas fa-clock"></i> </a>
                 <a href="/productConfiguration" class="block py-1 sidebarA">Product Configuration  <i class="fas fa-ship"></i></a>
-                <a href="#" class="block py-1 sidebarA">Agency Profile  <i class="fas fa-id-card"></i> </a>
-                <a href="#" class="block py-1 sidebarA">Forms Manager <i class="fas fa-server"></i></a>
+                <a href="/agencyProfile" class="block py-1 sidebarA">Agency Profile  <i class="fas fa-id-card"></i> </a>
+                <a href="/formsManager" class="block py-1 sidebarA">Forms Manager <i class="fas fa-server"></i></a>
                 <a href="#" class="block py-1 sidebarA">Newsletters <i class="fas fa-envelope-open-text"></i></a>
                 <a href="#" class="block py-1 sidebarA">Automated Emails  <i class="fas fa-envelope"></i></a>
                 <a href="#" class="block py-1 sidebarA">Itinerary <i class="fa fa-plane"></i></a>

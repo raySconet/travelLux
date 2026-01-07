@@ -8,8 +8,8 @@ use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\SystemUsersController;
 use App\Http\Controllers\TimelineTasksController;
-
-
+use App\Http\Controllers\AgencyProfileController;
+use App\Http\Controllers\FormsManagerController;
 
 use App\Http\Controllers\productConfigurationController;
 
@@ -94,6 +94,13 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/timelinetasks', [TimelineTasksController::class, 'index']);
     Route::get('/timelinetasks/{timelinetask}', [TimelineTasksController::class, 'edit'])->name('timeline-tasks.edit');
+});
+Route::middleware('auth')->group(function () {
+    Route::get('/agencyProfile', [AgencyProfileController::class, 'index']);
+});
+Route::middleware('auth')->group(function () {
+    Route::get('/formsManager', [FormsManagerController::class, 'index']);
+    Route::get('/forms-manager/{user}', [FormsManagerController::class, 'edit'])->name('forms-manager.edit');
 });
 
 require __DIR__.'/auth.php';

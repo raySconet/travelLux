@@ -2,10 +2,10 @@
     <x-slot name="header">
         <div class="p-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-2xl text-gray-500 leading-tight">
-                <i class="fa-solid fa-user-circle mr-2 text-[#f18325]"></i>{{ __('System Users') }}
+                <i class="fa-solid fa-server mr-2 text-[#f18325]"></i>{{ __('Customers Forms') }}
             </h2>
-            
-            <x-primary-btn class="flex items-center gap-2"><i class="far fa-plus-square"></i>Add User</x-primary-btn>
+
+            <x-primary-btn  class="flex items-center gap-2"><i class="far fa-plus-square"></i>Add</x-primary-btn>
         </div>
     </x-slot>
 
@@ -35,7 +35,7 @@
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
                                     border-b-2 border-black">
-                                UserName
+                                Active
                             </th>
                         </tr>
                     </thead>
@@ -43,13 +43,13 @@
 
                     <tbody class="divide-y">
                         @foreach ($users as $user)
-                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('system-users.edit', $user->id) }}'">
+                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('forms-manager.edit', $user->id) }}'">
                                 <td class="px-4 py-3 font-medium text-gray-800">
                                     {{ $user->name }}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600">
-                                    {{ $user->email }}
+                              
                                 </td>
 
                             </tr>

@@ -24,7 +24,7 @@
 
         <div class="relative mt-4">
             <label for="priority">Priority</label>
-            <select name="priority" id="priority" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="priority" id="priority" class="w-full border-b border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select Priority--</option>
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
@@ -33,6 +33,7 @@
         </div>
     </div>
 
+    <h1 class="text-xl">Task Due</h1>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
         <div class="relative mt-3">
             <label>Day(s)</label>

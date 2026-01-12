@@ -13,16 +13,14 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/administration.css', 'resources/js/administration.js'])
+
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <img src="{{ asset('images/archer-logo.png') }}" style="width: 250px;  height: auto;" alt="Logo"> {{-- was width 108px height 50px--}}
-                </a>
-            </div>
-
-            <div class="w-full sm:max-w-md mt-12 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg"> {{-- was mt-6 sm:max-w-md --}}
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0  bg-[#f18325]">
+            <div class="w-full sm:max-w-md mt-12 px-12 py-10 bg-white shadow-md overflow-hidden "> 
                 {{ $slot }}
             </div>
         </div>

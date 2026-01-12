@@ -13,7 +13,7 @@
        
         <div class="bg-white shadow rounded-lg">
            
-            <div class="flex items-end justify-end px-6 py-4 border-b">
+            <div class="flex items-end justify-end px-6 py-4">
 
                 <div class="relative">
                     <input
@@ -40,27 +40,27 @@
                     <thead class="bg-white">
                         <tr>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-black">
+                                       border-b-2 border-t-2 border-[#dee2e6]">
                                 Product
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-black">
+                                       border-b-2 border-t-2 border-[#dee2e6]">
                                 Destination
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-black">
+                                       border-b-2 border-t-2 border-[#dee2e6]">
                                 Task Name
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-black">
+                                       border-b-2 border-t-2 border-[#dee2e6]">
                                 Priority
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-black">
+                                       border-b-2 border-t-2 border-[#dee2e6]">
                                 Days
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-black">
+                                       border-b-2 border-t-2 border-[#dee2e6]">
                                 DateType
                             </th>
                         </tr>
@@ -70,13 +70,25 @@
                     <tbody class="divide-y">
                         @foreach ($users as $user)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('timeline-tasks.edit', $user->id) }}'">
-                                <td class="px-4 py-3 font-medium text-gray-800">
+                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
                                     {{ $user->name}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600">
+                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
                                     {{ $user->email}}
                                 </td>
+
+                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                </td>   
+
+                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                </td>
+                                
+                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                </td>
+                                
+                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                </td>   
 
                             </tr>
                         @endforeach

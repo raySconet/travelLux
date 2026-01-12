@@ -129,7 +129,7 @@
 
             <x-input-label type="text" for="userName">User Name</x-input-label>
         </div>
-        <div class="flex items-center gap-2 mt-6">
+        <div class="flex items-center gap-2 mt-13">
             <input type="checkbox" class="h-4 w-4">
             <label class="text-sm">Email As Username</label>
         </div>

@@ -10,6 +10,10 @@ use App\Http\Controllers\SystemUsersController;
 use App\Http\Controllers\TimelineTasksController;
 use App\Http\Controllers\AgencyProfileController;
 use App\Http\Controllers\FormsManagerController;
+use App\Http\Controllers\AutomatedEmailsController;
+use App\Http\Controllers\ItineraryController;
+
+
 
 use App\Http\Controllers\productConfigurationController;
 
@@ -78,12 +82,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/system-users', [SystemUsersController::class, 'index'])->name('system-users.index');
     Route::get('/system-users/{user}', [SystemUsersController::class, 'edit'])->name('system-users.edit');
 });
-
-Route::get('/system-users', [SystemUsersController::class, 'index'])
-    ->name('system-users.index');
-
-Route::get('/system-users/{user}', [SystemUsersController::class, 'edit'])
-    ->name('system-users.edit');
 Route::middleware('auth')->group(function () {
     Route::get('/productConfiguration', [ProductConfigurationController::class, 'index']);
     // Route::post('/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
@@ -101,6 +99,14 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/formsManager', [FormsManagerController::class, 'index']);
     Route::get('/forms-manager/{user}', [FormsManagerController::class, 'edit'])->name('forms-manager.edit');
+});
+Route::middleware('auth')->group(function () {
+    Route::get('/automatedEmails', [AutomatedEmailsController::class, 'index']);
+    Route::get('/automatedEmails/{automatedEmail}', [AutomatedEmailsController::class, 'edit'])->name('automated-emails.edit');
+});
+Route::middleware('auth')->group(function () {
+    Route::get('/itinerary', [ItineraryController::class, 'index']);
+    Route::get('/itinerary/{itinerary}', [ItineraryController::class, 'edit'])->name('itinerary.edit');
 });
 
 require __DIR__.'/auth.php';

@@ -129,7 +129,7 @@
 
             <x-input-label type="text" for="userName">User Name</x-input-label>
         </div>
-        <div class="flex items-center gap-2 mt-6">
+        <div class="flex items-center gap-2 mt-13">
             <input type="checkbox" class="h-4 w-4">
             <label class="text-sm">Email As Username</label>
         </div>
@@ -318,32 +318,3 @@
         </div>
     </div>
 </div>
-
-{{-- <script>
-    function dateDropdown(minYear = 1920, maxYear = 2040) {
-        return {
-            day: '',
-            month: '',
-            year: '',
-
-            days: Array.from({ length: 31 }, (_, i) => i + 1),
-
-            months: [
-                'January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'
-            ],
-
-            years: Array.from(
-                { length: maxYear - minYear + 1 },
-                (_, i) => minYear + i
-            ),
-
-            get formattedDate() {
-                if (!this.day || !this.month || !this.year) return '';
-                return `${String(this.month).padStart(2, '0')}/` +
-                       `${String(this.day).padStart(2, '0')}/` +
-                       `${this.year}`;
-            }
-        };
-    }
-</script> --}}

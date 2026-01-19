@@ -1,29 +1,27 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
+        <div class="p-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+            <h2 class=" text-2xl text-gray-500 leading-tight">
+                <i class="fa-solid fa-user-circle mr-2 text-[#f18325]"></i>{{ __('My Profile') }}
+            </h2>
+             
+            <p>*Please fill in required fields.</p>
+            <x-primary-btn class="flex items-center gap-2"><i class="fas fa-save"></i>Save</x-primary-btn>
+        </div>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+    <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div class="bg-white shadow rounded-lg p-3">
+            @include('system-users.partials.user-info')
+        </div>
 
-            {{-- <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
+        <div class="bg-white shadow rounded-lg p-6" >
+                <div class="mt-4">
+                    <div>
+                        @include('system-users.partials.home-address')
+                    </div>
                 </div>
-            </div> --}}
         </div>
     </div>
 </x-app-layout>

@@ -2,6 +2,7 @@
 
 <button
     id="{{ $id }}"
-    {{ $attributes->merge(['class' => 'bg-[#eaf1ff] border border-[#cacaff] text-gray-800 py-2 px-4 rounded cursor-pointer ' . $class]) }}>
+    {{ $attributes->merge(['class' => 'space-x-2 bg-[#bdbdbd] border text-white py-2 px-8 rounded cursor-pointer  hover:bg-white hover:border-[#bdbdbd] hover:text-[#bdbdbd]
+                    transition-all duration-200' . $class]) }}>
     {{ $slot }}
 </button>

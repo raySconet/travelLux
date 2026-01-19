@@ -6,5 +6,5 @@
     name="{{ $name }}"
     value="{{ $value }}"
     placeholder="{{ $placeholder }}"
-    class="peer w-full border-b focus:outline-none focus:border-[#f18325] pt-5 pb-1 {{ $class }}"
+    class="peer w-full border-b border-[#bdbdbd] focus:outline-none focus:border-[#f18325] pt-5 pb-1 {{ $class }}"
 />

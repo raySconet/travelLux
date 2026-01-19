@@ -21,7 +21,7 @@
                 </span>
             </button>
 
-            <div x-show="open" x-collapse class="mt-2 text-sm space-y-2" >
+            <div x-show="open" x-collapse class="mt-2 text-md space-y-2" >
                 <a href="/system-users" class="block py-1  sidebarA">System Users <i class="fas fa-user-circle"></i> </a>
                 <a href="/timelinetasks" class="block py-1 sidebarA">Timeline Tasks <i class="fas fa-clock"></i> </a>
                 <a href="/productConfiguration" class="block py-1 sidebarA">Product Configuration  <i class="fas fa-ship"></i></a>

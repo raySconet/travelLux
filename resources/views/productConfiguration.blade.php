@@ -6,7 +6,6 @@
             </h2>
         </div>
     </x-slot>
-
         <div class=" mx-auto py-4 px-4">
             <div class=" p-4 bg-white shadow sm:rounded-lg">
                 <x-grid   class="2xl:grid-cols-12">
@@ -37,9 +36,6 @@
                         </h2>
                     </x-col>
                 </x-grid>
-
-
-
             </div>
             {{-- <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">

@@ -2,35 +2,42 @@
     $user = auth()->user();
 @endphp
 
-<nav x-data="{ open: false }" class="bg-[#f18325] fixed top-0 left-33 w-full z-50" style="float:right; ">
+<nav x-data="{ open: false }" class="bg-[#f18325] fixed top-0  w-full z-50" style="float:right; ">
+    <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
+        @csrf
+    </form>
+
+
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex  h-16 float-right">
-            <div class="flex">
+    <div class="max-w-7xl mx-auto w-full">
+        <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-8 flex-shrink-0">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
+                <div class="flex items-center">
                     {{-- <a href="{{ route('calendar') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a> --}}
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden sm:flex space-x-8">
                     {{-- <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link> --}}
-                    @if ($user && $user->isSuperAdmin())
+                    {{-- @if ($user && $user->isSuperAdmin())
                     <x-nav-link :href="route('insurance.index')" :active="request()->routeIs('insurance.index')">
                         {{ __('Insurance') }}
                     </x-nav-link>
-                    @endif
+                    @endif --}}
                 </div>
             </div>
 
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            {{-- <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
+                        <span class="text-white text-base">Welcome, {{ Auth::user()->name }}</span>
+                        <a href="/profile" class="block py-1  sidebarA">My Profile <i class="fas fa-user"></i> </a>
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white  focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
 
@@ -65,6 +72,35 @@
                         </form>
                     </x-slot>
                 </x-dropdown>
+            </div> --}}
+
+            <div class="hidden sm:flex items-center gap-4 flex-wrap">
+                <span class="text-white text-base">
+                    Welcome, {{ Auth::user()->name }}
+                </span>
+
+                <a href="/profile" class="text-white text-base flex items-center gap-1">
+                    <i class="fas fa-user"></i>
+                    My Profile
+                </a>
+
+                <a href="#" class="text-white text-base flex items-center gap-1">
+                    <i class="fas fa-chart-line"></i>
+                        Dashboard
+                </a>
+                
+                <a href="#" class="text-white text-base flex items-center gap-1">
+                    <i class="fas fa-bell"></i>
+                        Notifications
+                </a>
+                
+                <a href="#" 
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                    class="text-white text-base flex items-center gap-1">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                </a>
+
             </div>
 
             <!-- Hamburger -->

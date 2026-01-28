@@ -8,7 +8,7 @@
                 <div class="space-x-2">
                     <x-secondary-buttonToDelete><i class="fas fa-trash"></i><span>Delete</span></x-secondary-buttonToDelete>
                     <x-secondary-btn><i class="fas fa-save"></i><span>Save User</span></x-secondary-btn>
-                    <x-primary-btn><i class="far fa-minus-square"></i><span>Close User</span></x-primary-btn>
+                    <x-primary-btn onclick="window.history.back()"><i class="far fa-minus-square"></i><span>Close User</span></x-primary-btn>
                 </div>
         </div>
     </x-slot>

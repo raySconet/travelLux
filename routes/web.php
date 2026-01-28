@@ -12,8 +12,8 @@ use App\Http\Controllers\AgencyProfileController;
 use App\Http\Controllers\FormsManagerController;
 use App\Http\Controllers\AutomatedEmailsController;
 use App\Http\Controllers\ItineraryController;
-
-
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ReservationController;
 
 use App\Http\Controllers\productConfigurationController;
 
@@ -80,6 +80,7 @@ Route::post('/update-case-user', [CourtCasesController::class, 'updateCaseUser']
 
 Route::middleware('auth')->group(function () {
     Route::get('/system-users', [SystemUsersController::class, 'index'])->name('system-users.index');
+    Route::get('/system-users/create', [SystemUsersController::class, 'create'])->name('system-users.create');
     Route::get('/system-users/{user}', [SystemUsersController::class, 'edit'])->name('system-users.edit');
 });
 Route::middleware('auth')->group(function () {
@@ -108,5 +109,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/itinerary', [ItineraryController::class, 'index']);
     Route::get('/itinerary/{itinerary}', [ItineraryController::class, 'edit'])->name('itinerary.edit');
 });
-
+Route::middleware('auth')->group(function(){
+    Route::get('/customer-list', [CustomerController::class, 'index'])->name('customers.customerList');
+    Route::get('/customer-list/{customer}',[CustomerController::class, 'edit'])->name('customers.customerDetails');
+    Route::get('/inviteNewCustomer', [CustomerController::class, 'inviteNewCustomer'])->name('customers.inviteNewCustomer');
+});
+Route::middleware('auth')->group(function(){
+    Route::get('/reservation-list', [ReservationController::class, 'index'])->name('reservations.reservationList');
+    Route::get('/reservation-list/{reservation}',[ReservationController::class, 'edit'])->name('reservations.reservationDetails');
+});
 require __DIR__.'/auth.php';

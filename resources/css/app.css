@@ -261,6 +261,17 @@ select option {
 .sidebarA i{
     margin-right:10px;
 }
+.sidebarB {
+    padding-left:60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    gap:5px;
+}
+/* .sidebarB i{
+    margin-left:15px;
+} */
 .inputFocus::before {
     content: attr(data-placeholder);
     font-family: "Font Awesome 6 Free";

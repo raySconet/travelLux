@@ -5,7 +5,7 @@
                 <i class="fa-solid fa-id-card mr-2 text-[#f18325]"></i>{{ __('Agency Profile') }}
             </h2>
 
-            <x-primary-btn><i class="far fa-plus-square"></i>Save Profile</x-primary-btn>
+            <x-primary-btn class="flex items-center gap-2"><i class="fas fa-save"></i>Save Profile</x-primary-btn>
         </div>
     </x-slot>
 

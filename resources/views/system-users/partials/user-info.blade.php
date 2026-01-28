@@ -8,7 +8,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-5">
-            <x-text-input type="text" id="firstName" name="firstName" value="{{ $user->name }}" />
+            <x-text-input type="text" id="firstName" name="firstName" value="{{ old('name', $user->name ?? '') }}" />
 
             <x-input-label for="firstName"> First Name</x-input-label>
         </div>
@@ -21,7 +21,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-5">
-            <x-text-input type="email" id="email" name="email"  value="{{ $user->email }}" />
+            <x-text-input type="email" id="email" name="email" value="{{ old('email', $user->email ?? '') }}" />
 
             <x-input-label for="email">Email</x-input-label>
         </div>

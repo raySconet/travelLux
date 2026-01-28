@@ -2,10 +2,10 @@
     <x-slot name="header">
         <div class="p-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-2xl text-gray-500 leading-tight">
-                <i class="fa-solid fa-user-circle mr-2 text-[#f18325]"></i>{{ __('System Users') }}
+                <i class="fa-solid fas fa-list mr-2 text-[#f18325]"></i>{{ __('Customers') }}
             </h2>
             
-            <x-primary-btn class="flex items-center gap-2" onclick="window.location='{{ route('system-users.create') }}'"><i class="far fa-plus-square"></i>Add User</x-primary-btn>
+            <x-primary-btn class="flex items-center gap-2"><i class="far fa-plus-square"></i>Add Customer</x-primary-btn>
         </div>
     </x-slot>
 
@@ -13,15 +13,34 @@
        
         <div class="bg-white shadow rounded-lg">
            
-            <div class="flex items-end justify-end px-6 py-4 ">
+            <div class="flex items-end justify-between px-6 py-4">
+                <select name="CustomerTag" id="customerTag" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+                    <option value="-1">--Filter by Customer Tags --</option>
+                </select>
 
-                <div class="relative">
-                    <input
-                        type="text"
-                        placeholder="Quick Search"
-                        class="w-64 border-0 border-b-2 border-gray-400 text-sm px-1 py-1"
-                    >
-                </div>
+                <select name="status" id="status" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Invited">Invited</option>
+                    <option value="Paused">Paused</option>
+                    <option value="Prospect">Prospect</option>
+                </select>
+
+                
+                <select name="agents" id="agents" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+                    <option value="-1">All Agents</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}">
+                            {{ $user->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <input
+                    type="text"
+                    placeholder="Quick Search"
+                    class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1"
+                >
             </div>
 
            
@@ -33,33 +52,24 @@
                                 Name
                             </th>
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                UserName
-                            </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Role
-                            </th>   
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Active
-                            </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Access Level
-                            </th>  
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Phone
+                                Cell Phone
                             </th> 
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                City
+                                Email
                             </th> 
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                State
+                                Status
                             </th>
+                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
+                                Agent name
+                            </th>    
                         </tr>
                     </thead>
 
 
                     <tbody class="divide-y">
                         @foreach ($users as $user)
-                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('system-users.edit', $user->id) }}'">
+                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('customers.customerDetails', $user->id) }}'">
                                 <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
                                     {{ $user->name }}
                                 </td>

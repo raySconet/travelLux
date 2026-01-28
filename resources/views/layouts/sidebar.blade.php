@@ -42,9 +42,9 @@
             </button>
 
             <div x-show="open" x-collapse class="mt-2 text-sm space-y-2"  >
-                <a href="/cases" class="block py-1 sidebarA">Customer List<i class="fas fa-list"></i></a>
-                <a href="#" class="block py-1 sidebarA">New Customer <i class="fas fa-plus-circle"></i></a>
-                <a href="#" class="block py-1 sidebarA">Invite New Customer <i class="fas fa-envelope-open-text"></i></a>
+                <a href="/customer-list" class="block py-1 sidebarA">Customer List<i class="fas fa-list"></i></a>
+                <a href="" class="block py-1 sidebarA">New Customer <i class="fas fa-plus-circle"></i></a>
+                <a href="/inviteNewCustomer" class="block py-1 sidebarA">Invite New Customer <i class="fas fa-envelope-open-text"></i></a>
             </div>
         </li>
 
@@ -71,7 +71,7 @@
             </button>
 
             <div x-show="open" x-collapse class="mt-2 text-sm space-y-2"  >
-                <a href="/clients" class="block py-1 sidebarA">Current Reservations <i class="fas fa-list"></i></a>
+                <a href="/reservation-list" class="block py-1 sidebarA">Current Reservations <i class="fas fa-list"></i></a>
                 <a href="#" class="block py-1 sidebarA">New Reservation <i class="fas fa-plus-circle"></i></a>
             </div>
         </li>

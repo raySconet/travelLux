@@ -19,7 +19,7 @@
 
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0  bg-[#f18325]">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0" style="background: -moz-linear-gradient(bottom right, #F7B733, #F38423, #FC4A1A);">
             <div class="w-full sm:max-w-md mt-12 px-12 py-10 bg-white shadow-md overflow-hidden "> 
                 {{ $slot }}
             </div>

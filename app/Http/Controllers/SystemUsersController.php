@@ -18,4 +18,11 @@ class SystemUsersController extends Controller
         return view('system-users.edit' , compact('user'));
     }
 
+    public function create()
+    {
+        $user = new User(); 
+        return view('system-users.edit', compact('user'));
+    }
+
+
 }

@@ -72,7 +72,7 @@
 
         <div class="space-x-2 flex justify-end">
             <x-secondary-btn><span>Cancel</span></x-secondary-btn>
-            <x-primary-btn></i><span>Invite</span></x-primary-btn>
+            <x-primary-btn><span>Invite</span></x-primary-btn>
         </div>
     </div>
     

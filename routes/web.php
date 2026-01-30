@@ -14,6 +14,9 @@ use App\Http\Controllers\AutomatedEmailsController;
 use App\Http\Controllers\ItineraryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\VendorsController;
+use App\Http\Controllers\CommissionsRemittancesController;
+use App\Http\Controllers\AgentDashboardController;
 
 use App\Http\Controllers\productConfigurationController;
 
@@ -117,5 +120,14 @@ Route::middleware('auth')->group(function(){
 Route::middleware('auth')->group(function(){
     Route::get('/reservation-list', [ReservationController::class, 'index'])->name('reservations.reservationList');
     Route::get('/reservation-list/{reservation}',[ReservationController::class, 'edit'])->name('reservations.reservationDetails');
+});
+Route::middleware('auth')->group(function(){
+    Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');
+});
+Route::middleware('auth')->group(function(){
+    Route::get('/commissionRemittances', [CommissionsRemittancesController::class, 'index'])->name('commissions.commissionsRemittances');
+});
+Route::middleware('auth')->group(function(){
+    Route::get('/agentDashboard',[AgentDashboardController::class,'index'])->name('dashboards.agentDashboard');
 });
 require __DIR__.'/auth.php';

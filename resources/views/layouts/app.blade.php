@@ -39,12 +39,12 @@
             :class="sidebarOpen ? 'md:ml-64' : 'md:ml-0'">
 
             <!-- TOP NAV (your existing navigation) -->
-            <div class="flex items-center bg-[#f18325]  shadow px-4">
+            <div class="flex items-center bg-[#f18325]  shadow ">
                <a id="menu-toggle"
                     @click="sidebarOpen = !sidebarOpen;
                             first = !first; second = !second; third = !third;"
                     href="javascript:void(0);"
-                    class="sidebarBtn flex items-center justify-center z-100 w-10 h-16">
+                    class="sidebarBtn flex items-center justify-center z-100 w-10 h-16  pl-8">
                         <div class="menuIcon">
                             <div class="line1" :class="first ? 'animateFirstLine' : ''"></div>
                             <div class="line2" :class="second ? 'animateSecondLine' : ''"></div>
@@ -58,14 +58,14 @@
             <!-- PAGE HEADING -->
             @isset($header)
                 <header class="shadow text-white mt-2">
-                    <div class=" mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                    <div class="  py-3 px-2 sm:px-6">
                         {{ $header }}
                     </div>
                 </header>
             @endisset
 
             <!-- PAGE CONTENT -->
-            <main class="p-4">
+            <main class="p-2">
                 {{ $slot }}
             </main>
         </div>

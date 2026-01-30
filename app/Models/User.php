@@ -55,16 +55,13 @@ class User extends Authenticatable
         return self::where('isDeleted', 0)->orderBy('name')->get();
     }
 
-    public function event()
-    {
-        return $this->hasMany(Event::class);
-    }
+
     // If you omit the pivot table name,
     // Laravel will assume the table is the alphabetical order of the two model names (snake_case, singular), like court_case_user.
-    public function courtCases()
-    {
-        return $this->belongsToMany(CourtCase::class, 'user_case', 'user_id', 'case_id')->withTimestamps();
-    }
+    // public function courtCases()
+    // {
+    //     return $this->belongsToMany(CourtCase::class, 'user_case', 'user_id', 'case_id')->withTimestamps();
+    // }
 
     public function isSuperAdmin()
     {
@@ -81,104 +78,56 @@ class User extends Authenticatable
         return $this->userPermission === 'user';
     }
 
-    public function canEditEvent(Event $event)
-    {
-        return $this->isSuperAdmin() || ($this->isAdmin() && ($event->user_id === $this->id || $this->canViewEventsAndCasesForUser($event->user_id)));
-    }
 
-    public function canDeleteEvent(Event $event)
-    {
-        // return $this->canEditEvent($event); // same logic for now
-        return $this->isSuperAdmin(); // same logic for now
-    }
-
-    // public function canViewEvent(Event $event)
+    // public function canViewCase(CourtCase $case)
     // {
-    //     return $this->isSuperAdmin() || $this->isAdmin() || ($event->user_id === $this->id);
+    //     return $this->isSuperAdmin() ||  $this->isAssignedToCase($case); // $this->isAdmin() ||
     // }
 
-    public function canViewCase(CourtCase $case)
-    {
-        return $this->isSuperAdmin() ||  $this->isAssignedToCase($case); // $this->isAdmin() ||
-    }
+
 
     // public function canEditCase(CourtCase $case)
     // {
-    //     return $this->isSuperAdmin() || ($this->isAdmin() && ($this->isAssignedToCase($case) || $this->canViewEventsAndCasesForUser($case->user_id)));
+    //     if ($this->isSuperAdmin()) {
+    //         return true;
+    //     }
+
+    //     if (!$this->isAdmin()) {
+    //         return false;
+    //     }
+
+    //     // Check if assigned directly
+    //     if ($this->isAssignedToCase($case)) {
+    //         return true;
+    //     }
+
+    //     // Ensure users are loaded
+    //     if (!$case->relationLoaded('users')) {
+    //         $case->load('users');
+    //     }
+
+    //     // Check if admin can view any user assigned to the case
+    //     foreach ($case->users as $user) {
+    //         if ($this->canViewEventsAndCasesForUser($user->id)) {
+    //             return true;
+    //         }
+    //     }
+
+    //     return false;
     // }
 
-    public function canEditCase(CourtCase $case)
-    {
-        if ($this->isSuperAdmin()) {
-            return true;
-        }
 
-        if (!$this->isAdmin()) {
-            return false;
-        }
 
-        // Check if assigned directly
-        if ($this->isAssignedToCase($case)) {
-            return true;
-        }
-
-        // Ensure users are loaded
-        if (!$case->relationLoaded('users')) {
-            $case->load('users');
-        }
-
-        // Check if admin can view any user assigned to the case
-        foreach ($case->users as $user) {
-            if ($this->canViewEventsAndCasesForUser($user->id)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function canDeleteCase(CourtCase $case)
-    {
-        // return $this->canEditCase($case);
-        return $this->isSuperAdmin();
-    }
-
-    protected function isAssignedToCase(CourtCase $case)
-    {
-        return $case->relationLoaded('users') ? $case->users->contains('id', $this->id) : $case->users()->where('user_id', $this->id)->exists();
-    }
+    // protected function isAssignedToCase(CourtCase $case)
+    // {
+    //     return $case->relationLoaded('users') ? $case->users->contains('id', $this->id) : $case->users()->where('user_id', $this->id)->exists();
+    // }
 
     public function canCreateCase()
     {
         return $this->isSuperAdmin() || $this->isAdmin();
     }
 
-    public function canViewEventsAndCasesForUser($targetUserId)
-    {
-        if ($this->isSuperAdmin()) { //  || $this->isAdmin()
-            return true;
-        }
-
-        if ($this->id === $targetUserId) {
-            return true;
-        }
-
-        return UserAssignment::where('user_id', $this->id)
-            ->where('assigned_id', $targetUserId)
-            ->where('isDeleted', false)
-            ->whereHas('assignedUser', fn ($q) => $q->where('isDeleted', false))
-            ->exists();
-    }
-
-    public function canAddCategory()
-    {
-        return $this->isSuperAdmin();
-    }
-
-    public function canEditCategory()
-    {
-        return $this->isSuperAdmin();
-    }
 
     public function canDeleteCategory()
     {

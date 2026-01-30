@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header" >
-        <div class="p-4 bg-white shadow sm:rounded-lg">
+        <div class="py-4 px-4 bg-white shadow sm:rounded-lg">
             <h2 class=" text-xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-ship mr-2 text-[#f18325]"></i>{{ __('Product Configuration') }}
             </h2>

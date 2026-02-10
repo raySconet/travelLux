@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
                 <h2 class=" text-2xl text-gray-500 leading-tight">
                     <i class="fa-solid fa-plane mr-2 text-[#f18325]"></i>{{ __('Itinerary') }}
                 </h2>
@@ -16,7 +16,7 @@
         </div>
     </x-slot>
 
-    <div class="cover-wrapper">
+    <div class="cover-wrapper ml-3">
        
         <input type="file" id="coverPhotoInput" accept="image/*" hidden />
 
@@ -39,17 +39,17 @@
         </div>
     </div>
 
-    <div class="bg-white shadow rounded-lg mt-4 p-4">
+    <div class="bg-white shadow rounded-none mt-4 p-4 ml-3">
         <div class="grid grid-cols-4 gap-6">
             <div class="col-span-1 flex flex-col gap-4">
-                <x-primary-btn class="flex justify-center gap-2 w-auto max-w-[200px] px-4">
+                <x-primary-btn class="flex items-center justify-center gap-2 w-full max-w-[200px] px-4">
                     <i class="far fa-plus-square mt-1"></i>
                     Add Day
                 </x-primary-btn>
 
                
-                <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium border-b-2 border-t-2 border-[#dee2e6]">Attachment</span>
+                <div class="flex items-center justify-between border-t-2 border-b-2 border-[#dee2e6] px-2 py-1">
+                    <span class="text-sm font-medium">Attachment</span>
                     <button class="text-[#ccc] text-lg">
                         <i class="fas fa-paperclip"></i>
                     </button>
@@ -85,7 +85,7 @@
                             <label class="text-red-700 text-sm">Search in "Your Items" first.</label>
                             <label class="text-lg">Your Items</label>
                             <div class="relative mt-4">
-                                <select name="yourItems" id="yourItems" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+                                <select name="yourItems" id="yourItems" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                                     <option value="-1">Nothing selected</option>
                                 </select>
                             </div>
@@ -117,7 +117,7 @@
                                         </div>
 
                                         <div class="relative mt-3">
-                                            <select name="citySelect" id="citySelect" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+                                            <select name="citySelect" id="citySelect" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                                                 <option value="-1">Nothing selected</option>
                                             </select>
                                         </div>
@@ -125,7 +125,7 @@
 
                                     <div x-show="guideSearchSection === 'searchByCountry'" x-cloak class="flex flex-col gap-4">
                                         <div class="relative mt-3">
-                                            <select name="countrySelect" id="countrySelect" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+                                            <select name="countrySelect" id="countrySelect" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                                                 <option value="-1">Nothing selected</option>
                                             </select>
                                         </div>

@@ -13,9 +13,18 @@ class CustomerController extends Controller
        return view('customers.customerList', compact('users'));
     }
 
+    public function create(User $user)
+    {
+        $isNewCustomer = true;
+
+        return view('customers.customerDetails', compact('user', 'isNewCustomer'));
+    }
+
     public function edit(User $user)
     {
-        return view('customers.customerDetails' , compact('user'));
+        $isNewCustomer = false;
+
+        return view('customers.customerDetails' , compact('user', 'isNewCustomer'));
     }
 
     public function inviteNewCustomer(){

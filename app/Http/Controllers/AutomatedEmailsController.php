@@ -15,6 +15,7 @@ class AutomatedEmailsController extends Controller
 
     public function edit(User $user)
     {
-        return view('automated-emails.edit' , compact('user'));
+       $users = User::select('id','name', 'email')->get();
+        return view('automated-emails.edit' , compact('users'));
     }
 }

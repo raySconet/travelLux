@@ -4,12 +4,12 @@
         id="generalNotes"
         name="generalNotes"
         rows="3"
-        class="w-full border-b border-gray-300 focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1">
+        class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1">
     </textarea>
 </div>
-<div class="relative mt-6">
+<div class="relative mt-7">
     <label for="customerTags">Customer Tags</label>
-    <select name="customerTags" id="customerTags" class="w-full border-b-1 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+    <select name="customerTags" id="customerTags" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
         <option value="-1">-- Select Customer Tags--</option>
     </select>
 </div>

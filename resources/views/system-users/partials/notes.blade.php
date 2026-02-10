@@ -4,6 +4,6 @@
         id="generalNotes"
         name="generalNotes"
         rows="3"
-        class="w-full border-b border-gray-300 focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1">
+        class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1">
     </textarea>
 </div>

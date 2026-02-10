@@ -61,7 +61,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-6">
             <label for="status">Status</label>
-            <select name="status" id="status" class="w-full border-b-1 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="status" id="status" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
                 <option value="Invited">Invited</option>
@@ -72,7 +72,7 @@
 
         <div class="relative mt-6">
             <label for="gender">Gender</label>
-            <select name="gender" id="gender" class="w-full border-b-1 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="gender" id="gender" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select Gender --</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -84,22 +84,22 @@
 
         <div x-data="dateDropdown()" class="relative mt-5">
             <label class="block text-sm mb-1">Birth Date</label>
-            <div class="flex gap-2">
-                <select x-model="year" class="form-input">
+            <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Year</option>
                     <template x-for="y in years" :key="y">
                         <option :value="y" x-text="y"></option>
                     </template>
                 </select>
 
-                <select x-model="month" class="form-input">
+                <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Month</option>
                     <template x-for="(m, i) in months" :key="i">
                         <option :value="i + 1" x-text="m"></option>
                     </template>
                 </select>
 
-                <select x-model="day" class="form-input">
+                <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Day</option>
                     <template x-for="d in days" :key="d">
                         <option :value="d" x-text="d"></option>
@@ -113,22 +113,22 @@
 
         <div x-data="dateDropdown()" class="relative mt-5">
             <label class="block text-sm mb-1">Anniversary Date</label>
-            <div class="flex gap-2">
-                <select x-model="year" class="form-input">
+            <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Year</option>
                     <template x-for="y in years" :key="y">
                         <option :value="y" x-text="y"></option>
                     </template>
                 </select>
 
-                <select x-model="month" class="form-input">
+                <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Month</option>
                     <template x-for="(m, i) in months" :key="i">
                         <option :value="i + 1" x-text="m"></option>
                     </template>
                 </select>
 
-                <select x-model="day" class="form-input">
+                <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Day</option>
                     <template x-for="d in days" :key="d">
                         <option :value="d" x-text="d"></option>
@@ -145,7 +145,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-6">
             <label for="profileType">Profile Type</label>
-            <select name="profileType" id="profileType" class="w-full border-b-1 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="profileType" id="profileType" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select Profile Type--</option>
                 <option value="Corporate">Corporate</option>
                 <option value="Leisure">Leisure</option>
@@ -154,7 +154,7 @@
 
         <div class="relative mt-6">
             <label for="marialStatus">Marial Status</label>
-            <select name="marialStatus" id="marialStatus" class="w-full border-b-1 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="marialStatus" id="marialStatus" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select Marial Status --</option>
                 <option value="Single">Single</option>
                 <option value="Married">Married</option>
@@ -187,7 +187,7 @@
             id="specialNotes"
             name="specialNotes"
             rows="3"
-            class="w-full border-b border-gray-300 focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1">
+            class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1">
         </textarea>
     </div>
 

@@ -43,7 +43,7 @@
 
             <div x-show="open" x-collapse class="mt-2 text-sm space-y-2"  >
                 <a href="/customer-list" class="block py-1 sidebarA">Customer List<i class="fas fa-list"></i></a>
-                <a href="" class="block py-1 sidebarA">New Customer <i class="fas fa-plus-circle"></i></a>
+                <a href="/customer/create" class="block py-1 sidebarA">New Customer <i class="fas fa-plus-circle"></i></a>
                 <a href="/inviteNewCustomer" class="block py-1 sidebarA">Invite New Customer <i class="fas fa-envelope-open-text"></i></a>
             </div>
         </li>
@@ -72,7 +72,7 @@
 
             <div x-show="open" x-collapse class="mt-2 text-sm space-y-2"  >
                 <a href="/reservation-list" class="block py-1 sidebarA">Current Reservations <i class="fas fa-list"></i></a>
-                <a href="#" class="block py-1 sidebarA">New Reservation <i class="fas fa-plus-circle"></i></a>
+                <a href="/reservation-list/create" class="block py-1 sidebarA">New Reservation <i class="fas fa-plus-circle"></i></a>
             </div>
         </li>
 
@@ -85,40 +85,40 @@
             </button>
 
             <div x-show="open" x-collapse class="text-sm mt-2 space-y-2"  >
-                <a href="#" class="block py-1 sidebarA">Vendor Report <i class="fas fa-building"></i></a>
-                <a href="#" class="block py-1 sidebarA">1099 Report <i class="fas fa-list-alt"></i></a>
-                <a href="#" class="block py-1 sidebarA">Check History <i class="fas fa-history"></i></a>
-                <a href="#" class="block py-1 sidebarA">Current Checks <i class="fas fa-search-dollar"></i></a>
-                <a href="#" class="block py-1 sidebarA">Commission Claim <i class="fas fa-dollar-sign"></i></a>
+                <a href="/vendorReport" class="block py-1 sidebarA">Vendor Report <i class="fas fa-building"></i></a>
+                <a href="/1099Report" class="block py-1 sidebarA">1099 Report <i class="fas fa-list-alt"></i></a>
+                <a href="/checkHistoryReport" class="block py-1 sidebarA">Check History <i class="fas fa-history"></i></a>
+                <a href="/currentChecksReport" class="block py-1 sidebarA">Current Checks <i class="fas fa-search-dollar"></i></a>
+                <a href="/commissionClaimReport" class="block py-1 sidebarA">Commission Claim <i class="fas fa-dollar-sign"></i></a>
                 <a href="#" class="block py-1 sidebarA">Commission Not Claimed <i class="fas fa-dollar-sign"></i></a>
-                <a href="#" class="block py-1 sidebarA">Reservations Not Paid By ALT <i class="fas fa-money-check"></i></a>
-                <a href="#" class="block py-1 sidebarA">Reservations Paid By ALT <i class="fas fa-money-bill-alt"></i></a>
-                <a href="#" class="block py-1 sidebarA">Unknown Reservations <i class="fas fa-question"></i></a>
-                <a href="#" class="block py-1 sidebarA">Booked Trips by State <i class="fas fa-flag-usa"></i></a>
-                <a href="#" class="block py-1 sidebarA">Product Sales by Agent <i class="fas fa-poll"></i></a>
-                <a href="#" class="block py-1 sidebarA">Agent Sales by Product <i class="fas fa-poll-h"></i></a>
-                <a href="#" class="block py-1 sidebarA">Total Sales <i class="fas fa-chart-area"></i></a>
-                <a href="#" class="block py-1 sidebarA">Agent Expenses <i class="fas fa-money-check-alt"></i></a>
-                <a href="#" class="block py-1 sidebarA">Alias Total Sales <i class="fas fa-project-diagram"></i></a>
-                <a href="#" class="block py-1 sidebarA">Alias Total Gross Commission <i class="fas fa-chart-pie"></i></a>
-                <a href="#" class="block py-1 sidebarA">All Reservations By Date <i class="fas fa-book-open"></i></a>
-                <a href="#" class="block py-1 sidebarA">All Trips By Travel Date <i class="fas fa-plane-departure"></i></a>
-                <a href="#" class="block py-1 sidebarA">Top 15 Expensive Trips <i class="fas fa-briefcase"></i></a>
-                <a href="#" class="block py-1 sidebarA"> Product Sales (With Deposit) by Agent <i class="fas fa-vote-yea"></i></a>
-                <a href="#" class="block py-1 sidebarA"> Final Agency Commission <i class="fas fa-wifi"></i></a>
-                <a href="#" class="block py-1 sidebarA">Agents Report <i class="fas fa-user-circle"></i></a>
-                <a href="#" class="block py-1 sidebarA">Booked Reservations Per Month <i class="fas fa-list-ol"></i></a>
-                <a href="#" class="block py-1 sidebarA">Resleads Report <i class="fas fa-grip-horizontal"></i></a>
-                <a href="#" class="block py-1 sidebarA">Total Commission Report <i class="fas fa-umbrella"></i></a>
-                <a href="#" class="block py-1 sidebarA">Hotel Only Report <i class="fas fa-hotel"></i></a>
-                <a href="#" class="block py-1 sidebarA">Classic Vacations Report <i class="fas fa-map-pin"></i></a>
-                <a href="#" class="block py-1 sidebarA">Apple Vacations Report <i class="fas fa-apple-alt"></i></a>
-                <a href="#" class="block py-1 sidebarA">Travel Impressions Report <i class="fas fa-plane"></i></a>
-                <a href="#" class="block py-1 sidebarA">Vacation Express Report <i class="fas fa-globe"></i></a>
-                <a href="#" class="block py-1 sidebarA">Expedia Report <i class="fab fa-edge"></i></a>
+                <a href="/reservationsNotPaidByALTReport" class="block py-1 sidebarA">Reservations Not Paid By ALT <i class="fas fa-money-check"></i></a>
+                <a href="/reservationsPaidByALTReport" class="block py-1 sidebarA">Reservations Paid By ALT <i class="fas fa-money-bill-alt"></i></a>
+                <a href="/unknownReservationsReport" class="block py-1 sidebarA">Unknown Reservations <i class="fas fa-question"></i></a>
+                <a href="/bookedTripsByStateReport" class="block py-1 sidebarA">Booked Trips by State <i class="fas fa-flag-usa"></i></a>
+                <a href="/productSalesByAgentReport" class="block py-1 sidebarA">Product Sales by Agent <i class="fas fa-poll"></i></a>
+                <a href="/agentSalesByProductReport" class="block py-1 sidebarA">Agent Sales by Product <i class="fas fa-poll-h"></i></a>
+                <a href="/totalSalesReport" class="block py-1 sidebarA">Total Sales <i class="fas fa-chart-area"></i></a>
+                <a href="/agentExpensesReport" class="block py-1 sidebarA">Agent Expenses <i class="fas fa-money-check-alt"></i></a>
+                <a href="/aliasTotalSalesReport" class="block py-1 sidebarA">Alias Total Sales <i class="fas fa-project-diagram"></i></a>
+                <a href="/aliasTotalGrossCommission" class="block py-1 sidebarA">Alias Total Gross Commission <i class="fas fa-chart-pie"></i></a>
+                <a href="/allReservationsByDateReport" class="block py-1 sidebarA">All Reservations By Date <i class="fas fa-book-open"></i></a>
+                <a href="/allTripsByTravelDateReport" class="block py-1 sidebarA">All Trips By Travel Date <i class="fas fa-plane-departure"></i></a>
+                <a href="/top15ExpensiveTripsReport" class="block py-1 sidebarA">Top 15 Expensive Trips <i class="fas fa-briefcase"></i></a>
+                <a href="/productSalesWithDepositByAgentReport" class="block py-1 sidebarA"> Product Sales (With Deposit) by Agent <i class="fas fa-vote-yea"></i></a>
+                <a href="/finalAgencyCommissionReport" class="block py-1 sidebarA"> Final Agency Commission <i class="fas fa-wifi"></i></a>
+                <a href="/agentsReport" class="block py-1 sidebarA">Agents Report <i class="fas fa-user-circle"></i></a>
+                <a href="/bookedReservationsPerMonthReport" class="block py-1 sidebarA">Booked Reservations Per Month <i class="fas fa-list-ol"></i></a>
+                <a href="/reservationsLeadReport" class="block py-1 sidebarA">Resleads Report <i class="fas fa-grip-horizontal"></i></a>
+                <a href="/totalCommissionReport" class="block py-1 sidebarA">Total Commission Report <i class="fas fa-umbrella"></i></a>
+                <a href="/hotelOnlyReport" class="block py-1 sidebarA">Hotel Only Report <i class="fas fa-hotel"></i></a>
+                <a href="/classicVacationsReport" class="block py-1 sidebarA">Classic Vacations Report <i class="fas fa-map-pin"></i></a>
+                <a href="/appleVacationsReport" class="block py-1 sidebarA">Apple Vacations Report <i class="fas fa-apple-alt"></i></a>
+                <a href="/travelImpressionsReport" class="block py-1 sidebarA">Travel Impressions Report <i class="fas fa-plane"></i></a>
+                <a href="/vacationExpressReport" class="block py-1 sidebarA">Vacation Express Report <i class="fas fa-globe"></i></a>
+                <a href="/expediaReport" class="block py-1 sidebarA">Expedia Report <i class="fab fa-edge"></i></a>
                 <a href="#" class="block py-1 sidebarA">Forms Sent Per Agent <i class="fas fa-envelope"></i></a>
-                <a href="#" class="block py-1 sidebarA">Rebooking Rate Report <i class="fas fa-percent"></i></a>
-                <a href="#" class="block py-1 sidebarA">Sales Report <i class="fas fa-sign"></i></a>
+                <a href="/rebookingRateReport" class="block py-1 sidebarA">Rebooking Rate Report <i class="fas fa-percent"></i></a>
+                <a href="/salesReport" class="block py-1 sidebarA">Sales Report <i class="fas fa-sign"></i></a>
             </div>
         </li>
 
@@ -132,10 +132,10 @@
 
             <div x-show="open" x-collapse class="text-sm mt-2 space-y-2"  >
                 <a href="/agentDashboard" class="block py-1 sidebarA">Agent Dashboard <i class="fas fa-compass"></i></a>
-                <a href="#" class="block py-1 sidebarA">Overall Task Dashboard <i class="fas fa-check-double"></i></a>
-                <a href="#" class="block py-1 sidebarA">My Overall Task Dashboard <i class="fas fa-stopwatch"></i></a>
-                <a href="#" class="block py-1 sidebarA">Owners Dashboard <i class="fas fa-map"></i></a>
-                <a href="#" class="block py-1 sidebarA">Checking in this Week <i class="fas fa-calendar-check"></i></a>
+                <a href="/overallTaskDashboard" class="block py-1 sidebarA">Overall Task Dashboard <i class="fas fa-check-double"></i></a>
+                <a href="/myOverallTaskDashboard" class="block py-1 sidebarA">My Overall Task Dashboard <i class="fas fa-stopwatch"></i></a>
+                <a href="/ownersDashboard" class="block py-1 sidebarA">Owners Dashboard <i class="fas fa-map"></i></a>
+                <a href="/checkingInThisWeek" class="block py-1 sidebarA">Checking in this Week <i class="fas fa-calendar-check"></i></a>
             </div>
         </li>
 

@@ -13,7 +13,7 @@
        
         <div class="bg-white shadow rounded-lg">
            
-            <div class="flex items-end justify-end px-6 py-4 border-b">
+            <div class="flex items-end justify-end px-6 py-4">
 
                 <div class="relative">
                     <input
@@ -29,12 +29,12 @@
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-black">
+                            <th class="px-4 py-3 text-left text-sm text-gray-600
+                                    border-b-2 border-t-2 border-[#dee2e6] font-extrabold">
                                 Name
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-black">
+                            <th class="px-4 py-3 text-left text-sm text-gray-600
+                                    border-b-2 border-t-2 border-[#dee2e6] font-extrabold">
                                 Active
                             </th>
                         </tr>
@@ -44,11 +44,11 @@
                     <tbody class="divide-y">
                         @foreach ($users as $user)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('forms-manager.edit', $user->id) }}'">
-                                <td class="px-4 py-3 font-medium text-gray-800">
+                                <td class="w-3/4 px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
                                     {{ $user->name }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600">
+                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
                               
                                 </td>
 

@@ -24,7 +24,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-6">
             <label for="state/province/region">State/Province/Region</label>
-            <select name="state/province/region" id="state/province/region" class="w-full border-b-1 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="state/province/region" id="state/province/region" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select State/Province/Region--</option>
             </select>
         </div>

@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
             <h2 class=" text-2xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-user-circle mr-2 text-[#f18325]"></i>{{ __('System Users') }}
             </h2>
@@ -9,9 +9,9 @@
         </div>
     </x-slot>
 
-    <div class="p-6">
+    <div class="p-2">
        
-        <div class="bg-white shadow rounded-lg">
+        <div class="bg-white shadow rounded-none ml-2">
            
             <div class="flex items-end justify-end px-6 py-4 ">
 
@@ -64,7 +64,7 @@
                                     {{ $user->name }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
                                     {{ $user->email }}
                                 </td>
 

@@ -2,7 +2,7 @@
     <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
         <div class="relative mt-3">
             <label for="emailType">Email Type</label>
-            <select name="emailType" id="emailType" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="emailType" id="emailType" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select Email Type--</option>
                 <option value="anniversaryEmail">Anniversary Email</option>
                 <option value="upcomingAnniversaryEmail">Upcoming Anniversary Email</option>
@@ -25,7 +25,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-8">
             <label for="emailType">Send Before/After</label>
-            <select name="emailType" id="emailType" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="emailType" id="emailType" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select Before/After--</option>
                 <option value="before">Before</option>
                 <option value="after">After</option>
@@ -50,8 +50,13 @@
     <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
         <div class="relative mt-8">
             <label for="emailType">Automated Email For</label>
-            <select name="emailType" id="emailType" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="emailType" id="emailType" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select Agent--</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}">
+                            {{ $user->name }}
+                        </option>
+                    @endforeach        
             </select>
         </div>
     </div>
@@ -66,28 +71,28 @@
     <div class="grid grid-cols-1 md:grid-cols-5 gap-x-5 gap-y-4 items-end">
         <div class="relative mt-8">
             <label for="emailType">Product</label>
-            <select name="emailType" id="emailType" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="emailType" id="emailType" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select Product--</option>
             </select>
         </div>
 
         <div class="relative mt-8">
             <label for="emailType">Destination</label>
-            <select name="emailType" id="emailType" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="emailType" id="emailType" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select Destination--</option>
             </select>
         </div>
 
         <div class="relative mt-8">
             <label for="emailType">Resort/Ship</label>
-            <select name="emailType" id="emailType" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="emailType" id="emailType" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select Resort/Ship--</option>
             </select>
         </div>
 
         <div class="relative mt-8">
             <label for="emailType">Cruise/Type</label>
-            <select name="emailType" id="emailType" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="emailType" id="emailType" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">--Select Cruise/Type--</option>
             </select>
         </div>

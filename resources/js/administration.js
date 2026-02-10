@@ -32,14 +32,14 @@ $(document).ready(() => {
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
                 <div class="relative mt-3 md:col-span-2">
                     <label class="text-sm">Product</label>
-                    <select class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+                    <select class="w-full border-b-2 border-[#dee2e6] mb-4 focus:outline-none focus:border-[#f18325]">
                         <option value="-1">--Select product--</option>
                     </select>
                 </div>
 
                 <div class="relative mt-3 md:col-span-2">
                     <label class="text-sm">Destination</label>
-                    <select class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+                    <select class="w-full border-b-2 border-[#dee2e6] mb-4 focus:outline-none focus:border-[#f18325]">
                         <option value="-1">--Select destination--</option>
                     </select>
                 </div>

@@ -17,4 +17,8 @@ class TimelineTasksController extends Controller
     {
         return view('timeline-tasks.edit' , compact('user'));
     }
+
+    public function create(){
+        return view('timeline-tasks.edit');
+    }
 }

@@ -7,7 +7,7 @@
             <div class="dashboard-card bg-white shadow rounded-lg p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold  flex items-center gap-2 text-xl">
-                        <i class="far fa-clock text-xl text-red-500"></i>
+                        <i class="far fa-clock text-xl text-[#ff5722]"></i>
                         High Priority Tasks
                     </h3>
                     <i class="fas fa-expand text-base expand-btn"></i>
@@ -16,23 +16,23 @@
                 <div class="grid grid-cols-2 gap-4 text-center">
                     <div>
                         <p class="text-xl mt-1">Past Due</p>
-                        <p class="text-8xl leading-none text-red-600">1</p>
-                        <p class="text-sm text-gray-600 mt-1">Tasks</p>
+                        <p class="text-9xl leading-none text-[#e53935]">1</p>
+                        <p class="text-sm text-[#212121] mt-1">Tasks</p>
                     </div>
                     <div>
                         <p class="text-xl mt-1">Due Today</p>
-                        <p class="text-8xl text-orange-400">0</p>
-                        <p class="text-sm text-gray-600 mt-1">Tasks</p>
+                        <p class="text-9xl text-[#f9a825]">0</p>
+                        <p class="text-sm text-[#212121] mt-1">Tasks</p>
                     </div>
                     <div>
                         <p class="text-xl mt-1">Two Weeks</p>
-                        <p class="text-4xl text-blue-600">0</p>
-                        <p class="text-sm text-gray-600 mt-1">Tasks</p>
+                        <p class="text-5xl text-[#1565c0]">0</p>
+                        <p class="text-sm text-[#212121] mt-1">Tasks</p>
                     </div>
                     <div>
                         <p class="text-xl mt-1">30 Days</p>
-                        <p class="text-4xl text-blue-600">0</p>
-                        <p class="text-sm text-gray-600 mt-1">Tasks</p>
+                        <p class="text-5xl text-[#1565c0]">0</p>
+                        <p class="text-sm text-[#212121] mt-1">Tasks</p>
                     </div>
                 </div>
 
@@ -116,7 +116,7 @@
             <div class="dashboard-card bg-white shadow rounded-lg p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-semibold  flex items-center gap-2 text-xl">
-                        <i class="fas fa-chart-line text-blue-500"></i>
+                        <i class="fas fa-chart-line text-[#2196f3]"></i>
                         Total Sales
                     </h3>
                     <i class="fas fa-expand text-base expand-btn"></i>

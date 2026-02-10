@@ -26,7 +26,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-4">
             <label for="role">Role</label>
-            <select name="role" id="role" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="role" id="role" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">Select Role</option>
                 <option value="1">Administrator</option>
                 <option value="2">Agent</option>

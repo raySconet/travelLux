@@ -65,22 +65,22 @@
 
         <div x-data="dateDropdown()" class="relative mt-5">
             <label class="block text-sm mb-1">Birth Date</label>
-            <div class="flex gap-2">
-                <select x-model="year" class="form-input">
+            <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Year</option>
                     <template x-for="y in years" :key="y">
                         <option :value="y" x-text="y"></option>
                     </template>
                 </select>
 
-                <select x-model="month" class="form-input">
+                <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Month</option>
                     <template x-for="(m, i) in months" :key="i">
                         <option :value="i + 1" x-text="m"></option>
                     </template>
                 </select>
 
-                <select x-model="day" class="form-input">
+                <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Day</option>
                     <template x-for="d in days" :key="d">
                         <option :value="d" x-text="d"></option>
@@ -94,22 +94,22 @@
 
         <div x-data="dateDropdown()" class="relative mt-5">
             <label class="block text-sm mb-1">Hire Date</label>
-            <div class="flex gap-2">
-                <select x-model="year" class="form-input">
+            <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Year</option>
                     <template x-for="y in years" :key="y">
                         <option :value="y" x-text="y"></option>
                     </template>
                 </select>
 
-                <select x-model="month" class="form-input">
+                <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Month</option>
                     <template x-for="(m, i) in months" :key="i">
                         <option :value="i + 1" x-text="m"></option>
                     </template>
                 </select>
 
-                <select x-model="day" class="form-input">
+                <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                     <option value="">Day</option>
                     <template x-for="d in days" :key="d">
                         <option :value="d" x-text="d"></option>
@@ -123,13 +123,13 @@
     </div>
 
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-        <div class="relative mt-5">
-            <x-text-input type="text" />
-
-            <x-input-label type="text" for="userName">User Name</x-input-label>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 items-center">
+        <div class="relative mt-5 md:col-span-2">
+            <x-text-input type="text" class="w-full" />
+            <x-input-label for="userName">User Name</x-input-label>
         </div>
-        <div class="flex items-center gap-2 mt-13">
+
+        <div class="flex items-center justify-end gap-2 mt-13">
             <input type="checkbox" class="h-4 w-4">
             <label class="text-sm">Email As Username</label>
         </div>
@@ -173,7 +173,7 @@
 
         <div class="relative mt-6">
             <label for="timeZone">Time Zone</label>
-            <select name="timeZone" id="timeZone" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="timeZone" id="timeZone" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
                 <option value="-1">-- Select Time Zone --</option>
                 <option value="(UTC-12:00) International Date Line West">(UTC-12:00) International Date Line West</option>
                 <option value="(UTC-11:00) Coordinated Universal Time - 11">(UTC-11:00) Coordinated Universal Time - 11</option>

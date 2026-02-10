@@ -4,14 +4,14 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-6">
             <label for="customerReferral">Customer Referral</label>
-            <select name="customerReferral" id="customerReferral" class="w-full border-b-1 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="customerReferral" id="customerReferral" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">-- Select Customer --</option>
             </select>
         </div>
 
         <div class="relative mt-6">
             <label for="marketingMethod">Marketing Method</label>
-            <select name="marketingMethod" id="marketingMethod" class="w-full border-b-1 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="marketingMethod" id="marketingMethod" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="-1">-- Select Method --</option>
                 <option value="driveByOffice">Drive By Office</option>
                 <option value="emailMarketing">Email Marketing</option>

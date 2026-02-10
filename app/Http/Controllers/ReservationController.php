@@ -13,9 +13,20 @@ class ReservationController extends Controller
        return view('reservations.reservationList', compact('users'));
     }
 
-    public function edit(User $user)
+    public function create()
     {
-        return view('reservations.reservationDetails' , compact('user'));
+        $users = User::select('id','name','email')->get();
+        $isNewReservation = true;
+
+        return view('reservations.reservationDetails', compact('users', 'isNewReservation'));
+    }
+
+    public function edit($reservation)
+    {
+        $users = User::select('id','name','email')->get();
+        $isNewReservation = false;
+
+        return view('reservations.reservationDetails', compact('users', 'isNewReservation'));
     }
 
 }

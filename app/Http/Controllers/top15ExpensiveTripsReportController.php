@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class top15ExpensiveTripsReportController extends Controller
+class Top15ExpensiveTripsReportController extends Controller
 {
     public function index()
     {

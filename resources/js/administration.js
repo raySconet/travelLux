@@ -234,7 +234,7 @@ $(document).ready(() => {
                         class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-down"></i>
                     </button>
-                </div>    
+                </div>
 
             </div>
             <div class="addChoice mt-4 space-y-3"></div>`;
@@ -279,7 +279,7 @@ $(document).ready(() => {
                         class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-down"></i>
                     </button>
-                </div>    
+                </div>
             </div>
             <div class="addChoice mt-4 space-y-3"></div>`;
         }else if(type === 'signatureBlock'){
@@ -337,7 +337,7 @@ $(document).ready(() => {
         $('#form-items-container').append(html);
         const $dropdown = $(this).closest('el-dropdown');
         const $menu = $dropdown.find('el-menu[popover]');
-        $menu.attr('data-closed', 'true'); 
+        $menu.attr('data-closed', 'true');
     });
 
     $(document).on('click', '.addChoiceBtn', function () {
@@ -377,7 +377,7 @@ $(document).ready(() => {
         const $item = $(this).closest('div.choiceText');
         $item.remove();
     });
-   
+
     $(document).on('click', '.fa-arrow-up', function () {
         const $item = $(this).closest('.form-item');
         const $prev = $item.prev('.form-item');
@@ -386,7 +386,7 @@ $(document).ready(() => {
         }
     });
 
-   
+
     $(document).on('click', '.fa-arrow-down', function () {
         const $item = $(this).closest('.form-item');
         const $next = $item.next('.form-item');

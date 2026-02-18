@@ -33,60 +33,60 @@
         <p class="text-base mt-2">Important Payment Date</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-            <div x-data="dateDropdown()" class="relative mt-5">
-                <label class="block text-sm mb-1">Deposit Due Date</label>
+            <div x-data="dateDropdown('{{ old('deposit_due_date', $reservation->deposit_due_date ?? '') }}')" class="relative mt-5">
+                <label class="block text-sm mb-1">Checkin Date</label>
                 <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
                     <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                         <option value="">Year</option>
                         <template x-for="y in years" :key="y">
-                            <option :value="y" x-text="y"></option>
+                            <option :value="y" x-text="y" :selected="year == y"></option>
                         </template>
                     </select>
 
                     <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                         <option value="">Month</option>
                         <template x-for="(m, i) in months" :key="i">
-                            <option :value="i + 1" x-text="m"></option>
+                            <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
                         </template>
                     </select>
 
                     <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                         <option value="">Day</option>
                         <template x-for="d in days" :key="d">
-                            <option :value="d" x-text="d"></option>
+                            <option :value="d" x-text="d" :selected="day == d"></option>
                         </template>
                     </select>
-
                 </div>
-                <input type="hidden" name="birthDate" :value="formattedDate">
+
+                <input type="hidden" name="deposit_due_date" :value="formattedDate">
             </div>
 
-             <div x-data="dateDropdown()" class="relative mt-5">
-                <label class="block text-sm mb-1">Final Payment Date</label>
+            <div x-data="dateDropdown('{{ old('final_payment_due_date', $reservation->final_payment_due_date ?? '') }}')" class="relative mt-5">
+                <label class="block text-sm mb-1">Checkin Date</label>
                 <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
                     <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                         <option value="">Year</option>
                         <template x-for="y in years" :key="y">
-                            <option :value="y" x-text="y"></option>
+                            <option :value="y" x-text="y" :selected="year == y"></option>
                         </template>
                     </select>
 
                     <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                         <option value="">Month</option>
                         <template x-for="(m, i) in months" :key="i">
-                            <option :value="i + 1" x-text="m"></option>
+                            <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
                         </template>
                     </select>
 
                     <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
                         <option value="">Day</option>
                         <template x-for="d in days" :key="d">
-                            <option :value="d" x-text="d"></option>
+                            <option :value="d" x-text="d" :selected="day == d"></option>
                         </template>
                     </select>
-
                 </div>
-                <input type="hidden" name="birthDate" :value="formattedDate">
+
+                <input type="hidden" name="final_payment_due_date" :value="formattedDate">
             </div>
         </div>
     </div>

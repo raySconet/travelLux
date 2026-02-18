@@ -10,10 +10,8 @@ class Reservation extends Model
 
     protected $primaryKey = 'id';
 
-    // public $timestamps = false; // since you use created_on / last_modified_on
 
     protected $fillable = [
-        'id',
         'customer_id',
         'reservation_number',
         'group_number',
@@ -75,12 +73,22 @@ class Reservation extends Model
         'unknown_reservation_checked_flag',
         'stop_auto_emails',
         'radio_station_ads',
-        'agent_id Index',
+        'agent_id',
         'itinerary_trip_id',
-        'created_by Index',
+        'created_by',
         'created_on',
-        'last_modified_by Index',
+        'last_modified_by',
         'last_modified_on',
         'is_deleted'
     ];
+
+    public function agent()
+    {
+        return $this->belongsTo(User::class, 'agent_id'); 
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id'); 
+    }
 }

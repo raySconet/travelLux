@@ -4,8 +4,8 @@
         id="generalNotes"
         name="generalNotes"
         rows="3"
-        class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1">
-    </textarea>
+        class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1"
+    >{{ old('general_notes', $customer->general_notes ?? '') }}</textarea>
 </div>
 <div class="relative mt-7">
     <label for="customerTags">Customer Tags</label>

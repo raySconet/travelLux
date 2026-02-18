@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
             <h2 class=" text-2xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-server mr-2 text-[#f18325]"></i>{{ __('Customers Forms') }}
             </h2>
@@ -14,7 +14,7 @@
     </x-slot>
 
     <div>
-        <div class="bg-white shadow rounded-lg p-6" x-data="{ section: 'general' }">
+        <div class="bg-white shadow rounded-none p-6" x-data="{ section: 'general' }">
             <div class="topButtonsGroup">
                 <div class="btn-group systemUsersNav" role="group">
                     <button type="button"  class="systemUsersSectionBtn" :class="{ 'active': section === 'general' }" @click="section = 'general'">

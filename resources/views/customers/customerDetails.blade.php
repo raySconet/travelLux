@@ -5,11 +5,18 @@
                     <i class="fa-solid fas fa-list mr-2 text-[#f18325]"></i>{{ __('Customers') }}
                 </h2>
 
-                <div class="space-x-2">
-                    <x-secondary-buttonToDelete><i class="fas fa-trash"></i><span>Delete</span></x-secondary-buttonToDelete>
-                    <x-secondary-btn><i class="fas fa-save"></i><span>Save Customer</span></x-secondary-btn>
-                    <x-primary-btn onclick="window.history.back()"><i class="far fa-minus-square"></i><span>Close Customer</span></x-primary-btn>
-                </div>
+                @if($isNewCustomer)
+                    <div class="space-x-2">
+                        <x-secondary-btn><i class="fas fa-save"></i><span>Save Customer</span></x-secondary-btn>
+                        <x-primary-btn onclick="window.location='{{ route('customers.customerList') }}'"><i class="far fa-minus-square"></i><span>Close Customer</span></x-primary-btn>
+                    </div>
+                @else    
+                    <div class="space-x-2">
+                        <x-secondary-buttonToDelete><i class="fas fa-trash"></i><span>Delete</span></x-secondary-buttonToDelete>
+                        <x-secondary-btn><i class="fas fa-save"></i><span>Save Customer</span></x-secondary-btn>
+                        <x-primary-btn onclick="window.location='{{ route('customers.customerList') }}'"><i class="far fa-minus-square"></i><span>Close Customer</span></x-primary-btn>
+                    </div>
+                @endif    
             </div>
     </x-slot>
 
@@ -18,7 +25,7 @@
             @include('customers.partials.customer-info')
         </div>
 
-        <div class="bg-white shadow rounded-lg p-6" x-data="{ section: 'home' }">
+        <div class="bg-white shadow rounded-none p-6" x-data="{ section: 'home' }">
             <div class="topButtonsGroup">
                 <div class="btn-group systemUsersNav" role="group">
                     <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'home' }" @click="section = 'home'">
@@ -35,7 +42,12 @@
                     </button>    
                     <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'surveys'}" @click="section = 'surveys'">
                         <i style="font-size:20px;" class="fas fa-comments"></i>
-                    </button>   
+                    </button> 
+                    @if(!$isNewCustomer)
+                    <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'selfServiceInvitations'}" @click="section = 'selfServiceInvitations'">
+                        <i style="font-size:20px;" class="fas fa-address-card"></i>
+                    </button>  
+                    @endif
                     <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'travelHistory'}" @click="section = 'travelHistory'">
                         <i style="font-size:20px;" class="fas fa-history"></i>
                     </button>     
@@ -69,7 +81,11 @@
 
                     <div x-show="section === 'surveys'" x-cloak>
                         @include('customers.partials.surveys')
-                    </div>    
+                    </div>  
+                    
+                    <div x-show="section === 'selfServiceInvitations'" x-cloak>
+                        @include('customers.partials.selfServiceInvitations')
+                    </div> 
 
                     <div x-show="section === 'travelHistory'" x-cloak>
                         @include('customers.partials.travelHistory')

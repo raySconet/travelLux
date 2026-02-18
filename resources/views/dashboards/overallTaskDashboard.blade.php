@@ -14,7 +14,7 @@
 
         <div id="dashboard-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            <div class="dashboard-card bg-white shadow rounded-lg p-9">
+            <div class="dashboard-card bg-white shadow rounded-none p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold  flex items-center gap-2 text-xl">
                         <i class="far fa-clock text-xl text-[#ff5722]"></i>
@@ -52,7 +52,7 @@
             </div>
 
             
-            <div class="dashboard-card bg-white shadow rounded-lg p-9">
+            <div class="dashboard-card bg-white shadow rounded-none p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold  flex items-center gap-2 text-xl">
                         <i class="far fa-clock text-xl text-[#ffc107]"></i>
@@ -94,7 +94,7 @@
         <div id="dashboard-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             
-            <div class="dashboard-card bg-white shadow rounded-lg p-9">
+            <div class="dashboard-card bg-white shadow rounded-none p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold  flex items-center gap-2 text-xl">
                         <i class="far fa-clock text-xl text-[#50c878]"></i>
@@ -132,7 +132,7 @@
             </div>
 
           
-            <div class="dashboard-card bg-white shadow rounded-lg p-9">
+            <div class="dashboard-card bg-white shadow rounded-none p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold  flex items-center gap-2 text-xl">
                         <i class="far fa-clock text-xl text-[#bdbdbd]"></i>

@@ -81,4 +81,14 @@ class Reservation extends Model
         'last_modified_on',
         'is_deleted'
     ];
+
+    public function agent()
+    {
+        return $this->belongsTo(User::class, 'agent_id'); 
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id'); 
+    }
 }

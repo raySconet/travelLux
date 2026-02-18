@@ -1,7 +1,7 @@
 <div>
     <label class="text-base">Form Items</label>
 
-    <div class="form-item bg-white shadow rounded-lg p-6 mt-1" style="box-shadow: 1px 1px 6px #808080;">
+    <div class="form-item bg-white shadow rounded-none p-6 mt-1" style="box-shadow: 1px 1px 6px #808080;">
         <p class="font-extrabold text-base mb-3">HTML</p>
         <label class="text-sm">Content</label>
         <textarea

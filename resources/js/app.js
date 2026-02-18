@@ -1,11 +1,43 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
 
-window.dateDropdown = function(minYear = 1920, maxYear = 2040) {
+// window.dateDropdown = function(minYear = 1920, maxYear = 2040) {
+//     return {
+//         day: '',
+//         month: '',
+//         year: '',
+//         days: Array.from({ length: 31 }, (_, i) => i + 1),
+//         months: [
+//             'January', 'February', 'March', 'April', 'May', 'June',
+//             'July', 'August', 'September', 'October', 'November', 'December'
+//         ],
+//         years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i),
+//         get formattedDate() {
+//             if (!this.day || !this.month || !this.year) return '';
+//             return `${String(this.month).padStart(2, '0')}/` +
+//             `${String(this.day).padStart(2, '0')}/` +
+//             `${this.year}`;
+//         }
+//     };
+// };
+window.dateDropdown = function(initialDate = '', minYear = 1920, maxYear = 2040) {
+    let day = '';
+    let month = '';
+    let year = '';
+
+    if(initialDate) {
+        const parts = initialDate.split('-'); 
+        if(parts.length === 3) {
+            year = parseInt(parts[0]);
+            month = parseInt(parts[1]);
+            day = parseInt(parts[2]);
+        }
+    }
+
     return {
-        day: '',
-        month: '',
-        year: '',
+        day,
+        month,
+        year,
         days: Array.from({ length: 31 }, (_, i) => i + 1),
         months: [
             'January', 'February', 'March', 'April', 'May', 'June',
@@ -14,11 +46,9 @@ window.dateDropdown = function(minYear = 1920, maxYear = 2040) {
         years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i),
         get formattedDate() {
             if (!this.day || !this.month || !this.year) return '';
-            return `${String(this.month).padStart(2, '0')}/` +
-            `${String(this.day).padStart(2, '0')}/` +
-            `${this.year}`;
+            return `${String(this.year)}-${String(this.month).padStart(2,'0')}-${String(this.day).padStart(2,'0')}`;
         }
-    };
+    }
 };
 
 window.Alpine = Alpine;

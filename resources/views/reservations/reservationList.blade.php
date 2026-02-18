@@ -14,27 +14,26 @@
 
     <div class="p-2">
        
-        <div class="bg-white shadow rounded-none">
+        <div class="bg-white shadow rounded-none ml-1">
            
-            <div class="flex items-end justify-end px-6 py-4 gap-2">
-                <select name="status" id="status" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                    <option value="Active">Active</option>
-                    <option value="canceledComissionProtected">Canceled-Commission Protected</option>
-                    <option value="canceledWithInsurancePayout">Canceled w/ Insurance Payout</option>
-                    <option value="canceled">Canceled</option>
-                    <option value="duplicate">Duplicate</option>
-                    <option value="paidInFullByArcher">Paid in Full Paid by Archer</option>
-                    <option value="paidInFullNotByArcher">Paid in Full Not Paid by Archer</option>
-                    <option value="claimed">Claimed</option>
-                    <option value="onHold">On Hold</option>
-                    <option vallue="prospect">Prospect</option>
+            <form method="GET" action="{{ route('reservations.reservationList')}}" class="flex items-end justify-end px-6 py-4 gap-4"  onchange="this.form.submit()">
+                <select name="status" id="status" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" onchange="this.form.submit()">
+                    <option value="Active" {{ $status == 'Active' ? 'selected' : '' }}>Active</option>
+                    <option value="Canceled - Commission Protected" {{ $status == 'Canceled - Commission Protected' ? 'selected' : '' }}>Canceled - Commission Protected</option>
+                    <option value="Canceled w/ Insurance Payout" {{ $status == 'Canceled w/ Insurance Payout' ? 'selected' : '' }}>Canceled w/ Insurance Payout</option>
+                    <option value="Canceled" {{ $status == 'Canceled' ? 'selected' : '' }}>Canceled</option>
+                    <option value="Duplicate" {{ $status == 'Duplicate' ? 'selected' : '' }}>Duplicate</option>
+                    <option value="Paid in Full" {{ $status == 'Paid in Full' ? 'selected' : '' }}>Paid in Full by Archer</option>
+                    <option value="Paid in Full" {{ $status == 'Paid in Full' ? 'selected' : '' }}>Paid in Full Not Paid by Archer</option>
+                    <option value="Claimed" {{ $status == 'Claimed' ? 'selected' : '' }}>Claimed</option>
+                    <option value="On Hold" {{ $status == 'On Hold' ? 'selected' : '' }}>On Hold</option>
+                    <option value="Prospect" {{ $status == 'Prospect' ? 'selected' : '' }}>Prospect</option>
                 </select>
 
-                
-                <select name="agents" id="agents" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                    <option value="-1">All Agents</option>
+                <select name="users" id="users" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1"  onchange="this.form.submit()">
+                    <option value="-1" {{ $agentId == -1 ? 'selected' : ''}}>All Agents</option>
                     @foreach ($users as $user)
-                        <option value="{{ $user->id }}">
+                        <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : ''}}>
                             {{ $user->name }}
                         </option>
                     @endforeach
@@ -45,10 +44,10 @@
                     placeholder="Quick Search"
                     class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1"
                 >
-            </div>
+            </form>
 
            
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto mt-7 px-2">
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">
                         <tr>
@@ -90,18 +89,34 @@
 
 
                     <tbody class="divide-y">
-                        @foreach ($users as $user)
-                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('reservations.reservationDetails', $user->id) }}'">
+                        @foreach ($reservations as $reservation)
+                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('reservations.reservationDetails', $reservation->id) }}'">
                                 <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
                                     <input type="checkbox">
                                 </td>    
 
                                 <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                         
+                                    {{ $reservation->status}}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
-                                 
+                                    {{ $reservation->created_on}}
+                                </td>
+
+                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                    {{ $reservation->reservation_number}}
+                                </td>
+
+                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                    {{ $reservation->reservation_name}}
+                                </td>
+
+                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+
+                                </td>
+
+                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                    {{ $reservation->agent ? $reservation->agent->name : '-' }}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
@@ -113,27 +128,11 @@
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                    {{ $reservation->checkin_date}}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                                    {{ $user->name }}
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                    {{ $reservation->final_payment_due_date }}
                                 </td>
 
                             </tr>

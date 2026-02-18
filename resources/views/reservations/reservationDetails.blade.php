@@ -5,10 +5,19 @@
                     <i class="fa-solid fas fa-tag mr-2 text-[#f18325]"></i>{{ __('Reservations') }}
                 </h2>
 
-                <div class="space-x-2">
-                    <x-secondary-btn><i class="fas fa-save"></i><span>Save Reservation</span></x-secondary-btn>
-                    <x-primary-btn onclick="window.history.back()"><i class="far fa-minus-square"></i><span>Close Reservation</span></x-primary-btn>
-                </div>
+                @if($isNewReservation)
+                    <div class="space-x-2">
+                        <x-secondary-btn><i class="fas fa-save"></i><span>Save Reservation</span></x-secondary-btn>
+                        <x-primary-btn onclick="window.location='{{ route('reservations.reservationList') }}'"><i class="far fa-minus-square"></i><span>Close Reservation</span></x-primary-btn>
+                    </div>
+                @else
+                    <div class="space-x-2">
+                        <x-secondary-buttonToDelete><i class="fas fa-trash"></i><span>Delete</span></x-secondary-buttonToDelete>
+                        <x-secondary-buttonToDelete><i class="fas fa-copy"></i><span>Duplicate</span></x-secondary-buttonToDelete>
+                        <x-secondary-btn><i class="fas fa-save"></i><span>Save Reservation</span></x-secondary-btn>
+                        <x-primary-btn onclick="window.location='{{ route('reservations.reservationList') }}'"><i class="far fa-minus-square"></i><span>Close Reservation</span></x-primary-btn>
+                    </div>
+                @endif    
             </div>
     </x-slot>
 

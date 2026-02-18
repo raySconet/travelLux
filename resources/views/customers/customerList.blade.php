@@ -5,32 +5,32 @@
                 <i class="fa-solid fas fa-list mr-2 text-[#f18325]"></i>{{ __('Customers') }}
             </h2>
             
-            <x-primary-btn class="flex items-center gap-2"  onclick="window.location='{{ route('reservations.create') }}'"><i class="far fa-plus-square"></i>Add Customer</x-primary-btn>
+            <x-primary-btn class="flex items-center gap-2"  onclick="window.location='{{ route('customers.create') }}'"><i class="far fa-plus-square"></i>Add Customer</x-primary-btn>
         </div>
     </x-slot>
 
     <div class="p-2">
        
-        <div class="bg-white shadow rounded-none">
+        <div class="bg-white shadow rounded-none ml-1">
            
-            <div class="flex items-end justify-between px-6 py-4">
+            <form method="GET" action="{{ route('customers.customerList') }}" class="flex items-end justify-between px-6 py-4 ">
                 <select name="CustomerTag" id="customerTag" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                     <option value="-1">--Filter by Customer Tags --</option>
                 </select>
 
-                <select name="status" id="status" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                    <option value="Invited">Invited</option>
-                    <option value="Paused">Paused</option>
-                    <option value="Prospect">Prospect</option>
+                <select name="status" id="status" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" onchange="this.form.submit()">
+                    <option value="Active" {{ $status == 'Active' ? 'selected' : '' }}>Active</option>
+                    <option value="Inactive" {{ $status == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                    <option value="Invited" {{ $status == 'Invited' ? 'selected' : '' }}>Invited</option>
+                    <option value="Paused" {{ $status == 'Paused' ? 'selected' : '' }}>Paused</option>
+                    <option value="Prospect" {{ $status == 'Prospect' ? 'selected' : '' }}>Prospect</option>
                 </select>
 
                 
-                <select name="agents" id="agents" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                    <option value="-1">All Agents</option>
+                <select name="users" id="agents" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" onchange="this.form.submit()">
+                    <option value="-1" {{ $agentId == -1 ? 'selected' : '' }}>All Agents</option>
                     @foreach ($users as $user)
-                        <option value="{{ $user->id }}">
+                        <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : '' }}>
                             {{ $user->name }}
                         </option>
                     @endforeach
@@ -41,10 +41,10 @@
                     placeholder="Quick Search"
                     class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1"
                 >
-            </div>
+            </form>
 
            
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto mt-7 px-6">
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">
                         <tr>
@@ -68,26 +68,26 @@
 
 
                     <tbody class="divide-y">
-                        @foreach ($users as $user)
-                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('customers.customerDetails', $user->id) }}'">
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                                    {{ $user->name }}
+                        @foreach ($customers as $customer)
+                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('customers.customerDetails', $customer->id) }}'">
+                                <td class="px-4 py-3 text-[13px] font-normal text-[#212529] border-b-2 border-t-2 border-[#dee2e6]">
+                                    {{ $customer->lname }}, {{$customer->fname}} {{$customer->mname}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                                    {{ $user->email }}
+                                <td class="px-4 py-3 text-[#212529]  border-b-2 border-t-2 border-[#dee2e6]">
+                                    {{ $customer->cellphone }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-[#212529]  border-b-2 border-t-2 border-[#dee2e6]">
+                                    {{ $customer->email}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-[#212529]  border-b-2 border-t-2 border-[#dee2e6]">
+                                    {{$customer->status}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-[#212529]  border-b-2 border-t-2 border-[#dee2e6]">
+                                    {{ $customer->agent ? $customer->agent->name : '-' }}
                                 </td>
                             </tr>
                         @endforeach

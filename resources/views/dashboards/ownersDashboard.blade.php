@@ -3,7 +3,7 @@
     <div class=" space-y-6">
         <div id="dashboard-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            <div class="dashboard-card bg-white shadow rounded-lg p-9">
+            <div class="dashboard-card bg-white shadow rounded-none p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-semibold  flex items-center gap-2 text-xl">
                         <i class="fas fa-chart-line text-[#2196f3]"></i>
@@ -16,7 +16,7 @@
             </div>
 
             
-            <div class="dashboard-card bg-white shadow rounded-lg p-9">
+            <div class="dashboard-card bg-white shadow rounded-none p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold  flex items-center gap-2 text-xl">
                         <i class="fas fa-birthday-cake text-xl text-[#2196f3]"></i>
@@ -58,7 +58,7 @@
         <div id="dashboard-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             
-            <div class="dashboard-card bg-white shadow rounded-lg p-9">
+            <div class="dashboard-card bg-white shadow rounded-none p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold  flex items-center gap-2 text-xl">
                         <i class="fas fa-birthday text-xl text-[#2196f3]"></i>
@@ -96,7 +96,7 @@
             </div>
 
           
-            <div class="dashboard-card bg-white shadow rounded-lg p-9">
+            <div class="dashboard-card bg-white shadow rounded-none p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold  flex items-center gap-2 text-xl">
                         <i class="fas fa-glass-cheers text-xl text-[#2196f3]"></i>

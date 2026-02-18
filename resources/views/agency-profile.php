@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header" >
-        <div class="p-4 bg-white shadow sm:rounded-lg">
+        <div class="p-4 bg-white shadow sm:rounded-none">
             <h2 class=" text-xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-ship mr-2 text-[#f18325]"></i>{{ __('Agency Profile') }}
             </h2>
@@ -8,7 +8,7 @@
     </x-slot>
 
         <div class=" mx-auto py-4 px-4">
-            <div class=" p-4 bg-white shadow sm:rounded-lg">
+            <div class=" p-4 bg-white shadow sm:rounded-none">
                 <x-grid   class="2xl:grid-cols-12">
                     <x-col class="2xl:col-span-6 px-3">
                         <div>

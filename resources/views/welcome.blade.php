@@ -17,6 +17,7 @@
             @vite([ 'resources/js/reports.js'])
             @vite([ 'resources/js/dashboard.js'])
             @vite([ 'resources/js/vendors.js'])
+            @vite([ 'resources/js/customers.js'])
         @else
 
         @endif

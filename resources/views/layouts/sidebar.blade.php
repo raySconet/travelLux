@@ -48,20 +48,6 @@
             </div>
         </li>
 
-        <!-- Leads -->
-        <li x-data="{ open: false }">
-            <button @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
-                <i class="fa-solid w-[40px] fa-bookmark"></i>
-                Leads
-                <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
-            </button>
-
-            <div x-show="open" x-collapse class="mt-2 text-sm space-y-2"  >
-                <a href="/clients" class="block py-1 sidebarA">Current Leads <i class="fas fa-list"></i></a>
-                <a href="#" class="block py-1 sidebarA">New Lead <i class="fas fa-plus-circle"></i></a>
-            </div>
-        </li>
-
         <!-- Reservations  -->
         <li x-data="{ open: false }">
             <button @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
@@ -90,7 +76,6 @@
                 <a href="/checkHistoryReport" class="block py-1 sidebarA">Check History <i class="fas fa-history"></i></a>
                 <a href="/currentChecksReport" class="block py-1 sidebarA">Current Checks <i class="fas fa-search-dollar"></i></a>
                 <a href="/commissionClaimReport" class="block py-1 sidebarA">Commission Claim <i class="fas fa-dollar-sign"></i></a>
-                <a href="#" class="block py-1 sidebarA">Commission Not Claimed <i class="fas fa-dollar-sign"></i></a>
                 <a href="/reservationsNotPaidByALTReport" class="block py-1 sidebarA">Reservations Not Paid By ALT <i class="fas fa-money-check"></i></a>
                 <a href="/reservationsPaidByALTReport" class="block py-1 sidebarA">Reservations Paid By ALT <i class="fas fa-money-bill-alt"></i></a>
                 <a href="/unknownReservationsReport" class="block py-1 sidebarA">Unknown Reservations <i class="fas fa-question"></i></a>
@@ -116,7 +101,6 @@
                 <a href="/travelImpressionsReport" class="block py-1 sidebarA">Travel Impressions Report <i class="fas fa-plane"></i></a>
                 <a href="/vacationExpressReport" class="block py-1 sidebarA">Vacation Express Report <i class="fas fa-globe"></i></a>
                 <a href="/expediaReport" class="block py-1 sidebarA">Expedia Report <i class="fab fa-edge"></i></a>
-                <a href="#" class="block py-1 sidebarA">Forms Sent Per Agent <i class="fas fa-envelope"></i></a>
                 <a href="/rebookingRateReport" class="block py-1 sidebarA">Rebooking Rate Report <i class="fas fa-percent"></i></a>
                 <a href="/salesReport" class="block py-1 sidebarA">Sales Report <i class="fas fa-sign"></i></a>
             </div>

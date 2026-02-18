@@ -26,5 +26,9 @@ protected $table = 'destinations';
          'updated_at',
          'is_deleted'
     ];
-
+    // Each destination belongs to a product
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

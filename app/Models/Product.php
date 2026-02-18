@@ -38,4 +38,9 @@ class Product extends Model
         'is_deleted'
     ];
 
+     public function destinations()
+    {
+        return $this->hasMany(Destination::class);
+    }
+
 }

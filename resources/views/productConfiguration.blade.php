@@ -6,14 +6,19 @@
             </h2>
         </div>
     </x-slot>
-        <div class=" mx-auto py-4 px-4">
-            <div class=" p-4 bg-white shadow sm:rounded-lg">
+        <div class=" mx-auto py-2 px-4">
+            <div class=" p-3 bg-white shadow sm:rounded-lg">
                 <x-grid   class="2xl:grid-cols-12">
                     <x-col class="2xl:col-span-3 px-3">
                         <h2 class=" text-lg  text-gray-700 text-center p-2 border-t-1 border-b-1 border-gray-200 ">
                             <i class="fa-solid fa-circle-plus text-[#f18325] mr-2"></i>
                             {{ __('Products') }}
                         </h2>
+                        <div>
+                            @foreach($products as $product)
+                                <p>{{ $product->product_name }}</p>
+                            @endforeach
+                        </div>
                     </x-col>
 
                     <x-col class="2xl:col-span-3 px-3">

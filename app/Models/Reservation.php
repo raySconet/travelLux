@@ -10,6 +10,7 @@ class Reservation extends Model
 
     protected $primaryKey = 'id';
 
+
     protected $fillable = [
         'customer_id',
         'reservation_number',
@@ -41,7 +42,6 @@ class Reservation extends Model
         'is_luxury_magazine_lead',
         'is_facebook_lead',
         'is_instagram_lead',
-        'is_radio_lead',
         'secondary_agent',
         'product_id',
         'destination_id',
@@ -79,16 +79,6 @@ class Reservation extends Model
         'created_on',
         'last_modified_by',
         'last_modified_on',
-        'is_deleted' 
+        'is_deleted'
     ];
-
-    public function agent()
-    {
-        return $this->belongsTo(User::class, 'agent_id'); 
-    }
-
-    public function customer()
-    {
-        return $this->belongsTo(Customer::class, 'customer_id'); 
-    }
 }

@@ -124,7 +124,7 @@
         </li>
 
 
-    <!-- Commissions -->
+        <!-- Commissions -->
         <li x-data="{ open: false }">
             <button @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
                 <i class="fa-solid w-[40px] fa-comment-dollar "></i>

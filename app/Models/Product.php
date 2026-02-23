@@ -11,7 +11,7 @@ class Product extends Model
 
     protected $primaryKey = 'id';
 
-    // public $timestamps = false; // since you use created_on / last_modified_on
+    public $timestamps = false; // since you use created_on / last_modified_on
 
     protected $fillable = [
         'product_name',

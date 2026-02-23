@@ -18,34 +18,34 @@
                     <label for="agents" class="text-sm">
                         Select Agent
                     </label>
-                    <select name="agents" id="agents" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+                    <select name="agents" id="agents" class="w-85 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                         <option value="-1">All Agents</option>
                         @foreach ($users as $user)
-                            <option value="{{ $user->id }}">
+                            <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : ''}}>
                                 {{ $user->name }}
                             </option>
                         @endforeach
                     </select>
                 </div>
 
-                <input type="text" placeholder="Quick Search" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+                <input type="text" placeholder="Quick Search" class="w-85 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
             </div>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
+                            <th class="w-1/3 px-4 py-3 text-left text-sm font-bold text-gray-600
                                     border-b-2 border-t-2 border-[#dee2e6]">
                                 Name
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
+                            <th class="w-1/3 px-4 py-3 text-left text-sm font-bold text-gray-600
                                     border-b-2 border-t-2 border-[#dee2e6]">
                                 Date
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
+                            <th class="w-1/3 px-4 py-3 text-left text-sm font-bold text-gray-600
                                     border-b-2 border-t-2 border-[#dee2e6]">
-                                Create By
+                                Create by
                             </th>
                         </tr>
                     </thead>
@@ -54,15 +54,15 @@
                     <tbody class="divide-y">
                         @foreach ($users as $user)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('itinerary.edit', $user->id) }}'">
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $user->name}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $user->email}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 te border-t-2xt-gray-600 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
 
                                 </td>    
                             </tr>

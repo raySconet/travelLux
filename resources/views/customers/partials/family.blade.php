@@ -36,7 +36,7 @@
                 <h2 class="text-base">Add Family Member</h2>
             </div>
 
-            <button onclick="closeAddFamilyMemberModal()" class="text-gray-400 hover:text-gray-600">
+            <button type="button" onclick="closeAddFamilyMemberModal()" class="text-gray-400 hover:text-gray-600">
                 ✕
             </button>
         </div>
@@ -269,12 +269,12 @@
 
         
         <div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-            <x-primary-btn class="customerAddFamilyMember">
+            <x-primary-btn type="submit" class="customerAddFamilyMember">
                 <i class="fa fa-paper-plane"></i>
                 <span>Save</span>
             </x-primary-btn>
 
-            <x-secondary-btn onclick="closeAddFamilyMemberModal()">
+            <x-secondary-btn type="button" onclick="closeAddFamilyMemberModal()">
                 <i class="fa fa-times-circle"></i>
                 <span>Cancel</span>
             </x-secondary-btn>

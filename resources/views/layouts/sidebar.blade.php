@@ -13,7 +13,7 @@
     <ul class="space-y-3 text-md text-[#696969]" style="overflow-y: auto; height:91%;">
         <!-- Administration -->
         <li x-data="{ open: false }">
-            <button @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
                 <i class="fa-solid w-[40px] fa-shield-halved"></i>
                 Administration
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''">
@@ -35,7 +35,7 @@
 
         <!-- Customers -->
         <li x-data="{ open: false }">
-            <button @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
                 <i class="fa-solid fa-users w-[40px]"></i>
                 Customers
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
@@ -50,7 +50,7 @@
 
         <!-- Reservations  -->
         <li x-data="{ open: false }">
-            <button @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
                 <i class="fa-solid  w-[40px] fa-tag "></i>
                 Reservations
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
@@ -64,7 +64,7 @@
 
         <!-- Reports -->
         <li x-data="{ open: false }">
-            <button @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
                 <i class="fa-solid w-[40px] fa-chart-column "></i>
                 Reports
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
@@ -108,7 +108,7 @@
 
         <!-- Dashboards -->
         <li x-data="{ open: false }">
-            <button @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
                 <i class="fa-solid w-[40px] fa-chart-line "></i>
                 Dashboards
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
@@ -126,7 +126,7 @@
 
         <!-- Commissions -->
         <li x-data="{ open: false }">
-            <button @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
                 <i class="fa-solid w-[40px] fa-comment-dollar "></i>
                 Commissions
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
@@ -134,13 +134,13 @@
 
             <div x-show="open" x-collapse class="text-sm mt-2 space-y-2"  >
                 <a href="/commissionRemittances" class="block py-1 sidebarA">Commission Remittances <i class="fas fa-download"></i></a>
-                <a href="#" class="block py-1 sidebarA">Check Writer <i class="fas fa-pen"></i></a>
+                <a href="/checkWriter" class="block py-1 sidebarA">Check Writer <i class="fas fa-pen"></i></a>
             </div>
         </li>
 
         <!-- Vendors -->
         <li x-data="{ open: false }">
-            <button @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-gray-200">
                 <i class="fa-solid w-[40px] fa-solid fa-building "></i>
                 Vendors
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>

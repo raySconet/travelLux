@@ -4,57 +4,70 @@
             <x-text-input type="text" id="fname" name="fname" value="{{ old('fname', $customer->fname ?? '') }}" />
 
             <x-input-label for="fname"> First Name</x-input-label>
+
+            <x-input-error  :messages="$errors->get('fname')" />
         </div>
         <div class="relative mt-5">
-            <x-text-input type="text" id="middleName" name="middleName" value="{{ old('mname', $customer->mname ?? '') }}" />
+            <x-text-input type="text" id="mname" name="mname" value="{{ old('mname', $customer->mname ?? '') }}" />
 
-            <x-input-label for="middleName"> Middle Name</x-input-label>
+            <x-input-label for="mname"> Middle Name</x-input-label>   
         </div>
     </div>  
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-5">
-            <x-text-input type="text" id="lastName" name="lastName" value="{{ old('lname', $customer->lname ?? '') }}" />
+            <x-text-input type="text" id="lname" name="lname" value="{{ old('lname', $customer->lname ?? '') }}" />
 
-            <x-input-label for="lastName"> Last Name</x-input-label>
+            <x-input-label for="lname"> Last Name</x-input-label>
+
+            <x-input-error :messages="$errors->get('lname')" />
         </div>
         <div class="relative mt-5">
-            <x-text-input type="text" id="nickName" name="nickName" value="{{ old('nickname', $customer->nickname ?? '') }}" />
+            <x-text-input type="text" id="nickname" name="nickname" value="{{ old('nickname', $customer->nickname ?? '') }}" />
 
-            <x-input-label for="nickName"> Nick Name</x-input-label>
+            <x-input-label for="nickname"> Nick Name</x-input-label>
         </div>
     </div> 
 
     <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
-        <div class="relative mt-5 flex items-center gap-3">
-            <x-text-input type="email" id="email" name="email"  class="flex-1" value="{{ old('email', $customer->email ?? '') }}" />
-            <x-input-label for="email" class="absolute -top-4 left-0">Email</x-input-label>
+        <div class="relative mt-5 flex flex-col">
 
+            <div class="relative mt-5 flex items-center gap-3">
+                <x-text-input type="email" id="email" name="email"  class="flex-1" value="{{ old('email', $customer->email ?? '') }}" />
+                <x-input-label for="email" class="absolute -top-4 left-0">Email</x-input-label>
+    
+    
+                <button type="button" class="text-[#f18325] text-2xl flex-shrink-0 mt-9">
+                    <i class="fas fa-plus-circle"></i>
+                </button>
+    
+                
+            </div>
 
-            <button type="button" class="text-[#f18325] text-2xl flex-shrink-0 mt-9">
-                <i class="fas fa-plus-circle"></i>
-            </button>
+            <x-input-error :messages="$errors->get('email')" />
         </div>
     </div>
  
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
         <div class="relative mt-5">
-            <x-text-input type="text" id="cellPhoneNumber" name="cellPhoneNumber" value="{{ old('cellphone', $customer->cellphone ?? '') }}" />
+            <x-text-input type="text" id="cellphone" name="cellphone" value="{{ old('cellphone', $customer->cellphone ?? '') }}" />
 
-            <x-input-label for="cellPhoneNumber">Cell Phone Number</x-input-label>
+            <x-input-label for="cellphone">Cell Phone Number</x-input-label>    
+
+            <x-input-error :messages="$errors->get('cellphone')" />
         </div>
 
         <div class="relative mt-5">
-            <x-text-input type="text" id="homePhone" name="homePhone" value="{{ old('home_phone', $customer->home_phone ?? '') }}" />
+            <x-text-input type="text" id="home_phone" name="home_phone" value="{{ old('home_phone', $customer->home_phone ?? '') }}" />
 
-            <x-input-label for="homePhone">Home Phone</x-input-label>
+            <x-input-label for="home_phone">Home Phone</x-input-label>
         </div>
 
         <div class="relative mt-5">
-            <x-text-input type="text" id="workPhone" name="workPhone" value="{{ old('work_phone', $customer->work_phone ?? '') }}"  />
+            <x-text-input type="text" id="work_phone" name="work_phone" value="{{ old('work_phone', $customer->work_phone ?? '') }}"  />
 
-            <x-input-label for="workPhone">Work Phone</x-input-label>
+            <x-input-label for="work_phone">Work Phone</x-input-label>
         </div>
     </div>
 
@@ -107,7 +120,7 @@
                 </select>
             </div>
 
-            <input type="hidden" name="birthDate" :value="formattedDate">
+            <input type="hidden" name="birth_date" :value="formattedDate">
         </div>
 
         <div x-data="dateDropdown('{{ old('anniversary_date', $customer->anniversary_date ?? '') }}')" class="relative mt-5">

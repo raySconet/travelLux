@@ -25,7 +25,7 @@
                 <h2 class="text-base"> Add Linked Reservations </h2>
             </div>
 
-            <button onclick="closeTravelingWithModal()" class="text-gray-400 hover:text-gray-600">
+            <button type="button" onclick="closeTravelingWithModal()" class="text-gray-400 hover:text-gray-600">
                 ✕
             </button>
         </div>

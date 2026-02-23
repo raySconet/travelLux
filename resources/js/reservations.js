@@ -46,4 +46,21 @@ $(document).ready(function() {
     window.closePhoneNotesModal = function(){
         $('#phoneNotesModal').addClass('hidden');
     }
+
+    window.openCommissionFeesModal = function(){
+        $('#commissionFeesModal').removeClass('hidden')
+    }
+
+    window.closeCommissionFeesModal = function(){
+        $('#commissionFeesModal').addClass('hidden');
+    }
+
+    window.openReservationAddCustomerModal = function(){
+        $('#reservationAddCustomerModal').removeClass('hidden');
+    }
+
+    window.closeReservationAddCustomerModal = function(){
+        $('#reservationAddCustomerModal').addClass('hidden');
+    }
+    
 });

@@ -8,7 +8,7 @@ class CruiseItinerary extends Model
 {
     protected $primaryKey = 'id';
 
-    protected $table = 'court_cases';
+    protected $table = 'cruise_itineraries';
     // public $timestamps = false; // since you use created_on / last_modified_on
 
     protected $fillable = [

@@ -7,10 +7,12 @@ use App\Models\User;
 
 class ItineraryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
        $users = User::select('id','name', 'email')->get();
-       return view('itinerary', compact('users'));
+       $agentId = $request->input('users', auth()->id());
+       
+       return view('itinerary', compact('users', 'agentId'));
     }
 
     public function edit(User $user)

@@ -10,6 +10,8 @@ class Customer extends Model
 
     protected $primaryKey = 'id';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'fname',
         'mname',
@@ -190,4 +192,10 @@ class Customer extends Model
     {
         return $this->belongsTo(User::class, 'agent_id'); 
     }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'customer_id', 'id');
+    }
+
 }

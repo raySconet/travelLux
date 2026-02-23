@@ -20,16 +20,19 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css" />
 
         <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
 
         <!-- Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
             @vite(['resources/css/administration.css', 'resources/js/administration.js'])
+            @vite([ 'resources/js/customers.js'])
             @vite([ 'resources/js/reservations.js'])
             @vite([ 'resources/js/reports.js'])
             @vite([ 'resources/js/dashboard.js'])
+            @vite([ 'resources/js/commissions.js'])
             @vite([ 'resources/js/vendors.js'])
-            @vite([ 'resources/js/customers.js'])
         @endif
 
 

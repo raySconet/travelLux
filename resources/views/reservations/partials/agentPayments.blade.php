@@ -24,26 +24,24 @@
     <div class="relative flex flex-row justify-between gap-3 mt-5">
         <h6 class="text-base font-bold mt-2" style="color: rgba(0,0,0,0.54)">Commission Fees</h6>
 
-        <button type="button" class="text-[#f18325] text-2xl flex-shrink-0" onclick="openAgentPaymentsModal()">
+        <button type="button" class="text-[#f18325] text-2xl flex-shrink-0" onclick="openCommissionFeesModal()">
             <i class="fas fa-plus-circle"></i>
         </button>
     </div>
 @endif      
 
 <!-- Reservation Agent Payments Modal -->
-<x-reservations-modal id="agentPaymentsModal" title="Add Fee" close="closeAgentPaymentsModal()" saveClass="agentPaymentsModal">
+<x-reservations-modal id="commissionFeesModal" title="Add Fee" close="closeCommissionFeesModal()" saveClass="commissionFeesModalSaveBtn">
     <div class="relative mt-3">
         <label for="feeType">Fee Type</label>
         <select name="feeType" id="feeType" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
             <option value="-1">-- Select Type--</option>
-            <option value="breakfast">Breakfast</option>
-            <option value="lunch">Lunch</option>
-            <option value="dinner">Dinner</option>
+            <option value="breakfast">General Fee</option>
         </select>
     </div>
 
     <div class="relative mt-5">
-        <label for="agentPaymentsAmount" class="block text-sm">Amount/label>
+        <label for="agentPaymentsAmount" class="block text-sm">Amount</label>
         
         <div class="relative">
             <span class="absolute left-2 top-1/2 text-base font-bold"><i class="fas fa-dollar-sign"></i></span>

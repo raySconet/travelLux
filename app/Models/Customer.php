@@ -76,7 +76,7 @@ class Customer extends Model
         'extreme_sports',
         'family_adventures',
         'family_vacations',
-        'fishing', 
+        'fishing',
         'food_wine',
         'gaming',
         'gardens',
@@ -174,7 +174,7 @@ class Customer extends Model
         'agent_id',
         'is_website_lead_knot',
         'is_website_lead',
-        'is_virtuoso_lead', 
+        'is_virtuoso_lead',
         'is_luxury_magazine_lead',
         'is_facebook_lead',
         'is_instagram_lead',
@@ -183,11 +183,11 @@ class Customer extends Model
         'created_on',
         'last_modified_by',
         'last_modified_on',
-        'is_deleted' 
+        'is_deleted'
     ];
 
     public function agent()
     {
-        return $this->belongsTo(User::class, 'agent_id'); 
+        return $this->belongsTo(User::class, 'agent_id');
     }
 }

@@ -145,5 +145,8 @@ class User extends Authenticatable
             User::class,'user_assignments','assigned_id','user_id')->wherePivot('isDeleted', false);
     }
 
-
+    public function customers()
+    {
+        return $this->hasMany(Customer::class, 'agent_id');
+    }
 }

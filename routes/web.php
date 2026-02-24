@@ -16,6 +16,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\VendorsController;
 use App\Http\Controllers\CommissionsRemittancesController;
+use App\Http\Controllers\CheckWriterController;
 use App\Http\Controllers\AgentDashboardController;
 use App\Http\Controllers\productConfigurationController;
 use App\Http\Controllers\OverallTaskDashboardController;
@@ -152,18 +153,28 @@ Route::middleware('auth')->group(function(){
     Route::get('/customer-list', [CustomerController::class, 'index'])->name('customers.customerList');
     Route::get('/customer/create', [CustomerController::class,'create'])->name('customers.create');
     Route::get('/customer-list/{customer}',[CustomerController::class, 'edit'])->name('customers.customerDetails');
+
+    Route::post('/customer', [CustomerController::class, 'store'])->name('customers.store');
+    Route::put('/customer/{customer}', [CustomerController::class, 'update'])->name('customers.update');
+    Route::delete('/customer/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+
     Route::get('/inviteNewCustomer', [CustomerController::class, 'inviteNewCustomer'])->name('customers.inviteNewCustomer');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/reservation-list', [ReservationController::class, 'index'])->name('reservations.reservationList');
     Route::get('/reservation-list/create', [ReservationController::class,'create'])->name('reservations.create');
     Route::get('/reservation-list/{reservation}',[ReservationController::class, 'edit'])->name('reservations.reservationDetails');
+
+    Route::post('/reservation', [ReservationController::class, 'store'])->name('reservations.store');
+    Route::put('/reservation/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');
+    Route::put('/vendor-list/{product}', [VendorsController::class,'update'])->name('vendors.update');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/commissionRemittances', [CommissionsRemittancesController::class, 'index'])->name('commissions.commissionsRemittances');
+    Route::get('/checkWriter', [CheckWriterController::class, 'index'])->name('commissions.checkWriter');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/agentDashboard',[AgentDashboardController::class,'index'])->name('dashboards.agentDashboard');

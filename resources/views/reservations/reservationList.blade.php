@@ -46,8 +46,15 @@
                 >
             </form>
 
-           
-            <div class="overflow-x-auto mt-7 px-2">
+           <div class="flex justify-end px-6">
+                <button
+                    type="button"
+                    class="exportExcelBtn bg-[#e0e0e0] text-black px-2 py-1 rounded-none border-1 border-[#666]" style="background-image: linear-gradient(to bottom, #f9f9f9 0%, #e0e0e0 100%);">
+                    Excel
+                </button>
+            </div>
+
+            <div class="overflow-x-auto mt-3 px-2">
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">
                         <tr>
@@ -91,47 +98,47 @@
                     <tbody class="divide-y">
                         @foreach ($reservations as $reservation)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('reservations.reservationDetails', $reservation->id) }}'">
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     <input type="checkbox">
                                 </td>    
 
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $reservation->status}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $reservation->created_on}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $reservation->reservation_number}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $reservation->reservation_name}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-
+                                <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $reservation->customer ? $reservation->customer->fname . ',' . $reservation->customer->lname : '-' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $reservation->agent ? $reservation->agent->name : '-' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $reservation->product ? $reservation->product->product_name : '-' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $reservation->destination ? $reservation->destination->destination_name : '-' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $reservation->checkin_date}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $reservation->final_payment_due_date }}
                                 </td>
 

@@ -1,38 +1,73 @@
 <div>
-    <div class="flex flex-col gap-1">
-        <label for="agents" class="text-sm">
-            Select Agent
-        </label>
-        <select name="agents" id="agents" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-            <option value="-1">All Agents</option>
-            @foreach ($users as $user)
-                <option value="{{ $user->id }}">
-                    {{ $user->name }}
-                </option>
-            @endforeach        
-        </select>
-    </div>
+    <div x-data="reservationDropdowns({{ $customers->toJson() }}, {{ $reservation->customer_id ?? 'null' }}, {{ $reservation->agent_id ?? 'null' }})">
+        <div class="flex flex-col gap-1">
+            <label for="agent_id" class="text-sm">Assigned To</label>
+            <select name="agent_id" id="agent_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" x-model="selectedAgent">
+                <option value="">All Agents</option>
+                @foreach ($users as $user)
+                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                @endforeach
+            </select>
+            
+            <x-input-error :messages="$errors->get('agent_id')" />
+        </div>
 
-
-    <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
-        <div class="relative mt-5 flex items-end gap-3">
-            <button type="button" class="text-[#f18325] text-2xl flex-shrink-0">
-                <i class="fas fa-user-plus"></i>
-            </button>
+        <div class="flex items-center mt-5 gap-3">
+            <i class="fas fa-user-plus text-2xl text-[#f18325]" onclick="openReservationAddCustomerModal()"></i>
 
             <div class="flex-1">
                 <label for="customer" class="text-sm block mb-1">Customer</label>
-                <select
-                    name="customer"
-                    id="customer"
-                    class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1"
-                >
-                    <option value="-1">All Customers</option>
+                <select name="customer_id" id="customer" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" x-model="selectedCustomer">
+                    <option value="">Select Customer</option>
+                    <template x-for="customer in filteredCustomers" :key="customer.id">
+                        <option :value="customer.id" x-text="customer.fname + ' ' + customer.lname" :selected="customer.id == selectedCustomer"></option>
+                    </template>
                 </select>
+
+                <x-input-error :messages="$errors->get('customer_id')" />
+
             </div>
         </div>
-    </div>
 
+        <template x-if="currentCustomer">
+            <div x-data="{ open: false }" class="mt-5">
+                <div class="rounded-4xl bg-[#fff] flex flex-col justify-between px-5 py-2" style="box-shadow: 0 5px 5px -11px rgba(0, 0, 0, 0.2),0 1px 4px -22px rgba(0, 0, 0, 0.14),0 3px 14px 2px rgba(0, 0, 0, 0.12);">
+                    <div class="flex flex-row justify-between">
+                        <p>Customer Details</p>
+                        <i class="fas mt-1 cursor-pointer" @click="open = !open" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                    </div>
+
+                    <div x-show="open" x-transition class="flex flex-col mt-3 text-sm" x-cloak>
+                        <div>
+                            <div class="flex justify-between">
+                                <div class="flex flex-row">
+                                    <i class="fas fa-user-circle text-base"></i>
+                                    <p class="ml-3">Go to Customer Profile</p>
+                                </div>
+                                <i class="fas fa-external-link-alt text-base"></i>
+                            </div>
+
+                            <div class="flex flex-row mt-1" x-show="currentCustomer.email">
+                                <i class="fas fa-envelope text-base"></i>
+                                <div class="flex flex-col ml-3">
+                                    <p x-text="currentCustomer.email"></p>
+                                    <p class="text-[#bdbdbd]">Primary</p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-row mt-1" x-show="currentCustomer.cellphone">
+                                <i class="fas fa-phone text-base"></i>
+                                <div class="flex flex-col ml-3">
+                                    <p x-text="currentCustomer.cellphone"></p>
+                                    <p class="text-[#bdbdbd]">Mobile</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
         <div class="relative mt-9">
@@ -40,12 +75,14 @@
 
             <x-input-label for="reservation_number">Reservation Number</x-input-label>
             <span class="text-sm">WDW room only travel plan only</span>
+
+            <x-input-error :messages="$errors->get('reservation_number')" />
         </div>
 
         <div class="relative mt-9">
-            <x-text-input type="text" id="group_phone" name="group_phone"  value="{{ old('group_number', $reservation->group_number ?? '') }}"/>
+            <x-text-input type="text" id="group_number" name="group_number"  value="{{ old('group_number', $reservation->group_number ?? '') }}"/>
 
-            <x-input-label for="group_phone">Group Phone</x-input-label>
+            <x-input-label for="group_number">Group Phone</x-input-label>
         </div>
 
         <div class="flex-1 relative mt-8">
@@ -87,6 +124,8 @@
 
             <x-input-label for="reservation_name">Reservation Name</x-input-label>
             <span class="text-sm">For hotel only put hotel name first</span>
+
+            <x-input-error :messages="$errors->get('reservation_name')" />
         </div>
 
         <div class="flex-1 relative mt-8">
@@ -132,63 +171,69 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-        <div x-data="dateDropdown('{{ old('checkin_date', $reservation->checkin_date ?? '') }}')" class="relative mt-5">
-            <label class="block text-sm mb-1">Checkin Date</label>
-            <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
-                <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                    <option value="">Year</option>
-                    <template x-for="y in years" :key="y">
-                        <option :value="y" x-text="y" :selected="year == y"></option>
-                    </template>
-                </select>
+    <div class="flex flex-row">
 
-                <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                    <option value="">Month</option>
-                    <template x-for="(m, i) in months" :key="i">
-                        <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
-                    </template>
-                </select>
-
-                <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                    <option value="">Day</option>
-                    <template x-for="d in days" :key="d">
-                        <option :value="d" x-text="d" :selected="day == d"></option>
-                    </template>
-                </select>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+            <div x-data="dateDropdown('{{ old('checkin_date', $reservation->checkin_date ?? now()->format('Y-m-d')) }}')" class="relative mt-5">
+                <label class="block text-sm mb-1">Checkin Date</label>
+                <div class="flex w-[300] border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                    <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                        <option value="">Year</option>
+                        <template x-for="y in years" :key="y">
+                            <option :value="y" x-text="y" :selected="year == y"></option>
+                        </template>
+                    </select>
+    
+                    <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                        <option value="">Month</option>
+                        <template x-for="(m, i) in months" :key="i">
+                            <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
+                        </template>
+                    </select>
+    
+                    <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                        <option value="">Day</option>
+                        <template x-for="d in days" :key="d">
+                            <option :value="d" x-text="d" :selected="day == d"></option>
+                        </template>
+                    </select>
+                </div>
+    
+                <input type="hidden" name="checkin_date" :value="formattedDate">
             </div>
-
-            <input type="hidden" name="checkin_date" :value="formattedDate">
-        </div>
-
-        <div x-data="dateDropdown('{{ old('checkout_date', $reservation->checkout_date ?? '') }}')" class="relative mt-5">
-            <label class="block text-sm mb-1">Checkout Date</label>
-            <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
-                <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                    <option value="">Year</option>
-                    <template x-for="y in years" :key="y">
-                        <option :value="y" x-text="y" :selected="year == y"></option>
-                    </template>
-                </select>
-
-                <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                    <option value="">Month</option>
-                    <template x-for="(m, i) in months" :key="i">
-                        <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
-                    </template>
-                </select>
-
-                <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                    <option value="">Day</option>
-                    <template x-for="d in days" :key="d">
-                        <option :value="d" x-text="d" :selected="day == d"></option>
-                    </template>
-                </select>
+    
+            <div x-data="dateDropdown('{{ old('checkout_date', $reservation->checkout_date ?? now()->format('Y-m-d')) }}')" class="relative mt-5">
+                <label class="block text-sm mb-1">Checkout Date</label>
+                <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                    <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                        <option value="">Year</option>
+                        <template x-for="y in years" :key="y">
+                            <option :value="y" x-text="y" :selected="year == y"></option>
+                        </template>
+                    </select>
+    
+                    <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                        <option value="">Month</option>
+                        <template x-for="(m, i) in months" :key="i">
+                            <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
+                        </template>
+                    </select>
+    
+                    <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                        <option value="">Day</option>
+                        <template x-for="d in days" :key="d">
+                            <option :value="d" x-text="d" :selected="day == d"></option>
+                        </template>
+                    </select>
+                </div>
+    
+                <input type="hidden" name="checkout_date" :value="formattedDate">
             </div>
-
-            <input type="hidden" name="checkout_date" :value="formattedDate">
+    
         </div>
-
+        <div class="rounded-4xl bg-[#6c757d] text-[#fff] text-center py-3 mt-13 ml-12 w-[70] h-[30]">
+            <p class="-mt-2">Nights</p>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
@@ -233,10 +278,10 @@
     </div>
 
     <div class="flex flex-col gap-1 mt-6">
-        <label for="secondaryAgents" class="text-sm">
+        <label for="secondary_agent" class="text-sm">
             Secondary Agent
         </label>
-        <select name="secondaryAgents" id="secondaryAgents" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+        <select name="secondary_agent" id="secondary_agent" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
             <option value="-1">--Select Secondary Agent--</option>
             
         </select>
@@ -332,4 +377,84 @@
             </div>
         </div>
     @endif
+</div>
+
+<script>
+function reservationDropdowns(customers, currentCustomerId = null, currentAgentId = null) {
+    return {
+        customers: customers,
+        selectedAgent: currentAgentId ?? -1,
+        selectedCustomer: currentCustomerId ?? -1,
+
+        
+        get filteredCustomers() {
+            if(this.selectedAgent == -1) return this.customers;
+            return this.customers.filter(c => c.agent_id == this.selectedAgent);
+        },
+
+        get currentCustomer() {
+            return this.customers.find(c => c.id == this.selectedCustomer);
+        }
+    }
+}
+</script>
+
+<!-- Reservation Add Customer Modal -->
+<div id="reservationAddCustomerModal" class="fixed inset-0 bg-black/30 flex items-center justify-center hidden z-[9999]">
+    <div class="bg-white w-full max-w-4xl rounded-lg shadow-lg relative max-h-[95vh] overflow-y-auto">
+
+        <div class="flex items-center justify-between px-6 py-4 border-b-2 border-t-2 border-[#dee2e6]">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-user-plus text-[#f18325] text-base"></i>
+                <h2 class="text-base">Add Customer</h2>
+            </div>
+
+            <button type="button" onclick="closeReservationAddCustomerModal()" class="text-gray-400 hover:text-gray-600">
+                ✕
+            </button>
+        </div>
+
+        <div class="px-6 py-4 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
+                <div class="relative mt-2">
+                    <x-text-input type="text" id="fname" name="fname" />
+
+                    <x-input-label for="fname">First Name</x-input-label>
+                </div>
+
+                <div class="relative mt-2">
+                    <x-text-input type="text" id="lname" name="lname" />
+
+                    <x-input-label for="lname">Last Name</x-input-label>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
+                <div class="relative mt-2">
+                    <x-text-input type="text" id="email" name="email" />
+
+                    <x-input-label for="email">Email Address</x-input-label>
+                </div>
+
+                <div class="relative mt-2">
+                    <x-text-input type="text" id="home_phone" name="home_phone" />
+
+                    <x-input-label for="home_phone">Home Phone</x-input-label>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
+            <x-primary-btn type="submit" class="reservationAddCustomerSaveBtn">
+                <i class="fas fa-paper-plane"></i>
+                <span>Save</span>
+            </x-primary-btn>
+
+            <x-secondary-btn type="button" onclick="closeReservationAddCustomerModal()">
+                <i class="fa fa-times-circle"></i>
+                <span>Cancel</span>
+            </x-secondary-btn>
+        </div>
+
+    </div>
 </div>

@@ -3,60 +3,90 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="flex-1 relative mt-6">
-            <label for="product" class="text-sm block mb-1">Product</label>
-            <select name="product"id="product" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                <option value="-1">--Select Product--</option>
+            <label for="product_id" class="text-sm block mb-1">Product</label>
+            <select name="product_id" id="product_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+                <option value="">--Select Product--</option>
+                @foreach($products as $product)
+                    <option value="{{ $product->id }}"
+                        {{ old('product_id', $reservation->product_id) == $product->id ? 'selected' : '' }}>
+                        {{ $product->product_name }}
+                    </option>
+                @endforeach    
             </select>
+
+            <x-input-error :messages="$errors->get('product_id')" />
         </div>
 
         <div class="flex-1 relative mt-6">
-            <label for="destination" class="text-sm block mb-1">Destination</label>
-            <select name="destination"id="destination" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                <option value="-1">--Select Destination--</option>
+            <label for="destination_id" class="text-sm block mb-1">Destination</label>
+            <select name="destination_id"id="destination_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+                <option value="">--Select Destination--</option>
+                @foreach($destinations as $destination)
+                    <option value="{{ $destination->id }}"
+                        {{ old('destination_id', $reservation->destination_id) == $destination->id ? 'selected' : ''}}>
+                        {{ $destination->destination_name }}
+                    </option>
+                @endforeach        
             </select>
+
+            <x-input-error :messages="$errors->get('destination_id')" />
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="flex-1 relative mt-6">
-            <label for="resort/ship" class="text-sm block mb-1">Resort/Ship</label>
-            <select name="resort/ship"id="resort/ship" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                <option value="-1">--Select Resort/Ship--</option>
+            <label for="resort_id" class="text-sm block mb-1">Resort/Ship</label>
+            <select name="resort_id"id="resort_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+                <option value="">--Select Resort/Ship--</option>
+                @foreach($resortShips as $resortShip)
+                    <option value="{{ $resortShip->id }}"
+                        {{ old('resort_id', $reservation->resort_id) == $resortShip->id ? 'selected' : '' }}>
+                        {{ $resortShip->resort_ship_name }}
+                    </option>
+                @endforeach        
             </select>
+
+            <x-input-error :messages="$errors->get('resort_id')" />
         </div>
 
         <div class="flex-1 relative mt-6">
-            <label for="cruiseItinerary" class="text-sm block mb-1">Cruise Itinerary</label>
-            <select name="cruiseItinerary"id="cruiseItinerary" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+            <label for="cruise_itinerary_id" class="text-sm block mb-1">Cruise Itinerary</label>
+            <select name="cruise_itinerary_id"id="cruise_itinerary_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="-1">--Select Cruise/Type--</option>
+                @foreach($cruiseItineraries as $cruiseItineray)
+                <option value="{{ $cruiseItineray->id }}"
+                        {{ old('cruise_itinerary_id', $reservation->cruise_itinerary_id) == $cruiseItineray->id ? 'selected' : '' }}>
+                        {{ $cruiseItineray->cruise_name }}
+                    </option>
+                @endforeach        
             </select>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
         <div class="relative mt-6">
-            <x-text-input type="text" id="reservationNotes" name="reservationNotes"  value="{{ old('reservation_notes', $reservation->reservation_notes ?? '') }}"/>
+            <x-text-input type="text" id="reservation_notes" name="reservation_notes"  value="{{ old('reservation_notes', $reservation->reservation_notes ?? '') }}"/>
 
-            <x-input-label for="reservationNotes">Reservation Notes</x-input-label>
+            <x-input-label for="reservation_notes">Reservation Notes</x-input-label>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
         <div class="relative mt-9">
-            <x-text-input type="text" id="roomCategory" name="roomCategory"  value="{{ old('room_category', $reservation->room_category ?? '') }}"/>
+            <x-text-input type="text" id="room_category" name="room_category"  value="{{ old('room_category', $reservation->room_category ?? '') }}"/>
 
-            <x-input-label for="roomCategory">Room Category</x-input-label>
+            <x-input-label for="room_category">Room Category</x-input-label>
         </div>
 
         <div class="relative mt-9">
-            <x-text-input type="text" id="stateroomNumber" name="stateroomNumber" value="{{ old('stateroom_number', $reservation->stateroom_number ?? '') }}" />
+            <x-text-input type="text" id="stateroom_number" name="stateroom_number" value="{{ old('stateroom_number', $reservation->stateroom_number ?? '') }}" />
 
-            <x-input-label for="stateroomNumber">Stateroom Number</x-input-label>
+            <x-input-label for="stateroom_number">Stateroom Number</x-input-label>
         </div>
 
         <div class="flex-1 relative mt-8">
-            <label for="embarkationPort" class="text-sm block mb-1">Embarkation Port</label>
-            <select name="embarkationPort"id="embarkationPort" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+            <label for="embarkation_port" class="text-sm block mb-1">Embarkation Port</label>
+            <select name="embarkation_port"id="embarkation_port" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="-1">-- Select Port --</option>
                 <option value="Anchorage" {{ old('embarkation_port', $reservation->embarkation_port ?? '') == 'Anchorage' ? 'selected' : '' }}>Anchorage</option>
                 <option value="Baltimore" {{ old('embarkation_port', $reservation->embarkation_port ?? '') == 'Baltimore' ? 'selected' : '' }}>Baltimore</option>
@@ -91,14 +121,14 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-9">
-            <x-text-input type="text" id="daysOfTickets" name="daysOfTickets"  value="{{ old('days_of_tickets', $reservation->days_of_tickets ?? '') }}"/>
+            <x-text-input type="text" id="days_of_tickets" name="days_of_tickets"  value="{{ old('days_of_tickets', $reservation->days_of_tickets ?? '') }}"/>
 
-            <x-input-label for="daysOfTickets">Days Of Tickets</x-input-label>
+            <x-input-label for="days_of_tickets">Days Of Tickets</x-input-label>
         </div>
 
         <div class="flex-1 relative mt-8">
-            <label for="ticketTypes" class="text-sm block mb-1">Ticket Types</label>
-            <select name="ticketTypes"id="ticketTypes" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+            <label for="ticket_types" class="text-sm block mb-1">Ticket Types</label>
+            <select name="ticket_types"id="ticket_types" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="-1">-- Select Ticket Types --</option>
                 <option value="1" {{ old('ticket_types', $reservation->ticket_types ?? '') == '1' ? 'selected' : '' }}>Base</option>
                 <option value="2" {{ old('ticket_types', $reservation->ticket_types ?? '') == '2' ? 'selected' : '' }}>Cirque du Soleil</option>
@@ -123,8 +153,8 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="flex-1 relative mt-8">
-            <label for="diningOption" class="text-sm block mb-1">Dining Option</label>
-            <select name="diningOption"id="diningOption" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+            <label for="dining_option" class="text-sm block mb-1">Dining Option</label>
+            <select name="dining_option"id="dining_option" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="-1">-- Select Dining Option --</option>
                 <option value="Disney Dining Plan Plus" {{ old('dining_option', $reservation->dining_option ?? '') == 'Disney Dining Plan Plus' ? 'selected' : '' }}>Disney Dining Plan Plus</option>
                 <option value="DLR Character Dining" {{ old('dining_option', $reservation->dining_option ?? '') == 'DLR Character Dining' ? 'selected' : '' }}>DLR Character Dining</option>
@@ -142,8 +172,8 @@
         </div>
 
         <div class="flex-1 relative mt-8">
-            <label for="addOnOptions" class="text-sm block mb-1">Add-on Options</label>
-            <select name="addOnOptions"id="addOnOptions" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+            <label for="add_on_options" class="text-sm block mb-1">Add-on Options</label>
+            <select name="add_on_options"id="add_on_options" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="-1">-- Select Options --</option>
                 <option value="1" {{ old('add_on_options', $reservation->add_on_options ?? '') == '1' ? 'selected' : '' }}>Blue Man Group</option>
                 <option value="2" {{ old('add_on_options', $reservation->add_on_options ?? '') == '2' ? 'selected' : '' }}>Car Rental</option>
@@ -172,8 +202,8 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="flex-1 relative mt-8">
-            <label for="cruiseLevel" class="text-sm block mb-1">Cruise Level</label>
-            <select name="cruiseLevel"id="cruiseLevel" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+            <label for="cruise_level" class="text-sm block mb-1">Cruise Level</label>
+            <select name="cruise_level"id="cruise_level" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="-1">-- Select Cruise Level --</option>
                 <option value="Silver" {{ old('cruise_level', $reservation->cruise_level ?? '') == 'Silver' ? 'selected' : '' }}>Silver</option>
                 <option value="Gold" {{ old('cruise_level', $reservation->cruise_level ?? '') == 'Gold' ? 'selected' : '' }}>Gold</option>
@@ -186,8 +216,8 @@
         </div>
 
         <div class="flex-1 relative mt-8">
-            <label for="transportationOptions" class="text-sm block mb-1">Transportation Options</label>
-            <select name="transportationOptions"id="transportationOptions" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+            <label for="transportation_options" class="text-sm block mb-1">Transportation Options</label>
+            <select name="transportation_options"id="transportation_options" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="-1">-- Select Options --</option>
                 <option value="1" {{ old('transportation_options', $reservation->transportation_options ?? '') == '1' ? 'selected' : '' }}>Airport to Port</option>
                 <option value="2" {{ old('transportation_options', $reservation->transportation_options ?? '') == '2' ? 'selected' : '' }}>Booking Their Own Flights</option>

@@ -96,7 +96,7 @@
 <x-reservations-modal id="reservationPaymentsModal" title="Add Payment" close="closeReservationPaymentsModal()" saveClass="reservationPaymentsSaveBtn">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-2">
-            <x-text-input type="text" id="amnount" name="amount" />
+            <x-text-input type="text" id="amount" name="amount" />
 
             <x-input-label for="amount">Amount</x-input-label>
         </div>

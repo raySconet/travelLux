@@ -1,25 +1,6 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
 
-// window.dateDropdown = function(minYear = 1920, maxYear = 2040) {
-//     return {
-//         day: '',
-//         month: '',
-//         year: '',
-//         days: Array.from({ length: 31 }, (_, i) => i + 1),
-//         months: [
-//             'January', 'February', 'March', 'April', 'May', 'June',
-//             'July', 'August', 'September', 'October', 'November', 'December'
-//         ],
-//         years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i),
-//         get formattedDate() {
-//             if (!this.day || !this.month || !this.year) return '';
-//             return `${String(this.month).padStart(2, '0')}/` +
-//             `${String(this.day).padStart(2, '0')}/` +
-//             `${this.year}`;
-//         }
-//     };
-// };
 window.dateDropdown = function(initialDate = '', minYear = 1920, maxYear = 2040) {
     let day = '';
     let month = '';
@@ -40,8 +21,8 @@ window.dateDropdown = function(initialDate = '', minYear = 1920, maxYear = 2040)
         year,
         days: Array.from({ length: 31 }, (_, i) => i + 1),
         months: [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
         ],
         years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i),
         get formattedDate() {
@@ -54,14 +35,8 @@ window.dateDropdown = function(initialDate = '', minYear = 1920, maxYear = 2040)
 window.Alpine = Alpine;
 
 Alpine.start();
-$(document).ready(() => {
 
-    // flatpickr(".datetimepicker", {
-    //     enableTime: true,
-    //     dateFormat: "m-d-Y H:i",
-    //     time_24hr: true,
-    //     // defaultDate: new Date(),
-    // });
+$(document).ready(() => {
 
     $(document).ajaxStart(function () {
         $('#ajaxLoader').fadeIn();
@@ -72,100 +47,53 @@ $(document).ready(() => {
     });
 
 
+    // Excel Button for data table
+    $('.exportExcelBtn').on('click', function() {
+        const table = $('table').first()[0]; 
 
-
-         const $modal = $('#insuranceModal');
-    const $form = $('#insuranceForm');
-    const $modalTitle = $('#modalTitle');
-
-    // Open Add Insurance modal
-    $('#addInsuranceBtn').click(function() {
-        $form[0].reset();
-        $('#insuranceId').val('');
-        $modalTitle.text('Add Insurance');
-        $modal.removeClass('hidden');
-    });
-
-    // Close modal
-    $('#closeModal').click(function() {
-        $modal.addClass('hidden');
-    });
-
-    // Edit button
-    $('.editBtn').click(function() {
-        const $tr = $(this).closest('tr');
-        const id = $(this).data('id');
-
-        $('#insuranceId').val(id);
-        $form.find('input[name="insurance_name"]').val($tr.find('td:eq(0)').text());
-        $form.find('input[name="claim_number"]').val($tr.find('td:eq(1)').text());
-        $form.find('input[name="bi_adjuster"]').val($tr.find('td:eq(2)').text());
-        $form.find('input[name="tel"]').val($tr.find('td:eq(3)').text());
-        $form.find('input[name="email"]').val($tr.find('td:eq(4)').text());
-        $form.find('input[name="fax"]').val($tr.find('td:eq(5)').text());
-
-        $modalTitle.text('Edit Insurance');
-        $modal.removeClass('hidden');
-    });
-
-
-
-    // Submit form via AJAX
-    $form.submit(function(e) {
-        e.preventDefault();
-
-        const id = $('#insuranceId').val();
-        let url = $form.attr('action'); // default store URL
-        if(id) {
-            url = `/insurance/${id}`; // edit URL
+        if (!table) {
+            alert('No table found to export!');
+            return;
         }
 
-        $.ajax({
-            url: url,
-            type: id ? 'PUT' : 'POST', // PUT for edit, POST for store
-            data: $form.serialize(),
-            success: function(response) {
-                // Redirect to Insurance list page on success
-                window.location.href = "/insurance";
-            },
-            error: function(xhr) {
-                if(xhr.status === 422) {
-                    // Validation error (like duplicate name)
-                    const errors = xhr.responseJSON.errors;
-                    if(errors && errors.insurance_name) {
-                        alert(errors.insurance_name[0]); // show first error
-                    } else {
-                        alert('Validation error. Please check your inputs.');
-                    }
-                } else {
-                    alert('Something went wrong. Please try again.');
-                }
-                console.log(xhr.responseText);
-            }
-        });
+        const workbook = XLSX.utils.table_to_book(table, { sheet: "Archer Luxury Travel CRM" });
+
+        const ws = workbook.Sheets["Archer Luxury Travel CRM"];
+        const range = XLSX.utils.decode_range(ws['!ref']);
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            const cell_address = { c: C, r: 0 }; 
+            const cell_ref = XLSX.utils.encode_cell(cell_address);
+            if (!ws[cell_ref]) continue;
+            ws[cell_ref].s = { font: { bold: true } };
+        }
+
+        XLSX.writeFile(workbook, 'Archer Luxury Travel CRM.xlsx');
     });
+    
+    //  window.openDeleteModal = function() {
+ 
+    //     $('#deleteModal').removeClass('hidden');
+    // }
 
+    // window.closeDeleteModal = function() {
+    //     $('#deleteModal').addClass('hidden');
+    // }
 
+    let deleteForm = null;
 
-    $('.deleteBtn').click(function() {
-        const $tr = $(this).closest('tr');
-        const id = $(this).data('id');
+    window.openDeleteModal = function(button) {
+        deleteForm = $(button).closest('form'); 
+        $('#deleteModal').removeClass('hidden');
+    }
 
-        if(confirm('Are you sure you want to delete this insurance?')) {
-            $.ajax({
-                url: `/insurance/${id}`,
-                type: 'DELETE',
-                data: { _token: $('meta[name="csrf-token"]').attr('content')}, // Laravel CSRF token
-                success: function(response) {
-                    if(response.success) {
-                        $tr.remove(); // remove row from table
-                    }
-                },
-                error: function(xhr) {
-                    alert('Failed to delete insurance.');
-                    console.log(xhr.responseText);
-                }
-            });
+    window.closeDeleteModal = function() {
+        $('#deleteModal').addClass('hidden');
+        deleteForm = null;
+    }
+
+    $(document).on('click', '#confirmDeleteBtn', function () {
+        if (deleteForm) {
+            deleteForm.submit();
         }
     });
 });

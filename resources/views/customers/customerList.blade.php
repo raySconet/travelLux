@@ -43,25 +43,32 @@
                 >
             </form>
 
-           
-            <div class="overflow-x-auto mt-7 px-6">
+           <div class="flex justify-end px-6">
+                <button
+                    type="button"
+                    class="exportExcelBtn bg-[#e0e0e0] text-black px-2 py-1 rounded-none border-1 border-[#666]" style="background-image: linear-gradient(to bottom, #f9f9f9 0%, #e0e0e0 100%);">
+                    Excel
+                </button>
+            </div>
+
+            <div class="overflow-x-auto mt-3 px-6">
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">
                         <tr>
-                            <th class="w-1/5 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Name
+                            <th class="w-1/5 px-4 py-3 text-left text-sm border-b-2 border-t-2 border-[#dee2e6]">
+                                <b>Name</b>
                             </th>
-                            <th class="w-1/5 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Cell Phone
+                            <th class="w-1/5 px-4 py-3 text-left text-sm border-b-2 border-t-2 border-[#dee2e6]">
+                                <b>Cell Phone</b>
                             </th> 
-                            <th class="w-1/5 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Email
+                            <th class="w-1/5 px-4 py-3 text-left text-sm border-b-2 border-t-2 border-[#dee2e6]">
+                                <b>Email</b>
                             </th> 
-                            <th class="w-1/5 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Status
+                            <th class="w-1/5 px-4 py-3 text-left text-sm border-b-2 border-t-2 border-[#dee2e6]">
+                                <b>Status</b>
                             </th>
-                            <th class="w-1/5 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Agent name
+                            <th class="w-1/5 px-4 py-3 text-left text-sm border-b-2 border-t-2 border-[#dee2e6]">
+                                <b>Agent name</b>
                             </th>    
                         </tr>
                     </thead>
@@ -70,23 +77,23 @@
                     <tbody class="divide-y">
                         @foreach ($customers as $customer)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('customers.customerDetails', $customer->id) }}'">
-                                <td class="px-4 py-3 text-[13px] font-normal text-[#212529] border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-[13px] font-normal text-[#212529] border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $customer->lname }}, {{$customer->fname}} {{$customer->mname}}
                                 </td>
 
-                                <td class="px-4 py-3 text-[#212529]  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-[#212529]  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $customer->cellphone }}
                                 </td>
 
-                                <td class="px-4 py-3 text-[#212529]  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-[#212529]  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $customer->email}}
                                 </td>
 
-                                <td class="px-4 py-3 text-[#212529]  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-[#212529]  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{$customer->status}}
                                 </td>
 
-                                <td class="px-4 py-3 text-[#212529]  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-[#212529]  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $customer->agent ? $customer->agent->name : '-' }}
                                 </td>
                             </tr>

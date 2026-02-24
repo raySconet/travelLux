@@ -10,6 +10,7 @@ class Reservation extends Model
 
     protected $primaryKey = 'id';
 
+    public $timestamps = false;
 
     protected $fillable = [
         'customer_id',
@@ -89,6 +90,21 @@ class Reservation extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'customer_id'); 
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function destination()
+    {
+        return $this->belongsTo(Destination::class, 'destination_id');
+    }
+
+    public function resort()
+    {
+        return $this->belongsTo(ResortShip::class, 'resort_id');
     }
 }

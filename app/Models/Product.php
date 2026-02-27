@@ -38,7 +38,7 @@ class Product extends Model
         'is_deleted'
     ];
 
-    public function destinations()
+   public function destinations()
     {
         return $this->hasMany(Destination::class, 'product_id', 'id');
     }
@@ -52,6 +52,5 @@ class Product extends Model
     {
         return $this->hasMany(TimelineTask::class, 'product_id', 'id');
     }
-  
 
 }

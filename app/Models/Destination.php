@@ -27,8 +27,23 @@ protected $table = 'destinations';
          'is_deleted'
     ];
     // Each destination belongs to a product
-    public function product()
+     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
+
+    public function resortShips()
+    {
+        return $this->hasMany(ResortShip::class, 'destination_id', 'id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'destination_id', 'id');
+    }
+
+    public function timelineTasks()
+    {
+        return $this->hasMany(TimelineTask::class, 'destination_id', 'id');
+}
 }

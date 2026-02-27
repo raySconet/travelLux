@@ -65,7 +65,7 @@
 
             <!-- PAGE HEADING -->
             @isset($header)
-                <header class="shadow text-white mt-2">
+                <header class="shadow text-white ">
                     <div class="  py-3 px-2 sm:px-6">
                         {{ $header }}
                     </div>

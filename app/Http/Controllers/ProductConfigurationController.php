@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProductConfiguration;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductConfigurationController extends Controller
@@ -11,7 +11,10 @@ class ProductConfigurationController extends Controller
     {
         // $productConfiguation = productConfiguation::latest()->get();
         // return view('productConfiguation.index', compact('productConfiguation'));
-        return view('productConfiguration');
+        $products = Product::where('is_deleted', 0)
+                            ->orderByRaw('display_order = 0, display_order ASC')
+                            ->get();
+        return view('productConfiguration', compact('products'));
     }
 
     public function store(Request $request)

@@ -18,12 +18,12 @@ class CustomerController extends Controller
 
         $users = User::select('id','fname','lname','email')->get();
 
-   
+
         $customersQuery = Customer::with('agent')
                                     ->select('id','fname','mname','lname','cellphone','email','status','agent_id')
                                     ->where('status', $status)
                                     ->where('is_deleted', 0);
-      
+
         if($agentId != -1){
             $customersQuery->where('agent_id', $agentId);
         }

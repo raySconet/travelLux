@@ -52,4 +52,6 @@ class Product extends Model
     {
         return $this->hasMany(TimelineTask::class, 'product_id', 'id');
     }
+  
+
 }

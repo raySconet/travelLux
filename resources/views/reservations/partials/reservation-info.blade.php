@@ -5,7 +5,7 @@
             <select name="agent_id" id="agent_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" x-model="selectedAgent">
                 <option value="">All Agents</option>
                 @foreach ($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    <option value="{{ $user->id }}">{{ $user->fname . ' ' . $user->lname }}</option>
                 @endforeach
             </select>
             
@@ -173,67 +173,131 @@
 
     <div class="flex flex-row">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
-            <div x-data="dateDropdown('{{ old('checkin_date', $reservation->checkin_date ?? now()->format('Y-m-d')) }}')" class="relative mt-5">
-                <label class="block text-sm mb-1">Checkin Date</label>
-                <div class="flex w-[300] border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
-                    <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Year</option>
-                        <template x-for="y in years" :key="y">
-                            <option :value="y" x-text="y" :selected="year == y"></option>
-                        </template>
-                    </select>
-    
-                    <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Month</option>
-                        <template x-for="(m, i) in months" :key="i">
-                            <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
-                        </template>
-                    </select>
-    
-                    <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Day</option>
-                        <template x-for="d in days" :key="d">
-                            <option :value="d" x-text="d" :selected="day == d"></option>
-                        </template>
-                    </select>
+        @if(!$isNewReservation)
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                <div x-data="dateDropdown('{{ old('checkin_date', $reservation->checkin_date ?? '') }}')" class="relative mt-5">
+                    <label class="block text-sm mb-1">Checkin Date</label>
+                    <div class="flex w-[300] border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                        <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Year</option>
+                            <template x-for="y in years" :key="y">
+                                <option :value="y" x-text="y" :selected="year == y"></option>
+                            </template>
+                        </select>
+        
+                        <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Month</option>
+                            <template x-for="(m, i) in months" :key="i">
+                                <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
+                            </template>
+                        </select>
+        
+                        <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Day</option>
+                            <template x-for="d in days" :key="d">
+                                <option :value="d" x-text="d" :selected="day == d"></option>
+                            </template>
+                        </select>
+                    </div>
+        
+                    <input type="hidden" name="checkin_date" :value="formattedDate">
                 </div>
-    
-                <input type="hidden" name="checkin_date" :value="formattedDate">
-            </div>
-    
-            <div x-data="dateDropdown('{{ old('checkout_date', $reservation->checkout_date ?? now()->format('Y-m-d')) }}')" class="relative mt-5">
-                <label class="block text-sm mb-1">Checkout Date</label>
-                <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
-                    <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Year</option>
-                        <template x-for="y in years" :key="y">
-                            <option :value="y" x-text="y" :selected="year == y"></option>
-                        </template>
-                    </select>
-    
-                    <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Month</option>
-                        <template x-for="(m, i) in months" :key="i">
-                            <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
-                        </template>
-                    </select>
-    
-                    <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Day</option>
-                        <template x-for="d in days" :key="d">
-                            <option :value="d" x-text="d" :selected="day == d"></option>
-                        </template>
-                    </select>
+        
+                <div x-data="dateDropdown('{{ old('checkout_date', $reservation->checkout_date ?? '') }}')" class="relative mt-5">
+                    <label class="block text-sm mb-1">Checkout Date</label>
+                    <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                        <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Year</option>
+                            <template x-for="y in years" :key="y">
+                                <option :value="y" x-text="y" :selected="year == y"></option>
+                            </template>
+                        </select>
+        
+                        <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Month</option>
+                            <template x-for="(m, i) in months" :key="i">
+                                <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
+                            </template>
+                        </select>
+        
+                        <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Day</option>
+                            <template x-for="d in days" :key="d">
+                                <option :value="d" x-text="d" :selected="day == d"></option>
+                            </template>
+                        </select>
+                    </div>
+        
+                    <input type="hidden" name="checkout_date" :value="formattedDate">
                 </div>
-    
-                <input type="hidden" name="checkout_date" :value="formattedDate">
+        
             </div>
-    
-        </div>
-        <div class="rounded-4xl bg-[#6c757d] text-[#fff] text-center py-3 mt-13 ml-12 w-[70] h-[30]">
-            <p class="-mt-2">Nights</p>
-        </div>
+            <div class="rounded-4xl bg-[#6c757d] text-[#fff] text-center py-3 mt-13 ml-12 w-[70] h-[30]">
+                <p class="nights-display -mt-2">Nights</p>
+            </div>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                <div x-data="dateDropdown('{{ old('checkin_date', $reservation->checkin_date ?? now()->format('Y-m-d')) }}')" class="relative mt-5">
+                    <label class="block text-sm mb-1">Checkin Date</label>
+                    <div class="flex w-[300] border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                        <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Year</option>
+                            <template x-for="y in years" :key="y">
+                                <option :value="y" x-text="y" :selected="year == y"></option>
+                            </template>
+                        </select>
+        
+                        <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Month</option>
+                            <template x-for="(m, i) in months" :key="i">
+                                <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
+                            </template>
+                        </select>
+        
+                        <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Day</option>
+                            <template x-for="d in days" :key="d">
+                                <option :value="d" x-text="d" :selected="day == d"></option>
+                            </template>
+                        </select>
+                    </div>
+        
+                    <input type="hidden" name="checkin_date" :value="formattedDate">
+                </div>
+        
+                <div x-data="dateDropdown('{{ old('checkout_date', $reservation->checkout_date ?? now()->format('Y-m-d')) }}')" class="relative mt-5">
+                    <label class="block text-sm mb-1">Checkout Date</label>
+                    <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                        <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Year</option>
+                            <template x-for="y in years" :key="y">
+                                <option :value="y" x-text="y" :selected="year == y"></option>
+                            </template>
+                        </select>
+        
+                        <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Month</option>
+                            <template x-for="(m, i) in months" :key="i">
+                                <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
+                            </template>
+                        </select>
+        
+                        <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                            <option value="">Day</option>
+                            <template x-for="d in days" :key="d">
+                                <option :value="d" x-text="d" :selected="day == d"></option>
+                            </template>
+                        </select>
+                    </div>
+        
+                    <input type="hidden" name="checkout_date" :value="formattedDate">
+                </div>
+        
+            </div>
+            <div class="rounded-4xl bg-[#6c757d] text-[#fff] text-center py-3 mt-13 ml-12 w-[70] h-[30]">
+                <p class="nights-display -mt-2">Nights</p>
+            </div>
+        @endif        
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
@@ -244,7 +308,9 @@
                 <span class="absolute left-2 top-1/2 text-base font-bold"><i class="fas fa-dollar-sign"></i></span>
 
                 <x-text-input type="text" id="reservation_cost" name="reservation_cost" class="pl-7" value="{{ old('reservation_cost', $reservation->reservation_cost ?? '') }}"/>
-            </div>
+
+                </div>
+                <x-input-error :messages="$errors->get('reservation_cost')" />    
         </div>
 
 
@@ -256,6 +322,8 @@
 
                 <x-text-input type="text" id="agency_commission" name="agency_commission" class="pl-7" value="{{ old('agency_commission', $reservation->agency_commission ?? '') }}"/>
             </div>
+            
+            <x-input-error :messages="$errors->get('agency_commission')" />
         </div>
 
         <div class="relative mt-5">

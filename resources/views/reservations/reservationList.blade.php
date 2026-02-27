@@ -34,15 +34,18 @@
                     <option value="-1" {{ $agentId == -1 ? 'selected' : ''}}>All Agents</option>
                     @foreach ($users as $user)
                         <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : ''}}>
-                            {{ $user->name }}
+                            {{ $user->fname . ' ' . $user->lname }}
                         </option>
                     @endforeach
                 </select>
 
                 <input
                     type="text"
+                    name="search"
+                    value="{{ request('search')}}"
                     placeholder="Quick Search"
-                    class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1"
+                    class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none"
+                    oninput="clearTimeout(this.delay); this.delay=setTimeout(() => this.form.submit(), 500)""
                 >
             </form>
 
@@ -96,7 +99,7 @@
 
 
                     <tbody class="divide-y">
-                        @foreach ($reservations as $reservation)
+                        @forelse ($reservations as $reservation)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('reservations.reservationDetails', $reservation->id) }}'">
                                 <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     <input type="checkbox">
@@ -106,8 +109,8 @@
                                     {{ $reservation->status}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $reservation->created_on}}
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $reservation->created_on ? \Carbon\Carbon::parse($reservation->created_on)->format('m/d/Y') : '-' }}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
@@ -123,7 +126,7 @@
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $reservation->agent ? $reservation->agent->name : '-' }}
+                                    {{ $reservation->agent ? $reservation->agent->fname . ' ' . $reservation->agent->lname : '-' }}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
@@ -143,7 +146,13 @@
                                 </td>
 
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="10" class="py-2 text-center">
+                                    No data available in table
+                                </td>
+                            </tr>
+                        @endforelse    
                     </tbody>
                 </table>
             </div>

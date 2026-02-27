@@ -14,27 +14,18 @@
             <div class="flex items-center gap-8 flex-shrink-0">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    {{-- <a href="{{ route('calendar') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a> --}}
+                   
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden sm:flex space-x-8">
-                    {{-- <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link> --}}
-                    {{-- @if ($user && $user->isSuperAdmin())
-                    <x-nav-link :href="route('insurance.index')" :active="request()->routeIs('insurance.index')">
-                        {{ __('Insurance') }}
-                    </x-nav-link>
-                    @endif --}}
+                    
                 </div>
             </div>
 
             <div class="hidden sm:flex items-center gap-4 flex-wrap">
                 <span class="text-white text-base">
-                    Welcome, {{ Auth::user()->name }}
+                    Welcome, {{ Auth::user()->fname . ' ' . Auth::user()->lname }}
                 </span>
 
                 <a href="/profile" class="text-white text-base flex items-center gap-1">

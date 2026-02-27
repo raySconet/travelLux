@@ -9,9 +9,9 @@
         </div>
     </x-slot>
 
-    <div class="p-6">
+    <div class="p-2">
        
-        <div class="bg-white shadow rounded-none">
+        <div class="bg-white shadow rounded-none ml-2 mr-1 px-2">
            
             <div class="flex items-end justify-end gap-4 px-6 py-4">
                 <div class="flex flex-col gap-1">
@@ -21,7 +21,7 @@
                     <select
                         name="agents"
                         id="agents"
-                        class="w-80 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1"
+                        class="w-80 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none"
                     >
                         <option value="-1">All Agents</option>
                         @foreach ($users as $user)
@@ -44,24 +44,16 @@
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-b-2 border-t-2 border-[#dee2e6]">
                                 Action
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-t-2 border-[#dee2e6]">
-                                Destination
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-b-2 border-t-2 border-[#dee2e6]">
                                 Subject
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-b-2 border-t-2 border-[#dee2e6]">
                                 Days
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                    border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-b-2 border-t-2 border-[#dee2e6]">
                                 Message
                             </th>
                         </tr>
@@ -69,29 +61,31 @@
 
 
                     <tbody class="divide-y">
-                        @foreach ($users as $user)
+                        @forelse ($users as $user)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('automated-emails.edit', $user->id) }}'">
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}"">
                                     {{ $user->name}}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                                    {{ $user->email}}
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}"">
 
                                 </td>
                                 
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}"">
 
                                 </td>   
 
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}"">
 
                                 </td>    
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-2 text-center">
+                                    No data available in table
+                                </td>
+                            </tr>
+                        @endforelse    
                     </tbody>
                 </table>
             </div>

@@ -118,31 +118,36 @@ Route::post('/update-event-user', [EventController::class, 'updateEventUser']);
 Route::post('/update-case-user', [CourtCasesController::class, 'updateCaseUser']);
 
 Route::middleware('auth')->group(function () {
-    Route::get('/system-users', [SystemUsersController::class, 'index'])->name('system-users.index');
+    Route::get('/system-users', [SystemUsersController::class, 'index'])->name('system-users');
     Route::get('/system-users/create', [SystemUsersController::class, 'create'])->name('system-users.create');
     Route::get('/system-users/{user}', [SystemUsersController::class, 'edit'])->name('system-users.edit');
+
+    Route::post('/user', [SystemUsersController::class, 'store'])->name('system-users.store');
+    Route::put('/user/{user}', [SystemUsersController::class, 'update'])->name('system-users.update');
+    Route::delete('/user/{user}', [SystemUsersController::class, 'destroy'])->name('system-users.destroy');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/productConfiguration', [ProductConfigurationController::class, 'index']);
-    // Route::post('/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
-    // Route::put('/insurance/{id}', [InsuranceController::class, 'update'])->name('insurance.update');
-    // Route::delete('/insurance/{id}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
-    // Route::get('/insurance/{id}/fetch', [InsuranceController::class, 'fetch'])->name('insurance.fetch');
 });
 Route::middleware('auth')->group(function () {
-    Route::get('/timelinetasks', [TimelineTasksController::class, 'index']);
+    Route::get('/timelinetasks', [TimelineTasksController::class, 'index'])->name('timelinetasks');
     Route::get('/timelinetasks/create', [TimelineTasksController::class,'create'])->name('timeline-tasks.create');
-    Route::get('/timelinetasks/{timelinetask}', [TimelineTasksController::class, 'edit'])->name('timeline-tasks.edit');
+    Route::get('/timelinetasks/{timelineTask}', [TimelineTasksController::class, 'edit'])->name('timeline-tasks.edit');
+
+    Route::post('/timelineTask', [TimelineTasksController::class, 'store'])->name('timelineTask.store');
+    Route::put('/timelineTask/{timelineTask}', [TimelineTasksController::class, 'update'])->name('timelineTask.update');
+    Route::delete('/timelineTask/{timelineTask}', [TimelineTasksController::class, 'destroy'])->name('timelineTask.destroy');
 });
 Route::middleware('auth')->group(function () {
-    Route::get('/agencyProfile', [AgencyProfileController::class, 'index']);
+    Route::get('/agencyProfile', [AgencyProfileController::class, 'index'])->name('agencyProfile');
+    Route::put('/agencyProfile', [AgencyProfileController::class, 'update'])->name('agencyProfile.update');
 });
 Route::middleware('auth')->group(function () {
-    Route::get('/formsManager', [FormsManagerController::class, 'index']);
+    Route::get('/formsManager', [FormsManagerController::class, 'index'])->name('formsManager');
     Route::get('/forms-manager/{user}', [FormsManagerController::class, 'edit'])->name('forms-manager.edit');
 });
 Route::middleware('auth')->group(function () {
-    Route::get('/automatedEmails', [AutomatedEmailsController::class, 'index']);
+    Route::get('/automatedEmails', [AutomatedEmailsController::class, 'index'])->name('automatedEmails');
     Route::get('/automatedEmails/{automatedEmail}', [AutomatedEmailsController::class, 'edit'])->name('automated-emails.edit');
 });
 Route::middleware('auth')->group(function () {
@@ -167,6 +172,8 @@ Route::middleware('auth')->group(function(){
 
     Route::post('/reservation', [ReservationController::class, 'store'])->name('reservations.store');
     Route::put('/reservation/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
+    Route::delete('/reservation/{reservation}', [ReservationController::class ,'destroy'])->name('reservations.destroy');
+    Route::post('/reservations/{reservation}/duplicate', [ReservationController::class, 'duplicate'])->name('reservations.duplicate');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');

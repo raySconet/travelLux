@@ -11,7 +11,7 @@
 
     <div class="p-2">
        
-        <div class="bg-white shadow rounded-none ml-2">
+        <div class="bg-white shadow rounded-none ml-2 px-3 mr-1">
            
             <div class="flex items-end justify-end px-6 py-4 ">
 
@@ -19,7 +19,7 @@
                     <input
                         type="text"
                         placeholder="Quick Search"
-                        class="w-64 border-0 border-b-2 border-gray-400 text-sm px-1 py-1"
+                        class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none"
                     >
                 </div>
             </div>
@@ -29,28 +29,28 @@
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">
                         <tr>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-t-2 border-b-2 border-[#dee2e6]">
                                 Name
                             </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-t-2 border-b-2 border-[#dee2e6]">
                                 UserName
                             </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-t-2 border-b-2 border-[#dee2e6]">
                                 Role
                             </th>   
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-t-2 border-b-2 border-[#dee2e6]">
                                 Active
                             </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-t-2 border-b-2 border-[#dee2e6]">
                                 Access Level
                             </th>  
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-t-2 border-b-2 border-[#dee2e6]">
                                 Phone
                             </th> 
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-t-2 border-b-2 border-[#dee2e6]">
                                 City
                             </th> 
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="px-4 py-3 text-left text-sm font-extrabold border-t-2 border-b-2 border-[#dee2e6]">
                                 State
                             </th>
                         </tr>
@@ -60,36 +60,40 @@
                     <tbody class="divide-y">
                         @foreach ($users as $user)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('system-users.edit', $user->id) }}'">
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                                    {{ $user->name }}
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $user->fname . ' ' . $user->lname }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $user->email }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $user->role === 1 ? 'Administrator' : 'Agent' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    @if($user->is_disabled === 0)
+                                        <i class="fas fa-circle text-green-500 ml-3"></i>
+                                    @else
+                                        <i class="fas fa-circle text-red-500 ml-3"></i>
+                                    @endif
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $user->role }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $user->phone_number }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $user->city }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $user->state }}
                                 </td>
 
                             </tr>

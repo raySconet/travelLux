@@ -7,10 +7,25 @@ use App\Models\Product;
 
 class VendorsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-       $products = Product::orderBy('product_name')->get();
-       return view('vendors.vendorList', compact('products'));
+        $search = $request->input('search');
+
+        $productsQuery = Product::orderBy('product_name')
+                                ->where('is_deleted', 0);
+
+        if ($search) {
+            $productsQuery->where('product_name', 'like', "%{$search}%")
+                          ->orwhere('phone_number', 'like', "%{$search}%")
+                          ->orwhere('vendor_bdm', 'like', "%{$search}%")
+                          ->orwhere('bdm_phone_number', 'like', "%{$search}%")
+                          ->orwhere('bdm_email', 'like', "%{$search}%")
+                          ->orwhere('notes', 'like', "%{$search}%");
+        }
+
+        $products = $productsQuery->get();
+
+        return view('vendors.vendorList', compact('products'));
     }
 
     public function update(Request $request, Product $product)

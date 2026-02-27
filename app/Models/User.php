@@ -14,16 +14,62 @@ class User extends Authenticatable
 
     protected $table = 'users';
 
+    protected $primaryKey = 'id';
+
+
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'fname',
+        'lname',
+        'nickname', 
         'email',
+        'email_as_username',
+        'backup_email',
+        'username',
+        'phone_number',
+        'cell_phone_number',
+        'birth_date',
+        'hire_date',
+        'facebook_profile',
+        'instagram_account',
+        'twitter_account',
+        'time_zone',
+        'ssn',
+        'ein',
+        'automated_emails_page_access',
+        'email_verified_at',
+        'role',
+        'agent_title',
+        'commission',
+        'alternate_commission',
+        'include_in_alias_reports',
+        'alias',
+        'first_address_line',
+        'second_address_line',
+        'city',
+        'state',
+        'postal_code',
+        'mentor_ids',
+        'reservation_email_enabled',
+        'reservation_agent_owns_email',
+        'reservation_cc_email_address',
+        'reservation_bcc_email_address',
+        'task_enable_daily_tasks_email',
+        'task_seperate_email_per_task',
+        'task_send_email_at',
+        'general_notes',
+        'profile_photo',
+        'profile_submit_flag',
+        'is_disabled', 
         'password',
-        'userPermission',
+        'created_at',
+        'created_by',
+        'updated_at',
+        'last_modified_by', 
         'isDeleted',
     ];
 
@@ -50,99 +96,15 @@ class User extends Authenticatable
         ];
     }
 
-    public static function getActiveUsers()
-    {
-        return self::where('isDeleted', 0)->orderBy('name')->get();
-    }
-
-
-    // If you omit the pivot table name,
-    // Laravel will assume the table is the alphabetical order of the two model names (snake_case, singular), like court_case_user.
-    // public function courtCases()
-    // {
-    //     return $this->belongsToMany(CourtCase::class, 'user_case', 'user_id', 'case_id')->withTimestamps();
-    // }
-
     public function isSuperAdmin()
     {
         return $this->userPermission === 'super_admin';
     }
 
-    public function isAdmin()
+
+    public function customers()
     {
-        return $this->userPermission === 'admin';
-    }
-
-    public function isRegularUser()
-    {
-        return $this->userPermission === 'user';
-    }
-
-
-    // public function canViewCase(CourtCase $case)
-    // {
-    //     return $this->isSuperAdmin() ||  $this->isAssignedToCase($case); // $this->isAdmin() ||
-    // }
-
-
-
-    // public function canEditCase(CourtCase $case)
-    // {
-    //     if ($this->isSuperAdmin()) {
-    //         return true;
-    //     }
-
-    //     if (!$this->isAdmin()) {
-    //         return false;
-    //     }
-
-    //     // Check if assigned directly
-    //     if ($this->isAssignedToCase($case)) {
-    //         return true;
-    //     }
-
-    //     // Ensure users are loaded
-    //     if (!$case->relationLoaded('users')) {
-    //         $case->load('users');
-    //     }
-
-    //     // Check if admin can view any user assigned to the case
-    //     foreach ($case->users as $user) {
-    //         if ($this->canViewEventsAndCasesForUser($user->id)) {
-    //             return true;
-    //         }
-    //     }
-
-    //     return false;
-    // }
-
-
-
-    // protected function isAssignedToCase(CourtCase $case)
-    // {
-    //     return $case->relationLoaded('users') ? $case->users->contains('id', $this->id) : $case->users()->where('user_id', $this->id)->exists();
-    // }
-
-    public function canCreateCase()
-    {
-        return $this->isSuperAdmin() || $this->isAdmin();
-    }
-
-
-    public function canDeleteCategory()
-    {
-        return $this->isSuperAdmin();
-    }
-
-    public function assignedUsers()
-    {
-        return $this->belongsToMany(User::class,'user_assignments','user_id','assigned_id')->wherePivot('isDeleted', false);
-    }
-
-    public function usersWhoAssignedMe()
-    {
-        return $this->belongsToMany(
-            User::class,'user_assignments','assigned_id','user_id')->wherePivot('isDeleted', false);
+        return $this->hasMany(Customer::class, 'agent_id');
     }
 
 

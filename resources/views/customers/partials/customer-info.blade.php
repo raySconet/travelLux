@@ -28,26 +28,38 @@
             <x-input-label for="nickname"> Nick Name</x-input-label>
         </div>
     </div> 
-
+ 
     <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
         <div class="relative mt-5 flex flex-col">
 
             <div class="relative mt-5 flex items-center gap-3">
                 <x-text-input type="email" id="email" name="email"  class="flex-1" value="{{ old('email', $customer->email ?? '') }}" />
                 <x-input-label for="email" class="absolute -top-4 left-0">Email</x-input-label>
-    
-    
-                <button type="button" class="text-[#f18325] text-2xl flex-shrink-0 mt-9">
-                    <i class="fas fa-plus-circle"></i>
-                </button>
-    
-                
+
+                @if(empty($customer->secondary_email))
+                    <button type="button" id="addSecondaryEmail" class="text-[#f18325] text-2xl flex-shrink-0 mt-9">
+                        <i class="fas fa-plus-circle"></i>
+                    </button>
+                @endif
             </div>
 
             <x-input-error :messages="$errors->get('email')" />
+
+            <div id="secondaryEmailContainer" class="mt-4 space-y-3">
+                @if(!empty($customer->secondary_email))
+                    <div class="relative mt-2 flex items-center gap-3">
+                        <input type="email" name="secondary_email" 
+                            class="peer w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] pt-5 pb-1"
+                            value="{{ old('secondary_email', $customer->secondary_email) }}">
+                        <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-5 peer-focus:top-1 peer-focus:text-sm">
+                            Secondary Email
+                        </label>
+                    </div>
+                @endif
+            </div>
+
         </div>
     </div>
- 
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
         <div class="relative mt-5">

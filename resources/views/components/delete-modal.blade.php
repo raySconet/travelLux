@@ -1,5 +1,3 @@
-@props([ 'deleteClass' => null, ])
-
 <div id="deleteModal" class="fixed inset-0 bg-black/30 flex items-center justify-center hidden z-[9999]">
 
     <div class="bg-white w-full max-w-lg rounded-lg shadow-lg relative">
@@ -26,7 +24,7 @@
                 <span>No</span>
             </x-secondary-btn>
 
-            <x-primary-btn type="button" id="confirmDeleteBtn"  class="{{ $deleteClass }}">
+            <x-primary-btn type="button" id="confirmDeleteBtn">
                 <i class="fa fa-thumbs-up"></i>
                 <span>Yes</span>
             </x-primary-btn>

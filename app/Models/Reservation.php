@@ -10,8 +10,6 @@ class Reservation extends Model
 
     protected $primaryKey = 'id';
 
-    public $timestamps = false;
-
     protected $fillable = [
         'customer_id',
         'reservation_number',
@@ -106,5 +104,10 @@ class Reservation extends Model
     public function resort()
     {
         return $this->belongsTo(ResortShip::class, 'resort_id');
+    }
+
+    public function cruiseItinerary()
+    {
+        return $this->belongsTo(CruiseItinerary::class, 'cruise_itinerary_id');
     }
 }

@@ -10,7 +10,7 @@
 
     <x-app-layout>
         <x-slot name="header">
-                <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
+                <div class="p-2 bg-white shadow sm:rounded-none flex items-center justify-between">
                     <h2 class=" text-2xl text-gray-500 leading-tight">
                         <i class="fa-solid fas fa-list mr-2 text-[#f18325]"></i>{{ __('Customers') }}
                     </h2>
@@ -22,23 +22,14 @@
                         </div>
                     @else    
                         <div class="space-x-2">
-                            {{-- <form method="POST" action="{{ route('customers.destroy', $customer->id) }}" class="inline">
+                            <form method="POST" action="{{ route('customers.destroy', $customer->id) }}" class="inline delete-form">
                                 @csrf
                                 @method('DELETE')
-                                <x-secondary-buttonToDelete type="button" onclick="openDeleteModal()">
+
+                                <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)">
                                     <i class="fas fa-trash"></i><span>Delete</span>
                                 </x-secondary-buttonToDelete>
-                            </form> --}}
-                            <form method="POST" action="{{ route('customers.destroy', $customer->id) }}" class="inline delete-form">
-    @csrf
-    @method('DELETE')
-
-    <x-secondary-buttonToDelete 
-        type="button"
-        onclick="openDeleteModal(this)">
-        <i class="fas fa-trash"></i><span>Delete</span>
-    </x-secondary-buttonToDelete>
-</form>
+                            </form>
                             <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save Customer</span></x-secondary-btn>
                             <x-primary-btn type="button" onclick="window.location='{{ route('customers.customerList') }}'"><i class="far fa-minus-square"></i><span>Close Customer</span></x-primary-btn>
                         </div>
@@ -133,4 +124,4 @@
         </div>
     </x-app-layout>
 </form>
-<x-delete-modal deleteClass="customersDeleteBtn" />
+<x-delete-modal />

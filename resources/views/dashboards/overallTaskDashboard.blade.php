@@ -6,7 +6,7 @@
                 <option value="-1">--All Agents--</option>
                 @foreach ($users as $user)
                     <option value="{{ $user->id }}">
-                        {{ $user->name }}
+                        {{ $user->fname . ' ' . $user->lname }}
                     </option>
                 @endforeach
             </select>

@@ -11,7 +11,7 @@
 
     <div class="p-2">
        
-        <div class="bg-white shadow rounded-none ml-1">
+        <div class="bg-white shadow rounded-none ml-2 mr-1">
            
             <form method="GET" action="{{ route('customers.customerList') }}" class="flex items-end justify-between px-6 py-4 ">
                 <select name="CustomerTag" id="customerTag" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
@@ -31,15 +31,18 @@
                     <option value="-1" {{ $agentId == -1 ? 'selected' : '' }}>All Agents</option>
                     @foreach ($users as $user)
                         <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : '' }}>
-                            {{ $user->name }}
+                            {{ $user->fname . ' ' . $user->lname}}
                         </option>
                     @endforeach
                 </select>
 
                 <input
                     type="text"
+                    name="search"
+                    value="{{ request('search') }}"
                     placeholder="Quick Search"
-                    class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1"
+                    class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none"
+                    oninput="clearTimeout(this.delay); this.delay=setTimeout(() => this.form.submit(), 500)"
                 >
             </form>
 
@@ -73,31 +76,36 @@
                         </tr>
                     </thead>
 
-
                     <tbody class="divide-y">
-                        @foreach ($customers as $customer)
+                        @forelse ($customers as $customer)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('customers.customerDetails', $customer->id) }}'">
                                 <td class="px-4 py-3 text-[13px] font-normal text-[#212529] border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $customer->lname }}, {{$customer->fname}} {{$customer->mname}}
+                                    {{ $customer->lname }}, {{ $customer->fname }} {{ $customer->mname }}
                                 </td>
 
-                                <td class="px-4 py-3 text-[#212529]  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                <td class="px-4 py-3 text-[#212529] border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $customer->cellphone }}
                                 </td>
 
-                                <td class="px-4 py-3 text-[#212529]  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $customer->email}}
+                                <td class="px-4 py-3 text-[#212529] border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $customer->email }}
                                 </td>
 
-                                <td class="px-4 py-3 text-[#212529]  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{$customer->status}}
+                                <td class="px-4 py-3 text-[#212529] border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $customer->status }}
                                 </td>
 
-                                <td class="px-4 py-3 text-[#212529]  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $customer->agent ? $customer->agent->name : '-' }}
+                                <td class="px-4 py-3 text-[#212529] border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $customer->agent ? $customer->agent->fname . ' ' . $customer->agent->lname : '-' }}
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-2 text-center">
+                                    No data available in table
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

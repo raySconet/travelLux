@@ -21,8 +21,21 @@
                         </div>
                     @else
                         <div class="space-x-2">
-                            <x-secondary-buttonToDelete><i class="fas fa-trash"></i><span>Delete</span></x-secondary-buttonToDelete>
-                            <x-secondary-buttonToDelete><i class="fas fa-copy"></i><span>Duplicate</span></x-secondary-buttonToDelete>
+                            <form method="POST" action="{{ route('reservations.destroy', $reservation->id )}}" class="inline delete-form">
+                                @csrf
+                                @method('DELETE')
+
+                                <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)">
+                                    <i class="fas fa-trash"></i><span>Delete</span>
+                                </x-secondary-buttonToDelete>
+
+                            </form>
+                            <form method="POST" action="{{ route('reservations.duplicate', $reservation->id) }}" class="inline">
+                                @csrf
+                                <x-secondary-buttonToDelete type="submit">
+                                    <i class="fas fa-copy"></i><span>Duplicate</span>
+                                </x-secondary-buttonToDelete>
+                            </form>
                             <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save Reservation</span></x-secondary-btn>
                             <x-primary-btn type="button" onclick="window.location='{{ route('reservations.reservationList') }}'"><i class="far fa-minus-square"></i><span>Close Reservation</span></x-primary-btn>
                         </div>
@@ -157,3 +170,4 @@
         </div>
     </x-app-layout>
 </form>    
+<x-delete-modal />

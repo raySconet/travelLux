@@ -11,52 +11,60 @@
 
     <div class="p-2">
        
-        <div class="bg-white shadow rounded-none ml-2">
+        <div class="bg-white shadow rounded-none ml-2 px-3">
            
-            <div class="flex items-end justify-end px-6 py-4">
+            <form method="GET" action="{{ route('timelinetasks') }}" class="flex items-end justify-end px-6 py-4">
 
                 <div class="relative flex gap-6">
-                    <select name="filterByProduct" id="filterByProduct" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 text-[#495057]">
-                        <option value="-1">--Filter By Product--</option>
+                    <select  onchange="this.form.submit()" name="product_id" id="product_id" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 text-[#495057]">
+                        <option value="">--Filter By Product--</option>
+                        @foreach($products as $product)
+                            <option value="{{ $product->id }}"
+                                {{ request('product_id') == $product->id ? 'selected' : '' }}>
+                                {{ $product->product_name }}
+                            </option>    
+                        @endforeach    
                     </select>
-                    <select name="filterByDestination" id="filterByDestination" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 text-[#495057]">
-                        <option value="-1">--Filter by Destination--</option>
+                    <select  onchange="this.form.submit()" name="destination_id" id="destination_id" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 text-[#495057]">
+                        <option value="">--Filter by Destination--</option>
+                        @foreach($destinations as $destination)
+                            <option value="{{ $destination->id }}"  {{ request('destination_id') == $destination->id ? 'selected' : '' }}>>
+                                {{ $destination->destination_name }}
+                            </option>
+                        @endforeach        
                     </select>
                     <input
                         type="text"
+                        name="search"
+                        value="{{ request('search') }}"
                         placeholder="Quick Search"
-                        class="w-64 border-0 border-b-2 border-gray-400 text-sm px-1 py-1"
+                        class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none"
+                        oninput="clearTimeout(this.delay); this.delay=setTimeout(()=> this.form.submit(),500)"
                     >
                 </div>
-            </div>
+            </form>
 
            
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                       border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="w-1/6 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Product
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                       border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="w-1/6 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Destination
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                       border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="w-1/6 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Task Name
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                       border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="w-1/6 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Priority
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                       border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="w-1/6 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Days
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600
-                                       border-b-2 border-t-2 border-[#dee2e6]">
+                            <th class="w-1/6 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 DateType
                             </th>
                         </tr>
@@ -64,28 +72,31 @@
 
 
                     <tbody class="divide-y">
-                        @foreach ($users as $user)
-                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('timeline-tasks.edit', $user->id) }}'">
-                                <td class="px-4 py-3 text-gray-600  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $user->name}}
+                        @foreach ($timelineTasks as $timelineTask)
+                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('timeline-tasks.edit', $timelineTask->id) }}'">
+                                <td class="w-1/6 px-4 py-3 text-gray-600  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $timelineTask->product ? $timelineTask->product->product_name : '-' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $user->email}}
+                                <td class="w-1/6 px-4 py-3 text-gray-600  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $timelineTask->destination ? $timelineTask->destination->destination_name : '-' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                <td class="w-1/6 px-4 py-3 text-gray-600  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $timelineTask->task_name }}
                                 </td>   
 
-                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                <td class="w-1/6 px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    <i class="fas fa-exclamation-triangle text-[#bdbdbd] text-lg mr-2"></i>{{ $timelineTask->priority }}
                                 </td>
                                 
-                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                <td class="w-1/6 px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $timelineTask->due_days . ' ' . $timelineTask->before_after }}
                                 </td>
                                 
-                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                <td class="w-1/6 px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $timelineTask->date_type }}
                                 </td>   
-
                             </tr>
                         @endforeach
                     </tbody>

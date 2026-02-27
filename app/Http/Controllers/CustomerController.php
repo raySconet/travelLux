@@ -13,10 +13,10 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $status = $request->input('status', 'Active');
-
         $agentId = $request->input('users', auth()->id());
+        $search = $request->input('search');
 
-        $users = User::select('id','name','email')->get();
+        $users = User::select('id','fname','lname','email')->get();
 
    
         $customersQuery = Customer::with('agent')
@@ -26,6 +26,16 @@ class CustomerController extends Controller
       
         if($agentId != -1){
             $customersQuery->where('agent_id', $agentId);
+        }
+
+        if ($search) {
+            $customersQuery->where(function($query) use ($search) {
+                $query->where('fname', 'like', "%{$search}%")
+                    ->orWhere('lname', 'like', "%{$search}%")
+                    ->orWhere('mname', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('cellphone', 'like', "%{$search}%");
+            });
         }
 
         $customers = $customersQuery->orderBy('lname', 'asc')->get();
@@ -462,7 +472,6 @@ class CustomerController extends Controller
 
     public function destroy(Customer $customer)
     {
-        // Soft-delete by setting is_deleted = 1
         $customer->update([
             'is_deleted' => 1,
             'last_modified_by' => auth()->id(),

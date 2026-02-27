@@ -11,16 +11,21 @@
 
     <div class="p-2">
        
-        <div class="bg-white shadow rounded-none ml-2">
+        <div class="bg-white shadow rounded-none ml-2 px-2 mr-1">
            
             <div class="flex items-end justify-end px-6 py-4 ">
 
                 <div class="relative">
-                    <input
+                    <form method="GET" action="{{ route('vendors.vendorList') }}">
+                        <input
                         type="text"
+                        name="search"
+                        value="{{ request('search') }}"
                         placeholder="Quick Search"
                         class="w-130 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none"
-                    >
+                        oninput="clearTimeout(this.delay); this.delay=setTimeout(() => this.form.submit(), 500)"
+                        >
+                    </form>
                 </div>
             </div>
 
@@ -55,27 +60,27 @@
                         @foreach($products as $product)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick='openVendorModal(@json($product))'>
 
-                                <td class="w-1/6 px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="w-1/6 px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $product->product_name }}
                                 </td>
 
-                                <td class="w-1/6 px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="w-1/6 px-4 py-3 text-gray-600  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $product->phone_number }}
                                 </td>
 
-                                <td class="w-1/6 px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="w-1/6 px-4 py-3 text-gray-600  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $product->vendor_bdm }}
                                 </td>
 
-                                <td class="w-1/6 px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="w-1/6 px-4 py-3 text-gray-600  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $product->bdm_phone_number }}
                                 </td>
 
-                                <td class="w-1/6 px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="w-1/6 px-4 py-3 text-gray-600  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $product->bdm_email }}
                                 </td>
 
-                                <td class="w-1/6 px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <td class="w-1/6 px-4 py-3 text-gray-600  border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $product->notes }}
                                 </td>
 

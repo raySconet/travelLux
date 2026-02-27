@@ -63,4 +63,33 @@ $(document).ready(function() {
         $('#reservationAddCustomerModal').addClass('hidden');
     }
     
+    
+    function calculateNights() {
+        const checkinVal = $('input[name="checkin_date"]').val();
+        const checkoutVal = $('input[name="checkout_date"]').val();
+
+        if(!checkinVal || !checkoutVal) {
+            $('.nights-display').text('Nights');
+            return;
+        }
+
+        const checkinDate = new Date(checkinVal);
+        const checkoutDate = new Date(checkoutVal);
+
+        if(checkoutDate < checkinDate) {
+            $('.nights-display').text('Invalid Dates');
+            return;
+        }
+
+        const diffTime = Math.abs(checkoutDate - checkinDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        $('.nights-display').text(diffDays + ' Nights');
+    }
+
+    $('div[x-data^="dateDropdown"]').on('change', 'select', function() {
+        setTimeout(calculateNights, 50);
+    });
+
+    calculateNights();
 });

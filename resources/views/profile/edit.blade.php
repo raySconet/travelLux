@@ -11,7 +11,7 @@
     </x-slot>
 
 
-    <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+    <div class="p-2 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start ml-2 mr-1">
         <div class="bg-white shadow rounded-none p-2">
             @include('system-users.partials.user-info')
         </div>

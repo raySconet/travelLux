@@ -11,7 +11,7 @@ class Product extends Model
 
     protected $primaryKey = 'id';
 
-    public $timestamps = false; // since you use created_on / last_modified_on
+    // public $timestamps = false; // since you use created_on / last_modified_on
 
     protected $fillable = [
         'product_name',
@@ -38,4 +38,18 @@ class Product extends Model
         'is_deleted'
     ];
 
+    public function destinations()
+    {
+        return $this->hasMany(Destination::class, 'product_id', 'id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'product_id', 'id');
+    }
+
+    public function timelineTasks()
+    {
+        return $this->hasMany(TimelineTask::class, 'product_id', 'id');
+    }
 }

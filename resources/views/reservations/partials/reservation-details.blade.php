@@ -124,6 +124,8 @@
             <x-text-input type="text" id="days_of_tickets" name="days_of_tickets"  value="{{ old('days_of_tickets', $reservation->days_of_tickets ?? '') }}"/>
 
             <x-input-label for="days_of_tickets">Days Of Tickets</x-input-label>
+
+            <x-input-error :messages="$errors->get('days_of_tickets')" /> 
         </div>
 
         <div class="flex-1 relative mt-8">

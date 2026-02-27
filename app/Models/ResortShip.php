@@ -22,4 +22,19 @@ class ResortShip extends Model
          'last_modified_on',
          'is_deleted'
     ];
+
+    public function destination()
+    {
+        return $this->belongsTo(Destination::class, 'destination_id', 'id');
+    }
+
+    public function cruiseItineraries()
+    {
+        return $this->hasMany(CruiseItinerary::class, 'resort_ship_id', 'id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'resort_id', 'id');
+    }
 }

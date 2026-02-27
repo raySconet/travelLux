@@ -16,17 +16,34 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
        $status = $request->input('status', 'Active');
+       $search = $request->input('search');
+
 
        $agentId = $request->input('users', auth()->id());
 
-       $users = User::select('id','name', 'email')->get();
+       $users = User::select('id','fname', 'lname','email')->get();
 
        $reservationsQuery = Reservation::with('agent', 'customer', 'product', 'destination')
                                         ->select('id', 'status', 'created_on', 'reservation_number', 'reservation_name', 'customer_id', 'agent_id', 'product_id', 'destination_id', 'checkin_date', 'final_payment_due_date')
-                                        ->where('status',$status);
+                                        ->where('status',$status)   
+                                        ->where('is_deleted',0);
 
         if($agentId !=-1){
             $reservationsQuery->where('agent_id', $agentId);
+        }
+
+        if($search) {
+            $reservationsQuery->where(function($query) use ($search) {
+                $query->whereHas('customer', function($q) use ($search) {
+                    $q->where('fname', 'like', "%{$search}%")
+                    ->orWhere('lname', 'like', "%{$search}%")
+                    ->orWhere('mname', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('cellphone', 'like', "%{$search}%");
+                })
+                ->orWhere('reservation_number', 'like', "%{$search}%")
+                ->orWhere('reservation_name', 'like', "%{$search}%");
+            });
         }
 
         $reservations = $reservationsQuery->orderBy('created_on', 'asc')->get(); 
@@ -36,7 +53,7 @@ class ReservationController extends Controller
     public function create(Reservation $reservation)
     {
         $reservation = new Reservation();
-        $users = User::select('id','name','email')->get();
+        $users = User::select('id','fname', 'lname' ,'email')->get();
         $isNewReservation = true;
 
         $customers = Customer::select('id','fname','lname','agent_id','email', 'cellphone')->get();
@@ -52,7 +69,7 @@ class ReservationController extends Controller
 
     public function edit(Reservation $reservation)
     {
-        $users = User::select('id','name','email')->get();
+        $users = User::select('id','fname', 'lname' ,'email')->get();
         $isNewReservation = false;
 
         $customers = Customer::select('id','fname','lname','agent_id')->get();
@@ -76,21 +93,28 @@ class ReservationController extends Controller
             'agency_commission.required' => 'The Total Agency Commission field is required.',
             'product_id.required' => 'The Product field is required.',
             'destination_id.required' => 'The Destination field is required',
-            'resort_id.required' => 'The Resort/Ship field is required.'
+            'resort_id.required' => 'The Resort/Ship field is required.',
+            'onboard_credit_from_cruise_line.numeric' => 'The OBC From Cruise Line field must be numeric and may contain 2 decimal points.',
+            'onboard_credit_from_agent' => 'The OBC From Agent field must be numeric and may contain 2 decimal points.'
         ];
 
         $data = $request->validate([
 
             //  Required fields
+            'agent_id' => 'required|integer',
             'customer_id' => 'required|integer',
             'reservation_number' => 'required|string|max:255',
+            'reservation_name' => 'required|string|max:255',
+            'reservation_cost' => 'required|numeric',
+            'agency_commission' => 'required|numeric',
             'status' => 'required|string|max:255',
-            'agent_id' => 'required|integer',
+            'product_id' => 'required|integer',
+            'destination_id' => 'required|integer',
+            'resort_id' => 'required|integer',
 
             //  Optional string fields
             'group_number' => 'nullable|string|max:50',
             'special_offer' => 'nullable|string|max:255',
-            'reservation_name' => 'required|string|max:255',
             'celebrations' => 'nullable|string|max:255',
             'celebration_notes' => 'nullable|string|max:255',
             'room_category' => 'nullable|string|max:255',
@@ -103,11 +127,9 @@ class ReservationController extends Controller
             'cruise_level' => 'nullable|string|max:255',
 
             //  Optional numeric (money)
-            'reservation_cost' => 'required|numeric',
-            'agency_commission' => 'required|numeric',
             'agent_commission' => 'nullable|numeric',
-            'onboard_credit_from_cruise_line' => 'nullable|numeric',
-            'onboard_credit_from_agent' => 'nullable|numeric',
+            'onboard_credit_from_cruise_line' => ['nullable','regex:/^\d+(\.\d{1,2})?$/'],
+            'onboard_credit_from_agent' => ['nullable','regex:/^\d+(\.\d{1,2})?$/'],
 
             //  Optional mediumtext / text
             'commission_notes' => 'nullable|string',
@@ -133,9 +155,6 @@ class ReservationController extends Controller
             'is_surprise' => 'nullable|integer',
             'agent_personal_travel' => 'nullable|integer',
             'secondary_agent' => 'nullable|integer',
-            'product_id' => 'required|integer',
-            'destination_id' => 'required|integer',
-            'resort_id' => 'required|integer',
             'cruise_itinerary_id' => 'nullable|integer',
             'days_of_tickets' => 'nullable|integer',
             'concierge_ship' => 'nullable|integer',
@@ -177,18 +196,37 @@ class ReservationController extends Controller
 
     public function update(Request $request, Reservation $reservation)
     {
-        $data = $request->validate([
+        $messages = [
+            'agent_id.required' => 'The Agent field is required.',
+            'customer_id.required' => 'The Customer field is required.',
+            'reservation_number.required' => 'The Reservation Number field is required.',
+            'reservation_name.required' => 'The Reservation Name field is required.',
+            'reservation_cost.required' => 'The Total Cost field is required.',
+            'agency_commission.required' => 'The Total Agency Commission field is required.',
+            'product_id.required' => 'The Product field is required.',
+            'destination_id.required' => 'The Destination field is required',
+            'resort_id.required' => 'The Resort/Ship field is required.',
+            'onboard_credit_from_cruise_line' => 'The OBC From Cruise Line field must be numeric and may contain 2 decimal points.',
+            'onboard_credit_from_agent' => 'The OBC From Agent field must be numeric and may contain 2 decimal points.',
+            'days_of_tickets.numeric' => 'Invalid',
+        ];
 
+        $data = $request->validate([
             //  Required fields
+            'agent_id' => 'required|integer',
             'customer_id' => 'required|integer',
             'reservation_number' => 'required|string|max:255',
+            'reservation_name' => 'required|string|max:255',
+            'reservation_cost' => 'required|numeric',
+            'agency_commission' => 'required|numeric',
             'status' => 'required|string|max:255',
-            'agent_id' => 'required|integer',
+            'product_id' => 'required|integer',
+            'destination_id' => 'required|integer',
+            'resort_id' => 'required|integer',
 
             //  Optional string fields
             'group_number' => 'nullable|string|max:50',
             'special_offer' => 'nullable|string|max:255',
-            'reservation_name' => 'nullable|string|max:255',
             'celebrations' => 'nullable|string|max:255',
             'celebration_notes' => 'nullable|string|max:255',
             'room_category' => 'nullable|string|max:255',
@@ -201,11 +239,9 @@ class ReservationController extends Controller
             'cruise_level' => 'nullable|string|max:255',
 
             //  Optional numeric
-            'reservation_cost' => 'nullable|numeric',
-            'agency_commission' => 'nullable|numeric',
             'agent_commission' => 'nullable|numeric',
-            'onboard_credit_from_cruise_line' => 'nullable|numeric',
-            'onboard_credit_from_agent' => 'nullable|numeric',
+            'onboard_credit_from_cruise_line' => ['nullable','regex:/^\d+(\.\d{1,2})?$/'],
+            'onboard_credit_from_agent' => ['nullable','regex:/^\d+(\.\d{1,2})?$/'],
 
             //  Optional text
             'commission_notes' => 'nullable|string',
@@ -231,9 +267,6 @@ class ReservationController extends Controller
             'is_surprise' => 'nullable|integer',
             'agent_personal_travel' => 'nullable|integer',
             'secondary_agent' => 'nullable|integer',
-            'product_id' => 'nullable|integer',
-            'destination_id' => 'nullable|integer',
-            'resort_id' => 'nullable|integer',
             'cruise_itinerary_id' => 'nullable|integer',
             'days_of_tickets' => 'nullable|integer',
             'concierge_ship' => 'nullable|integer',
@@ -256,7 +289,7 @@ class ReservationController extends Controller
             'is_facebook_lead' => 'nullable|integer',
             'is_instagram_lead' => 'nullable|integer',
             'is_radio_lead' => 'nullable|integer',
-        ]);
+        ], $messages);
 
         // Always update last modified
         $data['last_modified_by'] = auth()->id();
@@ -269,5 +302,33 @@ class ReservationController extends Controller
             ->with('success', 'Reservation updated successfully');
     }
 
+    public function destroy(Reservation $reservation)
+    {
+        $reservation->update([
+            'is_deleted' => 1,
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
 
+        return redirect()
+            ->route('reservations.reservationList')
+            ->with('success', 'Reservation deleted successfully');
+    }
+
+    public function duplicate(Reservation $reservation)
+    {
+        $data = $reservation->toArray();
+        unset($data['id']); 
+        $data['created_on'] = now();
+        $data['created_by'] = auth()->id();
+        $data['last_modified_by'] = null;
+        $data['last_modified_on'] = null;
+
+        $newReservation = Reservation::create($data);
+
+        return redirect()
+            ->route('reservations.reservationDetails', $newReservation->id)
+            ->with('success', 'Reservation duplicated successfully');
+    }
+    
 }

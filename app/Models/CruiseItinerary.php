@@ -31,4 +31,9 @@ class CruiseItinerary extends Model
     {
         return $this->hasMany(Reservation::class, 'cruise_itinerary_id', 'id');
     }
+
+    public function automatedEmails()
+    {
+        return $this->hasMany(AutomatedEmail::class, 'cruise_itinerary_list');
+    }
 }

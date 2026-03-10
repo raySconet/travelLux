@@ -57,7 +57,7 @@
 
 
                     <tbody class="divide-y">
-                        @foreach($products as $product)
+                        @forelse($products as $product)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick='openVendorModal(@json($product))'>
 
                                 <td class="w-1/6 px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
@@ -85,7 +85,13 @@
                                 </td>
 
                             </tr>
-                        @endforeach    
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-2 text-center">
+                                    No data available in table
+                                </td>
+                            </tr>
+                        @endforelse    
                     </tbody>
                 </table>
             </div>

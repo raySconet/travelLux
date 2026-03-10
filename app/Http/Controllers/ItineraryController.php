@@ -9,7 +9,9 @@ class ItineraryController extends Controller
 {
     public function index(Request $request)
     {
-       $users = User::select('id','name', 'email')->get();
+       $users = User::select('id','name', 'email')
+                    ->where('isDeleted',0)
+                    ->get();
        $agentId = $request->input('users', auth()->id());
        
        return view('itinerary', compact('users', 'agentId'));

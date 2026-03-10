@@ -21,7 +21,9 @@ class ReservationController extends Controller
 
        $agentId = $request->input('users', auth()->id());
 
-       $users = User::select('id','fname', 'lname','email')->get();
+       $users = User::select('id','fname', 'lname','email')
+                    ->where('isDeleted',0)
+                    ->get();
 
        $reservationsQuery = Reservation::with('agent', 'customer', 'product', 'destination')
                                         ->select('id', 'status', 'created_on', 'reservation_number', 'reservation_name', 'customer_id', 'agent_id', 'product_id', 'destination_id', 'checkin_date', 'final_payment_due_date')
@@ -53,15 +55,17 @@ class ReservationController extends Controller
     public function create(Reservation $reservation)
     {
         $reservation = new Reservation();
-        $users = User::select('id','fname', 'lname' ,'email')->get();
+        $users = User::select('id','fname', 'lname' ,'email')
+                    ->where('isDeleted',0)
+                    ->get();
         $isNewReservation = true;
 
-        $customers = Customer::select('id','fname','lname','agent_id','email', 'cellphone')->get();
+        $customers = Customer::select('id','fname','lname','agent_id','email', 'cellphone')->where('is_deleted',0)->get();
 
-        $products = Product::orderBy('product_name')->get();
-        $destinations = Destination::orderBy('destination_name')->get();
-        $resortShips = ResortShip::orderBY('resort_ship_name')->get();
-        $cruiseItineraries = CruiseItinerary::orderBY('cruise_name')->get();
+        $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
+        $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
+        $resortShips = ResortShip::orderBY('resort_ship_name')->where('is_deleted',0)->get();
+        $cruiseItineraries = CruiseItinerary::orderBY('cruise_name')->where('is_deleted',0)->get();
 
 
         return view('reservations.reservationDetails', compact('users', 'reservation', 'isNewReservation', 'products', 'customers', 'destinations', 'resortShips','cruiseItineraries'));
@@ -69,15 +73,17 @@ class ReservationController extends Controller
 
     public function edit(Reservation $reservation)
     {
-        $users = User::select('id','fname', 'lname' ,'email')->get();
+        $users = User::select('id','fname', 'lname' ,'email')
+                    ->where('isDeleted',0)
+                    ->get();
         $isNewReservation = false;
 
-        $customers = Customer::select('id','fname','lname','agent_id')->get();
+        $customers = Customer::select('id','fname','lname','agent_id')->where('is_deleted',0)->get();
 
-        $products = Product::orderBy('product_name')->get();
-        $destinations = Destination::orderBy('destination_name')->get();
-        $resortShips = ResortShip::orderBY('resort_ship_name')->get();
-        $cruiseItineraries = CruiseItinerary::orderBY('cruise_name')->get();
+        $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
+        $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
+        $resortShips = ResortShip::orderBY('resort_ship_name')->where('is_deleted',0)->get();
+        $cruiseItineraries = CruiseItinerary::orderBY('cruise_name')->where('is_where',0)->get();
 
         return view('reservations.reservationDetails', compact('users', 'reservation' ,'isNewReservation','products', 'customers', 'destinations', 'resortShips','cruiseItineraries'));
     }
@@ -329,6 +335,25 @@ class ReservationController extends Controller
         return redirect()
             ->route('reservations.reservationDetails', $newReservation->id)
             ->with('success', 'Reservation duplicated successfully');
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->selected_reservations;
+
+        if (!$ids || count($ids) == 0) {
+            return redirect()->back();
+        }
+
+        Reservation::whereIn('id', $ids)->update([
+            'is_deleted' => 1,
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
+
+        return redirect()
+            ->route('reservations.reservationList')
+            ->with('success', 'Reservations deleted successfully.');
     }
     
 }

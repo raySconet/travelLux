@@ -9,18 +9,19 @@
        
     <x-app-layout>
         <x-slot name="header">
-                <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
-                    <h2 class=" text-2xl text-gray-500 leading-tight">
-                        <i class="fa-solid fas fa-tag mr-2 text-[#f18325]"></i>{{ __('Reservations') }}
-                    </h2>
+            <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
+                <h2 class=" text-2xl text-gray-500 leading-tight">
+                    <i class="fa-solid fas fa-tag mr-2 text-[#f18325]"></i>{{ __('Reservations') }}
+                </h2>
 
-                    @if($isNewReservation)
-                        <div class="space-x-2">
-                            <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save Reservation</span></x-secondary-btn>
-                            <x-primary-btn type="button" onclick="window.location='{{ route('reservations.reservationList') }}'"><i class="far fa-minus-square"></i><span>Close Reservation</span></x-primary-btn>
-                        </div>
-                    @else
-                        <div class="space-x-2">
+                @if($isNewReservation)
+                    <div class="space-x-2">
+                        <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save Reservation</span></x-secondary-btn>
+                        <x-primary-btn type="button" onclick="window.location='{{ route('reservations.reservationList') }}'"><i class="far fa-minus-square"></i><span>Close Reservation</span></x-primary-btn>
+                    </div>
+                @else
+                    <div class="space-x-2">
+                        @if(auth()->user()->isAdmin())
                             <form method="POST" action="{{ route('reservations.destroy', $reservation->id )}}" class="inline delete-form">
                                 @csrf
                                 @method('DELETE')
@@ -30,17 +31,18 @@
                                 </x-secondary-buttonToDelete>
 
                             </form>
-                            <form method="POST" action="{{ route('reservations.duplicate', $reservation->id) }}" class="inline">
-                                @csrf
-                                <x-secondary-buttonToDelete type="submit">
-                                    <i class="fas fa-copy"></i><span>Duplicate</span>
-                                </x-secondary-buttonToDelete>
-                            </form>
-                            <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save Reservation</span></x-secondary-btn>
-                            <x-primary-btn type="button" onclick="window.location='{{ route('reservations.reservationList') }}'"><i class="far fa-minus-square"></i><span>Close Reservation</span></x-primary-btn>
-                        </div>
-                    @endif    
-                </div>
+                        @endif
+                        <form method="POST" action="{{ route('reservations.duplicate', $reservation->id) }}" class="inline">
+                            @csrf
+                            <x-secondary-buttonToDelete type="submit">
+                                <i class="fas fa-copy"></i><span>Duplicate</span>
+                            </x-secondary-buttonToDelete>
+                        </form>
+                        <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save Reservation</span></x-secondary-btn>
+                        <x-primary-btn type="button" onclick="window.location='{{ route('reservations.reservationList') }}'"><i class="far fa-minus-square"></i><span>Close Reservation</span></x-primary-btn>
+                    </div>
+                @endif    
+            </div>
         </x-slot>
 
         <div class="p-2 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">

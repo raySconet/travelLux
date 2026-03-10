@@ -53,4 +53,9 @@ class Product extends Model
         return $this->hasMany(TimelineTask::class, 'product_id', 'id');
     }
 
+    public function automatedEmails()
+    {
+        return $this->hasMany(AutomatedEmail::class, 'product_list');
+    }
+
 }

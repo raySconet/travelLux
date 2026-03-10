@@ -16,7 +16,9 @@ class CustomerController extends Controller
         $agentId = $request->input('users', auth()->id());
         $search = $request->input('search');
 
-        $users = User::select('id','fname','lname','email')->get();
+        $users = User::select('id','fname','lname','email')
+                        ->where('isDeleted',0)
+                        ->get();
 
 
         $customersQuery = Customer::with('agent')
@@ -47,8 +49,8 @@ class CustomerController extends Controller
     {
         $customer = new Customer();
         $isNewCustomer = true;
-        $states = State::orderBy('name')->get();
-        $countries = Country::orderBy('name')->get();
+        $states = State::orderBy('name')->where('is_deleted',0)->get();
+        $countries = Country::orderBy('name')->where('is_deleted',0)->get();
 
         return view('customers.customerDetails', compact('customer', 'isNewCustomer', 'states', 'countries'));
     }
@@ -56,8 +58,8 @@ class CustomerController extends Controller
     public function edit(Customer $customer)
     {
         $isNewCustomer = false;
-        $states = State::orderBy('name')->get();
-        $countries = Country::orderBy('name')->get();
+        $states = State::orderBy('name')->where('is_deleted',0)->get();
+        $countries = Country::orderBy('name')->where('is_deleted',0)->get();
 
         return view('customers.customerDetails', compact('customer', 'isNewCustomer', 'states', 'countries'));
     }

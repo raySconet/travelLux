@@ -62,7 +62,26 @@ $(document).ready(function() {
     window.closeReservationAddCustomerModal = function(){
         $('#reservationAddCustomerModal').addClass('hidden');
     }
-    
+
+    window.openAttentionModal = function(){
+        $('#attentionReservationModal').removeClass('hidden');
+    }
+
+    window.closeAttentionModal = function(){
+        $('#attentionReservationModal').addClass('hidden');
+    }
+
+    window.handleBulkDelete = function() {
+
+        const checked = $('.reservation-checkbox:checked');
+
+        if (checked.length === 0) {
+            openAttentionModal();
+            return;
+        }
+
+        $('#bulkDeleteForm').submit();
+    };
     
     function calculateNights() {
         const checkinVal = $('input[name="checkin_date"]').val();

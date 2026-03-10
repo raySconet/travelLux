@@ -22,14 +22,16 @@
                         </div>
                     @else    
                         <div class="space-x-2">
-                            <form method="POST" action="{{ route('customers.destroy', $customer->id) }}" class="inline delete-form">
-                                @csrf
-                                @method('DELETE')
+                            @if(auth()->user()->isAdmin())
+                                <form method="POST" action="{{ route('customers.destroy', $customer->id) }}" class="inline delete-form">
+                                    @csrf
+                                    @method('DELETE')
 
-                                <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)">
-                                    <i class="fas fa-trash"></i><span>Delete</span>
-                                </x-secondary-buttonToDelete>
-                            </form>
+                                    <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)">
+                                        <i class="fas fa-trash"></i><span>Delete</span>
+                                    </x-secondary-buttonToDelete>
+                                </form>
+                            @endif
                             <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save Customer</span></x-secondary-btn>
                             <x-primary-btn type="button" onclick="window.location='{{ route('customers.customerList') }}'"><i class="far fa-minus-square"></i><span>Close Customer</span></x-primary-btn>
                         </div>

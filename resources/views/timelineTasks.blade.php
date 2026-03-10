@@ -28,7 +28,7 @@
                     <select  onchange="this.form.submit()" name="destination_id" id="destination_id" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 text-[#495057]">
                         <option value="">--Filter by Destination--</option>
                         @foreach($destinations as $destination)
-                            <option value="{{ $destination->id }}"  {{ request('destination_id') == $destination->id ? 'selected' : '' }}>>
+                            <option value="{{ $destination->id }}"  {{ request('destination_id') == $destination->id ? 'selected' : '' }}>
                                 {{ $destination->destination_name }}
                             </option>
                         @endforeach        

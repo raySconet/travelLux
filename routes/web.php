@@ -9,7 +9,7 @@ use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\SystemUsersController;
 use App\Http\Controllers\TimelineTasksController;
 use App\Http\Controllers\AgencyProfileController;
-use App\Http\Controllers\FormsManagerController;
+use App\Http\Controllers\CustomersFormController;
 use App\Http\Controllers\AutomatedEmailsController;
 use App\Http\Controllers\ItineraryController;
 use App\Http\Controllers\CustomerController;
@@ -143,12 +143,23 @@ Route::middleware('auth')->group(function () {
     Route::put('/agencyProfile', [AgencyProfileController::class, 'update'])->name('agencyProfile.update');
 });
 Route::middleware('auth')->group(function () {
-    Route::get('/formsManager', [FormsManagerController::class, 'index'])->name('formsManager');
-    Route::get('/forms-manager/{user}', [FormsManagerController::class, 'edit'])->name('forms-manager.edit');
+    Route::get('/customersForms', [CustomersFormController::class, 'index'])->name('customersForms');
+    Route::get('/customersForm/create', [CustomersFormController::class,'create'])->name('customersForm.create');
+    Route::get('/customers-form/{customerForm}', [CustomersFormController::class, 'edit'])->name('customersForm.edit');
+
+    Route::post('/customersForm', [CustomersFormController::class, 'store'])->name('customersForm.store');
+    Route::put('/customersForm/{customerForm}', [CustomersFormController::class,'update'])->name('customersForm.update');
+    Route::delete('/customersForm/{customerForm}', [CustomersFormController::class,'destroy'])->name('customersForm.destroy');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/automatedEmails', [AutomatedEmailsController::class, 'index'])->name('automatedEmails');
-    Route::get('/automatedEmails/{automatedEmail}', [AutomatedEmailsController::class, 'edit'])->name('automated-emails.edit');
+    Route::get('/automatedEmails/create', [AutomatedEmailsController::class,'create'])->name('automatedEmails.create');
+    Route::get('/automatedEmails/{automatedEmail}', [AutomatedEmailsController::class, 'edit'])->name('automatedEmails.edit');
+
+    Route::post('/automatedEmail', [AutomatedEmailsController::class,'store'])->name('automatedEmails.store');
+    Route::put('/automatedEmail/{automatedEmail}', [AutomatedEmailsController::class,'update'])->name('automatedEmails.update');
+    Route::delete('/automatedEmail/{automatedEmail}', [AutomatedEmailsController::class,'destroy'])->name('automatedEmails.destroy');
+    Route::patch('/automatedEmails/{automatedEmail}/toggle', [AutomatedEmailsController::class, 'toggle'])->name('automatedEmails.toggle');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/itinerary', [ItineraryController::class, 'index']);
@@ -173,6 +184,7 @@ Route::middleware('auth')->group(function(){
     Route::post('/reservation', [ReservationController::class, 'store'])->name('reservations.store');
     Route::put('/reservation/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
     Route::delete('/reservation/{reservation}', [ReservationController::class ,'destroy'])->name('reservations.destroy');
+    Route::delete('/reservations/bulk-delete', [ReservationController::class, 'bulkDelete'])->name('reservations.bulkDelete');
     Route::post('/reservations/{reservation}/duplicate', [ReservationController::class, 'duplicate'])->name('reservations.duplicate');
 });
 Route::middleware('auth')->group(function(){

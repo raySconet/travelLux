@@ -9,7 +9,9 @@ class RebookingRateReportController extends Controller
 {
     public function index()
     {
-        $users = User::select('id','name', 'email')->get();
+        $users = User::select('id','name', 'email')
+                    ->where('isDeleted',0)
+                    ->get();
        return view('reports.rebookingRateReport', compact('users'));
     }
 

@@ -397,4 +397,63 @@ $(document).ready(() => {
 
     // end forms manager
 
+
+    // start automated Emails
+    $('#addRowAutomatedEmails').on('click', function () {
+        const row = `
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-x-5 gap-y-4 items-end">
+                <div class="relative">
+                    <label for="product_list">Product</label>
+                    <select name="product_list" id="product_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+                        <option value="">--Select Product--</option>
+                    </select>
+                </div>
+
+                <div class="relative">
+                    <label for="destination_list">Destination</label>
+                    <select name="destination_list" id="destination_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+                        <option value="">--Select Destination--</option>
+                    </select>
+                </div>
+
+                <div class="relative">
+                    <label for="resort_list">Resort/Ship</label>
+                    <select name="resort_list" id="resort_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+                        <option value="">--Select Resort/Ship--</option>  
+                    </select>
+                </div>
+
+                <div class="relative">
+                    <label for="cruise_itinerary_list">Cruise/Type</label>
+                    <select name="cruise_itinerary_list" id="cruise_itinerary_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+                        <option value="">--Select Cruise/Type--</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-center items-center">
+                    <button type="button"
+                        class="text-[#989898] text-2xl delete-row flex -mt-3 mr-3">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <i id="addRowAutomatedEmails" class="fa-solid fa-circle-plus text-[#f18325] mb-4 text-2xl cursor-pointer"></i>
+                </div>
+            </div>
+        `;
+        $('#addRowAutomatedEmailsContainer').append(row);
+    });
+
+    function toggleReservationSection() {
+        if ($('#email_type').val() === 'Reservation Reminder') {
+            $('#reservationReminderSection').css('display', 'grid');
+        } else {
+            $('#reservationReminderSection').hide();
+        }
+    }
+
+    toggleReservationSection();
+
+    $(document).on('change', '#email_type', function () {
+        toggleReservationSection();
+    });
+    // end automated emails
 });

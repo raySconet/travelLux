@@ -13,16 +13,19 @@
        
         <div class="bg-white shadow rounded-none ml-2 px-3 mr-1">
            
-            <div class="flex items-end justify-end px-6 py-4 ">
+            <form method="GET" action="{{ route('system-users') }}" class="flex items-end justify-end px-6 py-4 ">
 
                 <div class="relative">
                     <input
                         type="text"
+                        name="search"
+                        value="{{ request('search') }}"
                         placeholder="Quick Search"
                         class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none"
+                        oninput="clearTimeout(this.delay); this.delay=setTimeout(()=>this.form.submit(),500)"
                     >
                 </div>
-            </div>
+            </form>
 
            
             <div class="overflow-x-auto">

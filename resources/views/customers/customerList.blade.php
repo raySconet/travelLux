@@ -13,7 +13,7 @@
        
         <div class="bg-white shadow rounded-none ml-2 mr-1">
            
-            <form method="GET" action="{{ route('customers.customerList') }}" class="flex items-end justify-between px-6 py-4 ">
+            <form method="GET" action="{{ route('customers.customerList') }}" class="flex items-end justify-end gap-9 px-6 py-4 ">
                 <select name="CustomerTag" id="customerTag" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                     <option value="-1">--Filter by Customer Tags --</option>
                 </select>
@@ -26,15 +26,16 @@
                     <option value="Prospect" {{ $status == 'Prospect' ? 'selected' : '' }}>Prospect</option>
                 </select>
 
-                
-                <select name="users" id="agents" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" onchange="this.form.submit()">
-                    <option value="-1" {{ $agentId == -1 ? 'selected' : '' }}>All Agents</option>
-                    @foreach ($users as $user)
-                        <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : '' }}>
-                            {{ $user->fname . ' ' . $user->lname}}
-                        </option>
-                    @endforeach
-                </select>
+                @if(auth()->user()->isAdmin())
+                    <select name="users" id="agents" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" onchange="this.form.submit()">
+                        <option value="-1" {{ $agentId == -1 ? 'selected' : '' }}>All Agents</option>
+                        @foreach ($users as $user)
+                            <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : '' }}>
+                                {{ $user->fname . ' ' . $user->lname}}
+                            </option>
+                        @endforeach
+                    </select>
+                @endif
 
                 <input
                     type="text"

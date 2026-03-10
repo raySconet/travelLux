@@ -37,4 +37,9 @@ class ResortShip extends Model
     {
         return $this->hasMany(Reservation::class, 'resort_id', 'id');
     }
+
+    public function automatedEmails()
+    {
+        return $this->hasMany(AutomatedEmail::class, 'resort_list');
+    }
 }

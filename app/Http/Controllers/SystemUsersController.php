@@ -8,11 +8,24 @@ use Illuminate\Support\Facades\Hash;
 
 class SystemUsersController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-       $users = User::select('id','fname', 'lname' ,'email', 'role', 'is_disabled', 'phone_number', 'city', 'state')
-                      ->where('isDeleted', 0)
-                      ->get();
+       $search = $request->input('search'); 
+       $usersQuery = User::select('id','fname', 'lname' ,'email', 'role', 'is_disabled', 'phone_number', 'city', 'state')
+                      ->where('isDeleted', 0);
+
+       if($search){
+            $usersQuery->where('fname', 'like', "%{$search}%")
+                       ->orwhere('lname', 'like', "%{$search}%")
+                       ->orwhere('email', 'like', "%{$search}%")
+                       ->orwhere('role', 'like', "%{$search}%")
+                       ->orwhere('phone_number', 'like', "%{$search}%")
+                       ->orwhere('city', 'like', "%{$search}%")
+                       ->orwhere('state', 'like', "%{$search}%");
+       }
+       
+       $users = $usersQuery->get();
+
        return view('systemUsers', compact('users'));
     }
 

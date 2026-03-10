@@ -96,6 +96,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function isAdmin()
+    {
+        return $this->role == 1;
+    }
+
     public function isSuperAdmin()
     {
         return $this->userPermission === 'super_admin';
@@ -107,4 +112,13 @@ class User extends Authenticatable
         return $this->hasMany(Customer::class, 'agent_id');
     }
 
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'agent_id');
+    }
+
+    public function automatedEmails()
+    {
+        return $this->hasMany(AutomatedEmail::class, 'agent_id');
+    }
 }

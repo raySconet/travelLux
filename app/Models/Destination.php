@@ -45,5 +45,10 @@ protected $table = 'destinations';
     public function timelineTasks()
     {
         return $this->hasMany(TimelineTask::class, 'destination_id', 'id');
-}
+    }
+
+    public function automatedEmails()
+    {
+        return $this->hasMany(AutomatedEmail::class, 'destination_list');
+    }
 }

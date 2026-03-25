@@ -58,7 +58,14 @@ class CustomersFormController extends Controller
         $data['created_by'] = auth()->id();
         $data['created_at'] = now();
 
-        CustomersForm::create($data);
+        $form = CustomersForm::create($data);
+
+        CustomersFormRequired::create([
+            'form_id' => $form->id,
+            'all_customers_required' => $request->all_customers_required ?? 0,
+            'all_reservations_required' => $request->all_reservations_required ?? 0,
+            'is_deleted' => 0
+        ]);
 
         return redirect()
                 ->route('customersForms')
@@ -85,6 +92,15 @@ class CustomersFormController extends Controller
         $data['updated_at'] = now();
 
         $customerForm->update($data);
+
+        CustomersFormRequired::updateOrCreate(
+            ['form_id' => $customerForm->id],
+            [
+                'all_customers_required' => $request->all_customers_required ?? 0,
+                'all_reservations_required' => $request->all_reservations_required ?? 0,
+                'is_deleted' => 0
+            ]
+        );
 
         return redirect()
                 ->route('customersForms')

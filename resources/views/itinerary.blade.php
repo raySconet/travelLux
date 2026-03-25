@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
-            <h2 class=" text-2xl text-gray-500 leading-tight">
+        <div class="p-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+            <h2 class=" text-xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-plane mr-2 text-[#f18325]"></i>{{ __('Itinerary') }}
             </h2>
 
@@ -9,9 +9,9 @@
         </div>
     </x-slot>
 
-    <div class="p-2">
+    <div class="mx-auto py-2 px-4">
        
-        <div class="bg-white shadow rounded-none ml-2 mr-1 px-2">
+        <div class="py-3 bg-white shadow rounded-lg px-2">
            
             <div class="flex items-end justify-end gap-4 px-6 py-4">
                 <div class="flex flex-col gap-1">
@@ -22,7 +22,7 @@
                         <option value="-1">All Agents</option>
                         @foreach ($users as $user)
                             <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : ''}}>
-                                {{ $user->name }}
+                                {{ $user->fname . ' ' . $user->lname }}
                             </option>
                         @endforeach
                     </select>

@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
+        <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-2xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-user-circle mr-2 text-[#f18325]"></i>{{ __('Agents Report') }}
             </h2>
@@ -8,9 +8,9 @@
         </div>
     </x-slot>
 
-    <div class="p-2">
+    <div class="mx-auto py-2 px-4">
        
-        <div class="bg-white shadow rounded-none ml-2">
+        <div class="p-3 bg-white shadow sm:rounded-lg">
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">
@@ -41,15 +41,15 @@
                         @foreach ($users as $user)
                             <tr class="hover:bg-gray-50 cursor-pointer">
                                 <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                                    {{ $user->name }}
+                                    {{ $user->fname }}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
-                                    
+                                    {{ $user->lname }}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                    {{ $user->city . '-' . $user->state . '-' . $user->first_address_line1 }}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
@@ -57,11 +57,11 @@
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                    {{ $user->cell_phone_number }}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                    {{ $user->commission }}
                                 </td>
 
                             </tr>

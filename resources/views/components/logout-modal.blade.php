@@ -1,0 +1,33 @@
+<div id="logoutModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
+
+    <div class="bg-white w-full max-w-lg rounded-lg relative">
+
+
+        <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-exclamation-triangle text-[#f18325] text-lg"></i>
+                <h2 class="text-lg">Logout</h2>
+            </div>
+
+            <button type="button" onclick="closeLogoutModal()" class="text-gray-400 hover:text-gray-400">
+                ✕
+            </button>
+        </div>
+
+        <div class="px-6 py-4 space-y-4">
+            <p class="text-base">Are you sure you want to logout?</p>
+        </div>
+
+        <div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
+            <x-secondary-btn type="button" onclick="closeLogoutModal()">
+                <i class="fa fa-thumbs-down"></i>
+                <span>No</span>
+            </x-secondary-btn>
+
+            <x-primary-btn type="submit" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fa fa-thumbs-up"></i>
+                <span>Yes</span>
+            </x-primary-btn>
+        </div>
+    </div>
+</div>

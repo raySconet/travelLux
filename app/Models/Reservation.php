@@ -110,4 +110,30 @@ class Reservation extends Model
     {
         return $this->belongsTo(CruiseItinerary::class, 'cruise_itinerary_id');
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(ReservationTask::class, 'reservation_id', 'id');
+    }
+
+    public function diningNotes()
+    {
+        return $this->hasMany(ReservationDiningNote::class, 'reservation_id', 'id');
+    }
+
+    public function gifts()
+    {
+        return $this->hasMany(ReservationGift::class,'reservation_id','id');
+    }
+
+    public function phoneNotes()
+    {
+        return $this->hasMany(ReservationPhoneNote::class,'reservation_id','id');
+    }
+
+    public function commissionFees()
+    {
+        return $this->hasMany(ReservationCommissionFee::class,'reservation_id','id');
+    }
+
 }

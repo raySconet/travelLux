@@ -21,6 +21,6 @@ class CustomersFormRequired extends Model
 
     public function form()
     {
-        return $this->belongsTo(CustomersForm::class, 'form_id')->where();
+        return $this->belongsTo(CustomersForm::class, 'form_id');
     }
 }

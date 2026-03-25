@@ -5,12 +5,12 @@
     'saveClass' => null,
 ])
 
-<div id="{{ $id }}" class="fixed inset-0 bg-black/30 flex items-center justify-center hidden z-[9999]">
+<div id="{{ $id }}" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
     
     <div class="bg-white w-full max-w-lg rounded-lg shadow-lg relative">
 
         
-        <div class="flex items-center justify-between px-6 py-4 border-b-2 border-t-2 border-[#dee2e6]">
+        <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
             <div class="flex items-center space-x-2">
                 <i class="fas fa-plus-circle text-[#f18325] text-base"></i>
                 <h2 class="text-base">{{ $title }}</h2>

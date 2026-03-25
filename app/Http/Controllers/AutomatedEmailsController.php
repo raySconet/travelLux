@@ -19,24 +19,30 @@ class AutomatedEmailsController extends Controller
                     ->where('isDeleted',0)
                     ->get();
 
+        $agentId = $request->input('agent_id', -1);
+
         $query = AutomatedEmail::with('agent','product','destination','resortShip','cruiseItinerary')
                                 ->select('id','is_disabled','subject','before_after','days','message','agent_id','product_list','destination_list','resort_list','cruise_itinerary_list')
                                 ->where('is_deleted',0);
 
-        if ($request->agent_id && $request->agent_id != -1) {
-            $query->where('agent_id', $request->agent_id);
+        if ($agentId == -1) {
+            $query->where('agent_id', -1); 
+        } else {
+            $query->where('agent_id', $agentId);
         }
 
-        if($search){
-            $query->where('subject', 'like', "%{$search}%")
-                  ->where('before_after','like',"%{$search}%")
-                  ->where('days', 'like', "%{$search}%")
-                  ->where('message','like',"%{$search}%");  
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('subject', 'like', "%{$search}%")
+                ->orWhere('before_after','like',"%{$search}%")
+                ->orWhere('days', 'like', "%{$search}%")
+                ->orWhere('message','like',"%{$search}%");
+            });
         }
 
         $automatedEmails = $query->get();
 
-        return view('automatedEmails', compact('users','automatedEmails'));
+        return view('automatedEmails', compact('users','automatedEmails', 'agentId'));
     }
 
     public function create(AutomatedEmail $automatedEmail)
@@ -95,7 +101,7 @@ class AutomatedEmailsController extends Controller
             'destination_list' => 'nullable|integer',
             'resort_list' => 'nullable|integer',
             'cruise_itinerary_list' => 'nullable|integer',
-            'agent_id' => 'nullable|integer',
+            'agent_id' => 'required|integer',
             'is_disabled' => 'nullable|integer',
             'is_deleted' => 'nullable|integer'
         ], $messages);
@@ -131,7 +137,7 @@ class AutomatedEmailsController extends Controller
             'destination_list' => 'nullable|integer',
             'resort_list' => 'nullable|integer',
             'cruise_itinerary_list' => 'nullable|integer',
-            'agent_id' => 'nullable|integer',
+            'agent_id' => 'required|integer',
             'is_disabled' => 'nullable|integer',
             'is_deleted' => 'nullable|integer'
         ], $messages);

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
-            <h2 class=" text-2xl text-gray-500 leading-tight">
+        <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+            <h2 class=" text-xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-chart-pie mr-2 text-[#f18325]"></i>{{ __('Alias Total Gross Commission') }}
             </h2>
             
@@ -10,15 +10,15 @@
         </div>
     </x-slot>
 
-    <div class="p-2">
+    <div class="mx-auto py-2 px-4">
        
-        <div class="bg-white shadow rounded-none ml-2">
+        <div class="bg-white shadow sm:rounded-lg ml-2">
             <div class="overflow-x-auto">
                 <p class="bg-gray-100 ml-1 text-sm">Alias Total Gross Commissions are the total agency commissions from the reservations,as it's been imputed or paid.
                     Meaning the full commission amount not the split.(keep in mind if you haven't marked something claimed that you claimed its in here twice)
                 </p>
                 <table class="min-w-full text-sm">
-                    <thead class="bg-white">
+                    <thead class="bg-white sm:rounded-lg">
                         <tr>
                             <th class="w-1/2 px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Alias
@@ -46,5 +46,5 @@
         </div>
     </div>
 
-    <x-report-range-date></x-report-range-date>
 </x-app-layout>
+<x-report-range-date></x-report-range-date>

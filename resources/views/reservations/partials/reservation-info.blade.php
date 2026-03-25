@@ -13,7 +13,7 @@
         </div>
 
         <div class="flex items-center mt-5 gap-3">
-            <i class="fas fa-user-plus text-2xl text-[#f18325]" onclick="openReservationAddCustomerModal()"></i>
+            <i class="fas fa-user-plus text-2xl text-[#f18325]" title="Quick Customer Add" onclick="openReservationAddCustomerModal()"></i>
 
             <div class="flex-1">
                 <label for="customer" class="text-sm block mb-1">Customer</label>
@@ -468,10 +468,10 @@ function reservationDropdowns(customers, currentCustomerId = null, currentAgentI
 </script>
 
 <!-- Reservation Add Customer Modal -->
-<div id="reservationAddCustomerModal" class="fixed inset-0 bg-black/30 flex items-center justify-center hidden z-[9999]">
+<div id="reservationAddCustomerModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
     <div class="bg-white w-full max-w-4xl rounded-lg shadow-lg relative max-h-[95vh] overflow-y-auto">
 
-        <div class="flex items-center justify-between px-6 py-4 border-b-2 border-t-2 border-[#dee2e6]">
+        <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
             <div class="flex items-center space-x-2">
                 <i class="fas fa-user-plus text-[#f18325] text-base"></i>
                 <h2 class="text-base">Add Customer</h2>

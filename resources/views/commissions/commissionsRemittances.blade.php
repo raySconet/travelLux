@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
-            <h2 class="text-2xl text-gray-500 leading-tight flex items-baseline">
+        <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+            <h2 class="text-xl text-gray-500 leading-tight flex items-baseline">
                 <i class="fa-solid fa-download mr-2 text-[#f18325]"></i>
                 <span>Commissions Remittances</span>
                 <span class="text-base ml-2">- Received from vendors</span>
@@ -15,7 +15,7 @@
     </x-slot>
 
 
-    <div class="bg-[#90caf9] shadow rounded-none p-6 w-406 ml-3">
+    <div class="bg-[#90caf9] shadow sm:rounded-lg p-6 w-406 ml-3 mt-2">
         <p class="text-base font-semibold text-white">Search For Reservations</p>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
             <div class="relative mt-3">
@@ -57,7 +57,7 @@
         </div>
     </div>
 
-    <div class="bg-[#c8e6c9] shadow rounded-none p-6 mt-5 w-406 ml-3">
+    <div class="bg-[#c8e6c9] shadow sm:rounded-lg p-6 mt-5 w-406 ml-3">
         <div class="flex flex-row justify-between">
             <div class="flex flex-row gap-1">
                 <i class="fas fa-check text-[#00a86b] mt-1 text-2xl font-extrabold"></i>
@@ -69,7 +69,7 @@
 
         <div class="p-6">
        
-        <div class="bg-white shadow rounded-none">
+        <div class="bg-white shadow sm:rounded-lg">
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">

@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Customer;
 use App\Models\State;
 use App\Models\Country;
+use App\Models\CustomersForm;
+use App\Models\CustomerFamilyMember;
 
 class CustomerController extends Controller
 {
@@ -49,19 +51,28 @@ class CustomerController extends Controller
     {
         $customer = new Customer();
         $isNewCustomer = true;
-        $states = State::orderBy('name')->where('is_deleted',0)->get();
-        $countries = Country::orderBy('name')->where('is_deleted',0)->get();
+        $states = State::orderBy('name')->get();
+        $countries = Country::orderBy('name')->get();
 
         return view('customers.customerDetails', compact('customer', 'isNewCustomer', 'states', 'countries'));
     }
 
+
     public function edit(Customer $customer)
     {
         $isNewCustomer = false;
-        $states = State::orderBy('name')->where('is_deleted',0)->get();
-        $countries = Country::orderBy('name')->where('is_deleted',0)->get();
+        
 
-        return view('customers.customerDetails', compact('customer', 'isNewCustomer', 'states', 'countries'));
+        $states = State::orderBy('name')->get();
+        $countries = Country::orderBy('name')->get();
+
+        $availableForms = CustomersForm::where('is_deleted', 0)
+                                        ->where('is_active', 1)
+                                        ->whereHas('customersFormRequired', function ($q) {
+                                            $q->where('all_customers_required', 1);
+                                        })->get();
+
+        return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms'));
     }
 
     public function inviteNewCustomer(){
@@ -268,7 +279,16 @@ class CustomerController extends Controller
         $data['created_by'] = auth()->id();
         $data['created_on'] = now();
 
-        Customer::create($data);
+        $customer = Customer::create($data);
+
+        $customer->familyMembers()->create([
+            'fname' => $data['fname'],
+            'lname' => $data['lname'],
+            'relation' => 'Self',
+        
+            'created_by' => auth()->id(),
+            'created_on' => now(),
+        ]);
 
         return redirect()
             ->route('customers.customerList')
@@ -484,4 +504,66 @@ class CustomerController extends Controller
             ->route('customers.customerList')
             ->with('success', 'Customer deleted successfully');
     }
+
+    public function storeFamilyMember(Request $request, Customer $customer)
+    {
+        $messages = [
+            'fname.required' => 'The First Name field is required.',
+            'lname.required' => 'The Last Name field is required.'
+        ];
+        
+        $data = $request->validate([
+            'fname' => 'required|string',
+            'lname' => 'required|string',
+            'mname' => 'nullable|string',
+            'nickname' => 'nullable|string',
+            'birth_date' => 'nullable|date',
+            'relation' => 'nullable|string',
+            'gender' => 'nullable|string',
+            'cellphone' => 'nullable|integer',
+            'home_phone' => 'nullable|integer',
+            'work_phone' => 'nullable|integer',
+            'email' => 'nullable|string',
+            'traveler_number' => 'nullable|integer',
+            'deceased' => 'nullable|integer',
+            'passport_number' => 'nullable|integer',
+            'passport_issue_date' => 'nullable|date',
+            'passport_expiration_date' => 'nullable|date',
+            'address_line1' => 'nullable|string',
+            'address_line2' => 'nullable|string',
+            'city' => 'nullable|string',
+            'state' => 'nullable|string',
+            'zip_code' => 'nullable|integer',
+            'country' => 'nullable|integer',
+            'special_notes' => 'nullable|string',
+        ], $messages);
+
+        $data['customer_id'] = $customer->id;
+        $data['created_by'] = auth()->id();
+        $data['created_on'] = now();
+
+        CustomerFamilyMember::create($data);
+
+        return redirect()
+                ->route('customers.customerDetails', $customer->id)
+                ->with('success', 'Family Member added successfully')
+                ->with('activeTab', 'family');
+    }
+
+    public function deleteFamilyMember(CustomerFamilyMember $member)
+    {
+        $customerId = $member->customer_id;
+
+        $member->update([
+            'is_deleted' => 1,
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
+
+        return redirect()
+                ->route('customers.customerDetails', $customerId)
+                ->with('success', 'Family Member deleted successfully')
+                ->with('activeTab', 'family');
+    }
+
 }

@@ -1,23 +1,25 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
-                <h2 class=" text-2xl text-gray-500 leading-tight">
+        <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+                <h2 class=" text-xl text-gray-500 leading-tight">
                     <i class="fa-solid fa-tag mr-2 text-[#f18325]"></i>{{ __('Reservations') }}
                 </h2>
 
                 <div class="space-x-2">
-                    <x-secondary-buttonToDelete type="button" onclick="handleBulkDelete()">
-                        <i class="fas fa-trash"></i>
-                        <span>Delete Reservations</span>
-                    </x-secondary-buttonToDelete>
+                    @if(auth()->user()->isAdmin())
+                        <x-secondary-buttonToDelete type="button" onclick="handleBulkDelete()">
+                            <i class="fas fa-trash"></i>
+                            <span>Delete Reservations</span>
+                        </x-secondary-buttonToDelete>
+                    @endif
                     <x-primary-btn type="button" onclick="window.location='{{ route('reservations.create') }}'"><i class="far fa-plus-square"></i><span>Add Reservations</span></x-primary-btn>
                 </div>
         </div>
     </x-slot>
 
-    <div class="p-2">
+    <div class="mx-auto py-2 px-4">
        
-        <div class="bg-white shadow rounded-none ml-1">
+        <div class="p-3 bg-white shadow sm:rounded-lg">
            
             <form method="GET" action="{{ route('reservations.reservationList')}}" class="flex items-end justify-end px-6 py-4 gap-4"  onchange="this.form.submit()">
                 <select name="status" id="status" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" onchange="this.form.submit()">
@@ -118,7 +120,7 @@
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                        {{ $reservation->created_on ? \Carbon\Carbon::parse($reservation->created_on)->format('m/d/Y') : '-' }}
+                                        {{ $reservation->created_on ? \Carbon\Carbon::parse($reservation->created_on)->format('m/d/Y') : ' ' }}
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
@@ -130,23 +132,23 @@
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                        {{ $reservation->customer ? $reservation->customer->fname . ',' . $reservation->customer->lname : '-' }}
+                                        {{ $reservation->customer ? $reservation->customer->fname . ',' . $reservation->customer->lname : ' ' }}
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                        {{ $reservation->agent ? $reservation->agent->fname . ' ' . $reservation->agent->lname : '-' }}
+                                        {{ $reservation->agent ? $reservation->agent->fname . ' ' . $reservation->agent->lname : ' ' }}
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                        {{ $reservation->product ? $reservation->product->product_name : '-' }}
+                                        {{ $reservation->product ? $reservation->product->product_name : ' ' }}
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                        {{ $reservation->destination ? $reservation->destination->destination_name : '-' }}
+                                        {{ $reservation->destination ? $reservation->destination->destination_name : ' ' }}
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                        {{ $reservation->checkin_date}}
+                                        {{ $reservation->checkin_date ? \Carbon\Carbon::parse($reservation->checkin_date)->format('m/d/Y') : ' ' }}
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">

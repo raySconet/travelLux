@@ -24,7 +24,7 @@ window.dateDropdown = function(initialDate = '', minYear = 1920, maxYear = 2040)
             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
         ],
-        years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i),
+        years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i),
         get formattedDate() {
             if (!this.day || !this.month || !this.year) return '';
             return `${String(this.year)}-${String(this.month).padStart(2,'0')}-${String(this.day).padStart(2,'0')}`;
@@ -69,15 +69,6 @@ $(document).ready(() => {
 
         XLSX.writeFile(workbook, 'Archer Luxury Travel CRM.xlsx');
     });
-    
-    //  window.openDeleteModal = function() {
- 
-    //     $('#deleteModal').removeClass('hidden');
-    // }
-
-    // window.closeDeleteModal = function() {
-    //     $('#deleteModal').addClass('hidden');
-    // }
 
     let deleteForm = null;
 
@@ -96,4 +87,12 @@ $(document).ready(() => {
             deleteForm.submit();
         }
     });
+
+    window.openLogoutModal = function(){
+        $('#logoutModal').removeClass('hidden');
+    }
+
+    window.closeLogoutModal = function(){
+        $('#logoutModal').addClass('hidden');
+    }
 });

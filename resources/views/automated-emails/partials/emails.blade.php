@@ -68,13 +68,13 @@
         <div class="relative mt-8">
             <label for="agent_id">Automated Email For</label>
             <select name="agent_id" id="agent_id" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
-                <option value="-1">--Select Agent--</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}"
-                            {{ old('agent_id', $automatedEmail->agent_id ?? '') == $user->id ? 'selected' : '' }}>
-                            {{ $user->fname . ' ' . $user->lname }}
-                        </option>
-                    @endforeach        
+                <option value="-1" {{ old('agent_id', $automatedEmail->agent_id ?? '') == -1 ? 'selected' : '' }}>All Agents</option>
+                @foreach($users as $user)
+                    <option value="{{ $user->id }}"
+                        {{ old('agent_id', $automatedEmail->agent_id ?? '') == $user->id ? 'selected' : '' }}>
+                        {{ $user->fname . ' ' . $user->lname }}
+                    </option>
+                @endforeach        
             </select>
         </div>
     </div>

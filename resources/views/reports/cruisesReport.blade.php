@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-xl text-gray-500 leading-tight">
-                <i class="fa-solid fa-plane mr-2 text-[#f18325]"></i>{{ __('Travel Impressions Report') }}
+                <i class="fa-solid fa-ship mr-2 text-[#f18325]"></i>{{ __('Cruises Report') }}
             </h2>
             
             <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#f18325] text-[#f18325]"><i class="fas fa-cloud-download-alt"></i>Download</button>
@@ -12,15 +12,14 @@
         </div>
     </x-slot>
 
-    <div class="p-2">
-       
+    <div class="p-2">  
        
     </div>
 
 </x-app-layout>
 <x-report-range-date>
     <x-slot name="footer">
-        <x-primary-btn id="totalCommissionReportBtn"><i class="fa fa-paper-plane"></i><span>Run Report</span></x-primary-btn>
+        <x-primary-btn id="cruisesReportBtn"><i class="fa fa-paper-plane"></i><span>Run Report</span></x-primary-btn>
         <x-secondary-btn onclick="closeReportDateRangeModal()"><i class="fa fa-times-circle"></i><span>Cancel</span></x-secondary-btn>
     </x-slot>
 </x-report-range-date>

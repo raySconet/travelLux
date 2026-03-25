@@ -4,7 +4,7 @@
 
         <div id="dashboard-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            <div class="dashboard-card bg-white shadow rounded-none p-9">
+            <div class="dashboard-card bg-white shadow sm:rounded-lg p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold  flex items-center gap-2 text-xl">
                         <i class="far fa-clock text-xl text-[#ff5722]"></i>
@@ -42,7 +42,7 @@
             </div>
 
             
-            <div class="dashboard-card bg-white shadow rounded-none p-9">
+            <div class="dashboard-card bg-white shadow sm:rounded-lg p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold  flex items-center gap-2 text-xl">
                         <i class="fas fa-dollar-sign font-bold text-xl text-blue-500"></i>
@@ -94,7 +94,7 @@
         <div id="dashboard-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             
-            <div class="dashboard-card bg-white shadow rounded-none p-9">
+            <div class="dashboard-card bg-white shadow sm:rounded-lg p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-semibold text-gray-700 flex items-center gap-2 text-xl">
                         <i class="far fa-calendar-alt text-blue-500 text-xl"></i>
@@ -113,7 +113,7 @@
             </div>
 
           
-            <div class="dashboard-card bg-white shadow rounded-none p-9">
+            <div class="dashboard-card bg-white shadow sm:rounded-lg p-9">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-semibold  flex items-center gap-2 text-xl">
                         <i class="fas fa-chart-line text-[#2196f3]"></i>

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
-            <h2 class=" text-2xl text-gray-500 leading-tight">
+        <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+            <h2 class=" text-xl text-gray-500 leading-tight">
                 <i class="fa-solid fas fa-list mr-2 text-[#f18325]"></i>{{ __('Vendors') }}
             </h2>
             
@@ -9,9 +9,9 @@
     </x-slot>
     
 
-    <div class="p-2">
+    <div class="mx-auto py-2 px-4">
        
-        <div class="bg-white shadow rounded-none ml-2 px-2 mr-1">
+        <div class="p-3 bg-white shadow sm:rounded-lg px-2">
            
             <div class="flex items-end justify-end px-6 py-4 ">
 
@@ -103,7 +103,7 @@
         @csrf
         @method('PUT')
 
-        <div id="vendorModal" class="fixed inset-0 bg-black/30 flex items-center justify-center hidden z-[9999]">
+        <div id="vendorModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
             <div class="bg-white w-full max-w-lg rounded-lg shadow-lg relative">
                 
             

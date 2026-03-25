@@ -534,7 +534,7 @@ class CustomerController extends Controller
             'city' => 'nullable|string',
             'state' => 'nullable|string',
             'zip_code' => 'nullable|integer',
-            'country' => 'nullable|integer',
+            'country' => 'nullable|string',
             'special_notes' => 'nullable|string',
         ], $messages);
 

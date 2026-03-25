@@ -202,7 +202,7 @@
 
                         <div class="flex items-center justify-end gap-2 mt-8">
                             <input type="hidden" name="deceased" value="0">
-                            <input type="checkbox" class="h-4 w-4" value="1">
+                            <input type="checkbox" name="deceased"  class="h-4 w-4" value="1">
                             <label class="text-sm">Deceased</label>
                         </div>
                     </div>

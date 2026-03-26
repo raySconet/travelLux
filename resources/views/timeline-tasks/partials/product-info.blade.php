@@ -20,9 +20,9 @@
             <select name="destination_id" id="destination_id" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
                 <option value="">--Select Destination--</option>
                 @foreach($destinations as $destination)
-                    <option value="{{ $destination->id }}"
+                    <option value="{{ $destination->id }}" data-product="{{ $destination->product_id }}"
                         {{ old('destination_id', $timelineTask->destination_id) == $destination->id ? 'selected' : '' }}>
-                        {{ $destination->destination_name}}
+                        {{ $destination->destination_name }}
                     </option>
                 @endforeach        
             </select>

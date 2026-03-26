@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
+    {{-- <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
         @csrf
-    </form>
+    </form> --}}
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">

@@ -14,9 +14,8 @@
         <div class="p-3 bg-white shadow sm:rounded-lg px-3">
            
             <form method="GET" action="{{ route('timelinetasks') }}" class="flex items-end justify-end px-6 py-4">
-
                 <div class="relative flex gap-6">
-                    <select  onchange="this.form.submit()" name="product_id" id="product_id" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 text-[#495057]">
+                    <select onchange="document.getElementById('destination_id').value=''; this.form.submit()" name="product_id" id="product_id" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 text-[#495057]">
                         <option value="">--Filter By Product--</option>
                         @foreach($products as $product)
                             <option value="{{ $product->id }}"
@@ -25,14 +24,19 @@
                             </option>    
                         @endforeach    
                     </select>
-                    <select  onchange="this.form.submit()" name="destination_id" id="destination_id" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 text-[#495057]">
+
+                    <select onchange="this.form.submit()" name="destination_id" id="destination_id" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 text-[#495057] {{ request('product_id') ? '' : '' }}">
                         <option value="">--Filter by Destination--</option>
-                        @foreach($destinations as $destination)
-                            <option value="{{ $destination->id }}"  {{ request('destination_id') == $destination->id ? 'selected' : '' }}>
-                                {{ $destination->destination_name }}
-                            </option>
-                        @endforeach        
+                        @if(request('product_id'))
+                            @foreach($destinations as $destination)
+                                <option value="{{ $destination->id }}" 
+                                    {{ request('destination_id') == $destination->id ? 'selected' : '' }}>
+                                    {{ $destination->destination_name }}
+                                </option>
+                            @endforeach  
+                        @endif
                     </select>
+
                     <input
                         type="text"
                         name="search"

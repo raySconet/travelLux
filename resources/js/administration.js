@@ -26,6 +26,36 @@ window.Alpine = Alpine;
 Alpine.start();
 $(document).ready(() => {
 
+    // start timeline task 
+    var $productSelect = $('#product_id');
+    var $destinationSelect = $('#destination_id');
+    var $allOptions = $destinationSelect.find('option').not(':first'); 
+
+    function filterDestinations() {
+        var selectedProduct = $productSelect.val();
+        var selectedDestination = $destinationSelect.val(); 
+
+        if (!selectedDestination || selectedDestination === '') {
+            $destinationSelect.val('');
+        }
+
+        $allOptions.each(function() {
+            var $option = $(this);
+            if ($option.data('product') == selectedProduct || $option.val() == selectedDestination) {
+                $option.show();
+            } else {
+                $option.hide();
+            }
+        });
+
+        $destinationSelect.prop('disabled', !selectedProduct);
+    }
+    filterDestinations();
+
+    $productSelect.on('change', filterDestinations);
+
+    // end timeline task
+
     // start forms manager
     $('#addRowBtn').on('click', function () {
         const row = `

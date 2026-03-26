@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
-            <h2 class=" text-2xl text-gray-500 leading-tight">
+        <div class="p-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+            <h2 class=" text-xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-user-circle mr-2 text-[#f18325]"></i>{{ __('System Users') }}
             </h2>
             
@@ -9,9 +9,9 @@
         </div>
     </x-slot>
 
-    <div class="p-2">
+    <div class="mx-auto py-2 px-4">
        
-        <div class="bg-white shadow rounded-none ml-2 px-3 mr-1">
+        <div class="py-3 bg-white shadown sm:rounded-lg px-3">
            
             <form method="GET" action="{{ route('system-users') }}" class="flex items-end justify-end px-6 py-4 ">
 
@@ -84,7 +84,7 @@
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $user->role }}
+                                    <span class="ml-8">{{ $user->role }}</span>
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">

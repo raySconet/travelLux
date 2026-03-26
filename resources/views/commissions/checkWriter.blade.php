@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
-            <h2 class="text-2xl text-gray-500 leading-tight flex items-baseline">
+        <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+            <h2 class="text-xl text-gray-500 leading-tight flex items-baseline">
                 <i class="fa-solid fa-pen mr-2 text-[#f18325]"></i>
                 <span>Check Writer</span>
             </h2>
@@ -12,9 +12,9 @@
         </div>
     </x-slot>
 
-    <div class="p-2">
+    <div class="mx-auto py-2 px-4">
        
-        <div class="bg-white shadow rounded-none ml-2 px-3">
+        <div class="p-3 bg-white shadow sm:rounded-lg">
            
             <div class="flex  justify-between px-6 py-4 ">
                 <div class="flex flex-row gap-4">
@@ -127,7 +127,7 @@
 </x-app-layout>
 
 <!-- Edit Reservation Check Writer Modal -->
-<div id="editReservationCheckWriterModal" class="fixed inset-0 bg-black/30 flex items-center justify-center hidden z-[9999]">
+<div id="editReservationCheckWriterModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
     <div class="bg-white w-full max-w-lg rounded-lg shadow-lg relative max-h-[125vh] overflow-y-auto">
 
         <div class="flex items-center justify-between px-3 py-4 border-b-2 border-t-2 border-[#dee2e6]">

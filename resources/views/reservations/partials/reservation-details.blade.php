@@ -22,8 +22,8 @@
             <select name="destination_id"id="destination_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="">--Select Destination--</option>
                 @foreach($destinations as $destination)
-                    <option value="{{ $destination->id }}"
-                        {{ old('destination_id', $reservation->destination_id) == $destination->id ? 'selected' : ''}}>
+                    <option value="{{ $destination->id }}" data-product="{{ $destination->product_id }}"
+                        {{ old('destination_id', $reservation->destination_id) == $destination->id ? 'selected' : '' }}>
                         {{ $destination->destination_name }}
                     </option>
                 @endforeach        
@@ -38,8 +38,8 @@
             <label for="resort_id" class="text-sm block mb-1">Resort/Ship</label>
             <select name="resort_id"id="resort_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="">--Select Resort/Ship--</option>
-                @foreach($resortShips as $resortShip)
-                    <option value="{{ $resortShip->id }}"
+                @foreach($resortShips as $resortShip) 
+                    <option value="{{ $resortShip->id }}" data-destination="{{ $resortShip->destination_id }}" 
                         {{ old('resort_id', $reservation->resort_id) == $resortShip->id ? 'selected' : '' }}>
                         {{ $resortShip->resort_ship_name }}
                     </option>
@@ -53,10 +53,10 @@
             <label for="cruise_itinerary_id" class="text-sm block mb-1">Cruise Itinerary</label>
             <select name="cruise_itinerary_id"id="cruise_itinerary_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="-1">--Select Cruise/Type--</option>
-                @foreach($cruiseItineraries as $cruiseItineray)
-                <option value="{{ $cruiseItineray->id }}"
-                        {{ old('cruise_itinerary_id', $reservation->cruise_itinerary_id) == $cruiseItineray->id ? 'selected' : '' }}>
-                        {{ $cruiseItineray->cruise_name }}
+                @foreach($cruiseItineraries as $cruiseItinerary)
+                <option value="{{ $cruiseItinerary->id }}" 
+                        {{ old('cruise_itinerary_id', $reservation->cruise_itinerary_id) == $cruiseItinerary->id ? 'selected' : '' }}>
+                        {{ $cruiseItinerary->cruise_name }}
                     </option>
                 @endforeach        
             </select>
@@ -276,3 +276,32 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const destinationSelect = document.getElementById('destination_id');
+    const resortSelect = document.getElementById('resort_id');
+    const resortOptions = Array.from(resortSelect.options);
+
+    function filterResorts() {
+        const selectedDestination = destinationSelect.value;
+
+        resortSelect.innerHTML = '<option value="">--Select Resort/Ship--</option>';
+
+        resortOptions.forEach(option => {
+            if(option.dataset.destination === selectedDestination) {
+                resortSelect.appendChild(option.cloneNode(true));
+            }
+        });
+
+        resortSelect.value = '';
+    }
+
+    destinationSelect.addEventListener('change', filterResorts);
+
+    if(resortSelect.dataset.selectedDestination) {
+        filterResorts();
+        resortSelect.value = resortSelect.dataset.selectedResort || '';
+    }
+});
+</script>

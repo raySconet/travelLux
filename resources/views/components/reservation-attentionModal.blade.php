@@ -1,4 +1,4 @@
-<div id="attentionReservationModal" class="fixed inset-0 bg-black/30 flex items-center justify-center hidden z-[9999]">
+<div id="attentionReservationModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
 
     <div class="bg-white w-full max-w-lg rounded-lg shadow-lg relative">
 

@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
+        <div class="p-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-2xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-envelope mr-2 text-[#f18325]"></i>{{ __('Automated  Emails') }}
             </h2>
@@ -11,21 +11,23 @@
 
     <div class="p-2">
        
-        <div class="bg-white shadow rounded-none ml-2 mr-1 px-2">
+        <div class="bg-white shadow rounded-lg ml-2 mr-1 px-2">
             <form method="GET" action="{{ route('automatedEmails') }}">
                 <div class="flex items-end justify-end gap-4 px-6 py-4">
                     
-                    <div class="flex flex-col gap-1">
-                        <label for="agent_id" class="text-sm">Select Agent</label>
-                        <select name="agent_id" id="agent_id" onchange="this.form.submit()" class="w-80 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none">
-                            <option value="-1">All Agents</option>
-                            @foreach ($users as $user)
-                                <option value="{{ $user->id }}" {{ request('agent_id') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->fname . ' ' . $user->lname }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    @if(auth()->user()->isAdmin())
+                        <div class="flex flex-col gap-1">
+                            <label for="agent_id" class="text-sm">Select Agent</label>
+                            <select name="agent_id" id="agent_id" onchange="this.form.submit()" class="w-80 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none">
+                                <option value="-1" {{ $agentId == -1 ? 'selected' : '' }}>All Agents</option>
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : '' }}>
+                                        {{ $user->fname . ' ' . $user->lname }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
 
                     <input
                         type="text"

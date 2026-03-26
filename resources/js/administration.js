@@ -1,5 +1,5 @@
 import './bootstrap';
-import Alpine from 'alpinejs';
+// import Alpine from 'alpinejs';
 
 window.dateDropdown = function(minYear = 1920, maxYear = 2040) {
     return {
@@ -11,7 +11,7 @@ window.dateDropdown = function(minYear = 1920, maxYear = 2040) {
             'January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'
         ],
-        years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i),
+        years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i),
         get formattedDate() {
             if (!this.day || !this.month || !this.year) return '';
             return `${String(this.month).padStart(2, '0')}/` +
@@ -25,6 +25,36 @@ window.Alpine = Alpine;
 
 Alpine.start();
 $(document).ready(() => {
+
+    // start timeline task 
+    var $productSelect = $('#product_id');
+    var $destinationSelect = $('#destination_id');
+    var $allOptions = $destinationSelect.find('option').not(':first'); 
+
+    function filterDestinations() {
+        var selectedProduct = $productSelect.val();
+        var selectedDestination = $destinationSelect.val(); 
+
+        if (!selectedDestination || selectedDestination === '') {
+            $destinationSelect.val('');
+        }
+
+        $allOptions.each(function() {
+            var $option = $(this);
+            if ($option.data('product') == selectedProduct || $option.val() == selectedDestination) {
+                $option.show();
+            } else {
+                $option.hide();
+            }
+        });
+
+        $destinationSelect.prop('disabled', !selectedProduct);
+    }
+    filterDestinations();
+
+    $productSelect.on('change', filterDestinations);
+
+    // end timeline task
 
     // start forms manager
     $('#addRowBtn').on('click', function () {

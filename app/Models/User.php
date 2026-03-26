@@ -121,4 +121,29 @@ class User extends Authenticatable
     {
         return $this->hasMany(AutomatedEmail::class, 'agent_id');
     }
+
+    public function reservationTasks()
+    {
+        return $this->hasMany(ReservationGift::class,'created_by');
+    }
+
+    public function reservationDiningNotes()
+    {
+        return $this->hasMany(ReservationDiningNote::class,'created_by');
+    }
+
+    public function reservationGifts()
+    {
+        return $this->hasMany(ReservationGift::class,'created_by');
+    }
+
+    public function reservationPhoneNotes()
+    {
+        return $this->hasMany(ReservationPhoneNote::class,'created_by');
+    }
+
+    public function reservationCommissionFees()
+    {
+        return $this->hasMany(ReservationCommissionFee::class,'created_by');
+    }
 }

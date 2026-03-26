@@ -33,6 +33,8 @@ use App\Http\Controllers\ReservationsNotPaidByALTReportController;
 use App\Http\Controllers\ReservationsPaidByALTReportController;
 use App\Http\Controllers\UnknownReservationsReportController;
 use App\Http\Controllers\BookedTripsByStateReportController;
+use App\Http\Controllers\ReservationsChangesReportController;
+use App\Http\Controllers\ReservationsByAgentReportController;
 use App\Http\Controllers\ProductSalesByAgentReportController;
 use App\Http\Controllers\AgentSalesByProductReportController;
 use App\Http\Controllers\TotalSalesReportController;
@@ -42,6 +44,7 @@ use App\Http\Controllers\AliasTotalGrossCommissionReportController;
 use App\Http\Controllers\AllReservationsByDateReportController;
 use App\Http\Controllers\AllTripsByTravelDateReportController;
 use App\Http\Controllers\Top15ExpensiveTripsReportController;
+use App\Http\Controllers\CruisesReportController;
 use App\Http\Controllers\ProductSalesWithDepositByAgentReportController;
 use App\Http\Controllers\FinalAgencyCommissionReportController;
 use App\Http\Controllers\BookedReservationsPerMonthReportController;
@@ -49,6 +52,7 @@ use App\Http\Controllers\ResleadsReportController;
 use App\Http\Controllers\TotalCommissionReportController;
 use App\Http\Controllers\HotelOnlyReportController;
 use App\Http\Controllers\ClassicVacationsReportController;
+use App\Http\Controllers\PleasantEvokeReportController;
 use App\Http\Controllers\AppleVacationsReportController;
 use App\Http\Controllers\TravelImpressionsReportController;
 use App\Http\Controllers\VacationExpressReportController;
@@ -175,6 +179,9 @@ Route::middleware('auth')->group(function(){
     Route::delete('/customer/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 
     Route::get('/inviteNewCustomer', [CustomerController::class, 'inviteNewCustomer'])->name('customers.inviteNewCustomer');
+
+    Route::post('/customer/{customer}/members', [CustomerController::class, 'storeFamilyMember'])->name('customers.familyMembers.store');
+    Route::delete('/members/{member}', [CustomerController::class, 'deleteFamilyMember'])->name('familyMembers.delete');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/reservation-list', [ReservationController::class, 'index'])->name('reservations.reservationList');
@@ -185,7 +192,24 @@ Route::middleware('auth')->group(function(){
     Route::put('/reservation/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
     Route::delete('/reservation/{reservation}', [ReservationController::class ,'destroy'])->name('reservations.destroy');
     Route::delete('/reservations/bulk-delete', [ReservationController::class, 'bulkDelete'])->name('reservations.bulkDelete');
-    Route::post('/reservations/{reservation}/duplicate', [ReservationController::class, 'duplicate'])->name('reservations.duplicate');
+
+    Route::post('/reservation/{reservation}/tasks', [ReservationController::class, 'storeTask'])->name('reservations.tasks.store');
+    Route::post('/tasks/{task}/toggle-complete', [ReservationController::class, 'toggleCompleteTask'])->name('tasks.toggleComplete');
+    Route::delete('/tasks/{task}', [ReservationController::class, 'deleteTask'])->name('tasks.delete');
+
+    Route::post('/reservation/{reservation}/diningNotes', [ReservationController::class, 'storeDiningNote'])->name('reservations.diningNotes.store');
+    Route::post('/diningNotes/{diningNote}/toggle-cancel', [ReservationController::class, 'toggleCancelDiningNote'])->name('diningNotes.toggleCancel');
+    Route::delete('/diningNotes/{diningNote}', [ReservationController::class,'deleteDiningNote'])->name('diningNotes.delete');
+
+    Route::post('/reservation/{reservation}/gifts', [ReservationController::class, 'storeGift'])->name('reservations.gifts.store');
+    Route::delete('/gifts/{gift}', [ReservationController::class, 'deleteGift'])->name('gifts.delete');
+
+    Route::post('/reservation/{reservation}/phoneNotes', [ReservationController::class, 'storePhoneNote'])->name('reservations.phoneNotes.store');
+    Route::post('/phoneNotes/{phoneNote}/toggle-cancel', [ReservationController::class, 'toggleCancelPhoneNote'])->name('phoneNotes.toggleCancel');
+    Route::delete('/phoneNotes/{phoneNote}', [ReservationController::class, 'deletePhoneNote'])->name('phoneNotes.delete');
+
+    Route::post('/reservation/{reservation}/commissionFees', [ReservationController::class, 'storeCommissionFee'])->name('reservations.commissionFees.store');
+    Route::delete('/commissionFees/{commissionFee}', [ReservationController::class, 'deleteCommissionFee'])->name('commissionFees.delete');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');
@@ -212,6 +236,8 @@ Route::middleware('auth')->group(function(){
     Route::get('/reservationsPaidByALTReport', [ReservationsPaidByALTReportController::class,'index'])->name('reports.reservationsPaidByALTReport');
     Route::get('/unknownReservationsReport',[UnknownReservationsReportController::class,'index'])->name('reports.unknownReservationsReport');
     Route::get('/bookedTripsByStateReport', [BookedTripsByStateReportController::class,'index'])->name('reports.bookedTripsByStateReport');
+    Route::get('/reservationsChangesReport', [ReservationsChangesReportController::class,'index'])->name('reports.reservationsChangesReport');
+    Route::get('/reservationsByAgentReport', [ReservationsByAgentReportController::class,'index'])->name('reports.reservationsByAgentReport');
     Route::get('/productSalesByAgentReport', [ProductSalesByAgentReportController::class,'index'])->name('reports.productSalesByAgentReport');
     Route::get('/agentSalesByProductReport', [AgentSalesByProductReportController::class,'index'])->name('reports.agentSalesByProductReport');
     Route::get('/totalSalesReport', [TotalSalesReportController::class,'index'])->name('reports.totalSalesReport');
@@ -221,6 +247,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/allReservationsByDateReport', [AllReservationsByDateReportController::class,'index'])->name('reports.allReservationsByDateReport');
     Route::get('/allTripsByTravelDateReport', [AllTripsByTravelDateReportController::class,'index'])->name('reports.allTripsByTravelDateReport');
     Route::get('/top15ExpensiveTripsReport', [Top15ExpensiveTripsReportController::class,'index'])->name('reports.top15ExpensiveTripsReport');
+    Route::get('/cruisesReport', [CruisesReportController::class,'index'])->name('reports.cruisesReport');
     Route::get('/productSalesWithDepositByAgentReport', [ProductSalesWithDepositByAgentReportController::class,'index'])->name('reports.productSalesWithDepositByAgentReport');
     Route::get('/finalAgencyCommissionReport', [FinalAgencyCommissionReportController::class,'index'])->name('reports.finalAgencyCommissionReport');
     Route::get('/agentsReport', [AgentsReportController::class,'index'])->name('reports.agentsReport');
@@ -229,6 +256,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/totalCommissionReport', [TotalCommissionReportController::class,'index'])->name('reports.totalCommissionReport');
     Route::get('/hotelOnlyReport', [HotelOnlyReportController::class,'index'])->name('reports.hotelOnlyReport');
     Route::get('/classicVacationsReport', [ClassicVacationsReportController::class,'index'])->name('reports.classicVacationsReport');
+    Route::get('/pleasantEvokeReport', [PleasantEvokeReportController::class,'index'])->name('reports.pleasantEvokeReport');
     Route::get('/appleVacationsReport', [AppleVacationsReportController::class,'index'])->name('reports.appleVacationsReport');
     Route::get('/travelImpressionsReport', [TravelImpressionsReportController::class,'index'])->name('reports.travelImpressionsReport');
     Route::get('/vacationExpressReport', [VacationExpressReportController::class,'index'])->name('reports.vacationExpressReport');

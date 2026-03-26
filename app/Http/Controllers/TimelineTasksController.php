@@ -11,47 +11,66 @@ class TimelineTasksController extends Controller
 {
     public function index(Request $request)
     {
-       $search = $request->input('search');
+        $search = $request->input('search');
+        $productId = $request->input('product_id');
+        $destinationId = $request->input('destination_id');
+
+        $timelineTasksQuery = TimelineTask::with('product', 'destination')
+                                            ->select('id','product_id','destination_id','task_name','priority','due_days','before_after','date_type','created_by','is_deleted')
+                                            ->where('is_deleted', 0);
+
+        $products = Product::orderBy('product_name')
+                                ->where('is_deleted', 0)
+                                ->get();
+
         
-       $timelineTasksQuery = TimelineTask::with('product', 'destination')
-                                         ->select('id','product_id','destination_id','task_name','priority','due_days','before_after','date_type','created_by','is_deleted')
-                                         ->where('is_deleted',0);
+        if ($productId) {
+            $destinations = Destination::orderBy('destination_name')
+                ->where('is_deleted', 0)
+                ->where('product_id', $productId)
+                ->get();
+        } else {
+            $destinations = collect(); 
+        }
 
-       $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
-       $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
-       $productId = $request->input('product_id');
-       $destinationId = $request->input('destination_id'); 
+        if ($productId && $destinationId) {
+            $validDestination = Destination::where('id', $destinationId)
+                ->where('product_id', $productId)
+                ->where('is_deleted', 0)
+                ->exists();
 
-        if ($productId && $productId != '') {
+            if (!$validDestination) {
+                $destinationId = null;
+            }
+        }
+
+        if ($productId) {
             $timelineTasksQuery->where('product_id', $productId);
         }
 
-        if ($destinationId && $destinationId != '') {
+        if ($destinationId) {
             $timelineTasksQuery->where('destination_id', $destinationId);
         }
-        
+
         if ($search) {
             $timelineTasksQuery->where(function ($query) use ($search) {
-
                 $query->whereHas('product', function ($q) use ($search) {
                     $q->where('product_name', 'like', "%{$search}%");
                 })
-
                 ->orWhereHas('destination', function ($q) use ($search) {
                     $q->where('destination_name', 'like', "%{$search}%");
                 })
-
                 ->orWhere('task_name', 'like', "%{$search}%")
                 ->orWhere('priority', 'like', "%{$search}%")
                 ->orWhere('due_days', 'like', "%{$search}%")
                 ->orWhere('before_after', 'like', "%{$search}%")
                 ->orWhere('date_type', 'like', "%{$search}%");
-
             });
         }
 
-       $timelineTasks = $timelineTasksQuery->get();
-       return view('timelineTasks', compact('timelineTasks','products', 'destinations'));
+        $timelineTasks = $timelineTasksQuery->get();
+
+        return view('timelineTasks', compact('timelineTasks', 'products', 'destinations'));
     }
 
     public function edit(TimelineTask $timelineTask)

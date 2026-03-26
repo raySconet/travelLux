@@ -111,4 +111,26 @@ $(document).ready(function() {
     });
 
     calculateNights();
+
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.reservationTasksSaveBtn')) {
+            e.target.closest('form').submit();
+        }
+
+        if (e.target.closest('.diningInformationSaveBtn')) {
+            e.target.closest('form').submit();
+        }
+
+        if (e.target.closest('giftsModalSaveBtn')) {
+            e.target.closest('form').submit();
+        }
+
+        if (e.target.closest('phoneNotesModalSaveBtn')) {
+            e.target.closest('form').submit();
+        }
+
+        if (e.target.closest('commissionFeesModalSaveBtn')) {
+            e.target.closest('form').submit();
+        }
+    });
 });

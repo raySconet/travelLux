@@ -196,4 +196,9 @@ class Customer extends Model
         return $this->hasMany(Reservation::class, 'customer_id', 'id');
     }
 
+    public function familyMembers()
+    {
+        return $this->hasMany(CustomerFamilyMember::class, 'customer_id', 'id');
+    }
+
 }

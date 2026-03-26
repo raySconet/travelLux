@@ -44,7 +44,7 @@
                 </a>
                 
                 <a href="#" 
-                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                    onclick="openLogoutModal()"
                     class="text-white text-base flex items-center gap-1">
                         <i class="fas fa-sign-out-alt"></i>
                         Logout
@@ -107,3 +107,4 @@
         </div>
     </div>
 </nav>
+<x-logout-modal />

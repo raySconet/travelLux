@@ -1,3 +1,10 @@
+@php
+    $overdueTasksCount = $reservation->tasks()
+        ->where('is_deleted', 0)
+        ->where('is_completed', 0)
+        ->whereDate('due_date', '<=', \Carbon\Carbon::today())
+        ->count();
+@endphp
 <form method="POST"
       action="{{ $isNewReservation
             ? route('reservations.store')
@@ -9,8 +16,8 @@
        
     <x-app-layout>
         <x-slot name="header">
-            <div class="p-4 bg-white shadow sm:rounded-none flex items-center justify-between">
-                <h2 class=" text-2xl text-gray-500 leading-tight">
+            <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+                <h2 class=" text-xl text-gray-500 leading-tight">
                     <i class="fa-solid fas fa-tag mr-2 text-[#f18325]"></i>{{ __('Reservations') }}
                 </h2>
 
@@ -32,12 +39,7 @@
 
                             </form>
                         @endif
-                        <form method="POST" action="{{ route('reservations.duplicate', $reservation->id) }}" class="inline">
-                            @csrf
-                            <x-secondary-buttonToDelete type="submit">
-                                <i class="fas fa-copy"></i><span>Duplicate</span>
-                            </x-secondary-buttonToDelete>
-                        </form>
+                        <x-secondary-buttonToDelete type="submit"><i class="fas fa-copy"></i><span>Duplicate</span></x-secondary-buttonToDelete>
                         <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save Reservation</span></x-secondary-btn>
                         <x-primary-btn type="button" onclick="window.location='{{ route('reservations.reservationList') }}'"><i class="far fa-minus-square"></i><span>Close Reservation</span></x-primary-btn>
                     </div>
@@ -45,19 +47,25 @@
             </div>
         </x-slot>
 
-        <div class="p-2 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-            <div class="bg-white shadow rounded-none p-3 ml-2">
+        <div class="mx-auto py-2 px-4 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <div class="p-3 bg-white shadow sm:rounded-lg">
                 @include('reservations.partials.reservation-info')
             </div>
 
-            <div class="bg-white shadow rounded-none p-6" x-data="{ section: 'reservaton-details' }">
+            <div class="p-3 bg-white shadow sm:rounded-lg" x-data="{ section: '{{ session('activeTab', 'reservaton-details') }}' }">
                 <div class="topButtonsGroup">
                     <div class="btn-group systemUsersNav" role="group">
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'reservaton-details' }" @click="section = 'reservaton-details'">
                             <i style="font-size:20px;" class="fas fa-globe"></i>
                         </button>
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'tasks' }" @click="section = 'tasks'">
+                        <button type="button" class="systemUsersSectionBtn relative" :class="{ 'active': section === 'tasks' }" @click="section = 'tasks'">
                             <i style="font-size:20px;" class="fas fa-clock"></i>
+
+                            @if($overdueTasksCount > 0)
+                                <span class="absolute -top-2 -right-3 bg-red-500 text-white text-base px-1.5 py-0.250 rounded-full">
+                                    {{ $overdueTasksCount }}
+                                </span>
+                            @endif
                         </button>
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'payments' }" @click="section = 'payments'">
                             <i style="font-size:20px;" class="fas fa-credit-card"></i>

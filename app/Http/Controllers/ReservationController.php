@@ -10,6 +10,12 @@ use App\Models\Customer;
 use App\Models\Destination;
 use App\Models\ResortShip;
 use App\Models\CruiseItinerary;
+use App\Models\CustomersForm;
+use App\Models\ReservationTask;
+use App\Models\ReservationDiningNote;
+use App\Models\ReservationGift;
+use App\Models\ReservationPhoneNote;
+use App\Models\ReservationCommissionFee;
 
 class ReservationController extends Controller
 {
@@ -83,9 +89,15 @@ class ReservationController extends Controller
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
         $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
         $resortShips = ResortShip::orderBY('resort_ship_name')->where('is_deleted',0)->get();
-        $cruiseItineraries = CruiseItinerary::orderBY('cruise_name')->where('is_where',0)->get();
+        $cruiseItineraries = CruiseItinerary::orderBY('cruise_name')->where('is_deleted',0)->get();
 
-        return view('reservations.reservationDetails', compact('users', 'reservation' ,'isNewReservation','products', 'customers', 'destinations', 'resortShips','cruiseItineraries'));
+        $availableForms = CustomersForm::where('is_deleted', 0)
+                                        ->where('is_active', 1)
+                                        ->whereHas('customersFormRequired', function($q){
+                                            $q->where('all_reservations_required', 1);
+                                        })->get();
+
+        return view('reservations.reservationDetails', compact('users', 'reservation' ,'isNewReservation','products', 'customers', 'destinations', 'resortShips','cruiseItineraries','availableForms'));
     }
 
     public function store(Request $request)
@@ -321,22 +333,6 @@ class ReservationController extends Controller
             ->with('success', 'Reservation deleted successfully');
     }
 
-    public function duplicate(Reservation $reservation)
-    {
-        $data = $reservation->toArray();
-        unset($data['id']); 
-        $data['created_on'] = now();
-        $data['created_by'] = auth()->id();
-        $data['last_modified_by'] = null;
-        $data['last_modified_on'] = null;
-
-        $newReservation = Reservation::create($data);
-
-        return redirect()
-            ->route('reservations.reservationDetails', $newReservation->id)
-            ->with('success', 'Reservation duplicated successfully');
-    }
-
     public function bulkDelete(Request $request)
     {
         $ids = $request->selected_reservations;
@@ -355,5 +351,261 @@ class ReservationController extends Controller
             ->route('reservations.reservationList')
             ->with('success', 'Reservations deleted successfully.');
     }
-    
+
+    public function storeTask(Request $request, Reservation $reservation)
+    {
+        $messages = [
+            'task_name.required' => 'The Task Name field is required.',
+            'due_date.required' => 'The Due Date field is required.',
+            'priority.required' => 'The Priority field is required.',
+        ];
+
+        $data = $request->validate([
+            'task_name' => 'required|string|max:255',
+            'priority' => 'required|string',
+            'due_date' => 'required|date',
+            'notes' => 'nullable|string',
+        ],$messages);
+
+        $data['reservation_id'] = $reservation->id;
+        $data['created_by'] = auth()->id();
+        $data['created_on'] = now();
+
+        ReservationTask::create($data);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservation->id)
+                ->with('success', 'Task added successfully')
+                ->with('activeTab', 'tasks');
+    }
+
+    public function toggleCompleteTask(ReservationTask $task)
+    {
+        $task->update([
+            'is_completed' => $task->is_completed ? 0 : 1, 
+            'is_completed_by' =>  auth()->id(),
+            'is_completed_on' =>  now(),
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
+
+        return redirect()
+            ->route('reservations.reservationDetails', $task->reservation_id)
+            ->with('success', $task->is_completed ? 'Task marked incomplete' : 'Task completed')
+            ->with('activeTab', 'tasks');
+    }
+
+    public function deleteTask(ReservationTask $task)
+    {
+        $reservationId = $task->reservation_id;
+
+        $task->update([
+            'is_deleted' => 1,
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservationId)
+                ->with('success', 'Task deleted successfully')
+                ->with('activeTab', 'tasks');
+    }
+
+    public function storeDiningNote(Request $request, Reservation $reservation)
+    {
+        $messages = [
+            'notes.required' => 'The Note field is required.',
+        ];
+
+        $data = $request->validate([
+            'dining_date' => 'nullable|date',
+            'dining_time' => 'nullable|date_format:H:i',
+            'meal' => 'nullable|string',
+            'notes' => 'required|string',
+        ],$messages);
+
+        $data['reservation_id'] = $reservation->id;
+        $data['created_by'] = auth()->id();
+        $data['created_on'] = now();
+
+        ReservationDiningNote::create($data);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservation->id)
+                ->with('success', 'Task added successfully')
+                ->with('activeTab', 'diningInformation');
+    }
+
+    public function toggleCancelDiningNote(ReservationDiningNote $diningNote)
+    {
+        $diningNote->update([
+            'is_canceled' => $diningNote->is_canceled ? 0 : 1,
+            'canceled_by' => auth()->id(),
+            'canceled_on' => now(),
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $diningNote->reservation_id)
+                ->with('success', $diningNote->is_canceled ? 'Dining Note marked as uncanceled' : 'Dining Note marked as canceled')
+                ->with('activeTab', 'diningInformation');
+    }
+
+    public function deleteDiningNote(ReservationDiningNote $diningNote)
+    {
+        $reservationId = $diningNote->reservation_id;
+
+        $diningNote->update([
+            'is_deleted' => 1,
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservationId)
+                ->with('success', 'Dining Note deleted successfully')
+                ->with('activeTab', 'diningInformation');
+    }
+
+    public function storeGift(Request $request, Reservation $reservation)
+    {
+        $messages = [
+            'gift_type.required' => 'Gift Type is required.',
+            'gift_date.required' => 'Gift Date is required.',
+            'amount.required' => 'Amount is required.',
+        ];
+
+        $data = $request->validate([
+            'gift_date' => 'required|date',
+            'gift_type' => 'required|string',
+            'amount' => 'required|integer',
+            'notes' => 'nullable|string'
+        ], $messages);
+
+        $data['reservation_id'] = $reservation->id;
+        $data['created_by'] = auth()->id();
+        $data['created_on'] = now();
+
+        ReservationGift::create($data);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservation->id)
+                ->with('success', 'Gift added successfully')
+                ->with('activeTab', 'giftsInfo');
+    }
+
+    public function deleteGift(ReservationGift $gift)
+    {
+        $reservationId = $gift->reservation_id;
+
+        $gift->update([
+            'is_deleted' => 1,
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now()
+        ]);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservationId)
+                ->with('success', 'Gift deleted successfully')
+                ->with('activeTab', 'giftsInfo');
+    }
+
+    public function storePhoneNote(Request $request, Reservation $reservation)
+    {
+        $messages = [
+            'notes.required' => 'The Notes field is required.',
+        ];
+
+        $data = $request->validate([
+            'category' => 'nullable|string',
+            'caller_name' => 'nullable|string',
+            'caller_phone_number' => 'nullable|string',
+            'notes' => 'required|string',
+        ], $messages);
+
+        $data['reservation_id'] = $reservation->id;
+        $data['created_by'] = auth()->id();
+        $data['created_on'] = now();
+
+        ReservationPhoneNote::create($data);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservation->id)
+                ->with('success', 'Phone Note added successfully')
+                ->with('activeTab', 'phoneNotes');
+    }
+
+    public function toggleCancelPhoneNote(ReservationPhoneNote $phoneNote)
+    {
+        $phoneNote->update([
+            'is_canceled' => $phoneNote->is_canceled ? 0 : 1,
+            'canceled_by' => auth()->id(),
+            'canceled_on' => now(),
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $phoneNote->reservation_id)
+                ->with('success', $phoneNote->is_canceled ? 'Phone Note marked as uncanceled' : 'Phone Note marked as canceled')
+                ->with('activeTab', 'phoneNotes');
+    }
+
+    public function deletePhoneNote(ReservationPhoneNote $phoneNote)
+    {
+        $reservationId = $phoneNote->reservation_id;
+
+        $phoneNote->update([
+            'is_deleted' => 1,
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservationId)
+                ->with('success', 'Phone Note deleted successfully')
+                ->with('activeTab', 'phoneNotes');
+    }
+
+    public function storeCommissionFee(Request $request, Reservation $reservation)
+    {
+        $messages = [
+            'fee_type.required' => 'The Fee Type field is required.',
+            'amount.required' => 'The Fee Amount field is required.'
+        ];
+
+        $data = $request->validate([
+            'fee_type' => 'required|string',
+            'amount' => 'required|integer',
+            'notes' => 'nullable|string',
+        ], $messages);
+
+        $data['reservation_id'] = $reservation->id;
+        $data['created_by'] = auth()->id();
+        $data['created_on'] = now();
+        
+        ReservationCommissionFee::create($data);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservation->id)
+                ->with('success', 'Commission Fee added successfully')
+                ->with('activeTab', 'agentPayments');
+    }
+
+    public function deleteCommissionFee(ReservationCommissionFee $commissionFee)
+    {
+        $reservationId = $commissionFee->reservation_id;
+
+        $commissionFee->update([
+            'is_deleted' => 1,
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservationId)
+                ->with('success', 'Commission Fee deleted successfully')
+                ->with('activeTab', 'agentPayments');
+    }
 }

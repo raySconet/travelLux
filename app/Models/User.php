@@ -25,7 +25,7 @@ class User extends Authenticatable
     protected $fillable = [
         'fname',
         'lname',
-        'nickname', 
+        'nickname',
         'email',
         'email_as_username',
         'backup_email',
@@ -64,12 +64,12 @@ class User extends Authenticatable
         'general_notes',
         'profile_photo',
         'profile_submit_flag',
-        'is_disabled', 
+        'is_disabled',
         'password',
         'created_at',
         'created_by',
         'updated_at',
-        'last_modified_by', 
+        'last_modified_by',
         'isDeleted',
     ];
 

@@ -181,6 +181,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/inviteNewCustomer', [CustomerController::class, 'inviteNewCustomer'])->name('customers.inviteNewCustomer');
 
     Route::post('/customer/{customer}/members', [CustomerController::class, 'storeFamilyMember'])->name('customers.familyMembers.store');
+    Route::put('/family-members/{familyMember}', [CustomerController::class, 'updateFamilyMember'])->name('familyMembers.update');
     Route::delete('/members/{member}', [CustomerController::class, 'deleteFamilyMember'])->name('familyMembers.delete');
 });
 Route::middleware('auth')->group(function(){
@@ -195,21 +196,34 @@ Route::middleware('auth')->group(function(){
 
     Route::post('/reservation/{reservation}/tasks', [ReservationController::class, 'storeTask'])->name('reservations.tasks.store');
     Route::post('/tasks/{task}/toggle-complete', [ReservationController::class, 'toggleCompleteTask'])->name('tasks.toggleComplete');
+    Route::put('/task/{task}', [ReservationController::class, 'updateTask'])->name('tasks.update');
     Route::delete('/tasks/{task}', [ReservationController::class, 'deleteTask'])->name('tasks.delete');
+    
+    Route::post('/reservation/{reservation}/payments', [ReservationController::class, 'storePayment'])->name('reservations.payments.store');
+    Route::put('/payment/{payment}', [ReservationController::class, 'updatePayment'])->name('reservations.payments.update');
+    Route::delete('/payment/{payment}', [ReservationController::class, 'deletePayment'])->name('reservations.payments.delete');
+
+    Route::post('/traveler/{traveler}/toggle-include', [ReservationController::class, 'toggleIncludeTraveler'])->name('travelers.toggleInclude');
 
     Route::post('/reservation/{reservation}/diningNotes', [ReservationController::class, 'storeDiningNote'])->name('reservations.diningNotes.store');
     Route::post('/diningNotes/{diningNote}/toggle-cancel', [ReservationController::class, 'toggleCancelDiningNote'])->name('diningNotes.toggleCancel');
+    Route::put('/diningNote/{diningNote}', [ReservationController::class, 'updateDiningNote'])->name('reservations.diningNotes.update');
     Route::delete('/diningNotes/{diningNote}', [ReservationController::class,'deleteDiningNote'])->name('diningNotes.delete');
 
     Route::post('/reservation/{reservation}/gifts', [ReservationController::class, 'storeGift'])->name('reservations.gifts.store');
+    Route::put('/gift/{gift}', [ReservationController::class, 'updateGift'])->name('reservations.gifts.update');
     Route::delete('/gifts/{gift}', [ReservationController::class, 'deleteGift'])->name('gifts.delete');
 
     Route::post('/reservation/{reservation}/phoneNotes', [ReservationController::class, 'storePhoneNote'])->name('reservations.phoneNotes.store');
     Route::post('/phoneNotes/{phoneNote}/toggle-cancel', [ReservationController::class, 'toggleCancelPhoneNote'])->name('phoneNotes.toggleCancel');
+    Route::put('/phoneNote/{phoneNote}', [ReservationController::class, 'updatePhoneNote'])->name('reservations.phoneNotes.update');
     Route::delete('/phoneNotes/{phoneNote}', [ReservationController::class, 'deletePhoneNote'])->name('phoneNotes.delete');
 
     Route::post('/reservation/{reservation}/commissionFees', [ReservationController::class, 'storeCommissionFee'])->name('reservations.commissionFees.store');
+    Route::put('/commissionFee/{commissionFee}', [ReservationController::class, 'updateCommissionFee'])->name('reservations.commissionFees.update');
     Route::delete('/commissionFees/{commissionFee}', [ReservationController::class, 'deleteCommissionFee'])->name('commissionFees.delete');
+
+    Route::get('/customers/{id}/active-reservations', [ReservationController::class, 'getActiveReservations']);
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');

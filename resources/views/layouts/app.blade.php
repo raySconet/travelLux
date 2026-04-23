@@ -39,6 +39,11 @@
         @endif
 
 
+        <style>
+            [x-cloak] {
+                display: none !important;
+            }
+        </style>
     </head>
     <body class="font-sans "
         x-data="{ sidebarOpen: true, first: true, second: true, third: true }">

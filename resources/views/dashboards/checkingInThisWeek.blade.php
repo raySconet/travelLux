@@ -34,29 +34,36 @@
                         </tr>
                     </thead>
 
-
                     <tbody class="divide-y">
+                        @forelse($thisWeekReservations as $reservation)
                             <tr class="hover:bg-gray-50 cursor-pointer">
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                                    
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $reservation->customer ? $reservation->customer->fname . ',' . $reservation->customer->lname : ' ' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
-                                   
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $reservation->reservation_number }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $reservation->product ? $reservation->product->product_name : ' ' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ \Carbon\Carbon::parse($reservation->checkin_date)->format('m/d/Y') }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ \Carbon\Carbon::parse($reservation->checkout_date)->format('m/d/Y') }}
                                 </td>
                             </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-gray-500">
+                                    No data available in this table
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -98,29 +105,36 @@
                         </tr>
                     </thead>
 
-
                     <tbody class="divide-y">
+                        @forelse($nextWeekReservations as $reservation)
                             <tr class="hover:bg-gray-50 cursor-pointer">
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                                    
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $reservation->customer ? $reservation->customer->fname . ',' . $reservation->customer->lname : ' ' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
-                                   
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $reservation->reservation_number }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $reservation->product ? $reservation->product->product_name : ' ' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ \Carbon\Carbon::parse($reservation->checkin_date)->format('m/d/Y') }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ \Carbon\Carbon::parse($reservation->checkout_date)->format('m/d/Y') }}
                                 </td>
                             </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-gray-500">
+                                    No data available in this table
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

@@ -1,3 +1,6 @@
+@php
+    $isTaskModalOpen = session('openTaskModal') || $errors->taskStore->any();
+@endphp
 @if ($isNewReservation)
     <div class="space-x-2">
         <i class="fas fa-exclamation-triangle text-[#6c757d] text-base"></i>
@@ -30,15 +33,15 @@
             @php
                 $isOverdue = $task->is_completed == 0 && $task->due_date && \Carbon\Carbon::parse($task->due_date)->lte(\Carbon\Carbon::today());
             @endphp
-            <div class="flex justify-between mt-1">
+            <div class="flex justify-between mt-1" onclick='openEditTaskModal(@json($task))'>
                 <div class="flex gap-5">
                     <form method="POST" action="{{ route('tasks.toggleComplete', $task->id) }}" class="inline">
                         @csrf
-                        <button type="submit">
+                        <button onclick="event.stopPropagation();" type="submit">
                             @if($task->is_completed == 0)
-                                <i class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl" title="Complete Task"></i>
+                                <i title="Complete Task" class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl" title="Complete Task"></i>
                             @else
-                                <i class="fas fa-check-circle text-[#50c878] mt-3 text-2xl" title="Undo Complete"></i>
+                                <i title="Undo Complete" class="fas fa-check-circle text-[#50c878] mt-3 text-2xl" title="Undo Complete"></i>
                             @endif
                         </button>
                     </form>       
@@ -69,8 +72,8 @@
                     <form method="POST" action="{{ route('tasks.delete', $task->id) }}" class="inline delete-form">
                         @csrf
                         @method('DELETE')
-                        <button type="button" onclick="openDeleteModal(this)">
-                            <i class="fa fa-trash text-[#bdbdbd]"></i>
+                        <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
+                            <i title="Delete Task" class="fa fa-trash text-[#bdbdbd]"></i>
                         </button>
                     </form>
                 </div>
@@ -84,21 +87,23 @@
 
 <!-- Reservations Tasks Modal -->
 @if (!$isNewReservation)
-    <form  method="POST" action="{{ route('reservations.tasks.store', $reservation->id) }}">
+    <form id="taskForm"  method="POST" action="{{ route('reservations.tasks.store', $reservation->id) }}" data-store-url="{{ route('reservations.tasks.store', $reservation->id)}}">
         @csrf
+        <input type="hidden" id="task_id_modal" name="task_id" value="">
+        <input type="hidden" name="_method" id="task_method" value="POST">
 
-        <x-reservations-modal id="reservationsTasksModal"  title="Add Task" close="closeReservationsTasksModal()" saveClass="reservationTasksSaveBtn">
+        <x-reservations-modal id="reservationsTasksModal"  title="Add Task" close="closeReservationsTasksModal()" saveClass="reservationTasksSaveBtn" :open="$isTaskModalOpen" >
             <div class="relative mt-2">
-                <x-text-input type="text" id="task_name" name="task_name"  />
+                <x-text-input type="text" id="task_name_modal" name="task_name" value="{{ old('task_name', $reservation->task_name ?? '') }}" />
 
                 <x-input-label for="task_name">Task Name</x-input-label>
 
-                <x-input-error :messages="$errors->get('task_name')" />
+                <x-input-error :messages="$errors->taskStore->get('task_name')" />
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
 
-                <div x-data="dateDropdown()" class="relative mt-5">
+                <div  x-data="dateDropdown('{{ old('due_date', $reservation->due_date ?? '') }}')" class="relative mt-5">
                     <label class="block text-sm mb-1">Due Date</label>
                     <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
                         <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
@@ -123,26 +128,26 @@
                         </select>
 
                     </div>
-                    <input type="hidden" name="due_date" :value="formattedDate">
-                    <x-input-error :messages="$errors->get('due_date')" />
+                    <input type="hidden" id="task_due_date_modal" name="due_date" :value="formattedDate">
+                    <x-input-error :messages="$errors->taskStore->get('due_date')" />
                 </div>
 
                 <div class="relative mt-9">
                     <label for="priority">Priority</label>
-                    <select name="priority" id="priority" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                    <select name="priority" id="task_priority_modal" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
                         <option value="">-- Select Priority --</option>
-                        <option value="Low">Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
+                        <option value="Low" {{ old('priority', $reservation->priority ?? '') == 'Low' ? 'selected' : '' }}>Low</option>
+                        <option value="Medium" {{ old('priority', $reservation->priority ?? '') == 'Medium' ? 'selected' : ''}}>Medium</option>
+                        <option value="High" {{ old('priority', $reservation->priority ?? '') == 'High' ? 'selected' : '' }}>High</option>
                     </select>
-                    <x-input-error :messages="$errors->get('priority')" />
+                    <x-input-error :messages="$errors->taskStore->get('priority')" />
                 </div>
             </div>
 
             <div class="relative mt-8 mb-5">
-                <x-text-input type="text" id="notes" name="notes"  />
+                <x-text-input type="text" id="task_notes_modal" name="task_notes" value="{{ old('task_notes', $reservation->task_notes ?? '') }}" />
 
-                <x-input-label for="notes">Notes</x-input-label>
+                <x-input-label for="task_notes">Notes</x-input-label>
             </div>
 
         </x-reservations-modal>

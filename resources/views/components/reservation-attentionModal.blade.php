@@ -3,7 +3,7 @@
     <div class="bg-white w-full max-w-lg rounded-lg shadow-lg relative">
 
 
-        <div class="flex items-center justify-between px-6 py-4 border-b-2 border-t-2 border-[#dee2e6]">
+        <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
             <div class="flex items-center space-x-2">
                 <i class="fas fa-exclamation-triangle text-[#f18325] text-lg"></i>
                 <h2 class="text-lg">Attention</h2>

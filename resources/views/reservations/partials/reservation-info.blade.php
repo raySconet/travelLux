@@ -5,7 +5,7 @@
             <select name="agent_id" id="agent_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" x-model="selectedAgent">
                 <option value="">All Agents</option>
                 @foreach ($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->fname . ' ' . $user->lname }}</option>
+                    <option value="{{ $user->id }}" data-commission="{{ $user->commission ?? 0 }}">{{ $user->fname . ' ' . $user->lname }}</option>
                 @endforeach
             </select>
             
@@ -94,7 +94,7 @@
                 <option value="Summer Recovery Dine Offer" {{ old('special_offer', $reservation->special_offer ?? '') == 'Summer Recovery Dine Offer' ? 'selected' : '' }}>Summer Recovery Dine Offer</option>
                 <option value="Sun and Fun" {{ old('special_offer', $reservation->special_offer ?? '') == 'Sun and Fun' ? 'selected' : '' }}>Sun and Fun</option>
                 <option value="Annual Passholder" {{ old('special_offer', $reservation->special_offer ?? '') == 'Annual Passholder' ? 'selected' : '' }}>Annual Passholder</option>
-                <option value="Bounceback Offer" {{ old('special_offer', $reservation->special_offer ?? '') == 'Bounceback offer' ? 'selected' : '' }}>Bounceback Offer</option>
+                <option value="Bounceback Offer" {{ old('special_offer', $reservation->special_offer ?? '') == 'Bounceback Offer' ? 'selected' : '' }}>Bounceback Offer</option>
                 <option value="Disney Visa Cardholder" {{ old('special_offer', $reservation->special_offer ?? '') == 'Disney Visa Cardholder' ? 'selected' : '' }}>Disney Visa Cardholder</option>
                 <option value="Disney Wedding Group" {{ old('special_offer', $reservation->special_offer ?? '') == 'Disney Wedding Group' ? 'selected' : '' }}>Disney Wedding Group</option>
                 <option value="Event Voucher" {{ old('special_offer', $reservation->special_offer ?? '') == 'Event Voucher' ? 'selected' : '' }}>Event Voucher</option>
@@ -108,8 +108,8 @@
                 <option value="No Sale" {{ old('special_offer', $reservation->special_offer ?? '') == 'No Sale' ? 'selected' : '' }}>No Sale</option>
                 <option value="Onboard Booking" {{ old('special_offer', $reservation->special_offer ?? '') == 'Onboard Booking' ? 'selected' : '' }}>Onboard Booking</option>
                 <option value="Package Sale" {{ old('special_offer', $reservation->special_offer ?? '') == 'Package Sale' ? 'selected' : '' }}>Package Sale</option>
-                <option value="PIN Code" {{ old('special_offer', $reservation->special_offer ?? '') == 'PIN code' ? 'selected' : '' }}>PIN Code</option>
-                <option value="Room Only/Broad Offer" {{ old('special_offer', $reservation->special_offer ?? '') == 'Room Only/Broad offer' ? 'selected' : '' }}>Room Only/Broad Offer</option>
+                <option value="PIN Code" {{ old('special_offer', $reservation->special_offer ?? '') == 'PIN Code' ? 'selected' : '' }}>PIN Code</option>
+                <option value="Room Only/Broad Offer" {{ old('special_offer', $reservation->special_offer ?? '') == 'Room Only/Broad Offer' ? 'selected' : '' }}>Room Only/Broad Offer</option>
                 <option value="Run Disney" {{ old('special_offer', $reservation->special_offer ?? '') == 'Run Disney' ? 'selected' : '' }}>Run Disney</option>
                 <option value="RunDisney Charity" {{ old('special_offer', $reservation->special_offer ?? '') == 'RunDisney Charity' ? 'selected' : '' }}>RunDisney Charity</option>
                 <option value="Stay, Play and Dine" {{ old('special_offer', $reservation->special_offer ?? '') == 'Stay, Play and Dine' ? 'selected' : '' }}>Stay, Play and Dine</option>
@@ -332,8 +332,10 @@
             <div class="relative">
                 <span class="absolute left-2 top-1/2 text-base font-bold"><i class="fas fa-dollar-sign"></i></span>
 
-                <x-text-input type="text" id="agent_commission" name="agent_commission" class="pl-7" value="{{ old('agent_commission', $reservation->agent_commission ?? '') }}"/>
+                <x-text-input type="text" id="agent_commission" name="agent_commission" class="pl-7" value="{{ old('agent_commission', $reservation->agent_commission ?? '') }}" @if(auth()->user()->role == 2) readonly @endif/>
             </div>
+
+            <x-input-error :messages="$errors->get('agent_commission')" />
         </div>
     </div>
 

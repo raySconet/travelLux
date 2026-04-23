@@ -136,4 +136,19 @@ class Reservation extends Model
         return $this->hasMany(ReservationCommissionFee::class,'reservation_id','id');
     }
 
+    public function travelers()
+    {
+        return $this->hasMany(ReservationTraveler::class, 'reservation_id', 'id');
+    }
+
+    public function linkedReservations()
+    {
+        return $this->hasMany(ReservationLink::class, 'reservation_id', 'id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(ReservationPayment::class, 'reservation_id','id');
+    }
+
 }

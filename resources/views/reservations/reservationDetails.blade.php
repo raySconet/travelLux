@@ -52,14 +52,14 @@
                 @include('reservations.partials.reservation-info')
             </div>
 
-            <div class="p-3 bg-white shadow sm:rounded-lg" x-data="{ section: '{{ session('activeTab', 'reservaton-details') }}' }">
+            <div class="p-3 bg-white shadow sm:rounded-lg" x-data="{ section: '{{ session('activeTab', 'reservation-details') }}' }">
                 <div class="topButtonsGroup">
                     <div class="btn-group systemUsersNav" role="group">
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'reservaton-details' }" @click="section = 'reservaton-details'">
-                            <i style="font-size:20px;" class="fas fa-globe"></i>
+                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'reservation-details' }" @click="section = 'reservation-details'">
+                            <i title="Reservation Details" style="font-size:20px;" class="fas fa-globe"></i>
                         </button>
                         <button type="button" class="systemUsersSectionBtn relative" :class="{ 'active': section === 'tasks' }" @click="section = 'tasks'">
-                            <i style="font-size:20px;" class="fas fa-clock"></i>
+                            <i title="Tasks" style="font-size:20px;" class="fas fa-clock"></i>
 
                             @if($overdueTasksCount > 0)
                                 <span class="absolute -top-2 -right-3 bg-red-500 text-white text-base px-1.5 py-0.250 rounded-full">
@@ -68,51 +68,51 @@
                             @endif
                         </button>
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'payments' }" @click="section = 'payments'">
-                            <i style="font-size:20px;" class="fas fa-credit-card"></i>
+                            <i title="Payment Info" style="font-size:20px;" class="fas fa-credit-card"></i>
                         </button>
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'onBoardCredit'}"  @click="section = 'onBoardCredit'">
-                            <i style="font-size:20px;" class="fas fa-clipboard"></i>
+                            <i title="On Board Credit" style="font-size:20px;" class="fas fa-clipboard"></i>
                         </button>    
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'linkedReservations'}" @click="section = 'linkedReservations'">
-                            <i style="font-size:20px;" class="fas fa-link"></i>
+                            <i title="Travel With" style="font-size:20px;" class="fas fa-link"></i>
                         </button>   
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'travelers'}" @click="section = 'travelers'">
-                            <i style="font-size:20px;" class="fas fa-walking"></i>
+                            <i title="Travelers" style="font-size:20px;" class="fas fa-walking"></i>
                         </button>     
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'forms'}" @click="section = 'forms'">
-                            <i style="font-size:20px;" class="fab fa-wpforms"></i>
+                            <i title="Forms" style="font-size:20px;" class="fab fa-wpforms"></i>
                         </button> 
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'flightInfo'}" @click="section = 'flightInfo'">
-                            <i style="font-size:20px;" class="fas fa-plane"></i>
+                            <i title="Flight Info" style="font-size:20px;" class="fas fa-plane"></i>
                         </button>       
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'diningInformation'}" @click="section = 'diningInformation'">
-                            <i style="font-size:20px;" class="fas fa-utensils"></i>
+                            <i title="Dining Info" style="font-size:20px;" class="fas fa-utensils"></i>
                         </button>   
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'giftsInfo'}" @click="section = 'giftsInfo'">
-                            <i style="font-size:20px;" class="fas fa-gift"></i>
+                            <i title="Gifts" style="font-size:20px;" class="fas fa-gift"></i>
                         </button>  
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'autoEmails'}" @click="section = 'autoEmails'">
-                            <i style="font-size:20px;" class="fas fa-envelope"></i>
+                            <i title="Sent Auto Emails" style="font-size:20px;" class="fas fa-envelope"></i>
                         </button>  
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'notes'}" @click="section = 'notes'">
-                            <i style="font-size:20px;" class="fas fa-sticky-note"></i>
+                            <i title="Notes" style="font-size:20px;" class="fas fa-sticky-note"></i>
                         </button>  
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'phoneNotes'}" @click="section = 'phoneNotes'">
-                            <i style="font-size:20px;" class="fas fa-phone"></i>
+                            <i title="Document Phone Notes" style="font-size:20px;" class="fas fa-phone"></i>
                         </button>    
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'agentPayments'}" @click="section = 'agentPayments'">
-                            <i style="font-size:20px;" class="fas fa-dollar-sign"></i>
+                            <i title="Agent Payment Info" style="font-size:20px;" class="fas fa-dollar-sign"></i>
                         </button>        
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'attachments'}" @click="section = 'attachments'">
-                            <i style="font-size:20px;" class="fas fa-paperclip"></i>
+                            <i title="Attachments" style="font-size:20px;" class="fas fa-paperclip"></i>
                         </button>   
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'selectItineraryTrip'}" @click="section = 'selectItineraryTrip'">
-                            <i style="font-size:20px;" class="fas fa-ship"></i>
+                            <i title="Itinerary Trips" style="font-size:20px;" class="fas fa-ship"></i>
                         </button>     
                     </div>
                 </div>
                     <div class="mt-4">
-                        <div x-show="section === 'reservaton-details'" x-cloak>
+                        <div x-show="section === 'reservation-details'" x-cloak>
                             @include('reservations.partials.reservation-details')
                         </div>
 

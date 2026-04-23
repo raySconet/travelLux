@@ -12,10 +12,12 @@ use App\Models\ResortShip;
 use App\Models\CruiseItinerary;
 use App\Models\CustomersForm;
 use App\Models\ReservationTask;
+use App\Models\ReservationPayment;
 use App\Models\ReservationDiningNote;
 use App\Models\ReservationGift;
 use App\Models\ReservationPhoneNote;
 use App\Models\ReservationCommissionFee;
+use App\Models\ReservationTraveler;
 
 class ReservationController extends Controller
 {
@@ -61,7 +63,7 @@ class ReservationController extends Controller
     public function create(Reservation $reservation)
     {
         $reservation = new Reservation();
-        $users = User::select('id','fname', 'lname' ,'email')
+        $users = User::select('id','fname', 'lname' ,'email', 'commission')
                     ->where('isDeleted',0)
                     ->get();
         $isNewReservation = true;
@@ -73,8 +75,13 @@ class ReservationController extends Controller
         $resortShips = ResortShip::orderBY('resort_ship_name')->where('is_deleted',0)->get();
         $cruiseItineraries = CruiseItinerary::orderBY('cruise_name')->where('is_deleted',0)->get();
 
+        $referralCustomers = Customer::where('agent_id', auth()->id())
+                                ->where('is_deleted',0)
+                                ->orderBy('lname')
+                                ->get();
 
-        return view('reservations.reservationDetails', compact('users', 'reservation', 'isNewReservation', 'products', 'customers', 'destinations', 'resortShips','cruiseItineraries'));
+    
+        return view('reservations.reservationDetails', compact('users', 'reservation', 'isNewReservation', 'products', 'customers', 'destinations', 'resortShips','cruiseItineraries','referralCustomers'));
     }
 
     public function edit(Reservation $reservation)
@@ -97,7 +104,12 @@ class ReservationController extends Controller
                                             $q->where('all_reservations_required', 1);
                                         })->get();
 
-        return view('reservations.reservationDetails', compact('users', 'reservation' ,'isNewReservation','products', 'customers', 'destinations', 'resortShips','cruiseItineraries','availableForms'));
+        $referralCustomers = Customer::where('agent_id', auth()->id())
+                                ->where('is_deleted',0)
+                                ->orderBy('lname')
+                                ->get();                                
+
+        return view('reservations.reservationDetails', compact('users', 'reservation' ,'isNewReservation','products', 'customers', 'destinations', 'resortShips','cruiseItineraries','availableForms','referralCustomers'));
     }
 
     public function store(Request $request)
@@ -109,6 +121,7 @@ class ReservationController extends Controller
             'reservation_name.required' => 'The Reservation Name field is required.',
             'reservation_cost.required' => 'The Total Cost field is required.',
             'agency_commission.required' => 'The Total Agency Commission field is required.',
+            'agent_commission.required' => 'The Agent Commission field is required.',
             'product_id.required' => 'The Product field is required.',
             'destination_id.required' => 'The Destination field is required',
             'resort_id.required' => 'The Resort/Ship field is required.',
@@ -117,20 +130,18 @@ class ReservationController extends Controller
         ];
 
         $data = $request->validate([
-
-            //  Required fields
             'agent_id' => 'required|integer',
             'customer_id' => 'required|integer',
             'reservation_number' => 'required|string|max:255',
             'reservation_name' => 'required|string|max:255',
             'reservation_cost' => 'required|numeric',
             'agency_commission' => 'required|numeric',
+            'agent_commission' => 'required|numeric',
             'status' => 'required|string|max:255',
             'product_id' => 'required|integer',
             'destination_id' => 'required|integer',
             'resort_id' => 'required|integer',
 
-            //  Optional string fields
             'group_number' => 'nullable|string|max:50',
             'special_offer' => 'nullable|string|max:255',
             'celebrations' => 'nullable|string|max:255',
@@ -144,25 +155,20 @@ class ReservationController extends Controller
             'transportation_options' => 'nullable|string|max:255',
             'cruise_level' => 'nullable|string|max:255',
 
-            //  Optional numeric (money)
-            'agent_commission' => 'nullable|numeric',
             'onboard_credit_from_cruise_line' => ['nullable','regex:/^\d+(\.\d{1,2})?$/'],
             'onboard_credit_from_agent' => ['nullable','regex:/^\d+(\.\d{1,2})?$/'],
 
-            //  Optional mediumtext / text
             'commission_notes' => 'nullable|string',
             'reservation_notes' => 'nullable|string',
             'flight_notes' => 'nullable|string',
             'notes' => 'nullable|string',
 
-            //  Optional dates
             'checkin_date' => 'nullable|date',
             'checkout_date' => 'nullable|date',
             'deposit_due_date' => 'nullable|date',
             'final_payment_due_date' => 'nullable|date',
             'unknown_reservation_date' => 'nullable|date',
 
-            //  Optional integers / flags
             'commission_received' => 'nullable|integer',
             'commission_claimed' => 'nullable|integer',
             'look_up' => 'nullable|integer',
@@ -189,7 +195,6 @@ class ReservationController extends Controller
             'last_modified_by' => 'nullable|integer',
             'is_deleted' => 'nullable|integer',
 
-            //  Lead source flags
             'is_website_lead_knot' => 'nullable|integer',
             'is_website_lead' => 'nullable|integer',
             'is_virtuoso_lead' => 'nullable|integer',
@@ -200,11 +205,27 @@ class ReservationController extends Controller
 
         ], $messages);
 
-        //  Auto fields
         $data['created_by'] = auth()->id();
         $data['created_on'] = now();
 
-        Reservation::create($data);
+        $reservation = Reservation::create($data);
+
+        $customer = Customer::with('familyMembers')->find($data['customer_id']);
+
+        if ($customer && $customer->familyMembers->count() > 0) {
+            $travelersData = $customer->familyMembers->map(function ($familyMember) use ($reservation) {
+                return [
+                    'reservation_id' => $reservation->id,
+                    'customer_family_member_id' => $familyMember->id,
+                    'is_included' => 0, 
+                    'is_deleted' => 0,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->toArray();
+
+            ReservationTraveler::insert($travelersData);
+        }
 
         return redirect()
             ->route('reservations.reservationList')
@@ -221,6 +242,7 @@ class ReservationController extends Controller
             'reservation_name.required' => 'The Reservation Name field is required.',
             'reservation_cost.required' => 'The Total Cost field is required.',
             'agency_commission.required' => 'The Total Agency Commission field is required.',
+            'agent_commission.required' => 'The Agent Commission field is required.',
             'product_id.required' => 'The Product field is required.',
             'destination_id.required' => 'The Destination field is required',
             'resort_id.required' => 'The Resort/Ship field is required.',
@@ -230,19 +252,18 @@ class ReservationController extends Controller
         ];
 
         $data = $request->validate([
-            //  Required fields
             'agent_id' => 'required|integer',
             'customer_id' => 'required|integer',
             'reservation_number' => 'required|string|max:255',
             'reservation_name' => 'required|string|max:255',
             'reservation_cost' => 'required|numeric',
             'agency_commission' => 'required|numeric',
+            'agent_commission' => 'required|numeric',
             'status' => 'required|string|max:255',
             'product_id' => 'required|integer',
             'destination_id' => 'required|integer',
             'resort_id' => 'required|integer',
 
-            //  Optional string fields
             'group_number' => 'nullable|string|max:50',
             'special_offer' => 'nullable|string|max:255',
             'celebrations' => 'nullable|string|max:255',
@@ -256,25 +277,20 @@ class ReservationController extends Controller
             'transportation_options' => 'nullable|string|max:255',
             'cruise_level' => 'nullable|string|max:255',
 
-            //  Optional numeric
-            'agent_commission' => 'nullable|numeric',
             'onboard_credit_from_cruise_line' => ['nullable','regex:/^\d+(\.\d{1,2})?$/'],
             'onboard_credit_from_agent' => ['nullable','regex:/^\d+(\.\d{1,2})?$/'],
 
-            //  Optional text
             'commission_notes' => 'nullable|string',
             'reservation_notes' => 'nullable|string',
             'flight_notes' => 'nullable|string',
             'notes' => 'nullable|string',
 
-            //  Optional dates
             'checkin_date' => 'nullable|date',
             'checkout_date' => 'nullable|date',
             'deposit_due_date' => 'nullable|date',
             'final_payment_due_date' => 'nullable|date',
             'unknown_reservation_date' => 'nullable|date',
 
-            // Optional integers / flags
             'commission_received' => 'nullable|integer',
             'commission_claimed' => 'nullable|integer',
             'look_up' => 'nullable|integer',
@@ -299,7 +315,6 @@ class ReservationController extends Controller
             'itinerary_trip_id' => 'nullable|integer',
             'is_deleted' => 'nullable|integer',
 
-            //  Lead flags
             'is_website_lead_knot' => 'nullable|integer',
             'is_website_lead' => 'nullable|integer',
             'is_virtuoso_lead' => 'nullable|integer',
@@ -309,7 +324,6 @@ class ReservationController extends Controller
             'is_radio_lead' => 'nullable|integer',
         ], $messages);
 
-        // Always update last modified
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
 
@@ -360,12 +374,23 @@ class ReservationController extends Controller
             'priority.required' => 'The Priority field is required.',
         ];
 
-        $data = $request->validate([
+        $validator = \Validator::make($request->all(), [
             'task_name' => 'required|string|max:255',
             'priority' => 'required|string',
             'due_date' => 'required|date',
-            'notes' => 'nullable|string',
-        ],$messages);
+            'task_notes' => 'nullable|string',
+        ], $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->route('reservations.reservationDetails', $reservation->id)
+                ->withErrors($validator, 'taskStore')
+                ->withInput()
+                ->with('activeTab', 'tasks')
+                ->with('openTaskModal', true);
+        }
+
+        $data = $validator->validated();
 
         $data['reservation_id'] = $reservation->id;
         $data['created_by'] = auth()->id();
@@ -376,6 +401,26 @@ class ReservationController extends Controller
         return redirect()
                 ->route('reservations.reservationDetails', $reservation->id)
                 ->with('success', 'Task added successfully')
+                ->with('activeTab', 'tasks');
+    }
+
+    public function updateTask(Request $request, ReservationTask $task)
+    {
+        $data = $request->validate([
+            'task_name' => 'required|string|max:255',
+            'priority' => 'required|string',
+            'due_date' => 'required|date',
+            'task_notes' => 'nullable|string',
+        ]);
+
+        $data['last_modified_by'] = auth()->id();
+        $data['last_modified_on'] = now();
+
+        $task->update($data);
+
+        return redirect()
+                ->back()
+                ->with('success', 'Task updated successfully')
                 ->with('activeTab', 'tasks');
     }
 
@@ -411,18 +456,110 @@ class ReservationController extends Controller
                 ->with('activeTab', 'tasks');
     }
 
+    public function storePayment(Request $request, Reservation $reservation)
+    {
+        // dd($request->all());
+        $messages = [
+            'notes.required' => 'The Payment Amount field is required',
+            'payment_type.required' => 'The Payment Type is required.',
+            'payment_method.required' => 'The Payment Method is required.',
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'amount' => 'required|integer', 
+            'payment_type' => 'required|string',
+            'payment_method' => 'required|string',
+            'payment_date' => 'nullable|date',
+            'check_number' => 'nullable|integer',
+            'credit_card_number' => 'nullable|integer',
+            'notes' => 'nullable|string',
+        ], $messages); 
+
+        if ($validator->fails()) {
+            return redirect()
+                ->route('reservations.reservationDetails', $reservation->id)
+                ->withErrors($validator, 'paymentStore')
+                ->withInput()
+                ->with('activeTab', 'payments')
+                ->with('openPaymentModal', true);
+        }
+
+        $data = $validator->validated();
+
+        $data['reservation_id'] = $reservation->id;
+        $data['created_by'] = auth()->id();
+        $data['created_on'] = now();
+
+        ReservationPayment::create($data);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservation->id)
+                ->with('success', 'Customer Payments added successfully')
+                ->with('activeTab', 'payments');
+    }
+
+    public function updatePayment(Request $request, ReservationPayment $payment)
+    {
+        $data = $request->validate([
+            'amount' => 'required|integer',
+            'payment_type' => 'required|string',
+            'payment_method' => 'required|string',
+            'payment_date' => 'nullable|date',
+            'check_number' => 'nullable|integer',
+            'credit_card_number' => 'nullable|integer',
+            'notes' => 'nullable|string',
+        ]);
+
+        $data['last_modified_by'] = auth()->id();
+        $data['last_modified_on'] = now();
+
+        $payment->update($data);
+
+        return redirect()
+                ->back()
+                ->with('success', 'Payment updated successfully')
+                ->with('activeTab', 'payments');
+    }
+
+    public function deletePayment(ReservationPayment $payment)
+    {
+        $reservationId = $payment->reservation_id;
+
+        $payment->update([
+            'is_deleted' => 1,
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $reservationId)
+                ->with('success', 'Payment deleted successfully')
+                ->with('activeTab', 'payments');
+    }
+
     public function storeDiningNote(Request $request, Reservation $reservation)
     {
         $messages = [
             'notes.required' => 'The Note field is required.',
         ];
 
-        $data = $request->validate([
+        $validator = \Validator::make($request->all(), [
             'dining_date' => 'nullable|date',
             'dining_time' => 'nullable|date_format:H:i',
             'meal' => 'nullable|string',
             'notes' => 'required|string',
         ],$messages);
+
+        if($validator->fails()) {
+            return redirect()
+                    ->route('reservations.reservationDetails', $reservation->id)
+                    ->withErrors($validator, 'diningNoteStore')
+                    ->withInput()
+                    ->with('activeTab','diningInformation')
+                    ->with('openDiningInfoModal', true);
+        }
+
+        $data = $validator->validated();
 
         $data['reservation_id'] = $reservation->id;
         $data['created_by'] = auth()->id();
@@ -432,7 +569,27 @@ class ReservationController extends Controller
 
         return redirect()
                 ->route('reservations.reservationDetails', $reservation->id)
-                ->with('success', 'Task added successfully')
+                ->with('success', 'Dining Note added successfully')
+                ->with('activeTab', 'diningInformation');
+    }
+
+    public function updateDiningNote(Request $request, ReservationDiningNote $diningNote)
+    {
+        $data = $request->validate([
+            'dining_date' => 'nullable|date',
+            'dining_time' => 'nullable|date_format:H:i:s',
+            'meal' => 'nullable|string',
+            'notes' => 'required|string',
+        ]);
+
+        $data['last_modified_by'] = auth()->id();
+        $data['last_modified_on'] = now();
+
+        $diningNote->update($data);
+
+        return redirect()
+                ->back()
+                ->with('success', 'Dining note updated successfully')
                 ->with('activeTab', 'diningInformation');
     }
 
@@ -476,12 +633,23 @@ class ReservationController extends Controller
             'amount.required' => 'Amount is required.',
         ];
 
-        $data = $request->validate([
+        $validator = \Validator::make($request->all(), [
             'gift_date' => 'required|date',
             'gift_type' => 'required|string',
             'amount' => 'required|integer',
             'notes' => 'nullable|string'
         ], $messages);
+
+        if($validator->fails()) {
+            return redirect()
+                    ->route('reservations.reservationDetails', $reservation->id)
+                    ->withErrors($validator, 'giftStore')
+                    ->withInput()
+                    ->with('activeTab', 'giftsInfo')
+                    ->with('openGiftsModal', true);
+        }
+
+        $data = $validator->validated();
 
         $data['reservation_id'] = $reservation->id;
         $data['created_by'] = auth()->id();
@@ -492,6 +660,31 @@ class ReservationController extends Controller
         return redirect()
                 ->route('reservations.reservationDetails', $reservation->id)
                 ->with('success', 'Gift added successfully')
+                ->with('activeTab', 'giftsInfo');
+    }
+
+    public function updateGift(Request $request, ReservationGift $gift)
+    {
+        // dd([
+        //     'method' => $request->method(),
+        //     'all' => $request->all(),
+        // ]);
+
+        $data = $request->validate([
+            'gift_date' => 'required|date',
+            'gift_type' => 'required|string',
+            'amount' => 'required|integer',
+            'notes' => 'nullable|string',
+        ]);
+
+        $data['last_modified_by'] = auth()->id();
+        $data['last_modified_on'] = now();
+
+        $gift->update($data);
+
+        return redirect()
+                ->back()
+                ->with('success', 'Gift updated successfully')
                 ->with('activeTab', 'giftsInfo');
     }
 
@@ -517,12 +710,23 @@ class ReservationController extends Controller
             'notes.required' => 'The Notes field is required.',
         ];
 
-        $data = $request->validate([
+        $validator = \Validator::make($request->all(), [
             'category' => 'nullable|string',
             'caller_name' => 'nullable|string',
             'caller_phone_number' => 'nullable|string',
             'notes' => 'required|string',
         ], $messages);
+
+        if($validator->fails()) {
+            return redirect()
+                    ->route('reservations.reservationDetails', $reservation->id)
+                    ->withErrors($validator, 'phoneNoteStore')
+                    ->withInput()
+                    ->with('activeTab', 'phoneNotes')
+                    ->with('openPhoneNotesModal', true);
+        }
+
+        $data = $validator->validated();
 
         $data['reservation_id'] = $reservation->id;
         $data['created_by'] = auth()->id();
@@ -533,6 +737,31 @@ class ReservationController extends Controller
         return redirect()
                 ->route('reservations.reservationDetails', $reservation->id)
                 ->with('success', 'Phone Note added successfully')
+                ->with('activeTab', 'phoneNotes');
+    }
+
+    public function updatePhoneNote(Request $request, ReservationPhoneNote $phoneNote)
+    {
+        // dd([
+        //     'method' => $request->method(),
+        //     'all' => $request->all(),
+        // ]);
+
+        $data = $request->validate([
+            'category' => 'nullable|string',
+            'caller_name' => 'nullable|string',
+            'caller_phone_number' => 'nullable|string',
+            'notes' => 'required|string',
+        ]);
+
+        $data['last_modified_by'] = auth()->id();
+        $data['last_modified_on'] = now();
+
+        $phoneNote->update($data);
+
+        return redirect()
+                ->back()
+                ->with('success', 'Phone Note updated successfully')
                 ->with('activeTab', 'phoneNotes');
     }
 
@@ -575,11 +804,22 @@ class ReservationController extends Controller
             'amount.required' => 'The Fee Amount field is required.'
         ];
 
-        $data = $request->validate([
+        $validator = \Validator::make($request->all(), [
             'fee_type' => 'required|string',
             'amount' => 'required|integer',
             'notes' => 'nullable|string',
         ], $messages);
+
+        if($validator->fails()) {
+            return redirect()
+                    ->route('reservations.reservationDetails', $reservation->id)
+                    ->withErrors($validator, 'commissionFeeStore')
+                    ->withInput()
+                    ->with('activeTab', 'agentPayments')
+                    ->with('openCommissionFeesModal', true);
+        }
+
+        $data = $validator->validated();
 
         $data['reservation_id'] = $reservation->id;
         $data['created_by'] = auth()->id();
@@ -590,6 +830,25 @@ class ReservationController extends Controller
         return redirect()
                 ->route('reservations.reservationDetails', $reservation->id)
                 ->with('success', 'Commission Fee added successfully')
+                ->with('activeTab', 'agentPayments');
+    }
+
+    public function updateCommissionFee(Request $request, ReservationCommissionFee $commissionFee)
+    {
+        $data = $request->validate([
+            'fee_type' => 'required|string',
+            'amount' => 'required|integer',
+            'notes' => 'nullable|string',
+        ]);
+
+        $data['last_modified_by'] = auth()->id();
+        $data['last_modified_on'] = now();
+
+        $commissionFee->update($data);
+
+        return redirect()
+                ->back()
+                ->with('success', 'Commission Fee updated successfully')
                 ->with('activeTab', 'agentPayments');
     }
 
@@ -608,4 +867,29 @@ class ReservationController extends Controller
                 ->with('success', 'Commission Fee deleted successfully')
                 ->with('activeTab', 'agentPayments');
     }
+
+    public function toggleIncludeTraveler(ReservationTraveler $traveler)
+    {
+        $traveler->update([
+            'is_included' => $traveler->is_included ? 0 : 1,
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
+
+        return redirect()
+                ->route('reservations.reservationDetails', $traveler->reservation_id)
+                ->with('success', $traveler->is_included ? 'Traveler marked excluded' : 'Traveler marked included')
+                ->with('activeTab', 'travelers');
+    }
+    
+    public function getActiveReservations($customerId)
+    {
+        $reservations = Reservation::where('customer_id', $customerId)
+            ->where('status', 'Active') 
+            ->select('id', 'reservation_number', 'reservation_name', 'checkin_date', 'checkout_date')
+            ->get();
+
+        return response()->json($reservations);
+    }
+
 }

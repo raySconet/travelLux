@@ -29,7 +29,7 @@
                         <option value="">--Filter by Destination--</option>
                         @if(request('product_id'))
                             @foreach($destinations as $destination)
-                                <option value="{{ $destination->id }}" 
+                                <option value="{{ $destination->id }}"  data-product="{{ $destination->product_id }}"
                                     {{ request('destination_id') == $destination->id ? 'selected' : '' }}>
                                     {{ $destination->destination_name }}
                                 </option>

@@ -152,7 +152,7 @@
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-600 border-t-2  {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                        {{ $reservation->final_payment_due_date }}
+                                        {{ $reservation->final_payment_due_date ? \Carbon\Carbon::parse($reservation->final_payment_due_date)->format('m/d/y') : ' ' }}
                                     </td>
 
                                 </tr>

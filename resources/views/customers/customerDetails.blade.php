@@ -48,36 +48,36 @@
                 <div class="topButtonsGroup">
                     <div class="btn-group systemUsersNav" role="group">
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'home' }" @click="section = 'home'">
-                            <i style="font-size:20px;" class="fas fa-map-marker-alt"></i>
+                            <i title="Home Address" style="font-size:20px;" class="fas fa-map-marker-alt"></i>
                         </button>
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'rewards' }" @click="section = 'rewards'">
-                            <i style="font-size:20px;" class="fas fa-trophy"></i>
+                            <i title="Rewards" style="font-size:20px;" class="fas fa-trophy"></i>
                         </button>
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'family' }" @click="section = 'family'">
-                            <i style="font-size:20px;" class="fas fa-user-friends"></i>
+                            <i title="Family" style="font-size:20px;" class="fas fa-user-friends"></i>
                         </button>
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'forms'}"  @click="section = 'forms'">
-                            <i style="font-size:20px;" class="fab fa-wpforms"></i>
+                            <i title="Forms" style="font-size:20px;" class="fab fa-wpforms"></i>
                         </button>    
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'surveys'}" @click="section = 'surveys'">
-                            <i style="font-size:20px;" class="fas fa-comments"></i>
+                            <i title="Surveys" style="font-size:20px;" class="fas fa-comments"></i>
                         </button> 
                         @if(!$isNewCustomer)
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'selfServiceInvitations'}" @click="section = 'selfServiceInvitations'">
-                            <i style="font-size:20px;" class="fas fa-address-card"></i>
+                            <i title="Self Service Invitations" style="font-size:20px;" class="fas fa-address-card"></i>
                         </button>  
                         @endif
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'travelHistory'}" @click="section = 'travelHistory'">
-                            <i style="font-size:20px;" class="fas fa-history"></i>
+                            <i title="Travel History" style="font-size:20px;" class="fas fa-history"></i>
                         </button>     
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'referredBy'}" @click="section = 'referredBy'">
-                            <i style="font-size:20px;" class="fas fa-tag"></i>
+                            <i title="Referred By" style="font-size:20px;" class="fas fa-tag"></i>
                         </button> 
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'autoEmails'}" @click="section = 'autoEmails'">
-                            <i style="font-size:20px;" class="fas fa-envelope"></i>
+                            <i title="Sent Auto Emails" style="font-size:20px;" class="fas fa-envelope"></i>
                         </button>       
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'generalNotes'}" @click="section = 'generalNotes'">
-                            <i style="font-size:20px;" class="fas fa-sticky-note"></i>
+                            <i title="General Notes" style="font-size:20px;" class="fas fa-sticky-note"></i>
                         </button>    
                     </div>
                 </div>

@@ -1,3 +1,6 @@
+@php 
+    $isCommissionFeeModalOpen = session('openCommissionFeesModal') || $errors->commissionFeeStore->any();
+@endphp    
 @if ($isNewReservation)
     <div>
         <div class="space-x-2">
@@ -31,7 +34,7 @@
     </div>
     
     @forelse($reservation->commissionFees()->where('is_deleted',0)->get() as $commissionFee)
-        <div class="flex justify-between mt-5">
+        <div class="flex justify-between mt-5" onclick='openEditCommissionFeesModal(@json($commissionFee))'>
             <div class="flex flex-col ml-2">
                 <p class="text-lg"><b>Fee: ${{ $commissionFee->amount }}</b></p>
                 <p class="text-[#989898]">Type: {{ $commissionFee->fee_type }}</p>
@@ -43,8 +46,8 @@
                 @csrf
                 @method('DELETE')
 
-                <button type="button" onclick="openDeleteModal(this)">
-                    <i class="fas fa-trash text-[#bdbdbd] text-2xl mt-7"></i>
+                <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
+                    <i title="Delete Fee" class="fas fa-trash text-[#bdbdbd] text-2xl mt-7"></i>
                 </button>
             </form>
         </div>
@@ -57,16 +60,20 @@
 
 <!-- Reservation Agent Payments Modal -->
 @if(!$isNewReservation)
-    <form method="POST" action="{{ route('reservations.commissionFees.store', $reservation->id) }}">
+    <form id="commissionFeeForm" method="POST" action="{{ route('reservations.commissionFees.store', $reservation->id) }}" data-store-url="{{ route('reservations.commissionFees.store', $reservation->id)}}">
         @csrf
-        <x-reservations-modal id="commissionFeesModal" title="Add Fee" close="closeCommissionFeesModal()" saveClass="commissionFeesModalSaveBtn">
+        <input type="hidden" id="commission_fee_id_modal" name="commission_fee_id" value="">
+        <input type="hidden" name="_method" id="commission_fee_method" value="POST">
+
+
+        <x-reservations-modal id="commissionFeesModal" title="Add Fee" close="closeCommissionFeesModal()" saveClass="commissionFeesModalSaveBtn" :open="$isCommissionFeeModalOpen">
             <div class="relative mt-3">
                 <label for="fee_type">Fee Type</label>
                 <select name="fee_type" id="fee_type" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
                     <option value="">-- Select Type--</option>
-                    <option value="General Fee">General Fee</option>
+                    <option value="General Fee" {{ old('fee_type', $reservation->fee_type ?? '') == 'General Fee' ? 'selected' : '' }}>General Fee</option>
                 </select>
-                <x-input-error :messages="$errors->get('fee_type')" />
+                <x-input-error :messages="$errors->commissionFeeStore->get('fee_type')" />
             </div>
 
             <div class="relative mt-5">
@@ -75,13 +82,13 @@
                 <div class="relative">
                     <span class="absolute left-2 top-1/2 text-base font-bold"><i class="fas fa-dollar-sign"></i></span>
 
-                    <x-text-input type="text" id="amount" name="amount" class="pl-7" />
+                    <x-text-input type="text" id="commission_fee_amount" name="amount" class="pl-7" value="{{ old('amount', $reservation->amount ?? '') }}" />
                 </div>
-                <x-input-error :messages="$errors->get('amount')" />
+                <x-input-error :messages="$errors->commissionFeeStore->get('amount')" />
             </div>
 
             <div class="relative mt-3">
-                <x-text-input type="text" id="notes" name="notes" />
+                <x-text-input type="text" id="commission_fee_notes" name="notes" value="{{ old('notes', $reservation->notes ?? '') }}" />
 
                 <x-input-label for="notes">Notes</x-input-label>
             </div>

@@ -20,7 +20,7 @@ class ReservationTask extends Model
         'is_completed',
         'is_completed_by',
         'is_completed_on',
-        'noted',
+        'task_notes',
         'is_timeline_task',
         'created_by',
         'created_on',

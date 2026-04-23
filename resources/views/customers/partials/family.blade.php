@@ -17,7 +17,7 @@
     <hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
 
     @forelse($customer->familyMembers()->where('is_deleted', 0)->get() as $member)
-        <div class="flex items-center justify-between mt-3">
+        <div class="flex items-center justify-between mt-3 cursor-pointer" onclick='openEditFamilyMemberModal(@json($member))'>
             <div class="flex items-center gap-3">
                 <i class="fa fa-user-tie text-base"></i>
                 <p class="text-base">{{ $member->fname }} {{ $member->lname }}</p>
@@ -31,7 +31,7 @@
                 @csrf
                 @method('DELETE')
 
-                <button type="button" onclick="openDeleteModal(this)">
+                <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
                     <i class="fa fa-trash text-base"></i>
                 </button>
             </form>
@@ -43,9 +43,10 @@
 
 <!-- Add Family Member to customer modal -->
 @if(!$isNewCustomer)
-    <form method="POST" action="{{ route('customers.familyMembers.store', $customer->id) }}">
+    <form id="familyMemberForm" method="POST" action="{{ route('customers.familyMembers.store', $customer->id) }}" data-store-url="{{ route('customers.familyMembers.store', $customer->id) }}">
         @csrf
-
+        <input type="hidden" id="family_member_id" name="family_member_id" value="">
+        <input type="hidden" name="_method" id="family_member_method" value="POST">
         <div id="customersAddFamilyMemberModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
             
             <div class="bg-white w-full max-w-3xl rounded-lg shadow-lg relative">
@@ -53,7 +54,7 @@
                 
                 <div class="flex items-center justify-between px-6 py-4 border-b-2  border-[#dee2e6]">
                     <div class="flex items-center space-x-2">
-                        <i class="fas fa-plus-circle text-[#f18325] text-base"></i>
+                        <i class="fas fa-plus-circle text-[#f18325] text-base modal-icon"></i>
                         <h2 class="text-base">Add Family Member</h2>
                     </div>
 
@@ -66,7 +67,7 @@
                 <div class="px-6 py-4 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-8">
                         <div class="relative">
-                            <x-text-input type="text" id="fname" name="fname"  />
+                            <x-text-input type="text" id="family_fname" name="fname"  />
 
                             <x-input-label for="fname">First Name</x-input-label>
 
@@ -74,13 +75,13 @@
                         </div>
 
                         <div class="relative">
-                            <x-text-input type="text" id="mname" name="mname"  />
+                            <x-text-input type="text" id="family_mname" name="mname"  />
 
                             <x-input-label for="mname">Middle Name</x-input-label>
                         </div>
 
                         <div class="relative">
-                            <x-text-input type="text" id="lname" name="lname"  />
+                            <x-text-input type="text" id="family_lname" name="lname"  />
 
                             <x-input-label for="lname">Last Name</x-input-label>
 
@@ -88,7 +89,7 @@
                         </div>
 
                         <div class="relative">
-                            <x-text-input type="text" id="nickname" name="nickname"  />
+                            <x-text-input type="text" id="family_nickname" name="nickname"  />
 
                             <x-input-label for="nickname">Nick Name</x-input-label>
                         </div>
@@ -121,13 +122,13 @@
                                 </select>
 
                             </div>
-                            <input type="hidden" name="birth_date" :value="formattedDate">
+                            <input type="hidden"  id="family_birth_date" name="birth_date" :value="formattedDate">
                         </div>
 
                         <div class="relative mt-8">
                             <label for="relation">Relation</label>
-                            <select name="relation" id="relation" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
-                                <option value="-1">-- Select Relation --</option>
+                            <select name="relation" id="family_relation" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                                <option value="">-- Select Relation --</option>
                                 <option value="Adult Child">Adult Child</option>
                                 <option value="Adult Relative">Adult Relative</option>
                                 <option value="Aunt">Aunt</option>
@@ -159,8 +160,8 @@
 
                         <div class="relative mt-8">
                             <label for="gender">Gender</label>
-                            <select name="gender" id="gender" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
-                                <option value="-1">-- Select Gender --</option>
+                            <select name="gender" id="family_gender" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                                <option value="">-- Select Gender --</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                             </select>
@@ -169,19 +170,19 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                         <div class="relative">
-                            <x-text-input type="text" id="cellphone" name="cellphone"  />
+                            <x-text-input type="text" id="family_cellphone" name="cellphone"  />
 
                             <x-input-label for="cellphone">Cell Phone</x-input-label>
                         </div>
 
                         <div class="relative">
-                            <x-text-input type="text" id="home_phone" name="home_phone"  />
+                            <x-text-input type="text" id="family_home_phone" name="home_phone"  />
 
                             <x-input-label for="home_phone">Home Phone</x-input-label>
                         </div>
 
                         <div class="relative">
-                            <x-text-input type="text" id="work_phone" name="work_phone"  />
+                            <x-text-input type="text" id="family_work_phone" name="work_phone"  />
 
                             <x-input-label for="work_phone">Work Phone</x-input-label>
                         </div>
@@ -189,13 +190,13 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                         <div class="relative">
-                            <x-text-input type="text" id="email" name="email"  />
+                            <x-text-input type="text" id="family_email" name="email"  />
 
                             <x-input-label for="email">Email</x-input-label>
                         </div>
 
                         <div class="relative">
-                            <x-text-input type="text" id="traveler_number" name="traveler_number"  />
+                            <x-text-input type="text" id="family_traveler_number" name="traveler_number"  />
 
                             <x-input-label for="traveler_number">Known Traveler Number</x-input-label>
                         </div>
@@ -209,19 +210,19 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                         <div class="relative mt-2">
-                            <x-text-input type="text" id="passport_number" name="passport_number"  />
+                            <x-text-input type="text" id="family_passport_number" name="passport_number"  />
 
                             <x-input-label for="passport_number">Passport Number</x-input-label>
                         </div>
 
                         <div class="relative mt-2">
-                            <x-text-input type="date" id="passport_issue_date" name="passport_issue_date"  />
+                            <x-text-input type="date" id="family_passport_issue_date" name="passport_issue_date"  />
 
                             <x-input-label for="passport_issue_date">Passport Issue Date</x-input-label>
                         </div>
 
                         <div class="relative mt-2">
-                            <x-text-input type="date" id="passport_expiration_date" name="passport_expiration_date"  />
+                            <x-text-input type="date" id="family_passport_expiration_date" name="passport_expiration_date"  />
 
                             <x-input-label for="passport_expiration_date">Passport Expiration Date</x-input-label>
                         </div>
@@ -236,23 +237,24 @@
                                 ></i>
                                 Address
                             </p>
+                            <p id="family_address_preview" class="text-sm text-gray-600"></p>
                         </div>
 
                         <div x-show="open"  class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                             <div class="relative">
-                                <x-text-input type="text" id="address_line1" name="address_line1"  />
+                                <x-text-input type="text" id="family_address_line1" name="address_line1"  />
 
                                 <x-input-label for="address_line1">Address Line 1</x-input-label>
                             </div>
 
                             <div class="relative">
-                                <x-text-input type="text" id="address_line2" name="address_line2"  />
+                                <x-text-input type="text" id="family_address_line2" name="address_line2"  />
 
                                 <x-input-label for="address_line2">Address Line 2</x-input-label>
                             </div>
 
                             <div class="relative">
-                                <x-text-input type="text" id="city" name="city"  />
+                                <x-text-input type="text" id="family_city" name="city"  />
 
                                 <x-input-label for="city">City</x-input-label>
                             </div>
@@ -261,7 +263,7 @@
                         <div x-show="open"  class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                             <div class="relative mt-6">
                                 <label for="state">State/Province/Region</label>
-                                <select name="state" id="state" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                                <select name="state" id="family_state" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
                                     <option value="">-- Select State/Province/Region --</option>
                                     @foreach($states as $state)
                                         <option value="{{ $state->name }}">
@@ -272,14 +274,14 @@
                             </div>
 
                             <div class="relative mt-4">
-                                <x-text-input type="text" id="zip_code" name="zip_code"  />
+                                <x-text-input type="text" id="family_zip_code" name="zip_code"  />
 
                                 <x-input-label for="zip_code">Zip Code</x-input-label>
                             </div>
 
                             <div class="relative mt-5">
                                 <label for="country">Country</label>
-                                <select name="country" id="country" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                                <select name="country" id="family_country" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
                                     <option value="">-- Select Country --</option>
                                     @foreach($countries as $country)
                                         <option value="{{ $country->name }}">
@@ -294,7 +296,7 @@
                     <div class="flex flex-col mt-4">
                         <label for="special_notes" class="mb-1 text-sm text-gray-700">Special Notes</label>
                         <textarea
-                            id="special_notes"
+                            id="family_special_notes"
                             name="special_notes"
                             rows="2"
                             class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1">

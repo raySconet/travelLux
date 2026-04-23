@@ -1,59 +1,50 @@
 import './bootstrap';
 // import Alpine from 'alpinejs';
 
-window.dateDropdown = function(minYear = 1920, maxYear = 2040) {
-    return {
-        day: '',
-        month: '',
-        year: '',
-        days: Array.from({ length: 31 }, (_, i) => i + 1),
-        months: [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-        ],
-        years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i),
-        get formattedDate() {
-            if (!this.day || !this.month || !this.year) return '';
-            return `${String(this.month).padStart(2, '0')}/` +
-            `${String(this.day).padStart(2, '0')}/` +
-            `${this.year}`;
-        }
-    };
-};
-
 window.Alpine = Alpine;
 
 Alpine.start();
 $(document).ready(() => {
 
     // start timeline task 
-    var $productSelect = $('#product_id');
-    var $destinationSelect = $('#destination_id');
-    var $allOptions = $destinationSelect.find('option').not(':first'); 
+    const $timelineProductSelect = $('#product_id');
+    const $timelineDestinationSelect = $('#destination_id');
 
-    function filterDestinations() {
-        var selectedProduct = $productSelect.val();
-        var selectedDestination = $destinationSelect.val(); 
+    if ($timelineProductSelect.length && $timelineDestinationSelect.length && !$('#resort_id').length && !$('#cruise_itinerary_id').length) {
+        const allTimelineDestinationOptions = $timelineDestinationSelect.find('option').clone();
+        const oldTimelineDestination = $timelineDestinationSelect.val();
 
-        if (!selectedDestination || selectedDestination === '') {
-            $destinationSelect.val('');
+        function filterTimelineDestinations() {
+            const selectedProduct = $timelineProductSelect.val();
+
+            const currentDestination = oldTimelineDestination || $timelineDestinationSelect.val();
+
+            $timelineDestinationSelect.html('<option value="">--Select Destination--</option>');
+
+            allTimelineDestinationOptions.each(function() {
+                const $option = $(this);
+                const productId = $option.data('product');
+
+                if ($option.val() !== '' && productId !== undefined && productId.toString() === selectedProduct) {
+                    $timelineDestinationSelect.append($option.clone());
+                }
+            });
+
+            if (!$timelineDestinationSelect.find('option[value="' + currentDestination + '"]').length && currentDestination) {
+                const oldOption = allTimelineDestinationOptions.filter(`[value="${currentDestination}"]`);
+                $timelineDestinationSelect.append(oldOption.clone());
+            }
+
+            $timelineDestinationSelect.val(currentDestination);
         }
 
-        $allOptions.each(function() {
-            var $option = $(this);
-            if ($option.data('product') == selectedProduct || $option.val() == selectedDestination) {
-                $option.show();
-            } else {
-                $option.hide();
-            }
+        $timelineProductSelect.on('change', function() {
+            $timelineDestinationSelect.val('');
+            filterTimelineDestinations();
         });
 
-        $destinationSelect.prop('disabled', !selectedProduct);
+        filterTimelineDestinations();
     }
-    filterDestinations();
-
-    $productSelect.on('change', filterDestinations);
-
     // end timeline task
 
     // start forms manager

@@ -54,7 +54,12 @@ class CustomerController extends Controller
         $states = State::orderBy('name')->get();
         $countries = Country::orderBy('name')->get();
 
-        return view('customers.customerDetails', compact('customer', 'isNewCustomer', 'states', 'countries'));
+        $referralCustomers = Customer::where('agent_id', auth()->id())
+                              ->where('is_deleted', 0)
+                              ->orderBy('lname')
+                              ->get();
+
+        return view('customers.customerDetails', compact('customer', 'isNewCustomer', 'states', 'countries','referralCustomers'));
     }
 
 
@@ -72,7 +77,12 @@ class CustomerController extends Controller
                                             $q->where('all_customers_required', 1);
                                         })->get();
 
-        return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms'));
+        $referralCustomers = Customer::where('agent_id', auth()->id())
+                              ->where('is_deleted', 0)
+                              ->orderBy('lname')
+                              ->get();                                
+
+        return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms','referralCustomers'));
     }
 
     public function inviteNewCustomer(){
@@ -94,7 +104,6 @@ class CustomerController extends Controller
         ];
 
         $data = $request->validate([
-            // Required fields
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -106,7 +115,6 @@ class CustomerController extends Controller
             'city' => 'required|string|max:255',
 
 
-            // Optional string fields
             'mname' => 'nullable|string|max:255',
             'nickname' => 'nullable|string|max:255',
             'secondary_email' => 'nullable|email|max:255',
@@ -136,7 +144,6 @@ class CustomerController extends Controller
             'referred_by_phone' => 'nullable|string|max:255',
             'general_notes' => 'nullable|string',
 
-            // Optional boolean flags (stored as varchar(1) F/T)
             'interests_all_inclusive' => 'nullable|in:T,F',
             'four_wheel_drive_expedition' => 'nullable|in:T,F',
             'adult_education' => 'nullable|in:T,F',
@@ -255,7 +262,6 @@ class CustomerController extends Controller
             'direct_mail_marketing_permission' => 'nullable|in:T,F',
             'email_marketing_permission' => 'nullable|in:T,F',
 
-            // Optional int fields
             'retired' => 'nullable|integer',
             'children_at_home' => 'nullable|integer',
             'virtuoso_life' => 'nullable|integer',
@@ -269,7 +275,6 @@ class CustomerController extends Controller
             'is_instagram_lead' => 'nullable|integer',
             'is_radio_lead' => 'nullable|integer',
 
-            // Optional date fields
             'birth_date' => 'nullable|date',
             'anniversary_date' => 'nullable|date',
             'last_modified_on' => 'nullable|date',
@@ -298,7 +303,6 @@ class CustomerController extends Controller
     public function update(Request $request, Customer $customer)
     {
         $data = $request->validate([
-            // Required fields
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -308,7 +312,6 @@ class CustomerController extends Controller
             'postal_code' => 'required|string|max:255',
             'status' => 'nullable|string|max:255',
 
-            // Optional string fields
             'mname' => 'nullable|string|max:255',
             'nickname' => 'nullable|string|max:255',
             'secondary_email' => 'nullable|email|max:255',
@@ -339,7 +342,6 @@ class CustomerController extends Controller
             'referred_by_phone' => 'nullable|string|max:255',
             'general_notes' => 'nullable|string',
 
-            // Optional boolean flags (stored as varchar(1) F/T)
             'interests_all_inclusive' => 'nullable|in:T,F',
             'four_wheel_drive_expedition' => 'nullable|in:T,F',
             'adult_education' => 'nullable|in:T,F',
@@ -458,7 +460,6 @@ class CustomerController extends Controller
             'direct_mail_marketing_permission' => 'nullable|in:T,F',
             'email_marketing_permission' => 'nullable|in:T,F',
 
-            // Optional int fields
             'retired' => 'nullable|integer',
             'children_at_home' => 'nullable|integer',
             'virtuoso_life' => 'nullable|integer',
@@ -474,14 +475,12 @@ class CustomerController extends Controller
             'is_instagram_lead' => 'nullable|integer',
             'is_radio_lead' => 'nullable|integer',
 
-            // Optional date fields
             'birth_date' => 'nullable|date',
             'anniversary_date' => 'nullable|date',
             'created_on' => 'nullable|date',
             'last_modified_on' => 'nullable|date',
         ]);
 
-        // Always set last_modified
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
 
@@ -548,6 +547,42 @@ class CustomerController extends Controller
                 ->route('customers.customerDetails', $customer->id)
                 ->with('success', 'Family Member added successfully')
                 ->with('activeTab', 'family');
+    }
+
+    public function updateFamilyMember(Request $request, CustomerFamilyMember $familyMember)
+    {
+        $data = $request->validate([
+            'fname' => 'required|string',
+            'lname' => 'required|string',
+            'mname' => 'nullable|string',
+            'nickname' => 'nullable|string',
+            'birth_date' => 'nullable|date',
+            'relation' => 'nullable|string',
+            'gender' => 'nullable|string',
+            'cellphone' => 'nullable|integer',
+            'home_phone' => 'nullable|integer',
+            'work_phone' => 'nullable|integer',
+            'email' => 'nullable|string',
+            'traveler_number' => 'nullable|integer',
+            'deceased' => 'nullable|integer',
+            'passport_number' => 'nullable|integer',
+            'passport_issue_date' => 'nullable|date',
+            'passport_expiration_date' => 'nullable|date',
+            'address_line1' => 'nullable|string',
+            'address_line2' => 'nullable|string',
+            'city' => 'nullable|string',
+            'state' => 'nullable|string',
+            'zip_code' => 'nullable|integer',
+            'country' => 'nullable|string',
+            'special_notes' => 'nullable|string',
+        ]);
+
+        $familyMember->update($data);
+
+        return redirect()
+                ->back()
+                ->with('success', 'Family member updated successfully')
+                ->with('activeTab','family');
     }
 
     public function deleteFamilyMember(CustomerFamilyMember $member)

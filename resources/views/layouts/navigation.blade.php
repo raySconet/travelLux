@@ -2,7 +2,8 @@
     $user = auth()->user();
 @endphp
 
-<nav x-data="{ open: false }" class="bg-[#f18325] fixed top-0  w-full z-50" style="float:right; ">
+{{-- <nav x-data="{ open: false }" class="bg-[#f18325] fixed top-0  w-full z-50" style="float:right; "> --}}
+<nav x-data="{ open: false }" class="bg-[#f18325] w-full">
     <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
         @csrf
     </form>

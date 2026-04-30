@@ -151,4 +151,24 @@ class Reservation extends Model
         return $this->hasMany(ReservationPayment::class, 'reservation_id','id');
     }
 
+    public function links()
+    {
+        return $this->hasMany(ReservationLink::class, 'reservation_id');
+    }
+
+    public function linkedFrom()
+    {
+        return $this->hasMany(ReservationLink::class, 'linked_reservation_id');
+    }
+
+    public function automatedEmails()
+    {
+        return $this->hasMany(CustomerAutomatedEmail::class, 'reservation_id');
+    }
+
+    public function itineraryTrip()
+    {
+        return $this->belongsTo(ItineraryTrip::class, 'itinerary_trip_id');
+    }
+
 }

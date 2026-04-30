@@ -3,10 +3,17 @@
 
     <div class="flex items-end gap-4 mt-6">
         <div class="relative flex-1">
-            <select name="selectItineraryTrip"
-                    id="selectItineraryTrip"
-                    class="w-3/4 border-b border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="itinerary_trip_id" id="itinerary_trip_id" class="w-3/4 border-b border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+
                 <option value="-1">-- Select Trip --</option>
+
+                @foreach($itineraryTrips as $trip)
+                    <option value="{{ $trip->id }}"
+                        {{ old('itinerary_trip_id', $reservation->itinerary_trip_id ?? null) == $trip->id ? 'selected' : '' }}>
+                        {{ $trip->name }}
+                    </option>
+                @endforeach
+
             </select>
         </div>
 

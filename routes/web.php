@@ -224,6 +224,8 @@ Route::middleware('auth')->group(function(){
     Route::delete('/commissionFees/{commissionFee}', [ReservationController::class, 'deleteCommissionFee'])->name('commissionFees.delete');
 
     Route::get('/customers/{id}/active-reservations', [ReservationController::class, 'getActiveReservations']);
+    Route::post('/reservation/{reservation}/link', [ReservationController::class, 'linkReservation'])->name('reservations.link');
+    Route::post('/reservation/{reservation}/unlink', [ReservationController::class, 'unlinkReservation'])->name('reservations.unlink');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');

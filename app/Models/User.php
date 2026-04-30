@@ -146,4 +146,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ReservationCommissionFee::class,'created_by');
     }
+
+    public function itineraryTrips()
+    {
+        return $this->hasMany(ItineraryTrip::class, 'created_by', 'id');
+    }
 }

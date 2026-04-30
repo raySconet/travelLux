@@ -14,30 +14,39 @@
         </button>
     </div>     
 
-    <div class="flex justify-between mt-3">
+    @foreach($linkedReservations as $link)
+        @php
+            $other = $link->reservation_id == $reservation->id
+                ? $link->linkedReservation
+                : $link->reservation;
+        @endphp
+
+        <div class="flex justify-between mt-3">
         <div class="flex flex-col">
             <div class="flex space-x-2">
                 <i class="fas fa-user text-[#000] text-2xl mt-1"></i>
-                <p class="text-base mt-1"> customer fname customer lname </p>
+                <p class="text-base mt-1"> {{ $other->customer->fname ?? '-' }} {{ $other->customer->lname ?? '-' }} </p>
             </div>
 
             <div class="flex space-x-8">
                 <div class="flex text-base">
                     <i class="fas fa-calendar-alt mt-1"></i>
-                    <p class="ml-1"> checkin date </p>
+                    <p class="ml-1"> {{ $other->checkin_date ?? '-' }} </p>
                 </div>
                 
-                <p class="text-base">Number:...</p>
+                <p class="text-base">Number: {{ $other->reservation_number }}</p>
 
-                <p class="text-base">Name:..</p>
+                <p class="text-base">Name: {{ $other->reservation_name }}</p>
                 
             </div>
         </div>
         <div class="flex space-x-4 mt-3 text-xl">
-            <i title="Unlink Reservation" class="fas fa-unlink text-[#ed2939]"></i>
-            <i title="Go To Reservation" class="fas fa-external-link-alt text-[#bdbdbd]"></i>
+            <i title="Unlink Reservation" class="fas fa-unlink text-[#ed2939] unlink-reservation cursor-pointer" data-id="{{ $other->id }}"></i>
+            <a href="{{ route('reservations.reservationDetails', $other->id) }}"><i class="fas fa-external-link-alt text-[#bdbdbd] "></i></a>
         </div>
     </div>
+    @endforeach
+
 @endif    
 
 <!-- Reservations Traveling With Modal -->
@@ -76,3 +85,6 @@
 
     </div>
 </div>
+<script>
+    const CURRENT_RESERVATION_ID = {{ $reservation->id }};
+</script>

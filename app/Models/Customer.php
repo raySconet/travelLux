@@ -201,4 +201,9 @@ class Customer extends Model
         return $this->hasMany(CustomerFamilyMember::class, 'customer_id', 'id');
     }
 
+    public function automatedEmails()
+    {
+        return $this->hasMany(CustomerAutomatedEmail::class, 'customer_id');
+    }
+
 }

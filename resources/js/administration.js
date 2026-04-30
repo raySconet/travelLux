@@ -85,7 +85,7 @@ $(document).ready(() => {
         let html = '';
         if (type === 'title') {
             html = `
-            <div class="form-item bg-white shadow rounded-lg p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
+            <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Title</p>
                 <div class="relative mt-3">
                     <input type="text"  placeholder=" " class="peer w-full border-b focus:outline-none focus:border-[#f18325] pt-3 pb-1" />
@@ -110,7 +110,7 @@ $(document).ready(() => {
             </div>`;
         }else if(type === 'acknowledgement'){
             html = `
-            <div class="form-item bg-white shadow rounded-lg p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
+            <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Acknowledgement (Checkbox)</p>
                 <div class="relative mt-3">
                     <input type="text" placeholder=" " class="peer w-full border-b focus:outline-none focus:border-[#f18325] pt-3 pb-1 mb-5" />
@@ -139,7 +139,7 @@ $(document).ready(() => {
             </div>`;
         }else if(type === 'plainTextBlock'){
             html = `
-            <div class="form-item bg-white shadow rounded-lg p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
+            <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Plain Text Block</p>
                 <div class="relative mt-3">
                     <input type="text" placeholder=" " class="peer w-full border-b focus:outline-none focus:border-[#f18325] pt-3 pb-1" />
@@ -163,7 +163,7 @@ $(document).ready(() => {
             </div>`;
         }else if(type === 'customerInputBlock'){
             html = `
-            <div class="form-item bg-white shadow rounded-lg p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
+            <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Text Input</p>
                 <div class="relative mt-3">
                     <input type="text" placeholder=" " class="peer w-full border-b focus:outline-none focus:border-[#f18325] pt-3 pb-1 mb-5" />
@@ -192,7 +192,7 @@ $(document).ready(() => {
             </div>`;
         }else if(type === 'customerDeclaration'){
             html = `
-            <div class="form-item bg-white shadow rounded-lg p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
+            <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Customer Declaration</p>
                 <div>
                     <input type="checkbox" for="customerDeclarationRequired">
@@ -216,7 +216,7 @@ $(document).ready(() => {
             </div>`;
         }else if(type === 'choice'){
             html = `
-            <div class="form-item bg-white shadow rounded-lg p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
+            <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Choice (Radio Buttons)</p>
                 <div>
                     <input type="checkbox" for="requiredChoice">
@@ -261,7 +261,7 @@ $(document).ready(() => {
             <div class="addChoice mt-4 space-y-3"></div>`;
         }else if(type === 'dropdown'){
             html = `
-            <div class="form-item bg-white shadow rounded-lg p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
+            <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Dropdown</p>
                 <div class="relative mt-3">
                     <input type="text" placeholder=" " class="peer w-full border-b focus:outline-none focus:border-[#f18325] pt-3 pb-1 mb-5" />
@@ -305,7 +305,7 @@ $(document).ready(() => {
             <div class="addChoice mt-4 space-y-3"></div>`;
         }else if(type === 'signatureBlock'){
             html = `
-            <div class="form-item bg-white shadow rounded-lg p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
+            <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Signature Block</p>
                 <div>
                     <input type="checkbox" for="signatureBlockRequired">
@@ -329,7 +329,7 @@ $(document).ready(() => {
             </div>`;
         }else if(type === 'HTML'){
             html = `
-            <div class="flex-item bg-white shadow rounded-lg p-6 mt-1" style="box-shadow: 1px 1px 6px #808080;">
+            <div class="form-item flex-item bg-white shadow rounded-none p-6 mt-1" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">HTML</p>
                 <label class="text-sm">Content</label>
                 <textarea

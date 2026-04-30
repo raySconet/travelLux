@@ -21,7 +21,7 @@
                 </span>
             </button>
 
-            <div x-show="open"  class="mt-2 text-sm space-y-3" >
+            <div x-show="open" x-cloak class="mt-2 text-sm space-y-3" >
                 @if(auth()->user()->isAdmin())
                     <a href="/system-users" class="block py-1  sidebarA">System Users <i class="text-lg fas fa-user-circle"></i> </a>
                     <a href="/timelinetasks" class="block py-1 sidebarA">Timeline Tasks <i class="text-lg fas fa-clock"></i> </a>
@@ -42,7 +42,7 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open"  class="mt-2 text-sm space-y-3"  >
+            <div x-show="open" x-cloak  class="mt-2 text-sm space-y-3"  >
                 <a href="/customer-list" class="block py-1 sidebarA">Customer List<i class="text-lg fas fa-list"></i></a>
                 <a href="/customer/create" class="block py-1 sidebarA">New Customer <i class="text-lg fas fa-plus-circle"></i></a>
                 <a href="/inviteNewCustomer" class="block py-1 sidebarA">Invite New Customer <i class="text-lg fas fa-envelope-open-text"></i></a>
@@ -57,7 +57,7 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open"  class="mt-2 text-sm space-y-2"  >
+            <div x-show="open" x-cloak  class="mt-2 text-sm space-y-2"  >
                 <a href="/reservation-list" class="block py-1 sidebarA">Current Reservations <i class="text-lg fas fa-list"></i></a>
                 <a href="/reservation-list/create" class="block py-1 sidebarA">New Reservation <i class="text-lg fas fa-plus-circle"></i></a>
             </div>
@@ -71,7 +71,7 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open"  class="text-sm mt-2 space-y-2">
+            <div x-show="open" x-cloak class="text-sm mt-2 space-y-2">
                 <a href="/vendorReport" class="block py-1 sidebarA">Vendor Report <i class="text-lg fas fa-building"></i></a>
                 <a href="/1099Report" class="block py-1 sidebarA">1099 Report <i class="text-lg fas fa-list-alt"></i></a>
                 <a href="/checkHistoryReport" class="block py-1 sidebarA">Check History <i class="text-lg fas fa-history"></i></a>
@@ -123,7 +123,7 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open"  class="text-sm mt-2 space-y-3">
+            <div x-show="open" x-cloak  class="text-sm mt-2 space-y-3">
                 <a href="/agentDashboard" class="block py-1 sidebarA">Agent Dashboard <i class="text-lg fas fa-compass"></i></a>
                 @if(auth()->user()->isAdmin())
                  <a href="/overallTaskDashboard" class="block py-1 sidebarA">Overall Task Dashboard <i class="text-lg fas fa-check-double"></i></a>
@@ -146,7 +146,7 @@
                     <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
                 </button>
 
-                <div x-show="open"  class="text-sm mt-2 space-y-3"  >
+                <div x-show="open" x-cloak class="text-sm mt-2 space-y-3"  >
                     <a href="/commissionRemittances" class="block py-1 sidebarA">Commission Remittances <i class="text-lg fas fa-download"></i></a>
                     <a href="/checkWriter" class="block py-1 sidebarA">Check Writer <i class="text-lg fas fa-pen"></i></a>
                 </div>
@@ -161,7 +161,7 @@
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
             </button>
 
-            <div x-show="open"  class="text-sm mt-2 space-y-2"  >
+            <div x-show="open" x-cloak class="text-sm mt-2 space-y-2"  >
                 <a href="/vendor-list" class="block py-1 sidebarA">Vendor List <i class="text-lg fas fa-list"></i></a>
             </div>
         </li>

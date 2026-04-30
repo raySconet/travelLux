@@ -14,9 +14,9 @@
         <div class="p-3 bg-white shadow sm:rounded-lg">
            
             <form method="GET" action="{{ route('customers.customerList') }}" class="flex items-end justify-end gap-9 px-6 py-4 ">
-                <select name="CustomerTag" id="customerTag" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+                {{-- <select name="CustomerTag" id="customerTag" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                     <option value="-1">--Filter by Customer Tags --</option>
-                </select>
+                </select> --}}
 
                 <select name="status" id="status" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" onchange="this.form.submit()">
                     <option value="Active" {{ $status == 'Active' ? 'selected' : '' }}>Active</option>

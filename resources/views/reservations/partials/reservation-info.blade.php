@@ -44,7 +44,9 @@
                                     <i class="fas fa-user-circle text-base"></i>
                                     <p class="ml-3">Go to Customer Profile</p>
                                 </div>
-                                <i class="fas fa-external-link-alt text-base"></i>
+                                <a :href="`/customer-list/${currentCustomer.id}`">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>    
                             </div>
 
                             <div class="flex flex-row mt-1" x-show="currentCustomer.email">
@@ -332,7 +334,7 @@
             <div class="relative">
                 <span class="absolute left-2 top-1/2 text-base font-bold"><i class="fas fa-dollar-sign"></i></span>
 
-                <x-text-input type="text" id="agent_commission" name="agent_commission" class="pl-7" value="{{ old('agent_commission', $reservation->agent_commission ?? '') }}" @if(auth()->user()->role == 2) readonly @endif/>
+                <x-text-input type="text" id="agent_commission" name="agent_commission" class="pl-7" value="{{ old('agent_commission', $reservation->agent_commission ?? '') }}" />
             </div>
 
             <x-input-error :messages="$errors->get('agent_commission')" />

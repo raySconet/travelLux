@@ -5,7 +5,7 @@
         ->whereDate('due_date', '<=', \Carbon\Carbon::today())
         ->count();
 @endphp
-<form method="POST"
+<form method="POST" id="reservationForm"
       action="{{ $isNewReservation
             ? route('reservations.store')
             : route('reservations.update' , $reservation->id)}}">
@@ -53,6 +53,7 @@
             </div>
 
             <div class="p-3 bg-white shadow sm:rounded-lg" x-data="{ section: '{{ session('activeTab', 'reservation-details') }}' }">
+                <input type="hidden" name="activeTab" :value="section">
                 <div class="topButtonsGroup">
                     <div class="btn-group systemUsersNav" role="group">
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'reservation-details' }" @click="section = 'reservation-details'">

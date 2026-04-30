@@ -1,69 +1,44 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
 
-// window.dateDropdown = function(initialDate = '', minYear = 1920, maxYear = 2040) {
-//     let day = '';
-//     let month = '';
-//     let year = '';
-
-//     if(initialDate) {
-//         const parts = initialDate.split('-'); 
-//         if(parts.length === 3) {
-//             year = parseInt(parts[0]);
-//             month = parseInt(parts[1]);
-//             day = parseInt(parts[2]);
-//         }
-//     }
-
-//     return {
-//         day,
-//         month,
-//         year,
-//         days: Array.from({ length: 31 }, (_, i) => i + 1),
-//         months: [
-//             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-//             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-//         ],
-//         years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i),
-//         get formattedDate() {
-//             if (!this.day || !this.month || !this.year) return '';
-//             return `${String(this.year)}-${String(this.month).padStart(2,'0')}-${String(this.day).padStart(2,'0')}`;
-//         }
-//     }
-// };
-
 window.dateDropdown = function(initialDate = '', minYear = 1920, maxYear = 2040) {
-    return {
-        day: '',
-        month: '',
-        year: '',
+   return {
+       day: '',
+       month: '',
+       year: '',
+       init() {
+           if (initialDate) {
+               const parts = initialDate.split('-');
+               if (parts.length === 3) {
+                   this.year = parseInt(parts[0]);
+                   this.month = parseInt(parts[1]);
+                   this.day = parseInt(parts[2]);
+               }
+           }
+       },
 
-        init() {
-            if (initialDate) {
-                const parts = initialDate.split('-');
-                if (parts.length === 3) {
-                    this.year = parseInt(parts[0]);
-                    this.month = parseInt(parts[1]);
-                    this.day = parseInt(parts[2]);
-                }
-            }
-        },
-
-        days: Array.from({ length: 31 }, (_, i) => i + 1),
-
-        months: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ],
-
-        years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i),
-
-        get formattedDate() {
-            if (!this.year || !this.month || !this.day) return '';
-
-            return `${this.year}-${String(this.month).padStart(2,'0')}-${String(this.day).padStart(2,'0')}`;
-        }
-    }
+       setDate(dateStr) {
+           if (!dateStr) {
+               this.year = '';
+               this.month = '';
+               this.day = '';
+               return;
+           }
+           const parts = dateStr.split('-');
+           if (parts.length === 3) {
+               this.year = parseInt(parts[0]);
+               this.month = parseInt(parts[1]);
+               this.day = parseInt(parts[2]);
+           }
+       },
+       days: Array.from({ length: 31 }, (_, i) => i + 1),
+       months: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+       years: Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i),
+       get formattedDate() {
+           if (!this.year || !this.month || !this.day) return '';
+           return `${this.year}-${String(this.month).padStart(2,'0')}-${String(this.day).padStart(2,'0')}`;
+       }
+   }
 };
 window.Alpine = Alpine;
 

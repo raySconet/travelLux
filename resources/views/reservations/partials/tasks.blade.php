@@ -23,13 +23,68 @@
     <hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
     <div class="relative flex flex-col justify-between gap-3 mt-3">
         <h5 class="text-base">Timeline Tasks</h5>
-        <p class="text-center text-base">No Timeline Tasks.</p>
+        @php
+            $timelineTasks = $reservation->tasks()->where('is_deleted', 0)->where('is_timeline_task', 1)->get();
+        @endphp
+
+            @forelse($timelineTasks as $task)
+                @php
+                    $isOverdue = $task->is_completed == 0 && $task->due_date && \Carbon\Carbon::parse($task->due_date)->lte(\Carbon\Carbon::today());
+                @endphp
+                <div class="flex justify-between mt-1" onclick='openEditTaskModal(@json($task))'>
+                    <div class="flex gap-5">
+                        <form method="POST" action="{{ route('tasks.toggleComplete', $task->id) }}" class="inline">
+                            @csrf
+                            <button onclick="event.stopPropagation();" type="submit">
+                                @if($task->is_completed == 0)
+                                    <i title="Complete Task" class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl" title="Complete Task"></i>
+                                @else
+                                    <i title="Undo Complete" class="fas fa-check-circle text-[#50c878] mt-3 text-2xl" title="Undo Complete"></i>
+                                @endif
+                            </button>
+                        </form>       
+                        <div class="flex flex-col">
+                            @if($task->is_completed == 0)
+                                <p class="text-base">{{ $task->task_name }}</p>
+                                <div class="flex text-sm gap-1 {{ $isOverdue ? 'text-red-500' : 'text-[#bdbdbd]' }}">
+                                    <i class="far fa-clock mt-1"></i>
+                                    <p>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('m/d/Y') : ' ' }}</p>
+                                </div>
+                            @else
+                                <p class="text-base line-through">{{ $task->task_name }}</p>
+                                <div class="flex text-[#bdbdbd] text-sm gap-1">
+                                    <p>Completed By : {{ $task->agent->fname . ' '. $task->agent->lname }} on {{ $task->is_completed_on }}</p>
+                                </div>   
+                            @endif
+                        </div>
+                    </div>
+                    <div class="space-x-8 text-2xl">
+                        @if($task->priority == 'Low')
+                            <i class="fas fa-exclamation-triangle text-green-500" title="Low priority"></i>
+                        @elseif($task->priority == 'Medium')
+                            <i class="fas fa-exclamation-triangle text-yellow-500" title="Medium priority"></i>
+                        @else
+                            <i class="fas fa-exclamation-triangle text-red-500" title="High priority"></i>
+                        @endif 
+                        
+                        <form method="POST" action="{{ route('tasks.delete', $task->id) }}" class="inline delete-form">
+                            @csrf
+                            @method('DELETE')
+                            <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
+                                <i title="Delete Task" class="fa fa-trash text-[#bdbdbd]"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @empty
+                <p class="text-center text-base">No Timeline Tasks.</p>
+            @endforelse
     </div>
     <hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
     <div class="relative flex flex-col justify-between gap-3 mt-3">
         <h5 class="text-base">General Tasks.</h5>
 
-        @forelse($reservation->tasks()->where('is_deleted',0)->get() as $task)
+        @forelse($reservation->tasks()->where('is_deleted',0)->where('is_timeline_task',0)->get() as $task)
             @php
                 $isOverdue = $task->is_completed == 0 && $task->due_date && \Carbon\Carbon::parse($task->due_date)->lte(\Carbon\Carbon::today());
             @endphp
@@ -132,10 +187,10 @@
                     <x-input-error :messages="$errors->taskStore->get('due_date')" />
                 </div>
 
-                <div class="relative mt-9">
+                <div class="relative mt-10">
                     <label for="priority">Priority</label>
                     <select name="priority" id="task_priority_modal" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
-                        <option value="">-- Select Priority --</option>
+                        <option value="-1">-- Select Priority --</option>
                         <option value="Low" {{ old('priority', $reservation->priority ?? '') == 'Low' ? 'selected' : '' }}>Low</option>
                         <option value="Medium" {{ old('priority', $reservation->priority ?? '') == 'Medium' ? 'selected' : ''}}>Medium</option>
                         <option value="High" {{ old('priority', $reservation->priority ?? '') == 'High' ? 'selected' : '' }}>High</option>

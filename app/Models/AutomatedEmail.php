@@ -54,4 +54,9 @@ class AutomatedEmail extends Model
     {
         return $this->belongsTo(CruiseItinerary::class, 'cruise_itinerary_list'); 
     }
+
+    public function customerAutomatedEmails()
+    {
+        return $this->hasMany(CustomerAutomatedEmail::class, 'automated_email_id');
+    }
 }

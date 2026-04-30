@@ -181,7 +181,7 @@
                     <x-input-error :messages="$errors->paymentStore->get('payment_method')" />
                 </div>
 
-                <div x-init="init()" x-data="dateDropdown('{{ old('payment_date', $reservation->payment_date ?? '') }}')" class="relative mt-5">
+                <div x-data="dateDropdown('{{ old('payment_date', $reservation->payment_date ?? '') }}')" class="relative mt-5">
                     <label class="block text-sm -mb-2">Due Date</label>
                     <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
                         <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">

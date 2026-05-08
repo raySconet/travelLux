@@ -59,4 +59,9 @@ class AutomatedEmail extends Model
     {
         return $this->hasMany(CustomerAutomatedEmail::class, 'automated_email_id');
     }
+
+    public function attachments()
+    {
+        return $this->hasMany(AutomatedEmailAttachment::class, 'automated_email_id');
+    }
 }

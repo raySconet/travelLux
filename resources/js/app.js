@@ -40,11 +40,40 @@ window.dateDropdown = function(initialDate = '', minYear = 1920, maxYear = 2040)
        }
    }
 };
+
+function showLoader() {
+    if ($(".loaderContainer").length) return;
+
+    const loader = `
+        <div class="loaderContainer">
+            <i class="fas fa-spinner fa-spin"></i>
+        </div>
+    `;
+
+    $("body").append(loader);
+}
+
+function hideLoader() {
+    $(".loaderContainer").fadeOut(300, function () {
+        $(this).remove();
+    });
+}
+
+$(document).on("submit", "form", function () {
+    showLoader();
+});
+
+
 window.Alpine = Alpine;
 
 Alpine.start();
 
+
 $(document).ready(() => {
+
+    window.showLoaderOnSubmit = function () {
+        showLoader();
+    };
 
     $(document).ajaxStart(function () {
         $('#ajaxLoader').fadeIn();

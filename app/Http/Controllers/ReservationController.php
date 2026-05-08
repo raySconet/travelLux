@@ -23,6 +23,9 @@ use App\Models\TimelineTask;
 use App\Models\AutomatedEmail;
 use App\Models\CustomerAutomatedEmail;
 use App\Models\ItineraryTrip;
+use App\Models\ReservationAttachment;
+use Illuminate\Support\Facades\Storage;
+
 
 class ReservationController extends Controller
 {
@@ -77,8 +80,8 @@ class ReservationController extends Controller
 
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
         $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
-        $resortShips = ResortShip::orderBY('resort_ship_name')->where('is_deleted',0)->get();
-        $cruiseItineraries = CruiseItinerary::orderBY('cruise_name')->where('is_deleted',0)->get();
+        $resortShips = ResortShip::orderBy('resort_ship_name')->where('is_deleted',0)->get();
+        $cruiseItineraries = CruiseItinerary::orderBy('cruise_name')->where('is_deleted',0)->get();
 
         $referralCustomers = Customer::where('agent_id', auth()->id())
                                 ->where('is_deleted',0)
@@ -105,8 +108,8 @@ class ReservationController extends Controller
 
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
         $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
-        $resortShips = ResortShip::orderBY('resort_ship_name')->where('is_deleted',0)->get();
-        $cruiseItineraries = CruiseItinerary::orderBY('cruise_name')->where('is_deleted',0)->get();
+        $resortShips = ResortShip::orderBy('resort_ship_name')->where('is_deleted',0)->get();
+        $cruiseItineraries = CruiseItinerary::orderBy('cruise_name')->where('is_deleted',0)->get();
 
         $availableForms = CustomersForm::where('is_deleted', 0)
                                         ->where('is_active', 1)
@@ -254,6 +257,8 @@ class ReservationController extends Controller
 
             'group_number' => 'nullable|string|max:50',
             'special_offer' => 'nullable|string|max:255',
+            'spouse_email' => 'nullable|string|max:255',
+            'email_to_send' => 'nullable|string|max:255',
             'celebrations' => 'nullable|string|max:255',
             'celebration_notes' => 'nullable|string|max:255',
             'room_category' => 'nullable|string|max:255',
@@ -378,6 +383,8 @@ class ReservationController extends Controller
 
             'group_number' => 'nullable|string|max:50',
             'special_offer' => 'nullable|string|max:255',
+            'spouse_email' => 'nullable|string|max:255',
+            'email_to_send' => 'nullable|string|max:255',
             'celebrations' => 'nullable|string|max:255',
             'celebration_notes' => 'nullable|string|max:255',
             'room_category' => 'nullable|string|max:255',
@@ -443,10 +450,50 @@ class ReservationController extends Controller
         $this->generateTimelineTasks($reservation);
         $this->generateAutomatedEmails($reservation);
 
+        if ($request->hasFile('attachments')) {
+
+            foreach ($request->file('attachments') as $file) {
+
+                $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $extension = $file->getClientOriginalExtension();
+
+                $attachment = ReservationAttachment::create([
+                    'reservation_id' => $reservation->id,
+                    'file_name' => $originalName,
+                    'file_extension' => $extension,
+                    'file_size' => $file->getSize(),
+                    'created_by' => auth()->id(),
+                    'created_on' => now(),
+                ]);
+
+                $fileName = $attachment->id . '.' . $extension;
+
+                $file->storeAs(
+                    'attachments/reservations',
+                    $fileName,
+                    'public'
+                );
+            }
+        }
+
         return redirect()
                 ->route('reservations.reservationDetails', $reservation->id)
                 ->with('success', 'Reservation updated successfully')
                 ->with('activeTab', $request->input('activeTab', 'reservation-details'));
+    }
+
+    public function destroyAttachment(ReservationAttachment $attachment)
+    {
+        Storage::disk('public')->delete(
+            'attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension
+        );
+
+        $attachment->delete();
+
+        return redirect()
+                ->route('reservations.reservationDetails', $attachment->reservation_id)
+                ->with('success', 'Reservation attachments deleted successfully')
+                ->with('activeTab', 'attachments');
     }
 
     public function destroy(Reservation $reservation)
@@ -479,6 +526,44 @@ class ReservationController extends Controller
         return redirect()
             ->route('reservations.reservationList')
             ->with('success', 'Reservations deleted successfully.');
+    }
+
+    public function duplicate(Reservation $reservation)
+    {
+        $copy = $reservation->replicate();
+
+        $copy->id = null;
+        $copy->created_at = null;
+        $copy->updated_at = null;
+
+        $copy->reservation_name = $reservation->reservation_name . ' (Copy)';
+
+        $users = User::select('id','fname','lname','email','commission')
+            ->where('isDeleted', 0)
+            ->get();
+
+        $customers = Customer::select('id','fname','lname','agent_id','email','cellphone')
+            ->where('is_deleted', 0)
+            ->get();
+
+        $products = Product::orderBy('product_name')->where('is_deleted', 0)->get();
+        $destinations = Destination::orderBy('destination_name')->where('is_deleted', 0)->get();
+        $resortShips = ResortShip::orderBy('resort_ship_name')->where('is_deleted', 0)->get();
+        $cruiseItineraries = CruiseItinerary::orderBy('cruise_name')->where('is_deleted', 0)->get();
+
+        $referralCustomers = Customer::where('agent_id', auth()->id())
+            ->where('is_deleted', 0)
+            ->orderBy('lname')
+            ->get();
+
+        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)
+            ->where('created_by', auth()->id())
+            ->orderBy('date', 'desc')
+            ->get();
+
+        $isNewReservation = true;
+
+        return view('reservations.reservationDetails', compact('copy','users','customers','products','destinations','resortShips','cruiseItineraries','referralCustomers','itineraryTrips','isNewReservation'))->with('reservation', $copy);
     }
 
     public function storeTask(Request $request, Reservation $reservation)

@@ -51,3 +51,8 @@
     </div>
     <div id="productDestinationContainer" class="mt-4 space-y-3"></div>
 </div>
+<script>
+    window.products = @json($products ?? []);
+    window.destinations = @json($destinations ?? []);
+    window.existingRows = @json($customerFormRequiredRows ?? []);
+</script>

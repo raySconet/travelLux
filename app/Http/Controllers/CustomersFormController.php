@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\CustomersForm;
 use App\Models\CustomersFormRequired;
+use App\Models\Product;
+use App\Models\Destination;
 
 class CustomersFormController extends Controller
 {
@@ -28,15 +30,31 @@ class CustomersFormController extends Controller
         $customerForm = new CustomersForm();
         $isNewCustomersForm = true;
 
-        return view('customers-form.edit', compact('customerForm','isNewCustomersForm'));
+        $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
+        $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
+
+        return view('customers-form.edit', compact('customerForm','isNewCustomersForm','products','destinations'));
     }
 
     public function edit(CustomersForm $customerForm)
     {
         $isNewCustomersForm = false;
-        $customerFormRequired = $customerForm->customersFormRequired;
 
-        return view('customers-form.edit' , compact('customerForm','customerFormRequired','isNewCustomersForm'));
+        $customerFormRequiredRows = $customerForm->customersFormRequired()->get();
+
+        $customerFormRequired = $customerFormRequiredRows->first(); 
+
+        $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
+        $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
+
+        return view('customers-form.edit', compact(
+            'customerForm',
+            'customerFormRequiredRows',
+            'customerFormRequired',
+            'isNewCustomersForm',
+            'products',
+            'destinations'
+        ));
     }
 
     public function store(Request $request)
@@ -58,14 +76,29 @@ class CustomersFormController extends Controller
         $data['created_by'] = auth()->id();
         $data['created_at'] = now();
 
+
         $form = CustomersForm::create($data);
 
-        CustomersFormRequired::create([
-            'form_id' => $form->id,
-            'all_customers_required' => $request->all_customers_required ?? 0,
-            'all_reservations_required' => $request->all_reservations_required ?? 0,
-            'is_deleted' => 0
-        ]);
+        $productIds = $request->product_id ?? [];
+        $destinationIds = $request->destination_id ?? [];
+
+        $rows = min(count($productIds), count($destinationIds));
+
+        for ($i = 0; $i < $rows; $i++) {
+
+            if (!$productIds[$i] && !$destinationIds[$i]) {
+                continue;
+            }
+
+            CustomersFormRequired::create([
+                'form_id' => $form->id,
+                'product_id' => $productIds[$i] ?? null,
+                'destination_id' => $destinationIds[$i] ?? null,
+                'all_customers_required' => $request->all_customers_required ?? 0,
+                'all_reservations_required' => $request->all_reservations_required ?? 0,
+                'is_deleted' => 0
+            ]);
+        }
 
         return redirect()
                 ->route('customersForms')
@@ -93,18 +126,63 @@ class CustomersFormController extends Controller
 
         $customerForm->update($data);
 
-        CustomersFormRequired::updateOrCreate(
-            ['form_id' => $customerForm->id],
-            [
-                'all_customers_required' => $request->all_customers_required ?? 0,
-                'all_reservations_required' => $request->all_reservations_required ?? 0,
-                'is_deleted' => 0
-            ]
-        );
+        $productIds = $request->product_id ?? [];
+        $destinationIds = $request->destination_id ?? [];
+
+        $existingRows = CustomersFormRequired::where('form_id', $customerForm->id)
+            ->where('is_deleted', 0)
+            ->get();
+
+        $usedIds = [];
+
+        $rows = min(count($productIds), count($destinationIds));
+
+        for ($i = 0; $i < $rows; $i++) {
+
+            if (!$productIds[$i] && !$destinationIds[$i]) {
+                continue;
+            }
+
+            $existing = $existingRows[$i] ?? null;
+
+            if ($existing) {
+
+                $existing->update([
+                    'product_id' => $productIds[$i] ?? null,
+                    'destination_id' => $destinationIds[$i] ?? null,
+                    'all_customers_required' => $request->all_customers_required ?? 0,
+                    'all_reservations_required' => $request->all_reservations_required ?? 0,
+                    'is_deleted' => 0
+                ]);
+
+                $usedIds[] = $existing->id;
+
+            } else {
+
+                $newRow = CustomersFormRequired::create([
+                    'form_id' => $customerForm->id,
+                    'product_id' => $productIds[$i] ?? null,
+                    'destination_id' => $destinationIds[$i] ?? null,
+                    'all_customers_required' => $request->all_customers_required ?? 0,
+                    'all_reservations_required' => $request->all_reservations_required ?? 0,
+                    'is_deleted' => 0
+                ]);
+
+                $usedIds[] = $newRow->id;
+            }
+        }
+
+      
+        CustomersFormRequired::where('form_id', $customerForm->id)
+            ->whereNotIn('id', $usedIds)
+            ->update([
+                'is_deleted' => 1
+            ]);
 
         return redirect()
-                ->route('customersForms')
-                ->with('success', 'Customers Form updated successfully');
+                ->route('customersForm.edit', $customerForm->id)
+                ->with('success', 'Customers Form updated successfully')
+                ->with('activeTab', $request->input('activeTab', 'general'));
     }
 
     public function destroy(CustomersForm $customerForm)

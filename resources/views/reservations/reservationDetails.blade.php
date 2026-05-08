@@ -6,6 +6,7 @@
         ->count();
 @endphp
 <form method="POST" id="reservationForm"
+      enctype="multipart/form-data"
       action="{{ $isNewReservation
             ? route('reservations.store')
             : route('reservations.update' , $reservation->id)}}">
@@ -39,7 +40,9 @@
 
                             </form>
                         @endif
-                        <x-secondary-buttonToDelete type="submit"><i class="fas fa-copy"></i><span>Duplicate</span></x-secondary-buttonToDelete>
+                        <x-secondary-buttonToDelete type="button" id="duplicateReservationBtn" data-id="{{ $reservation->id }}">
+                            <i class="fas fa-copy"></i><span>Duplicate</span>
+                        </x-secondary-buttonToDelete>
                         <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save Reservation</span></x-secondary-btn>
                         <x-primary-btn type="button" onclick="window.location='{{ route('reservations.reservationList') }}'"><i class="far fa-minus-square"></i><span>Close Reservation</span></x-primary-btn>
                     </div>

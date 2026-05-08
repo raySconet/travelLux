@@ -78,7 +78,9 @@ class Reservation extends Model
         'created_on',
         'last_modified_by',
         'last_modified_on',
-        'is_deleted'
+        'is_deleted',
+        'spouse_email',
+        'email_to_send'
     ];
 
     public function agent()
@@ -169,6 +171,11 @@ class Reservation extends Model
     public function itineraryTrip()
     {
         return $this->belongsTo(ItineraryTrip::class, 'itinerary_trip_id');
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(ReservationAttachment::class, 'reservation_id');
     }
 
 }

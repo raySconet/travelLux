@@ -9,6 +9,8 @@ use App\Models\Product;
 use App\Models\Destination;
 use App\Models\ResortShip;
 use App\Models\CruiseItinerary;
+use App\Models\AutomatedEmailAttachment;
+use Illuminate\Support\Facades\Storage;
 
 class AutomatedEmailsController extends Controller
 {
@@ -75,6 +77,8 @@ class AutomatedEmailsController extends Controller
     public function toggle(AutomatedEmail $automatedEmail)
     {
         $automatedEmail->is_disabled = $automatedEmail->is_disabled == 0 ? 1 : 0;
+        $automatedEmail->last_modified_by = auth()->id();
+        $automatedEmail->last_modified_on = now();
         $automatedEmail->save();
 
         return redirect()->route('automatedEmails');
@@ -91,16 +95,17 @@ class AutomatedEmailsController extends Controller
         ];
 
         $data = $request->validate([
+            'attachments.*' => 'file|max:10240',
             'email_type' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
             'before_after' => 'required|string|max:255',
             'days' =>'required|integer',
             'message' => 'required|string|max:255',
             'bcc_agent' => 'nullable|integer',
-            'product_list' => 'nullable|integer',
-            'destination_list' => 'nullable|integer',
-            'resort_list' => 'nullable|integer',
-            'cruise_itinerary_list' => 'nullable|integer',
+            'product_list' => 'nullable|array',
+            'destination_list' => 'nullable|array',
+            'resort_list' => 'nullable|array',
+            'cruise_itinerary_list' => 'nullable|array',
             'agent_id' => 'required|integer',
             'is_disabled' => 'nullable|integer',
             'is_deleted' => 'nullable|integer'
@@ -109,7 +114,59 @@ class AutomatedEmailsController extends Controller
         $data['created_by'] = auth()->id();
         $data['created_at'] = now();
 
-        AutomatedEmail::create($data);
+        $data['product_list'] = isset($data['product_list'])
+            ? implode(',', array_map(fn($v) => $v ?: -1, $data['product_list']))
+            : null;
+
+        $data['destination_list'] = isset($data['destination_list'])
+            ? implode(',', array_map(fn($v) => $v ?: -1, $data['destination_list']))
+            : null;
+
+        $data['resort_list'] = isset($data['resort_list'])
+            ? implode(',', array_map(fn($v) => $v ?: -1, $data['resort_list']))
+            : null;
+
+        $data['cruise_itinerary_list'] = isset($data['cruise_itinerary_list'])
+            ? implode(',', array_map(fn($v) => $v ?: -1, $data['cruise_itinerary_list']))
+            : null;
+
+        $email = AutomatedEmail::create($data);
+
+        if ($request->hasFile('attachments')) {
+
+
+            foreach ($request->file('attachments') as $file) {
+
+                $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $extension = $file->getClientOriginalExtension();
+                $size = $file->getSize();
+
+                
+                $attachment = AutomatedEmailAttachment::create([
+                    'automated_email_id' => $email->id,
+                    'file_name' => $originalName,
+                    'file_extension' => $extension,
+                    'file_size' => $size,
+                    'created_by' => auth()->id(),
+                    'created_on' => now(),
+                ]);
+
+                
+                $fileName = $attachment->id . '.' . $extension;
+
+                
+                $path = $file->storeAs(
+                    'attachments/automatedEmails',
+                    $fileName,
+                    'public'
+                );
+
+                
+                if (!$path) {
+                    $attachment->delete();
+                }
+            }
+        }
 
         return redirect()
             ->route('automatedEmails')
@@ -127,29 +184,70 @@ class AutomatedEmailsController extends Controller
         ];
 
         $data = $request->validate([
+            'attachments.*' => 'file|max:10240',
             'email_type' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
             'before_after' => 'required|string|max:255',
             'days' => 'required|integer',
             'message' => 'required|string|max:255',
             'bcc_agent' => 'nullable|integer',
-            'product_list' => 'nullable|integer',
-            'destination_list' => 'nullable|integer',
-            'resort_list' => 'nullable|integer',
-            'cruise_itinerary_list' => 'nullable|integer',
+            'product_list' => 'nullable|array',
+            'destination_list' => 'nullable|array',
+            'resort_list' => 'nullable|array',
+            'cruise_itinerary_list' => 'nullable|array',
             'agent_id' => 'required|integer',
             'is_disabled' => 'nullable|integer',
             'is_deleted' => 'nullable|integer'
         ], $messages);
+
+        $data['product_list'] = isset($data['product_list'])
+            ? implode(',', array_map(fn($v) => $v ?: -1, $data['product_list']))
+            : null;
+
+        $data['destination_list'] = isset($data['destination_list'])
+            ? implode(',', array_map(fn($v) => $v ?: -1, $data['destination_list']))
+            : null;
+
+        $data['resort_list'] = isset($data['resort_list'])
+            ? implode(',', array_map(fn($v) => $v ?: -1, $data['resort_list']))
+            : null;
+
+        $data['cruise_itinerary_list'] = isset($data['cruise_itinerary_list'])
+            ? implode(',', array_map(fn($v) => $v ?: -1, $data['cruise_itinerary_list']))
+            : null;
 
         $data['last_modified_by'] = auth()->id();
         $data['updated_at'] = now();
 
         $automatedEmail->update($data);
 
-        return redirect()
-            ->route('automatedEmails')
-            ->with('success', 'Automated Email updated successfully');
+        if ($request->hasFile('attachments')) {
+
+            foreach ($request->file('attachments') as $file) {
+
+                $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $extension = $file->getClientOriginalExtension();
+
+                $attachment = AutomatedEmailAttachment::create([
+                    'automated_email_id' => $automatedEmail->id,
+                    'file_name' => $originalName,
+                    'file_extension' => $extension,
+                    'file_size' => $file->getSize(),
+                    'created_by' => auth()->id(),
+                    'created_on' => now(),
+                ]);
+
+                $fileName = $attachment->id . '.' . $extension;
+
+                $file->storeAs(
+                    'attachments/automatedEmails',
+                    $fileName,
+                    'public'
+                );
+            }
+        }
+
+        return back()->with('success', 'Automated Email updated successfully');
     }
 
     public function destroy(AutomatedEmail $automatedEmail)
@@ -163,5 +261,17 @@ class AutomatedEmailsController extends Controller
         return redirect()
             ->route('automatedEmails')
             ->with('success', 'Automated Email deleted successfully');
+    }
+
+    public function destroyAttachment(AutomatedEmailAttachment $attachment)
+    {
+        Storage::disk('public')->delete(
+            'attachments/automatedEmails/' .
+            $attachment->id . '.' . $attachment->file_extension
+        );
+
+        $attachment->delete();
+
+        return back()->with('success', 'Attachment deleted successfully');
     }
 }

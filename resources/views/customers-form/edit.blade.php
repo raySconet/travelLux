@@ -34,7 +34,8 @@
         </x-slot>
 
         <div>
-            <div class="bg-white shadow sm:rounded-lg p-3 ml-4 mr-3" x-data="{ section: 'general' }">
+            <div class="bg-white shadow sm:rounded-lg p-3 ml-4 mr-3" x-data="{ section: '{{ session('activeTab', 'general') }}' }">
+                <input type="hidden" name="activeTab" :value="section">
                 <div class="topButtonsGroup">
                     <div class="btn-group systemUsersNav" role="group">
                         <button type="button"  class="systemUsersSectionBtn" :class="{ 'active': section === 'general' }" @click="section = 'general'">

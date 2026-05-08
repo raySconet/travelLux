@@ -20,8 +20,13 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <i class="fas fa-paper-plane text-[#f18325] text-xl cursor-pointer"></i>
-                <i class="fas fa-eye text-[#bdbdbd] text-xl cursor-pointer"></i>
+                <i title="Send to Customer" class="fas fa-paper-plane text-[#f18325] text-xl cursor-pointer"></i>
+
+                <i
+                    title="Preview Form"
+                    onclick='openFormPreviewModal(@json($form->preview_form_html_content))'
+                    class="fas fa-eye text-[#bdbdbd] text-xl cursor-pointer">
+                </i>
             </div>
         </div>
     @empty
@@ -33,3 +38,4 @@
         <p class="text-base text-center">No Forms Required</p>
     </div>
 @endif    
+<x-form-preview />

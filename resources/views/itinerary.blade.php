@@ -1,27 +1,32 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+        <div class="p-4 px-4 bg-white shadow sm:rounded-none flex items-center justify-between">
             <h2 class=" text-xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-plane mr-2 text-[#f18325]"></i>{{ __('Itinerary') }}
             </h2>
 
-            <x-primary-btn  class="flex items-center gap-2"><i class="far fa-plus-square"></i>Add Trip</x-primary-btn>
+            <x-primary-btn class="flex items-center gap-2" onclick="window.location='{{ route('itinerary.create') }}'">
+                <i class="far fa-plus-square"></i>
+                Add Trip
+            </x-primary-btn>
         </div>
     </x-slot>
 
     <div class="mx-auto py-2 px-4">
        
-        <div class="py-3 bg-white shadow rounded-lg px-2">
+        <div class="py-3 bg-white shadow rounded-none px-2">
            
             <div class="flex items-end justify-end gap-4 px-6 py-4">
                 <div class="flex flex-col gap-1">
                     <label for="agents" class="text-sm">
                         Select Agent
                     </label>
-                    <select name="agents" id="agents" class="w-85 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+                    <select name="agents" id="agents" onchange="window.location='?agents=' + this.value" class="w-85 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+
                         <option value="-1">All Agents</option>
+
                         @foreach ($users as $user)
-                            <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : ''}}>
+                            <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : '' }}>
                                 {{ $user->fname . ' ' . $user->lname }}
                             </option>
                         @endforeach
@@ -49,19 +54,22 @@
 
 
                     <tbody class="divide-y">
-                        @foreach ($users as $user)
-                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('itinerary.edit', $user->id) }}'">
+                        @foreach ($itineraries as $itinerary)
+                            <tr class="hover:bg-gray-50 cursor-pointer"
+                                onclick="window.location='{{ route('itinerary.edit', $itinerary->id) }}'">
+
                                 <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $user->name}}
+                                    {{ $itinerary->name }}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $user->email}}
+                                    {{ $itinerary->date ? \Carbon\Carbon::parse($itinerary->date)->format('m/d/Y') : ' ' }}
                                 </td>
 
-                                <td class="px-4 py-3 te border-t-2xt-gray-600 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
+                                    {{ $itinerary->creator?->fname . ' ' . $itinerary->creator?->lname }}
+                                </td>
 
-                                </td>    
                             </tr>
                         @endforeach
                     </tbody>

@@ -164,10 +164,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/automatedEmail/{automatedEmail}', [AutomatedEmailsController::class,'update'])->name('automatedEmails.update');
     Route::delete('/automatedEmail/{automatedEmail}', [AutomatedEmailsController::class,'destroy'])->name('automatedEmails.destroy');
     Route::patch('/automatedEmails/{automatedEmail}/toggle', [AutomatedEmailsController::class, 'toggle'])->name('automatedEmails.toggle');
+
+    Route::delete('/automated-email-attachments/{attachment}', [AutomatedEmailsController::class, 'destroyAttachment'])->name('automatedEmails.attachments.destroy');
 });
 Route::middleware('auth')->group(function () {
-    Route::get('/itinerary', [ItineraryController::class, 'index']);
+    Route::get('/itinerary', [ItineraryController::class, 'index'])->name('itinerary.index');
+    Route::get('/itinerary/create', [ItineraryController::class, 'create'])->name('itinerary.create');
+    Route::post('/itinerary/store', [ItineraryController::class, 'store'])->name('itinerary.store');
     Route::get('/itinerary/{itinerary}', [ItineraryController::class, 'edit'])->name('itinerary.edit');
+    Route::delete('/itinerary/{itinerary}', [ItineraryController::class, 'destroy'])->name('itinerary.destroy');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/customer-list', [CustomerController::class, 'index'])->name('customers.customerList');
@@ -188,6 +193,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/reservation-list', [ReservationController::class, 'index'])->name('reservations.reservationList');
     Route::get('/reservation-list/create', [ReservationController::class,'create'])->name('reservations.create');
     Route::get('/reservation-list/{reservation}',[ReservationController::class, 'edit'])->name('reservations.reservationDetails');
+    Route::get('/reservation-list/{reservation}/duplicate', [ReservationController::class, 'duplicate'])->name('reservations.duplicate');
 
     Route::post('/reservation', [ReservationController::class, 'store'])->name('reservations.store');
     Route::put('/reservation/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
@@ -226,6 +232,8 @@ Route::middleware('auth')->group(function(){
     Route::get('/customers/{id}/active-reservations', [ReservationController::class, 'getActiveReservations']);
     Route::post('/reservation/{reservation}/link', [ReservationController::class, 'linkReservation'])->name('reservations.link');
     Route::post('/reservation/{reservation}/unlink', [ReservationController::class, 'unlinkReservation'])->name('reservations.unlink');
+
+    Route::delete('/reservation-attachments/{attachment}', [ReservationController::class, 'destroyAttachment'])->name('reservations.attachments.destroy');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');

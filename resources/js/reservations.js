@@ -1,9 +1,4 @@
 $(document).ready(function() {
-    $('#reservationForm').on('submit', function () {
-        $('#ajaxLoader').fadeIn();
-    });
-
-    
     // start reservation attention modal
     window.openAttentionModal = function(){
         $('#attentionReservationModal').removeClass('hidden');
@@ -25,6 +20,12 @@ $(document).ready(function() {
 
         $('#bulkDeleteForm').submit();
     };
+
+    $(document).on('click', '#duplicateReservationBtn', function () {
+        let reservationId = $(this).data('id');
+
+        window.location.href = '/reservation-list/' + reservationId + '/duplicate';
+    });
 
 
     // start reservation add customer
@@ -409,23 +410,23 @@ $(document).ready(function() {
 
         let reservationId = CURRENT_RESERVATION_ID; 
 
-    $.ajax({
-        url: `/reservation/${reservationId}/link`,
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data: {
-            linked_reservation_id: linkedId
-        },
-            success: function () {
-                closeTravelingWithModal();
-                location.reload(); 
+        $.ajax({
+            url: `/reservation/${reservationId}/link`,
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            error: function (err) {
-                alert(err.responseJSON?.message ?? 'Error linking');
-            }
-        });
+            data: {
+                linked_reservation_id: linkedId
+            },
+                success: function () {
+                    closeTravelingWithModal();
+                    location.reload(); 
+                },
+                error: function (err) {
+                    alert(err.responseJSON?.message ?? 'Error linking');
+                }
+            });
     });
 
     window.closeTravelingWithModal = function(){
@@ -436,6 +437,17 @@ $(document).ready(function() {
         $('#possible-reservations').html('');
     }
     // end of reservation travel with
+
+    // start forms
+    window.openFormPreviewModal = function(content){
+        $('#formPreviewContent').html(content);
+        $('#formPreviewModal').removeClass('hidden');
+    }
+
+    window.closeFormPreviewModal = function(){
+        $('#formPreviewModal').addClass('hidden');
+    }
+    // end forms
 
 
     // start reservation dining notes
@@ -675,5 +687,94 @@ $(document).ready(function() {
             e.target.closest('form').submit();
         }
     });
+
+    // start reservation attachments
+    const attachReservationBtn = $('#attachReservationBtn');
+    const reservationInput = $('#reservationAttachments');
+    const reservationTable = $('#reservationAttachmentsTable');
+
+    attachReservationBtn.on('click', function () {
+        reservationInput.trigger('click');
+    });
+
+    reservationInput.on('change', function () {
+
+        const emptyRow = reservationTable.find('.empty-row');
+
+        if (emptyRow.length) {
+            emptyRow.remove();
+        }
+
+        Array.from(this.files).forEach((file, index) => {
+
+            const rowId = 'res-file-' + index + '-' + Date.now();
+
+            const row = `
+                <div id="${rowId}" class="flex justify-between mt-5 attachment-row">
+
+                    <div class="flex space-x-3">
+
+                        <i class="fas fa-file text-[#000] text-2xl mt-3"></i>
+
+                        <div class="flex flex-col">
+
+                            <p class="text-base">
+                                ${file.name}
+                            </p>
+
+                            <p class="text-[#989898] text-sm">
+                                Size: ${file.size} Bytes
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="space-x-4">
+
+                        <i title="Download Attachment"
+                        class="fas fa-cloud-download-alt text-[#bdbdbd] text-xl mt-3"></i>
+
+                        <button type="button"
+                                onclick="removeReservationFile('${rowId}', '${file.name}')">
+
+                            <i title="Delete Attachment"
+                            class="fas fa-trash text-[#bdbdbd] text-xl mt-3"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+            reservationTable.append(row);
+        });
+    });
+
+    function removeReservationFile(rowId, fileName)
+    {
+        $('#' + rowId).remove();
+
+        const dt = new DataTransfer();
+
+        Array.from(reservationInput[0].files).forEach(file => {
+            if (file.name !== fileName) {
+                dt.items.add(file);
+            }
+        });
+
+        reservationInput[0].files = dt.files;
+
+        if (reservationTable.find('.attachment-row').length === 0) {
+
+            reservationTable.html(`
+                <div class="text-gray-400 mt-5 empty-row">
+                   
+                </div>
+            `);
+        }
+    }
+    // end reservation attachments
 
 });

@@ -1,4 +1,5 @@
 <form method="POST"
+      enctype="multipart/form-data"
       action="{{ $isNewAutomatedEmail
              ? route('automatedEmails.store')
              : route('automatedEmails.update', $automatedEmail->id ) }}">

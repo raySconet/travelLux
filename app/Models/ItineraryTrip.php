@@ -26,4 +26,19 @@ class ItineraryTrip extends Model
     {
         return $this->hasMany(Reservation::class, 'itinerary_trip_id', 'id');
     }
+
+    public function itineraryAttachments()
+    {
+        return $this->hasMany(ItineraryAttachment::class, 'trip_id', 'id');
+    }
+
+    public function itineraryDays()
+    {
+        return $this->hasMany(ItineraryDay::class, 'itinerary_trip_id', 'id');
+    }
+
+    public function itineraryImages()
+    {
+        return $this->hasMany(ItineraryImage::class, 'itinerary_id', 'id');
+    }
 }

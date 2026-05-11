@@ -8,7 +8,7 @@
 >
     <div class="border-b bg-[#292727] text-[#FFF] border-[#CCCCCC] font-semibold text-xl text-center" style="padding:4px 0px;">
         {{-- Archer Luxury Travel --}}
-        <img src="{{ asset('images/archer-logo-white.png') }}" style="width: 50%;  height: auto; margin:auto;"  alt="Logo">
+        <img src="{{ asset('images/archer-logo-final.png') }}" style="width: 50%;  height: auto; margin:auto;"  alt="Logo">
 
     </div>
 

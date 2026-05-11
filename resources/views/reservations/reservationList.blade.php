@@ -22,18 +22,24 @@
         <div class="p-3 bg-white shadow sm:rounded-lg">
            
             <form method="GET" action="{{ route('reservations.reservationList')}}" class="flex items-end justify-end px-6 py-4 gap-4"  onchange="this.form.submit()">
-                <select name="status" id="status" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" onchange="this.form.submit()">
-                    <option value="Active" {{ $status == 'Active' ? 'selected' : '' }}>Active</option>
-                    <option value="Canceled - Commission Protected" {{ $status == 'Canceled - Commission Protected' ? 'selected' : '' }}>Canceled - Commission Protected</option>
-                    <option value="Canceled w/ Insurance Payout" {{ $status == 'Canceled w/ Insurance Payout' ? 'selected' : '' }}>Canceled w/ Insurance Payout</option>
-                    <option value="Canceled" {{ $status == 'Canceled' ? 'selected' : '' }}>Canceled</option>
-                    <option value="Duplicate" {{ $status == 'Duplicate' ? 'selected' : '' }}>Duplicate</option>
-                    <option value="Paid in Full" {{ $status == 'Paid in Full' ? 'selected' : '' }}>Paid in Full by Archer</option>
-                    <option value="Paid in Full" {{ $status == 'Paid in Full' ? 'selected' : '' }}>Paid in Full Not Paid by Archer</option>
-                    <option value="Claimed" {{ $status == 'Claimed' ? 'selected' : '' }}>Claimed</option>
-                    <option value="On Hold" {{ $status == 'On Hold' ? 'selected' : '' }}>On Hold</option>
-                    <option value="Prospect" {{ $status == 'Prospect' ? 'selected' : '' }}>Prospect</option>
-                </select>
+                @php
+                    $selectedStatuses = request()->input('status', ['Active']);
+                @endphp
+                    
+                <div class="w-90">
+                    <select name="status[]" id="statusSearch" class="selectpicker w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" multiple data-none-selected-text="-- Filter by Status --">
+                        <option value="Active" {{ in_array('Active', $selectedStatuses) ? 'selected' : '' }}>Active</option>
+                        <option value="Canceled - Commission Protected" {{ in_array('Canceled - Commission Protected', $selectedStatuses) ? 'selected' : '' }}>Canceled - Commission Protected</option>
+                        <option value="Canceled w/ Insurance Payout" {{ in_array('Canceled w/ Insurance Payout', $selectedStatuses) ? 'selected' : '' }}>Canceled w/ Insurance Payout</option>
+                        <option value="Canceled" {{ in_array('Canceled', $selectedStatuses) ? 'selected' : '' }}>Canceled</option>
+                        <option value="Duplicate" {{ in_array('Duplicate', $selectedStatuses) ? 'selected' : '' }}>Duplicate</option>
+                        <option value="" {{ in_array('', $selectedStatuses) ? 'selected' : '' }}>Paid in Full by Archer</option>
+                        <option value="Paid in Full" {{ in_array('Paid in Full', $selectedStatuses) ? 'selected' : '' }}>Paid in full Not Paid by Archer</option>
+                        <option value="Claimed" {{ in_array('Claimed', $selectedStatuses) ? 'selected' : '' }}>Claimed</option>
+                        <option value="On Hold" {{ in_array('On Hold', $selectedStatuses) ? 'selected' : '' }}>On Hold</option>
+                        <option value="Prospect" {{ in_array('Prospect', $selectedStatuses) ? 'selected' : '' }}>Prospect</option>
+                    </select>
+                </div>
 
                 @if(auth()->user()->isAdmin())
                     <select name="users" id="users" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1"  onchange="this.form.submit()">

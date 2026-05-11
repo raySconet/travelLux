@@ -14,7 +14,9 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $status = $request->input('status', 'Active');
+        // $status = $request->input('status', 'Active');
+       $statuses = $request->input('status', ['Active']);
+
         $agentId = $request->input('users', auth()->id());
         $search = $request->input('search');
 
@@ -25,7 +27,7 @@ class CustomerController extends Controller
 
         $customersQuery = Customer::with('agent')
                                     ->select('id','fname','mname','lname','cellphone','email','status','agent_id')
-                                    ->where('status', $status)
+                                    ->where('status', $statuses)
                                     ->where('is_deleted', 0);
 
         if($agentId != -1){
@@ -44,7 +46,7 @@ class CustomerController extends Controller
 
         $customers = $customersQuery->orderBy('lname', 'asc')->get();
 
-        return view('customers.customerList', compact('users','customers','status','agentId'));
+        return view('customers.customerList', compact('users','customers','statuses','agentId'));
     }
 
     public function create(Customer $customer)

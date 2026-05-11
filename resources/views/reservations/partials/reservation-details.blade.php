@@ -128,27 +128,36 @@
             <x-input-error :messages="$errors->get('days_of_tickets')" /> 
         </div>
 
-        <div class="flex-1 relative mt-8">
+        <div class="flex-1 relative mt-7">
+            @php
+                $ticketTypeIds = old(
+                    'ticket_types',
+                    $reservation->ticket_types
+                        ? explode(',', $reservation->ticket_types)
+                        : []
+                );
+            @endphp
+
             <label for="ticket_types" class="text-sm block mb-1">Ticket Types</label>
-            <select name="ticket_types"id="ticket_types" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                <option value="-1">-- Select Ticket Types --</option>
-                <option value="1" {{ old('ticket_types', $reservation->ticket_types ?? '') == '1' ? 'selected' : '' }}>Base</option>
-                <option value="2" {{ old('ticket_types', $reservation->ticket_types ?? '') == '2' ? 'selected' : '' }}>Cirque du Soleil</option>
-                <option value="3" {{ old('ticket_types', $reservation->ticket_types ?? '') == '3' ? 'selected' : '' }}>Barcelona</option>
-                <option value="4" {{ old('ticket_types', $reservation->ticket_types ?? '') == '4' ? 'selected' : '' }}>MaxPass</option>
-                <option value="5" {{ old('ticket_types', $reservation->ticket_types ?? '') == '5' ? 'selected' : '' }}>MNSSHP</option>
-                <option value="6" {{ old('ticket_types', $reservation->ticket_types ?? '') == '6' ? 'selected' : '' }}>MVMCP</option>
-                <option value="7" {{ old('ticket_types', $reservation->ticket_types ?? '') == '7' ? 'selected' : '' }}>NBA Experience</option>
-                <option value="8" {{ old('ticket_types', $reservation->ticket_types ?? '') == '8' ? 'selected' : '' }}>Other</option>
-                <option value="9" {{ old('ticket_types', $reservation->ticket_types ?? '') == '9' ? 'selected' : '' }}>Park Hopper</option>
-                <option value="10"{{ old('ticket_types', $reservation->ticket_types ?? '') == '10' ? 'selected' : '' }}>SeaWorld</option>
-                <option value="11"{{ old('ticket_types', $reservation->ticket_types ?? '') == '11' ? 'selected' : '' }}>Southern CA City Pass</option>
-                <option value="12"{{ old('ticket_types', $reservation->ticket_types ?? '') == '12' ? 'selected' : '' }}>Universal</option>
-                <option value="13"{{ old('ticket_types', $reservation->ticket_types ?? '') == '13' ? 'selected' : '' }}>Universal 2 park park-to-park</option>
-                <option value="14"{{ old('ticket_types', $reservation->ticket_types ?? '') == '14' ? 'selected' : '' }}>Universal 3 park park-to-park</option>
-                <option value="15"{{ old('ticket_types', $reservation->ticket_types ?? '') == '15' ? 'selected' : '' }}>Water Park & More/Park Hopper Plus</option>
-                <option value="16"{{ old('ticket_types', $reservation->ticket_types ?? '') == '16' ? 'selected' : '' }}>Water Park and Sports</option>
-                <option value="17"{{ old('ticket_types', $reservation->ticket_types ?? '') == '17' ? 'selected' : '' }}>Water Park Only</option>
+
+            <select name="ticket_types[]" id="ticket_types" multiple class="selectpicker w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" data-none-selected-text="-- Select Ticket Types --">
+                <option value="1" {{ in_array('1', $ticketTypeIds) ? 'selected' : '' }}>Base</option>
+                <option value="2" {{ in_array('2', $ticketTypeIds) ? 'selected' : '' }}>Cirque du Soleil</option>
+                <option value="3" {{ in_array('3', $ticketTypeIds) ? 'selected' : '' }}>Barcelona</option>
+                <option value="4" {{ in_array('4', $ticketTypeIds) ? 'selected' : '' }}>MaxPass</option>
+                <option value="5" {{ in_array('5', $ticketTypeIds) ? 'selected' : '' }}>MNSSHP</option>
+                <option value="6" {{ in_array('6', $ticketTypeIds) ? 'selected' : '' }}>MVMCP</option>
+                <option value="7" {{ in_array('7', $ticketTypeIds) ? 'selected' : '' }}>NBA Experience</option>
+                <option value="8" {{ in_array('8', $ticketTypeIds) ? 'selected' : '' }}>Other</option>
+                <option value="9" {{ in_array('9', $ticketTypeIds) ? 'selected' : '' }}>Park Hopper</option>
+                <option value="10" {{ in_array('10', $ticketTypeIds) ? 'selected' : '' }}>SeaWorld</option>
+                <option value="11" {{ in_array('11', $ticketTypeIds) ? 'selected' : '' }}>Southern CA City Pass</option>
+                <option value="12" {{ in_array('12', $ticketTypeIds) ? 'selected' : '' }}>Universal</option>
+                <option value="13" {{ in_array('13', $ticketTypeIds) ? 'selected' : '' }}>Universal 2 park park-to-park</option>
+                <option value="14" {{ in_array('14', $ticketTypeIds) ? 'selected' : '' }}>Universal 3 park park-to-park</option>
+                <option value="15" {{ in_array('15', $ticketTypeIds) ? 'selected' : '' }}>Water Park & More/Park Hopper Plus</option>
+                <option value="16" {{ in_array('16', $ticketTypeIds) ? 'selected' : '' }}>Water Park and Sports</option>
+                <option value="17" {{ in_array('17', $ticketTypeIds) ? 'selected' : '' }}>Water Park Only</option>
             </select>
         </div>
     </div>

@@ -1,4 +1,20 @@
 $(document).ready(function() {
+    $(function () {
+        const $status = $('#statusSearch');
+
+        if (!$status.length) return;
+
+            $status.selectpicker({
+            noneSelectedText: '-- Filter by Status --',
+            actionsBox: false,
+            liveSearch: false
+        });
+
+        $status.on('changed.bs.select', function () {
+            $(this).closest('form').submit();
+        });
+    });
+    
     // start reservation attention modal
     window.openAttentionModal = function(){
         $('#attentionReservationModal').removeClass('hidden');

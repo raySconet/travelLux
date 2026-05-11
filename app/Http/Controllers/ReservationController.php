@@ -31,7 +31,8 @@ class ReservationController extends Controller
 {
     public function index(Request $request)
     {
-       $status = $request->input('status', 'Active');
+    //    $status = $request->input('status', 'Active');
+       $statuses = $request->input('status', ['Active']);
        $search = $request->input('search');
 
 
@@ -43,7 +44,7 @@ class ReservationController extends Controller
 
        $reservationsQuery = Reservation::with('agent', 'customer', 'product', 'destination')
                                         ->select('id', 'status', 'created_on', 'reservation_number', 'reservation_name', 'customer_id', 'agent_id', 'product_id', 'destination_id', 'checkin_date', 'final_payment_due_date')
-                                        ->where('status',$status)   
+                                        ->whereIn('status', $statuses)
                                         ->where('is_deleted',0);
 
         if($agentId !=-1){
@@ -65,7 +66,7 @@ class ReservationController extends Controller
         }
 
         $reservations = $reservationsQuery->orderBy('created_on', 'asc')->get(); 
-        return view('reservations.reservationList', compact('users', 'reservations', 'status', 'agentId'));
+        return view('reservations.reservationList', compact('users', 'reservations', 'statuses', 'agentId'));
     }
 
     public function create(Reservation $reservation)
@@ -264,7 +265,8 @@ class ReservationController extends Controller
             'room_category' => 'nullable|string|max:255',
             'stateroom_number' => 'nullable|string|max:255',
             'embarkation_port' => 'nullable|string|max:255',
-            'ticket_types' => 'nullable|string|max:255',
+            'ticket_types' => 'nullable|array',
+'ticket_types.*' => 'integer',
             'dining_option' => 'nullable|string|max:255',
             'add_on_options' => 'nullable|string|max:255',
             'transportation_options' => 'nullable|string|max:255',
@@ -322,6 +324,10 @@ class ReservationController extends Controller
 
         $data['created_by'] = auth()->id();
         $data['created_on'] = now();
+
+        $data['ticket_types'] = !empty($data['ticket_types'])
+    ? implode(',', $data['ticket_types'])
+    : null;
 
         $reservation = Reservation::create($data);
         $this->generateTimelineTasks($reservation);
@@ -390,7 +396,8 @@ class ReservationController extends Controller
             'room_category' => 'nullable|string|max:255',
             'stateroom_number' => 'nullable|string|max:255',
             'embarkation_port' => 'nullable|string|max:255',
-            'ticket_types' => 'nullable|string|max:255',
+            'ticket_types' => 'nullable|array',
+'ticket_types.*' => 'integer',
             'dining_option' => 'nullable|string|max:255',
             'add_on_options' => 'nullable|string|max:255',
             'transportation_options' => 'nullable|string|max:255',
@@ -445,6 +452,10 @@ class ReservationController extends Controller
 
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
+
+        $data['ticket_types'] = !empty($data['ticket_types'])
+    ? implode(',', $data['ticket_types'])
+    : null;
 
         $reservation->update($data);
         $this->generateTimelineTasks($reservation);

@@ -17,14 +17,19 @@
                 {{-- <select name="CustomerTag" id="customerTag" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                     <option value="-1">--Filter by Customer Tags --</option>
                 </select> --}}
-
-                <select name="status" id="status" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" onchange="this.form.submit()">
-                    <option value="Active" {{ $status == 'Active' ? 'selected' : '' }}>Active</option>
-                    <option value="Inactive" {{ $status == 'Inactive' ? 'selected' : '' }}>Inactive</option>
-                    <option value="Invited" {{ $status == 'Invited' ? 'selected' : '' }}>Invited</option>
-                    <option value="Paused" {{ $status == 'Paused' ? 'selected' : '' }}>Paused</option>
-                    <option value="Prospect" {{ $status == 'Prospect' ? 'selected' : '' }}>Prospect</option>
-                </select>
+                
+                @php
+                    $selectedStatuses = request()->input('status', ['Active']);
+                @endphp
+                <div class="w-90">
+                    <select name="status[]" id="statusSearch" class="selectpicker w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" multiple data-none-selected-text="-- Filter by Status --">
+                        <option value="Active" {{ in_array('Active', $selectedStatuses) ? 'selected' : '' }}>Active</option>
+                        <option value="Inactive" {{ in_array('Inactive', $selectedStatuses) ? 'selected' : '' }}>Inactive</option>
+                        <option value="Invited" {{ in_array('Invited', $selectedStatuses) ? 'selected' : '' }}>Invited</option>
+                        <option value="Paused" {{ in_array('Paused', $selectedStatuses) ? 'selected' : '' }}>Paused</option>
+                        <option value="Prospect" {{ in_array('Prospect', $selectedStatuses) ? 'selected' : '' }}>Prospect</option>
+                    </select>
+                </div>
 
                 @if(auth()->user()->isAdmin())
                     <select name="users" id="agents" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" onchange="this.form.submit()">

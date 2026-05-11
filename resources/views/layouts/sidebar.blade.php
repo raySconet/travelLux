@@ -3,7 +3,7 @@
 @endphp
 <!-- SIDEBAR -->
 <div
-    class="fixed inset-y-0 left-0 bg-white shadow-lg w-64 transform transition-transform duration-500 z-40"
+    class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform transition-all duration-500 z-40"
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
 >
     <div class="p-4.5 border-b bg-[#f18325] text-[#FFF] border-[#CCCCCC] font-semibold text-xl">

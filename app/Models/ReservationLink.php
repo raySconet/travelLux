@@ -25,4 +25,9 @@ class ReservationLink extends Model
     {
         return $this->belongsTo(Reservation::class, 'reservation_id', 'id');
     }
+
+    public function linkedReservation()
+    {
+        return $this->belongsTo(Reservation::class, 'linked_reservation_id', 'id');
+    }
 }

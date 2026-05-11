@@ -78,7 +78,9 @@ class Reservation extends Model
         'created_on',
         'last_modified_by',
         'last_modified_on',
-        'is_deleted'
+        'is_deleted',
+        'spouse_email',
+        'email_to_send'
     ];
 
     public function agent()
@@ -149,6 +151,31 @@ class Reservation extends Model
     public function payments()
     {
         return $this->hasMany(ReservationPayment::class, 'reservation_id','id');
+    }
+
+    public function links()
+    {
+        return $this->hasMany(ReservationLink::class, 'reservation_id');
+    }
+
+    public function linkedFrom()
+    {
+        return $this->hasMany(ReservationLink::class, 'linked_reservation_id');
+    }
+
+    public function automatedEmails()
+    {
+        return $this->hasMany(CustomerAutomatedEmail::class, 'reservation_id');
+    }
+
+    public function itineraryTrip()
+    {
+        return $this->belongsTo(ItineraryTrip::class, 'itinerary_trip_id');
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(ReservationAttachment::class, 'reservation_id');
     }
 
 }

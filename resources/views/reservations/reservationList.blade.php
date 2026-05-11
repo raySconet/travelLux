@@ -12,7 +12,7 @@
                             <span>Delete Reservations</span>
                         </x-secondary-buttonToDelete>
                     @endif
-                    <x-primary-btn type="button" onclick="window.location='{{ route('reservations.create') }}'"><i class="far fa-plus-square"></i><span>Add Reservations</span></x-primary-btn>
+                    <x-primary-btn type="button" onclick="showLoaderOnSubmit(); window.location='{{ route('reservations.create') }}'"><i class="far fa-plus-square"></i><span>Add Reservations</span></x-primary-btn>
                 </div>
         </div>
     </x-slot>
@@ -110,7 +110,7 @@
 
                         <tbody class="divide-y">
                             @forelse ($reservations as $reservation)
-                                <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('reservations.reservationDetails', $reservation->id) }}'">
+                                <tr class="hover:bg-gray-50 cursor-pointer" onclick="showLoaderOnSubmit();window.location='{{ route('reservations.reservationDetails', $reservation->id) }}'">
                                     <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                         <input type="checkbox" name="selected_reservations[]" value="{{ $reservation->id }}" class="reservation-checkbox" onclick="event.stopPropagation();">
                                     </td>

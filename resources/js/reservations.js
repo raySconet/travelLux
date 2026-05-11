@@ -21,6 +21,12 @@ $(document).ready(function() {
         $('#bulkDeleteForm').submit();
     };
 
+    $(document).on('click', '#duplicateReservationBtn', function () {
+        let reservationId = $(this).data('id');
+
+        window.location.href = '/reservation-list/' + reservationId + '/duplicate';
+    });
+
 
     // start reservation add customer
     window.openReservationAddCustomerModal = function(){
@@ -204,19 +210,20 @@ $(document).ready(function() {
         $form.attr('action', $form.data('store-url'));
         $('#task_method').val('POST');
 
-        $modal.find('select').each(function () {
-            $(this).val('');
-        });
+        $('#task_id_modal').val('');
+        $('#task_name_modal').val('');
+        $('#task_priority_modal').val(-1);
+        $('#task_notes_modal').val('');
 
-        $modal.find('input, textarea').each(function () {
-            if ($(this).attr('type') === 'checkbox') {
-                $(this).prop('checked', false);
-            } else if ($(this).attr('type') !== 'hidden') {
-                $(this).val('');
-            }
-        });
+        const dateEl = $modal.find('[x-data]')[0];
 
-        $('#task_id').val('');
+        if (dateEl && dateEl._x_dataStack) {
+
+            const alpineData = Alpine.$data(dateEl);
+
+            alpineData.setDate('');
+
+        }
     }
 
     window.openEditTaskModal = function (task) {
@@ -235,20 +242,10 @@ $(document).ready(function() {
         $('#task_priority_modal').val(task.priority ?? -1);
         $('#task_notes_modal').val(task.task_notes ?? '');
 
-        if (task.due_date) {
-            const dd = new Date(task.due_date);
-
-            const year = dd.getFullYear();
-            const month = dd.getMonth() + 1;
-            const day = dd.getDate();
-
-            const $yearSelect = $modal.find('[x-model="year"]');
-            const $monthSelect = $modal.find('[x-model="month"]');
-            const $daySelect = $modal.find('[x-model="day"]');
-
-            if ($yearSelect.length) $yearSelect.val(year).trigger('change');
-            if ($monthSelect.length) $monthSelect.val(month).trigger('change');
-            if ($daySelect.length) $daySelect.val(day).trigger('change');
+        const dateEl = $modal.find('[x-data]')[0];
+        if (dateEl && dateEl._x_dataStack) {
+            const alpineData = Alpine.$data(dateEl);
+            alpineData.setDate(task.due_date ?? '');
         }
     }
 
@@ -269,19 +266,23 @@ $(document).ready(function() {
         $form.attr('action', $form.data('store-url'));
         $('#payment_method').val('POST');
 
-        $modal.find('select').each(function () {
-            $(this).val('');
-        });
+        $('#payment_id_modal').val('');
+        $('#payment_amount_modal').val('');
+        $('#payment_type').val('');
+        $('#payment_method_modal').val('');
+        $('#check_number').val('');
+        $('#credit_card_number').val('');
+        $('#payment_notes_modal').val('');
 
-        $modal.find('input, textarea').each(function () {
-            if ($(this).attr('type') === 'checkbox') {
-                $(this).prop('checked', false);
-            } else if ($(this).attr('type') !== 'hidden') {
-                $(this).val('');
-            }
-        });
+        const dateEl = $modal.find('[x-data]')[0];
 
-        $('#payment_id').val('');
+        if (dateEl && dateEl._x_dataStack) {
+
+            const alpineData = Alpine.$data(dateEl);
+
+            alpineData.setDate('');
+
+        }
     }
 
     window.openEditPaymentModal = function (payment) {
@@ -289,6 +290,7 @@ $(document).ready(function() {
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Edit Payment');
+        $modal.find('.modal-icon').removeClass('fa-plus-circle').addClass('fa-edit');
 
         const $form = $('#paymentForm');
         $form.attr('action', `/payment/${payment.id}`);
@@ -302,22 +304,35 @@ $(document).ready(function() {
         $('#credit_card_number').val(payment.credit_card_number ?? '');
         $('#payment_notes_modal').val(payment.notes ?? '');
 
-        if (payment.payment_date) {
-            const pd = new Date(payment.payment_date);
-
-            const year = pd.getFullYear();
-            const month = pd.getMonth() + 1;
-            const day = pd.getDate();
-
-            const $yearSelect = $modal.find('[x-model="year"]');
-            const $monthSelect = $modal.find('[x-model="month"]');
-            const $daySelect = $modal.find('[x-model="day"]');
-
-            if ($yearSelect.length) $yearSelect.val(year).trigger('change');
-            if ($monthSelect.length) $monthSelect.val(month).trigger('change');
-            if ($daySelect.length) $daySelect.val(day).trigger('change');
+        const dateEl = $modal.find('[x-data]')[0];
+        if (dateEl && dateEl._x_dataStack) {
+            const alpineData = Alpine.$data(dateEl);
+            alpineData.setDate(payment.payment_date ?? '');
         }
     }
+
+    $(document).on('click', '.unlink-reservation', function () {
+        let linkedId = $(this).data('id');
+        let reservationId = CURRENT_RESERVATION_ID;
+
+
+        $.ajax({
+            url: `/reservation/${reservationId}/unlink`,
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                linked_reservation_id: linkedId
+            },
+            success: function () {
+                location.reload(); 
+            },
+            error: function (err) {
+                alert(err.responseJSON?.message ?? 'Error unlinking');
+            }
+        });
+    });
 
     window.closeReservationPaymentsModal = function(){
         $('#reservationPaymentsModal').addClass('hidden');
@@ -351,6 +366,9 @@ $(document).ready(function() {
         $.ajax({
             url: `/customers/${customerId}/active-reservations`,
             method: 'GET',
+            data: {
+                current_reservation_id: CURRENT_RESERVATION_ID
+            },
             dataType: 'json',
             success: function (data) {
 
@@ -374,8 +392,8 @@ $(document).ready(function() {
 
                             <button 
                                 type="button"
-                                class="space-x-2 bg-[#f18325] text-white py-1 px-2 rounded hover:bg-white hover:text-[#f18325] hover:border-[#f18325] border transition"
-                            >
+                                class="link-reservation space-x-2 bg-[#f18325] text-white py-1 px-2 rounded hover:bg-white hover:text-[#f18325] hover:border-[#f18325] border transition"
+                                data-id="${res.id}">
                                 <i class="fas fa-link"></i> Link
                             </button>
                         </div>
@@ -387,6 +405,30 @@ $(document).ready(function() {
         });
     });
 
+    $(document).on('click', '.link-reservation', function () {
+        let linkedId = $(this).data('id');
+
+        let reservationId = CURRENT_RESERVATION_ID; 
+
+        $.ajax({
+            url: `/reservation/${reservationId}/link`,
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                linked_reservation_id: linkedId
+            },
+                success: function () {
+                    closeTravelingWithModal();
+                    location.reload(); 
+                },
+                error: function (err) {
+                    alert(err.responseJSON?.message ?? 'Error linking');
+                }
+            });
+    });
+
     window.closeTravelingWithModal = function(){
         $('#travelingWithModal').addClass('hidden');
 
@@ -395,6 +437,17 @@ $(document).ready(function() {
         $('#possible-reservations').html('');
     }
     // end of reservation travel with
+
+    // start forms
+    window.openFormPreviewModal = function(content){
+        $('#formPreviewContent').html(content);
+        $('#formPreviewModal').removeClass('hidden');
+    }
+
+    window.closeFormPreviewModal = function(){
+        $('#formPreviewModal').addClass('hidden');
+    }
+    // end forms
 
 
     // start reservation dining notes
@@ -408,19 +461,20 @@ $(document).ready(function() {
         $form.attr('action', $form.data('store-url'));
         $('#dining_note_method').val('POST');
 
-        $modal.find('select').each(function () {
-            $(this).val('');
-        });
+        $('#dining_note_id_modal').val('');
+        $('#dining_time_modal').val('');
+        $('#meal_modal').val('-1');
+        $('#notes_modal').val('');
 
-        $modal.find('input, textarea').each(function () {
-            if ($(this).attr('type') === 'checkbox') {
-                $(this).prop('checked', false);
-            } else if ($(this).attr('type') !== 'hidden') {
-                $(this).val('');
-            }
-        });
+        const dateEl = $modal.find('[x-data]')[0];
 
-        $('#dining_note_id').val('');
+        if (dateEl && dateEl._x_dataStack) {
+
+            const alpineData = Alpine.$data(dateEl);
+
+            alpineData.setDate('');
+
+        }
     }
 
     window.openEditDiningInformationModal = function (diningNote) {
@@ -429,32 +483,22 @@ $(document).ready(function() {
         $modal.removeClass('hidden');
         $modal.find('h2').text('Edit Dining Note');
         $modal.find('.modal-icon').removeClass('fa-plus-circle').addClass('fa-edit');
-
+        
         const $form = $('#diningNoteForm');
         $form.attr('action', `/diningNote/${diningNote.id}`);
+        
         $('#dining_note_method').val('PUT');
-
         $('#dining_note_id_modal').val(diningNote.id ?? '');
         $('#dining_time_modal').val(diningNote.dining_time ?? '');
         $('#meal_modal').val(diningNote.meal ?? '');
         $('#notes_modal').val(diningNote.notes ?? '');
-
-        if (diningNote.dining_date) {
-            const dd = new Date(diningNote.dining_date);
-
-            const year = dd.getFullYear();
-            const month = dd.getMonth() + 1;
-            const day = dd.getDate();
-
-            const $yearSelect = $modal.find('[x-model="year"]');
-            const $monthSelect = $modal.find('[x-model="month"]');
-            const $daySelect = $modal.find('[x-model="day"]');
-
-            if ($yearSelect.length) $yearSelect.val(year).trigger('change');
-            if ($monthSelect.length) $monthSelect.val(month).trigger('change');
-            if ($daySelect.length) $daySelect.val(day).trigger('change');
+        
+        const dateEl = $modal.find('[x-data]')[0];
+        if (dateEl && dateEl._x_dataStack) {
+            const alpineData = Alpine.$data(dateEl);
+            alpineData.setDate(diningNote.dining_date ?? '');
         }
-    } 
+    }
 
     window.closeDiningInfoModal = function(){
         $('#diningInfoModal').addClass('hidden');
@@ -473,19 +517,20 @@ $(document).ready(function() {
         $form.attr('action', $form.data('store-url'));
         $('#gift_info_method').val('POST');
 
-        $modal.find('select').each(function () {
-            $(this).val('');
-        });
+        $('#gift_info_id_modal').val('');
+        $('#gift_type_modal').val('');
+        $('#amount_modal').val('');
+        $('#gifts_notes_modal').val('');
 
-        $modal.find('input, textarea').each(function () {
-            if ($(this).attr('type') === 'checkbox') {
-                $(this).prop('checked', false);
-            } else if ($(this).attr('type') !== 'hidden') {
-                $(this).val('');
-            }
-        });
+        const dateEl = $modal.find('[x-data]')[0];
 
-        $('#gift_info_id').val('');
+        if (dateEl && dateEl._x_dataStack) {
+
+            const alpineData = Alpine.$data(dateEl);
+
+            alpineData.setDate('');
+
+        }
     }
 
     window.openEditGiftInfoModal = function (gift) {
@@ -504,20 +549,10 @@ $(document).ready(function() {
         $('#amount_modal').val(gift.amount ?? '');
         $('#gifts_notes_modal').val(gift.notes ?? '');
 
-        if (gift.gift_date) {
-            const gd = new Date(gift.gift_date);
-
-            const year = gd.getFullYear();
-            const month = gd.getMonth() + 1;
-            const day = gd.getDate();
-
-            const $yearSelect = $modal.find('[x-model="year"]');
-            const $monthSelect = $modal.find('[x-model="month"]');
-            const $daySelect = $modal.find('[x-model="day"]');
-
-            if ($yearSelect.length) $yearSelect.val(year).trigger('change');
-            if ($monthSelect.length) $monthSelect.val(month).trigger('change');
-            if ($daySelect.length) $daySelect.val(day).trigger('change');
+        const dateEl = $modal.find('[x-data]')[0];
+        if (dateEl && dateEl._x_dataStack) {
+            const alpineData = Alpine.$data(dateEl);
+            alpineData.setDate(gift.gift_date ?? '');
         }
     }
 
@@ -526,6 +561,28 @@ $(document).ready(function() {
     }
     // end reservation gift notes
 
+
+    // start reservation automated email 
+    window.openReservationAutomatedEmailModal = function(message,fname,lname,cellphone,email){
+        const $modal = $('#reservationAutomatedEmailModal');
+
+        $('#reservationAutomatedEmailMessage').html(message);
+
+        $('#reservationAutomatedEmailAgentName').text(
+            `${fname} ${lname}`.trim()
+        );
+
+        $('#reservationAutomatedEmailAgentCellphone').text(cellphone);
+
+        $('#reservationAutomatedEmailAgentEmail').text(email);
+
+        $modal.removeClass('hidden');
+    }
+
+    window.closeReservationAutomatedEmailModal = function(){
+        $('#reservationAutomatedEmailModal').addClass('hidden');
+    }
+    // end reservation automated email
 
     // start reservation phone notes
     window.openPhoneNotesModal = function(){
@@ -538,19 +595,11 @@ $(document).ready(function() {
         $form.attr('action', $form.data('store-url'));
         $('#phone_note_method').val('POST');
 
-        $modal.find('select').each(function () {
-            $(this).val('');
-        });
-
-        $modal.find('input, textarea').each(function () {
-            if ($(this).attr('type') === 'checkbox') {
-                $(this).prop('checked', false);
-            } else if ($(this).attr('type') !== 'hidden') {
-                $(this).val('');
-            }
-        });
-
-        $('#phone_note_id').val('');
+        $('#phone_note_id_modal').val('');
+        $('#category').val('');
+        $('#caller_name').val('');
+        $('#caller_phone_number').val('');
+        $('#phone_notes_modal').val('');
     }
 
     window.openEditPhoneNote = function (phoneNote) {
@@ -588,19 +637,10 @@ $(document).ready(function() {
         $form.attr('action', $form.data('store-url'));
         $('#commission_fee_method').val('POST');
 
-        $modal.find('select').each(function () {
-            $(this).val('');
-        });
-
-        $modal.find('input, textarea').each(function () {
-            if ($(this).attr('type') === 'checkbox') {
-                $(this).prop('checked', false);
-            } else if ($(this).attr('type') !== 'hidden') {
-                $(this).val('');
-            }
-        });
-
-        $('#commission_fee_id').val('');
+        $('#commission_fee_id_modal').val('');
+        $('#fee_type').val('');
+        $('#commission_fee_amount').val('');
+        $('#commission_fee_notes').val('');
     }
 
     window.openEditCommissionFeesModal = function(commissionFee) {
@@ -647,5 +687,94 @@ $(document).ready(function() {
             e.target.closest('form').submit();
         }
     });
+
+    // start reservation attachments
+    const attachReservationBtn = $('#attachReservationBtn');
+    const reservationInput = $('#reservationAttachments');
+    const reservationTable = $('#reservationAttachmentsTable');
+
+    attachReservationBtn.on('click', function () {
+        reservationInput.trigger('click');
+    });
+
+    reservationInput.on('change', function () {
+
+        const emptyRow = reservationTable.find('.empty-row');
+
+        if (emptyRow.length) {
+            emptyRow.remove();
+        }
+
+        Array.from(this.files).forEach((file, index) => {
+
+            const rowId = 'res-file-' + index + '-' + Date.now();
+
+            const row = `
+                <div id="${rowId}" class="flex justify-between mt-5 attachment-row">
+
+                    <div class="flex space-x-3">
+
+                        <i class="fas fa-file text-[#000] text-2xl mt-3"></i>
+
+                        <div class="flex flex-col">
+
+                            <p class="text-base">
+                                ${file.name}
+                            </p>
+
+                            <p class="text-[#989898] text-sm">
+                                Size: ${file.size} Bytes
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="space-x-4">
+
+                        <i title="Download Attachment"
+                        class="fas fa-cloud-download-alt text-[#bdbdbd] text-xl mt-3"></i>
+
+                        <button type="button"
+                                onclick="removeReservationFile('${rowId}', '${file.name}')">
+
+                            <i title="Delete Attachment"
+                            class="fas fa-trash text-[#bdbdbd] text-xl mt-3"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+            reservationTable.append(row);
+        });
+    });
+
+    function removeReservationFile(rowId, fileName)
+    {
+        $('#' + rowId).remove();
+
+        const dt = new DataTransfer();
+
+        Array.from(reservationInput[0].files).forEach(file => {
+            if (file.name !== fileName) {
+                dt.items.add(file);
+            }
+        });
+
+        reservationInput[0].files = dt.files;
+
+        if (reservationTable.find('.attachment-row').length === 0) {
+
+            reservationTable.html(`
+                <div class="text-gray-400 mt-5 empty-row">
+                   
+                </div>
+            `);
+        }
+    }
+    // end reservation attachments
 
 });

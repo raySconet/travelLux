@@ -1,4 +1,4 @@
-<form method="POST"
+<form method="POST" 
       action="{{ $isNewCustomer 
             ? route('customers.store') 
             : route('customers.update', $customer->id) }}">
@@ -45,6 +45,7 @@
             </div>
 
             <div class="p-3 bg-white shadow sm:rounded-lg" x-data="{ section: '{{ session('activeTab', 'home') }}' }">
+                <input type="hidden" name="activeTab" :value="section">
                 <div class="topButtonsGroup">
                     <div class="btn-group systemUsersNav" role="group">
                         <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'home' }" @click="section = 'home'">

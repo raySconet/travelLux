@@ -44,7 +44,9 @@
                                     <i class="fas fa-user-circle text-base"></i>
                                     <p class="ml-3">Go to Customer Profile</p>
                                 </div>
-                                <i class="fas fa-external-link-alt text-base"></i>
+                                <a onclick="showLoaderOnSubmit()" :href="`/customer-list/${currentCustomer.id}`">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>    
                             </div>
 
                             <div class="flex flex-row mt-1" x-show="currentCustomer.email">
@@ -67,6 +69,26 @@
                 </div>
             </div>
         </template>
+    </div>
+
+    <div x-data="{hasSpouseEmail: {{ !empty($reservation->spouse_email) ? 'true' : 'false' }},spouseEmail: '{{ old('spouse_email', $reservation->spouse_email ?? '') }}'}" class="mt-6 flex flex-col gap-2">
+    
+        <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" x-model="hasSpouseEmail" class="h-4 w-4">
+            Add Spouse Email
+        </label>
+
+        <div x-show="hasSpouseEmail" x-transition class="mt-1">
+            <x-text-input 
+                type="email" 
+                name="spouse_email"
+                x-model="spouseEmail"
+                placeholder="Enter spouse email"
+                class="w-full"
+                value="{{ old('spouse_email', $reservation->spouse_email ?? '') }}"
+            />
+        </div>
+
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
@@ -332,7 +354,7 @@
             <div class="relative">
                 <span class="absolute left-2 top-1/2 text-base font-bold"><i class="fas fa-dollar-sign"></i></span>
 
-                <x-text-input type="text" id="agent_commission" name="agent_commission" class="pl-7" value="{{ old('agent_commission', $reservation->agent_commission ?? '') }}" @if(auth()->user()->role == 2) readonly @endif/>
+                <x-text-input type="text" id="agent_commission" name="agent_commission" class="pl-7" value="{{ old('agent_commission', $reservation->agent_commission ?? '') }}" />
             </div>
 
             <x-input-error :messages="$errors->get('agent_commission')" />

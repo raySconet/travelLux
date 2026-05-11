@@ -22,7 +22,7 @@
     </div>
 
     <div class="relative flex flex-col">
-        @forelse($reservation->payments()->where('is_deleted',0)->get() as $payment)
+        @forelse($reservation->payments->where('is_deleted', 0) as $payment)
             <hr class="mt-6 w-full border-b-1 border-[#dee2e6]">
             <div class="flex justify-between text-base mb-4 mt-2" onclick='openEditPaymentModal(@json($payment))'>
                 <div class="flex flex-col text-sm">
@@ -51,9 +51,13 @@
         <div class="flex flex-col gap-2" style="background-color: rgba(241, 131, 37,0.2)">
             <p class="text-right text-base mt-2 mr-2">Total Reservation Cost:<b>$ {{ number_format($reservation->reservation_cost, 2) }}</b></p>
             @php
-                $totalPayments = $reservation->payments()
-                    ->where('is_deleted', 0)
-                    ->sum('amount');
+                // $totalPayments = $reservation->payments()
+                //     ->where('is_deleted', 0)
+                //     ->sum('amount');
+
+                $totalPayments = $reservation->payments
+    ->where('is_deleted', 0)
+    ->sum('amount');
 
                 $balanceDue = ($reservation->reservation_cost ?? 0) - $totalPayments;
             @endphp
@@ -181,7 +185,7 @@
                     <x-input-error :messages="$errors->paymentStore->get('payment_method')" />
                 </div>
 
-                <div x-init="init()" x-data="dateDropdown('{{ old('payment_date', $reservation->payment_date ?? '') }}')" class="relative mt-5">
+                <div x-data="dateDropdown('{{ old('payment_date', $reservation->payment_date ?? '') }}')" class="relative mt-5">
                     <label class="block text-sm -mb-2">Due Date</label>
                     <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
                         <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">

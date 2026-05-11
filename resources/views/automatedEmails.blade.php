@@ -70,7 +70,7 @@
                                         @csrf
                                         @method('PATCH')
 
-                                        <button type="submit" title="{{ $automatedEmail->is_disabled == 0 ? 'Disable Email' : 'Enable Email' }}">
+                                        <button type="submit" title="{{ $automatedEmail->is_disabled == 0 ? 'Disable Email' : 'Enable Email' }}"  onclick="showLoaderOnSubmit()">
                                             @if($automatedEmail->is_disabled == 0)
                                                 <i class="fas fa-bell text-2xl text-[#f18325]"></i>
                                             @else

@@ -44,10 +44,15 @@
 
 
         <div class="flex items-center mt-8 ">
-            <x-secondary-btn id="addRowBtn" class="px-4 py-2 text-white rounded flex items-center gap-2" style="margin-right:130px;">
+            <x-secondary-btn type="button" id="addRowBtn" class="px-4 py-2 text-white rounded flex items-center gap-2" style="margin-right:130px;">
                 <i class="far fa-plus-square"></i>Add a specific Product/Destination
             </x-secondary-btn>
         </div>
     </div>
     <div id="productDestinationContainer" class="mt-4 space-y-3"></div>
 </div>
+<script>
+    window.products = @json($products ?? []);
+    window.destinations = @json($destinations ?? []);
+    window.existingRows = @json($customerFormRequiredRows ?? []);
+</script>

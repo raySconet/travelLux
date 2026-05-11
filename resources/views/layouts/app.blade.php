@@ -51,8 +51,8 @@
 
 
         <!-- MAIN WRAPPER -->
-        <div class="min-h-screen bg-gray-100 transition-all duration-500"
-            :class="sidebarOpen ? 'md:ml-64' : 'md:ml-0'">
+        <div class="min-h-screen bg-gray-100 pl-0 md:pl-64"
+            :class="sidebarOpen ? 'md:pl-64' : 'md:pl-0'">
 
             <!-- TOP NAV (your existing navigation) -->
             <div class="flex items-center bg-[#f18325]  shadow sticky top-0 z-40">

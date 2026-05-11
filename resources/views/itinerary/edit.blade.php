@@ -1,22 +1,29 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+        <div class="py-4 px-4 bg-white shadow sm:rounded-none flex items-center justify-between">
                 <h2 class=" text-xl text-gray-500 leading-tight">
                     <i class="fa-solid fa-plane mr-2 text-[#f18325]"></i>{{ __('Itinerary') }}
                 </h2>
 
                 <div class="space-x-2">
-                    <x-primary-btn><i class="far fa-plus-square"></i><span>Import Bookings</span></x-primary-btn>
+                    <x-primary-btn  onclick="openImportReservationBookings()"><i class="far fa-plus-square"></i><span>Import Bookings</span></x-primary-btn>
                     <x-secondary-btn><i class="fas fa-link"></i><span>Copy Link</span></x-secondary-btn>
                     <x-secondary-btn><i class="fas fa-file-pdf"></i><span>Pdf</span></x-secondary-btn>
                     <x-secondary-buttonToDelete><i class="fas fa-copy"></i><span>Duplicate</span></x-secondary-buttonToDelete>
-                    <x-secondary-buttonToDelete><i class="fas fa-trash"></i><span>Delete</span></x-secondary-buttonToDelete>
+                    <form method="POST" action="{{ route('itinerary.destroy', $itinerary->id)}}" class="inline delete-form">
+                            @csrf
+                            @method('DELETE')
+
+                            <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)">
+                                <i class="fas fa-trash"></i><span>Delete</span>
+                            </x-secondary-buttonToDelete>
+                    </form>
                     <x-primary-btn onclick="window.history.back()"><i class="far fa-minus-square"></i><span>Close Trip</span></x-primary-btn>
                 </div>
         </div>
     </x-slot>
 
-    <div class="cover-wrapper ml-3">
+    <div class="cover-wrapper ml-3 mr-3">
        
         <input type="file" id="coverPhotoInput" accept="image/*" hidden />
 
@@ -27,7 +34,7 @@
 
             <div class="cover-overlay">
                 <h4 class="flex items-center gap-2 text-lg">
-                    <span>Itinerary</span>
+                    <span>{{ $itinerary->name }}</span>
                     <i class="fas fa-pencil-alt text-base" id="editItineraryNamePencil"></i>
                 </h4>
 
@@ -155,3 +162,5 @@
 
 
 </x-app-layout>
+<x-import-reservation-bookings />
+<x-delete-modal />

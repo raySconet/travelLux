@@ -487,8 +487,9 @@ class CustomerController extends Controller
         $customer->update($data);
 
         return redirect()
-            ->route('customers.customerDetails', $customer->id)
-            ->with('success', 'Customer updated successfully');
+                ->route('customers.customerDetails', $customer->id)
+                ->with('success', 'Customer updated successfully')
+                ->with('activeTab', $request->input('activeTab', 'home'));
     }
 
     public function destroy(Customer $customer)

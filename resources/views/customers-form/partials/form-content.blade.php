@@ -1,20 +1,11 @@
-<div>
+<div class="flex flex-col">
     <label class="text-base">Form Items</label>
 
-    <div class="form-item bg-white shadow rounded-none p-6 mt-1" style="box-shadow: 1px 1px 6px #808080;">
-        <p class="font-extrabold text-base mb-3">HTML</p>
-        <label class="text-sm">Content</label>
-        <textarea
-            id="content"
-            name="content"
-            rows="3"
-            class="w-full border-b border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1">
-        </textarea>
+    <div id="form-items-container" class="space-y-4">
+        {!! $customerForm->form_items_html_content ?? '' !!}
     </div>
-
-    <div id="form-items-container" class="space-y-4"></div>
     <el-dropdown class="inline-block">
-        <button class="bg-[#6c757d] text-white mt-3 flex items-center gap-2 py-1 px-2 mb-3">
+        <button class="bg-[#6c757d] text-white mt-3 flex items-center gap-2 py-1 px-2 mb-3 rounded">
             <i class="fas fa-plus"></i>Add Form Item
         </button>
 
@@ -32,4 +23,26 @@
             </div>
         </el-menu>
     </el-dropdown>
+
+    <input type="hidden" name="form_items_html_content" id="form_items_html_content">
+
+    <input type="hidden" name="preview_form_html_content" id="preview_form_html_content">
+
+    <label class="text-base mt-2">Form Preview (Read-only)</label>
+
+    <div class="rounded-none bg-[#fff] px-5 py-4 mt-4" style="box-shadow: 1px 1px 6px #808080;">
+
+        <div id="form-preview-container" class="space-y-4">
+            {!! $customerForm->preview_form_html_content ?? '' !!}
+        </div>
+
+        <div class="flex pt-4">
+            <button type="button"
+                class="space-x-2 mt-2 mb-2 w-full py-2 bg-[#bdbdbd] text-white rounded">
+                <i class="fas fa-paper-plane"></i>
+                <span>Submit</span>
+            </button>
+        </div>
+
+    </div>
 </div>

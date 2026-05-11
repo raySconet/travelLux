@@ -18,6 +18,14 @@ use App\Models\ReservationGift;
 use App\Models\ReservationPhoneNote;
 use App\Models\ReservationCommissionFee;
 use App\Models\ReservationTraveler;
+use App\Models\ReservationLink;
+use App\Models\TimelineTask;
+use App\Models\AutomatedEmail;
+use App\Models\CustomerAutomatedEmail;
+use App\Models\ItineraryTrip;
+use App\Models\ReservationAttachment;
+use Illuminate\Support\Facades\Storage;
+
 
 class ReservationController extends Controller
 {
@@ -72,31 +80,36 @@ class ReservationController extends Controller
 
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
         $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
-        $resortShips = ResortShip::orderBY('resort_ship_name')->where('is_deleted',0)->get();
-        $cruiseItineraries = CruiseItinerary::orderBY('cruise_name')->where('is_deleted',0)->get();
+        $resortShips = ResortShip::orderBy('resort_ship_name')->where('is_deleted',0)->get();
+        $cruiseItineraries = CruiseItinerary::orderBy('cruise_name')->where('is_deleted',0)->get();
 
         $referralCustomers = Customer::where('agent_id', auth()->id())
                                 ->where('is_deleted',0)
                                 ->orderBy('lname')
                                 ->get();
 
+        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)
+                                ->where('created_by', auth()->id())
+                                ->orderBy('date', 'desc')
+                                ->get();                        
+
     
-        return view('reservations.reservationDetails', compact('users', 'reservation', 'isNewReservation', 'products', 'customers', 'destinations', 'resortShips','cruiseItineraries','referralCustomers'));
+        return view('reservations.reservationDetails', compact('users', 'reservation', 'isNewReservation', 'products', 'customers', 'destinations', 'resortShips','cruiseItineraries','referralCustomers','itineraryTrips'));
     }
 
     public function edit(Reservation $reservation)
     {
-        $users = User::select('id','fname', 'lname' ,'email')
-                    ->where('isDeleted',0)
-                    ->get();
+        $users = User::select('id','fname', 'lname', 'email', 'phone_number')
+            ->where('isDeleted',0)
+            ->get();
         $isNewReservation = false;
 
-        $customers = Customer::select('id','fname','lname','agent_id')->where('is_deleted',0)->get();
+        $customers = Customer::select('id','fname','lname', 'email','cellphone','agent_id')->where('is_deleted',0)->get();
 
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
         $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
-        $resortShips = ResortShip::orderBY('resort_ship_name')->where('is_deleted',0)->get();
-        $cruiseItineraries = CruiseItinerary::orderBY('cruise_name')->where('is_deleted',0)->get();
+        $resortShips = ResortShip::orderBy('resort_ship_name')->where('is_deleted',0)->get();
+        $cruiseItineraries = CruiseItinerary::orderBy('cruise_name')->where('is_deleted',0)->get();
 
         $availableForms = CustomersForm::where('is_deleted', 0)
                                         ->where('is_active', 1)
@@ -107,9 +120,109 @@ class ReservationController extends Controller
         $referralCustomers = Customer::where('agent_id', auth()->id())
                                 ->where('is_deleted',0)
                                 ->orderBy('lname')
-                                ->get();                                
+                                ->get();  
 
-        return view('reservations.reservationDetails', compact('users', 'reservation' ,'isNewReservation','products', 'customers', 'destinations', 'resortShips','cruiseItineraries','availableForms','referralCustomers'));
+        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)
+                                ->where('created_by', auth()->id())
+                                ->orderBy('date', 'desc')
+                                ->get();                         
+                                
+        $linkedReservations = ReservationLink::where('reservation_id', $reservation->id)
+                                            ->where('is_linked', 1) 
+                                            ->with('linkedReservation')
+                                            ->get();
+
+        return view('reservations.reservationDetails', compact('users', 'reservation' ,'isNewReservation','products', 'customers', 'destinations', 'resortShips','cruiseItineraries','availableForms','referralCustomers', 'linkedReservations','itineraryTrips'));
+    }
+
+    private function generateTimelineTasks($reservation)
+    {
+        ReservationTask::where('reservation_id', $reservation->id)
+            ->where('is_timeline_task', 1)
+            ->delete();
+
+        if (!$reservation->product_id || !$reservation->destination_id) {
+            return;
+        }
+
+        $timelineTasks = TimelineTask::where('product_id', $reservation->product_id)
+            ->where('destination_id', $reservation->destination_id)
+            ->get();
+
+        foreach ($timelineTasks as $task) {
+
+            $baseDate = match ($task->date_type) {
+                'Check In Date' => $reservation->checkin_date,
+                'Check Out Date' => $reservation->checkout_date,
+                'Deposit Due Date' => $reservation->deposit_due_date,
+                'Final Payment Due Date' => $reservation->final_payment_due_date,
+                default => $reservation->created_on,
+            };
+
+            $dueDate = $baseDate
+                ? \Carbon\Carbon::parse($baseDate)
+                    ->{strtolower($task->before_after) === 'before' ? 'subDays' : 'addDays'}($task->due_days)
+                : null;
+
+            ReservationTask::create([
+                'reservation_id' => $reservation->id,
+                'timeline_task_id' => $task->id,
+                'task_name' => $task->task_name,
+                'priority' => $task->priority,
+                'due_date' => $dueDate,
+                'date_type' => $task->date_type,
+                'is_timeline_task' => 1,
+                'created_by' => auth()->id(),
+                'created_on' => now(),
+            ]);
+        }
+    }
+
+    private function generateAutomatedEmails($reservation)
+    {
+        if ($reservation->stop_auto_emails) {
+            return;
+        }
+
+        CustomerAutomatedEmail::where('reservation_id', $reservation->id)->delete();
+
+        if (
+            !$reservation->product_id ||
+            !$reservation->destination_id ||
+            !$reservation->agent_id
+        ) {
+            return;
+        }
+
+        $emails = AutomatedEmail::where('is_deleted', 0)
+            ->where('is_disabled', 0)
+            ->where('product_list', $reservation->product_id)
+            ->where('destination_list', $reservation->destination_id)
+            ->where('agent_id', $reservation->agent_id)
+            ->get();
+
+        foreach ($emails as $email) {
+
+            $baseDate = match ($email->email_type) {
+                'Check In Date' => $reservation->checkin_date,
+                'Check Out Date' => $reservation->checkout_date,
+                'Deposit Due Date' => $reservation->deposit_due_date,
+                'Final Payment Due Date' => $reservation->final_payment_due_date,
+                default => $reservation->created_on,
+            };
+
+            $sendDate = $baseDate
+                ? \Carbon\Carbon::parse($baseDate)
+                    ->{strtolower($email->before_after) === 'before' ? 'subDays' : 'addDays'}($email->days)
+                : null;
+
+            CustomerAutomatedEmail::create([
+                'customer_id' => $reservation->customer_id,
+                'reservation_id' => $reservation->id,
+                'automated_email_id' => $email->id,
+                'date' => $sendDate,
+            ]);
+        }
     }
 
     public function store(Request $request)
@@ -144,6 +257,8 @@ class ReservationController extends Controller
 
             'group_number' => 'nullable|string|max:50',
             'special_offer' => 'nullable|string|max:255',
+            'spouse_email' => 'nullable|string|max:255',
+            'email_to_send' => 'nullable|string|max:255',
             'celebrations' => 'nullable|string|max:255',
             'celebration_notes' => 'nullable|string|max:255',
             'room_category' => 'nullable|string|max:255',
@@ -209,6 +324,8 @@ class ReservationController extends Controller
         $data['created_on'] = now();
 
         $reservation = Reservation::create($data);
+        $this->generateTimelineTasks($reservation);
+        $this->generateAutomatedEmails($reservation);
 
         $customer = Customer::with('familyMembers')->find($data['customer_id']);
 
@@ -266,6 +383,8 @@ class ReservationController extends Controller
 
             'group_number' => 'nullable|string|max:50',
             'special_offer' => 'nullable|string|max:255',
+            'spouse_email' => 'nullable|string|max:255',
+            'email_to_send' => 'nullable|string|max:255',
             'celebrations' => 'nullable|string|max:255',
             'celebration_notes' => 'nullable|string|max:255',
             'room_category' => 'nullable|string|max:255',
@@ -328,10 +447,53 @@ class ReservationController extends Controller
         $data['last_modified_on'] = now();
 
         $reservation->update($data);
+        $this->generateTimelineTasks($reservation);
+        $this->generateAutomatedEmails($reservation);
+
+        if ($request->hasFile('attachments')) {
+
+            foreach ($request->file('attachments') as $file) {
+
+                $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $extension = $file->getClientOriginalExtension();
+
+                $attachment = ReservationAttachment::create([
+                    'reservation_id' => $reservation->id,
+                    'file_name' => $originalName,
+                    'file_extension' => $extension,
+                    'file_size' => $file->getSize(),
+                    'created_by' => auth()->id(),
+                    'created_on' => now(),
+                ]);
+
+                $fileName = $attachment->id . '.' . $extension;
+
+                $file->storeAs(
+                    'attachments/reservations',
+                    $fileName,
+                    'public'
+                );
+            }
+        }
 
         return redirect()
-            ->route('reservations.reservationDetails', $reservation->id)
-            ->with('success', 'Reservation updated successfully');
+                ->route('reservations.reservationDetails', $reservation->id)
+                ->with('success', 'Reservation updated successfully')
+                ->with('activeTab', $request->input('activeTab', 'reservation-details'));
+    }
+
+    public function destroyAttachment(ReservationAttachment $attachment)
+    {
+        Storage::disk('public')->delete(
+            'attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension
+        );
+
+        $attachment->delete();
+
+        return redirect()
+                ->route('reservations.reservationDetails', $attachment->reservation_id)
+                ->with('success', 'Reservation attachments deleted successfully')
+                ->with('activeTab', 'attachments');
     }
 
     public function destroy(Reservation $reservation)
@@ -364,6 +526,44 @@ class ReservationController extends Controller
         return redirect()
             ->route('reservations.reservationList')
             ->with('success', 'Reservations deleted successfully.');
+    }
+
+    public function duplicate(Reservation $reservation)
+    {
+        $copy = $reservation->replicate();
+
+        $copy->id = null;
+        $copy->created_at = null;
+        $copy->updated_at = null;
+
+        $copy->reservation_name = $reservation->reservation_name . ' (Copy)';
+
+        $users = User::select('id','fname','lname','email','commission')
+            ->where('isDeleted', 0)
+            ->get();
+
+        $customers = Customer::select('id','fname','lname','agent_id','email','cellphone')
+            ->where('is_deleted', 0)
+            ->get();
+
+        $products = Product::orderBy('product_name')->where('is_deleted', 0)->get();
+        $destinations = Destination::orderBy('destination_name')->where('is_deleted', 0)->get();
+        $resortShips = ResortShip::orderBy('resort_ship_name')->where('is_deleted', 0)->get();
+        $cruiseItineraries = CruiseItinerary::orderBy('cruise_name')->where('is_deleted', 0)->get();
+
+        $referralCustomers = Customer::where('agent_id', auth()->id())
+            ->where('is_deleted', 0)
+            ->orderBy('lname')
+            ->get();
+
+        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)
+            ->where('created_by', auth()->id())
+            ->orderBy('date', 'desc')
+            ->get();
+
+        $isNewReservation = true;
+
+        return view('reservations.reservationDetails', compact('copy','users','customers','products','destinations','resortShips','cruiseItineraries','referralCustomers','itineraryTrips','isNewReservation'))->with('reservation', $copy);
     }
 
     public function storeTask(Request $request, Reservation $reservation)
@@ -584,6 +784,7 @@ class ReservationController extends Controller
 
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
+        
 
         $diningNote->update($data);
 
@@ -881,15 +1082,98 @@ class ReservationController extends Controller
                 ->with('success', $traveler->is_included ? 'Traveler marked excluded' : 'Traveler marked included')
                 ->with('activeTab', 'travelers');
     }
-    
-    public function getActiveReservations($customerId)
+
+    public function getActiveReservations(Request $request, $customerId)
     {
+        $currentId = $request->current_reservation_id;
+
+        $linkedIds = ReservationLink::where('reservation_id', $currentId)
+                                    ->pluck('linked_reservation_id')
+                                    ->toArray();
+
+        $reverseLinkedIds = ReservationLink::where('linked_reservation_id', $currentId)
+                                        ->pluck('reservation_id')
+                                        ->toArray();
+
+        $allLinkedIds = array_merge($linkedIds, $reverseLinkedIds);
+
+        $allLinkedIds[] = $currentId;
+
         $reservations = Reservation::where('customer_id', $customerId)
-            ->where('status', 'Active') 
+            ->where('status', 'Active')
+            ->where('is_deleted', 0)
+            ->whereNotIn('id', $allLinkedIds)
             ->select('id', 'reservation_number', 'reservation_name', 'checkin_date', 'checkout_date')
             ->get();
 
         return response()->json($reservations);
+    }
+
+    
+    public function linkReservation(Request $request, Reservation $reservation)
+    {
+        $linkedId = $request->linked_reservation_id;
+
+        if (!$linkedId || $linkedId == $reservation->id) {
+            return response()->json(['message' => 'Invalid reservation'], 422);
+        }
+
+        $exists = ReservationLink::where(function ($q) use ($reservation, $linkedId) {
+            $q->where('reservation_id', $reservation->id)
+            ->where('linked_reservation_id', $linkedId);
+        })->orWhere(function ($q) use ($reservation, $linkedId) {
+            $q->where('reservation_id', $linkedId)
+            ->where('linked_reservation_id', $reservation->id);
+        })->exists();
+
+        if ($exists) {
+            return response()->json(['message' => 'Already linked'], 409);
+        }
+
+        ReservationLink::create([
+            'reservation_id' => $reservation->id,
+            'linked_reservation_id' => $linkedId,
+            'is_linked' => 1,
+            'created_by' => auth()->id(),
+            'created_on' => now(),
+        ]);
+
+        ReservationLink::create([
+            'reservation_id' => $linkedId,
+            'linked_reservation_id' => $reservation->id,
+            'is_linked' => 1,
+            'created_by' => auth()->id(),
+            'created_on' => now(),
+        ]);
+
+        return response()->json(['message' => 'Linked successfully']);
+    }
+
+    public function unlinkReservation(Request $request, Reservation $reservation)
+    {
+        $linkedId = $request->linked_reservation_id;
+
+        if (!$linkedId) {
+            return response()->json(['message' => 'Invalid reservation'], 422);
+        }
+
+        ReservationLink::where('reservation_id', $reservation->id)
+            ->where('linked_reservation_id', $linkedId)
+            ->update([
+                'is_linked' => 0,
+                'last_modified_by' => auth()->id(),
+                'last_modified_on' => now()
+            ]);
+
+        ReservationLink::where('reservation_id', $linkedId)
+            ->where('linked_reservation_id', $reservation->id)
+            ->update([
+                'is_linked' => 0,
+                'last_modified_by' => auth()->id(),
+                'last_modified_on' => now()
+            ]);
+
+        return response()->json(['message' => 'Unlinked successfully']);
     }
 
 }

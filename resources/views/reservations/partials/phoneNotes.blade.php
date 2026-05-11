@@ -99,7 +99,7 @@
             <div class="relative mt-3">
                 <label for="category">Category</label>
                 <select name="category" id="category" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
-                    <option value="-1">--Select Category --</option>
+                    <option value="">--Select Category --</option>
                     <option value="Breakfast" {{ old('category', $reservation->category ?? '') == 'Breakfast' ? 'selected' : '' }}>Breakfast</option>
                     <option value="Lunch" {{ old('category', $reservation->category ?? '') == 'Lunch' ? 'selected' : '' }}>Lunch</option>
                     <option value="Dinner" {{ old('category', $reservation->category ?? '') == 'Dinner' ? 'selected' : '' }}>Dinner</option>

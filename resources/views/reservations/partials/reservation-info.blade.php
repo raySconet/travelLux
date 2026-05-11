@@ -13,7 +13,7 @@
         </div>
 
         <div class="flex items-center mt-5 gap-3">
-            <i class="fas fa-user-plus text-2xl text-[#f18325]" title="Quick Customer Add" onclick="openReservationAddCustomerModal()"></i>
+            <i class="fas fa-user-plus text-2xl text-[#B6844A]" title="Quick Customer Add" onclick="openReservationAddCustomerModal()"></i>
 
             <div class="flex-1">
                 <label for="customer" class="text-sm block mb-1">Customer</label>
@@ -497,7 +497,7 @@ function reservationDropdowns(customers, currentCustomerId = null, currentAgentI
 
         <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
             <div class="flex items-center space-x-2">
-                <i class="fas fa-user-plus text-[#f18325] text-base"></i>
+                <i class="fas fa-user-plus text-[#B6844A] text-base"></i>
                 <h2 class="text-base">Add Customer</h2>
             </div>
 

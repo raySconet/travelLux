@@ -2,10 +2,10 @@
     <x-slot name="header">
         <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-xl text-gray-500 leading-tight">
-                <i class="fa-solid fa-money-check-alt mr-2 text-[#f18325]"></i>{{ __('Agent Expenses Report') }}
+                <i class="fa-solid fa-money-check-alt mr-2 text-[#B6844A]"></i>{{ __('Agent Expenses Report') }}
             </h2>
             
-            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#f18325] text-[#f18325]"><i class="fas fa-cloud-download-alt"></i>Download</button>
+            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A]"><i class="fas fa-cloud-download-alt"></i>Download</button>
 
             <button class="flex items-center gap-2"><i class="far fa-calendar-alt text-[#212121] text-2xl" onclick="openReportDateRangeModal()"></i>-</button>
 
@@ -32,7 +32,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="relative mt-2">
                         <label for="reservationNumber">Reservation Number</label>
-                        <select name="reservationNumber" id="reservationNumber" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                        <select name="reservationNumber" id="reservationNumber" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                             <option value="-1">None</option>
                         </select>
                     </div>
@@ -51,7 +51,7 @@
 
                     <div class="relative mt-3">
                         <label for="paidFor">Paid By</label>
-                        <select name="paidFor" id="paidFor" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                        <select name="paidFor" id="paidFor" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                             <option value="-1">--Select--</option>
                             <option value="visa">Visa</option>
                             <option value="amex">Amex</option>
@@ -77,7 +77,7 @@
 
                     <div class="relative mt-3">
                         <label for="paidFor">Paid For</label>
-                        <select name="paidFor" id="paidFor" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                        <select name="paidFor" id="paidFor" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                             <option value="-1">--Select--</option>
                             <option value="advertising">Advertising</option>
                             <option value="carAndTruckAndGasExpense">Car and truch and gas expense</option>

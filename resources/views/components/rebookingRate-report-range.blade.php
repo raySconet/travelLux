@@ -4,7 +4,7 @@
         
         <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
             <div class="flex items-center gap-2">
-                <i class="far fa-calendar-alt text-xl text-[#f18325]"></i>
+                <i class="far fa-calendar-alt text-xl text-[#B6844A]"></i>
                 <h2 class="text-xl font-semibold text-gray-700">
                     Report Date Range
                 </h2>    
@@ -20,7 +20,7 @@
             <div class="relative mt-6">
                 <label for="beginYearRebookingRateReport">Begin Year</label>
 
-                <select name="beginYearRebookingRateReport" id="beginYearRebookingRateReport" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+                <select name="beginYearRebookingRateReport" id="beginYearRebookingRateReport" class="w-full border-b mb-4 focus:outline-none focus:border-[#B6844A]">
                     @php 
                         $previousYear = now()->year-1;
                     @endphp
@@ -36,7 +36,7 @@
             <div class="relative mt-6">
                 <label for="endYearRebookingRateReport">End Year</label>
 
-                <select name="endYearRebookingRateReport" id="endYearRebookingRateReport" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+                <select name="endYearRebookingRateReport" id="endYearRebookingRateReport" class="w-full border-b mb-4 focus:outline-none focus:border-[#B6844A]">
                     @php 
                         $currentYear = now()->year;
                     @endphp

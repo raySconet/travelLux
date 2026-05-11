@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-xl text-gray-500 leading-tight">
-                <i class="fa-solid fas fa-list mr-2 text-[#f18325]"></i>{{ __('Vendors') }}
+                <i class="fa-solid fas fa-list mr-2 text-[#B6844A]"></i>{{ __('Vendors') }}
             </h2>
             
         </div>
@@ -109,7 +109,7 @@
             
                 <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
                     <div class="flex items-center space-x-2">
-                        <i class="fas fa-edit text-xl text-[#f18325]"></i>
+                        <i class="fas fa-edit text-xl text-[#B6844A]"></i>
                         <h2 id="vendorModalTitle" class="text-xl font-semibold text-gray-700">
                         Edit Vendor
                         </h2>

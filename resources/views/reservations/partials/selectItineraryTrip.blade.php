@@ -3,7 +3,7 @@
 
     <div class="flex items-end gap-4 mt-6">
         <div class="relative flex-1">
-            <select name="itinerary_trip_id" id="itinerary_trip_id" class="w-3/4 border-b border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="itinerary_trip_id" id="itinerary_trip_id" class="w-3/4 border-b border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
 
                 <option value="-1">-- Select Trip --</option>
 

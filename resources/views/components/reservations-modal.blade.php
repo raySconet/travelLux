@@ -13,7 +13,7 @@
         
         <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
             <div class="flex items-center space-x-2">
-                <i class="fas fa-plus-circle text-[#f18325] text-base modal-icon"></i>
+                <i class="fas fa-plus-circle text-[#B6844A] text-base modal-icon"></i>
                 <h2 class="text-base">{{ $title }}</h2>
             </div>
 

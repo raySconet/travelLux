@@ -96,13 +96,11 @@
 
 
         <!-- MAIN WRAPPER -->
-       <div
-            class="min-h-screen bg-gray-100 transition-all duration-500"
-            :class="sidebarOpen ? 'md:pl-64' : 'md:pl-0'"
-        >
+        <div class="min-h-screen bg-gray-100 transform transition-all duration-600"
+            :class="sidebarOpen ? 'md:pl-64' : 'md:pl-0'">
 
             <!-- TOP NAV (your existing navigation) -->
-            <div class="flex items-center bg-[#f18325]  shadow sticky top-0 z-40">
+            <div class="flex items-center bg-[#292727]  shadow sticky top-0 z-40">
                <a id="menu-toggle"
                     @click="sidebarOpen = !sidebarOpen;
                             first = !first; second = !second; third = !third;"

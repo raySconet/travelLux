@@ -9,7 +9,7 @@
     <div class="relative flex flex-row justify-between gap-3 mt-5">
         <h6 class="text-lg">Family</h6>
 
-        <button type="button" class="text-[#f18325] text-2xl flex-shrink-0" onclick="openAddFamilyMemberModal()">
+        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openAddFamilyMemberModal()">
             <i class="fas fa-plus-circle"></i>
         </button>
     </div>
@@ -54,7 +54,7 @@
                 
                 <div class="flex items-center justify-between px-6 py-4 border-b-2  border-[#dee2e6]">
                     <div class="flex items-center space-x-2">
-                        <i class="fas fa-plus-circle text-[#f18325] text-base modal-icon"></i>
+                        <i class="fas fa-plus-circle text-[#B6844A] text-base modal-icon"></i>
                         <h2 class="text-base">Add Family Member</h2>
                     </div>
 
@@ -127,7 +127,7 @@
 
                         <div class="relative mt-8">
                             <label for="relation">Relation</label>
-                            <select name="relation" id="family_relation" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                            <select name="relation" id="family_relation" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                                 <option value="">-- Select Relation --</option>
                                 <option value="Adult Child">Adult Child</option>
                                 <option value="Adult Relative">Adult Relative</option>
@@ -160,7 +160,7 @@
 
                         <div class="relative mt-8">
                             <label for="gender">Gender</label>
-                            <select name="gender" id="family_gender" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                            <select name="gender" id="family_gender" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                                 <option value="">-- Select Gender --</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
@@ -263,7 +263,7 @@
                         <div x-show="open"  class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                             <div class="relative mt-6">
                                 <label for="state">State/Province/Region</label>
-                                <select name="state" id="family_state" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                                <select name="state" id="family_state" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                                     <option value="">-- Select State/Province/Region --</option>
                                     @foreach($states as $state)
                                         <option value="{{ $state->name }}">
@@ -281,7 +281,7 @@
 
                             <div class="relative mt-5">
                                 <label for="country">Country</label>
-                                <select name="country" id="family_country" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                                <select name="country" id="family_country" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                                     <option value="">-- Select Country --</option>
                                     @foreach($countries as $country)
                                         <option value="{{ $country->name }}">
@@ -299,7 +299,7 @@
                             id="family_special_notes"
                             name="special_notes"
                             rows="2"
-                            class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1">
+                            class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1">
                         </textarea>
                     </div>
                 </div>

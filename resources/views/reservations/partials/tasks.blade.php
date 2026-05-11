@@ -15,7 +15,7 @@
             @endif
         </h6>
 
-        <button type="button" class="text-[#f18325] text-2xl flex-shrink-0" onclick="openReservationsTasksModal()">
+        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openReservationsTasksModal()">
             <i class="fas fa-plus-circle"></i>
         </button>
     </div>
@@ -189,7 +189,7 @@
 
                 <div class="relative mt-10">
                     <label for="priority">Priority</label>
-                    <select name="priority" id="task_priority_modal" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                    <select name="priority" id="task_priority_modal" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                         <option value="-1">-- Select Priority --</option>
                         <option value="Low" {{ old('priority', $reservation->priority ?? '') == 'Low' ? 'selected' : '' }}>Low</option>
                         <option value="Medium" {{ old('priority', $reservation->priority ?? '') == 'Medium' ? 'selected' : ''}}>Medium</option>

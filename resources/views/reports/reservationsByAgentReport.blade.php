@@ -2,10 +2,10 @@
     <x-slot name="header">
         <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-xl text-gray-500 leading-tight">
-                <i class="fa-solid fa-tag mr-2 text-[#f18325]"></i>{{ __('Reservations By Agent Report') }}
+                <i class="fa-solid fa-tag mr-2 text-[#B6844A]"></i>{{ __('Reservations By Agent Report') }}
             </h2>
             
-            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#f18325] text-[#f18325]"><i class="fas fa-cloud-download-alt"></i>Download</button>
+            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A]"><i class="fas fa-cloud-download-alt"></i>Download</button>
 
             <button class="flex items-center gap-2"><i class="far fa-calendar-alt text-[#212121] text-2xl" onclick="openReportDateRangeModal()"></i>-</button>
 

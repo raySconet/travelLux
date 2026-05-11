@@ -12,7 +12,7 @@
     <div class="relative flex flex-row justify-between gap-3 mt-5">
         <h6 class="text-xl">Dining Info</h6>
 
-        <button type="button" class="text-[#f18325] text-2xl flex-shrink-0" onclick="openDiningInfoModal()">
+        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openDiningInfoModal()">
             <i class="fas fa-plus-circle"></i>
         </button>
     </div>
@@ -111,7 +111,7 @@
 
             <div class="relative mt-3">
                 <label for="meal">Meal</label>
-                <select name="meal" id="meal_modal" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                <select name="meal" id="meal_modal" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                     <option value="-1">-- Select Meal --</option>
                     <option value="Breakfast" {{ old('meal', $reservation->meal ?? '') == 'Breakfast' ? 'selected' : '' }}>Breakfast</option>
                     <option value="Lunch" {{ old('meal', $reservation->meal ?? '') == 'Lunch' ? 'selected' : '' }}>Lunch</option>
@@ -125,7 +125,7 @@
                     id="notes_modal"
                     name="notes"
                     rows="3"
-                    class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1"
+                    class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1"
                 >{{ old('notes', $reservation->notes ?? '') }}</textarea>
                 <x-input-error :messages="$errors->diningNoteStore->get('notes')" />
             </div>

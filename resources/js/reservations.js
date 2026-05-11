@@ -408,7 +408,7 @@ $(document).ready(function() {
 
                             <button 
                                 type="button"
-                                class="link-reservation space-x-2 bg-[#f18325] text-white py-1 px-2 rounded hover:bg-white hover:text-[#f18325] hover:border-[#f18325] border transition"
+                                class="link-reservation space-x-2 bg-[#B6844A] text-white py-1 px-2 rounded hover:bg-white hover:text-[#B6844A] hover:border-[#B6844A] border transition"
                                 data-id="${res.id}">
                                 <i class="fas fa-link"></i> Link
                             </button>

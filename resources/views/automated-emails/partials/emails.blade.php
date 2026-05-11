@@ -8,7 +8,7 @@
     <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
         <div  class="relative mt-3">
             <label for="email_type">Email Type</label>
-            <select name="email_type" id="email_type" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="email_type" id="email_type" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="" {{ old('email_type', $automatedEmail->email_type ?? '') == '-1' ? 'selected' : '' }}>--Select Email Type--</option>
                 <option value="Anniversary Email" {{ old('email_type', $automatedEmail->email_type ?? '') == 'Anniversary Email' ? 'selected' : '' }} >Anniversary Email</option>
                 <option value="Upcoming Anniversary Email" {{ old('email_type', $automatedEmail->email_type ?? '') == 'Upcoming Anniversary Email' ? 'selected' : '' }}>Upcoming Anniversary Email</option>
@@ -37,7 +37,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-8">
             <label for="before_after">Send Before/After</label>
-            <select name="before_after" id="before_after" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="before_after" id="before_after" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="" {{ old('before_after', $automatedEmail->before_after ?? '') == '-1' ? 'selected' : '' }}>--Select Before/After--</option>
                 <option value="Before" {{ old('before_after', $automatedEmail->before_after ?? '') == 'Before' ? 'selected' : '' }}>Before</option>
                 <option value="After" {{ old('before_after', $automatedEmail->before_after ?? '') == 'After' ? 'selected' : '' }}>After</option>
@@ -73,7 +73,7 @@
     <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
         <div class="relative mt-8">
             <label for="agent_id">Automated Email For</label>
-            <select name="agent_id" id="agent_id" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="agent_id" id="agent_id" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="-1" {{ old('agent_id', $automatedEmail->agent_id ?? '') == -1 ? 'selected' : '' }}>All Agents</option>
                 @foreach($users as $user)
                     <option value="{{ $user->id }}"
@@ -96,7 +96,7 @@
     <div id="reservationReminderSection" style="display: {{ old('email_type', $automatedEmail->email_type ?? '') === 'Reservation Reminder' ? 'grid' : 'none' }};" class="grid grid-cols-1 md:grid-cols-5 gap-x-5 gap-y-4 items-end">
         <div class="relative mt-8">
             <label for="product_list">Product</label>
-            <select id="product_list"  name="product_list[]"  class="product_list w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select id="product_list"  name="product_list[]"  class="product_list w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select Product--</option>
                 @foreach($products as $product)
                     <option value="{{ $product->id }}"
@@ -109,7 +109,7 @@
 
         <div class="relative mt-8">
             <label for="destination_list">Destination</label>
-            <select name="destination_list[]" id="destination_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="destination_list[]" id="destination_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select Destination--</option>
                 @foreach($destinations as $destination)
                     <option value="{{ $destination->id }}" data-product="{{ $destination->product_id }}"
@@ -122,7 +122,7 @@
 
         <div class="relative mt-8">
             <label for="resort_list">Resort/Ship</label>
-            <select name="resort_list[]" id="resort_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="resort_list[]" id="resort_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select Resort/Ship--</option>
                 @foreach($resortShips as $resortShip)
                     <option value="{{ $resortShip->id }}" data-destination="{{ $resortShip->destination_id }}"
@@ -135,7 +135,7 @@
 
         <div class="relative mt-8">
             <label for="cruise_itinerary_list">Cruise/Type</label>
-            <select name="cruise_itinerary_list[]" id="cruise_itinerary_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="cruise_itinerary_list[]" id="cruise_itinerary_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select Cruise/Type--</option>
                 @foreach($cruiseItineraries as $cruiseItinerary)
                     <option value="{{ $cruiseItinerary->id }}" data-resort="{{ $cruiseItinerary->resort_ship_id }}"
@@ -147,7 +147,7 @@
         </div>
 
         <div class="flex justify-center items-center">
-            <i id="addRowAutomatedEmails" class="fa-solid fa-circle-plus text-[#f18325] mb-4 text-2xl cursor-pointer"></i>
+            <i id="addRowAutomatedEmails" class="fa-solid fa-circle-plus text-[#B6844A] mb-4 text-2xl cursor-pointer"></i>
         </div>
     </div>
     <div id="addRowAutomatedEmailsContainer" class="mt-4 space-y-3" data-products="{{ $automatedEmail->product_list }}" data-destinations="{{ $automatedEmail->destination_list }}" data-resorts="{{ $automatedEmail->resort_list }}" data-cruises="{{ $automatedEmail->cruise_itinerary_list }}"></div>
@@ -156,7 +156,7 @@
     <div class="mt-7 space-x-2">
         <input type="file" id="attachments" name="attachments[]" multiple class="hidden">
         <label class="text-base">Attachments</label>
-        <i id="attachBtn" class="fas fa-paperclip text-[#f18325] text-base cursor-pointer"></i>
+        <i id="attachBtn" class="fas fa-paperclip text-[#B6844A] text-base cursor-pointer"></i>
 
         <div class="overflow-x-auto mt-2">
             <table class="min-w-full text-sm">

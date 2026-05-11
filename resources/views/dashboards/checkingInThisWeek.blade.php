@@ -2,7 +2,7 @@
     
     <div class="py-4 px-4 bg-white ml-4 mr-3 mb-1 shadow sm:rounded-lg flex items-center justify-between">
         <h2 class="text-xl text-gray-500 leading-tight">
-            <i class="fa-solid fas fa-calendar-check mr-2 text-[#f18325]"></i>{{ __('Checking in this Week') }}
+            <i class="fa-solid fas fa-calendar-check mr-2 text-[#B6844A]"></i>{{ __('Checking in this Week') }}
         </h2>
         
     </div>
@@ -73,7 +73,7 @@
 
     <div class="py-4 px-4 mt-2 ml-4 mr-3 mb-1 bg-white shadow sm:rounded-lg flex items-center justify-between">
         <h2 class="text-xl text-gray-500 leading-tight">
-            <i class="fa-solid fas fa-calendar-check mr-2 text-[#f18325]"></i>{{ __('Checking in Next Week') }}
+            <i class="fa-solid fas fa-calendar-check mr-2 text-[#B6844A]"></i>{{ __('Checking in Next Week') }}
         </h2>
         
     </div>

@@ -2,7 +2,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-3">
             <label for="product_id">Product</label>
-            <select name="product_id" id="product_id" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="product_id" id="product_id" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select Product--</option>
                 @foreach($products as $product)
                     <option value="{{ $product->id }}"
@@ -17,7 +17,7 @@
 
         <div class="relative mt-3">
             <label for="destination_id">Destination</label>
-            <select name="destination_id" id="destination_id" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="destination_id" id="destination_id" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select Destination--</option>
                 @foreach($destinations as $destination)
                     <option value="{{ $destination->id }}" data-product="{{ $destination->product_id }}"
@@ -42,7 +42,7 @@
 
         <div class="relative mt-4">
             <label for="priority">Priority</label>
-            <select name="priority" id="priority" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="priority" id="priority" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select Priority--</option>
                 <option value="Low" {{ old('priority', $timelineTask->priority ?? '') == 'Low' ? 'selected' : '' }}>Low</option>
                 <option value="Medium" {{ old('priority', $timelineTask->priority ?? '') == 'Medium' ? 'selected' : '' }}>Medium</option>
@@ -63,13 +63,13 @@
                 min="0"
                 step="1"
                 value="{{ old('due_days', $timelineTask->due_days ?? 0) }}"
-                class="w-full border-b-2 border-[#bdbdbd] py-1 focus:outline-none focus:border-[#f18325]"
+                class="w-full border-b-2 border-[#bdbdbd] py-1 focus:outline-none focus:border-[#B6844A]"
             >
         </div>
 
         <div class="relative mt-5">
             <label for="before_after">Before/After</label>
-            <select name="before_after" id="before_after" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="before_after" id="before_after" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">-- Select Before/After--</option>
                 <option value="Before" {{ old('before_after', $timelineTask->before_after ?? '') == 'Before' ? 'selected' : '' }}>Before</option>
                 <option value="After" {{ old('before_after', $timelineTask->before_after ?? '') == 'After' ? 'selected' : '' }}>After</option>
@@ -80,7 +80,7 @@
 
         <div class="relative mt-5">
             <label for="date_type">Date Type</label>
-            <select name="date_type" id="date_type" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="date_type" id="date_type" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">-- Select Date Type</option>
                 <option value="Check In Date" {{ old('date_type', $timelineTask->date_type ?? '') == 'Check In Date' ? 'selected' : '' }}>Check In Date</option>
                 <option value="Check Out Date" {{ old('date_type', $timelineTask->date_type ?? '') == 'Check Out Date' ? 'selected' : '' }}>Check Out Date</option>

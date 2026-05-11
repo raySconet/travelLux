@@ -37,7 +37,7 @@
                 <x-input-label for="email" class="absolute -top-4 left-0">Email</x-input-label>
 
                 @if(empty($customer->secondary_email))
-                    <button type="button" id="addSecondaryEmail" class="text-[#f18325] text-2xl flex-shrink-0 mt-9">
+                    <button type="button" id="addSecondaryEmail" class="text-[#B6844A] text-2xl flex-shrink-0 mt-9">
                         <i class="fas fa-plus-circle"></i>
                     </button>
                 @endif
@@ -49,7 +49,7 @@
                 @if(!empty($customer->secondary_email))
                     <div class="relative mt-2 flex items-center gap-3">
                         <input type="email" name="secondary_email" 
-                            class="peer w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] pt-5 pb-1"
+                            class="peer w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] pt-5 pb-1"
                             value="{{ old('secondary_email', $customer->secondary_email) }}">
                         <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-5 peer-focus:top-1 peer-focus:text-sm">
                             Secondary Email
@@ -86,7 +86,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-6">
             <label for="status">Status</label>
-            <select name="status" id="status" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="status" id="status" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="Active" {{ old('status', $customer->status ?? '') == 'Active' ? 'selected' : '' }}>Active</option>
                 <option value="Inactive" {{ old('status', $customer->status ?? '') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
                 <option value="Invited" {{ old('status', $customer->status ?? '') == 'Invited' ? 'selected' : '' }}>Invited</option>
@@ -97,7 +97,7 @@
 
         <div class="relative mt-6">
             <label for="gender">Gender</label>
-            <select name="gender" id="gender" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="gender" id="gender" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="-1" {{ old('gender', $customer->gender ?? '') == '-1' ? 'selected' : '' }}>--Select Gender--</option>
                 <option value="Male" {{ old('gender', $customer->gender ?? '') == 'Male' ? 'selected' : '' }}>Male</option>
                 <option value="Female" {{ old('gender', $customer->gender ?? '') == 'Female' ? 'selected' : '' }}>Female</option>
@@ -169,7 +169,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-6">
             <label for="profile_type">Profile Type</label>
-            <select name="profile_type" id="profile_type" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="profile_type" id="profile_type" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="-1" {{ old('profile_type', $customer->profile_type ?? '') == '-1' ? 'selected' : '' }}>--Select Profile Type--</option>
                 <option value="Corporate" {{ old('profile_type', $customer->profile_type ?? '') == 'Corporate' ? 'selected' : '' }}>Corporate</option>
                 <option value="Leisure" {{ old('profile_type', $customer->profile_type ?? '') == 'Leisure' ? 'selected' : '' }}>Leisure</option>
@@ -179,7 +179,7 @@
 
         <div class="relative mt-6">
             <label for="marital_status">Marial Status</label>
-            <select name="marital_status" id="marital_status" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="marital_status" id="marital_status" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="-1" {{ old('marital_status', $customer->marital_status ?? '') == '-1' ? 'selected' : '' }}>--Select Marial Status --</option>
                 <option value="Single" {{ old('marital_status', $customer->marital_status ?? '') == 'Single' ? 'selected' : '' }}>Single</option>
                 <option value="Married" {{ old('marital_status', $customer->marital_status ?? '') == 'Married' ? 'selected' : '' }}>Married</option>
@@ -239,7 +239,7 @@
             id="special_notes"
             name="special_notes"
             rows="3"
-            class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1"
+            class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1"
         >{{ old('special_notes', $customer->special_notes ?? '') }}</textarea>
     </div>
 

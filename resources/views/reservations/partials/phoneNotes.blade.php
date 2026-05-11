@@ -12,7 +12,7 @@
     <div class="relative flex flex-row justify-between gap-3 mt-5">
         <h6 class="text-xl">Phone Notes</h6>
 
-        <button type="button" class="text-[#f18325] text-2xl flex-shrink-0" onclick="openPhoneNotesModal()">
+        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openPhoneNotesModal()">
             <i class="fas fa-plus-circle"></i>
         </button>
     </div>    
@@ -98,7 +98,7 @@
         <x-reservations-modal id="phoneNotesModal" title="Add Phone Notes" close="closePhoneNotesModal()" saveClass="phoneNotesModalSaveBtn" :open="$isPhoneNoteModalOpen">
             <div class="relative mt-3">
                 <label for="category">Category</label>
-                <select name="category" id="category" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                <select name="category" id="category" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                     <option value="">--Select Category --</option>
                     <option value="Breakfast" {{ old('category', $reservation->category ?? '') == 'Breakfast' ? 'selected' : '' }}>Breakfast</option>
                     <option value="Lunch" {{ old('category', $reservation->category ?? '') == 'Lunch' ? 'selected' : '' }}>Lunch</option>
@@ -124,7 +124,7 @@
                     id="phone_notes_modal"
                     name="notes"
                     rows="3"
-                    class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1"
+                    class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1"
                 >{{ old('notes', $reservation->notes ?? '') }}</textarea>
                 <x-input-error :messages="$errors->phoneNoteStore->get('notes')" />
             </div>

@@ -12,7 +12,7 @@
         <x-slot name="header">
             <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
                 <h2 class=" text-xl text-gray-500 leading-tight">
-                    <i class="fa-solid fas fa-list mr-2 text-[#f18325]"></i>{{ __('Customers') }}
+                    <i class="fa-solid fas fa-list mr-2 text-[#B6844A]"></i>{{ __('Customers') }}
                 </h2>
 
                 @if($isNewCustomer)

@@ -10,13 +10,13 @@
     </div>    
 @else
     <div class="relative flex flex-row justify-between gap-3 mt-5">
-        <h6 class="text-lg space-x-2"><span>Credit Card Authorization Form</span> <i class="fas fa-paper-plane text-[#f18325] text-lg"></i></h6>
+        <h6 class="text-lg space-x-2"><span>Credit Card Authorization Form</span> <i class="fas fa-paper-plane text-[#B6844A] text-lg"></i></h6>
     </div>  
 
     <div class="relative flex flex-row justify-between gap-3 mt-5">
         <h6 class="text-lg">Reservation Payments</h6>
 
-        <button type="button" class="text-[#f18325] text-2xl flex-shrink-0" onclick="openReservationPaymentsModal()">
+        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openReservationPaymentsModal()">
             <i class="fas fa-plus-circle"></i>
         </button>
     </div>
@@ -150,7 +150,7 @@
 
                 <div class="relative mt-4">
                     <label for="payment_type">Payment Type</label>
-                    <select name="payment_type" id="payment_type" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                    <select name="payment_type" id="payment_type" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                         <option value="">-- Select Payment Type--</option>
                         <option value="Deposit">Deposit</option>
                         <option value="Final Payment">Final Payment</option>
@@ -164,7 +164,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <div class="relative mt-7">
                     <label for="payment_method">Payment Methods</label>
-                    <select name="payment_method" id="payment_method_modal" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                    <select name="payment_method" id="payment_method_modal" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                         <option value="">-- Select Payment Method --</option>
                         <option value="Agency Card">Agency Card</option>
                         <option value="Cash">Cash</option>

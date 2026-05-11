@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="p-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-xl text-gray-500 leading-tight">
-                <i class="fa-solid fa-clock mr-2 text-[#f18325]"></i>{{ __('Timeline Tasks') }}
+                <i class="fa-solid fa-clock mr-2 text-[#B6844A]"></i>{{ __('Timeline Tasks') }}
             </h2>
 
             <x-primary-btn  class="flex items-center gap-2" onclick="window.location='{{ route('timeline-tasks.create') }}'"><i class="far fa-plus-square"></i>Add Task</x-primary-btn>

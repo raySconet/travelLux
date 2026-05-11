@@ -2,7 +2,7 @@
     <x-slot name="header" >
         <div class="p-4 bg-white shadow sm:rounded-none">
             <h2 class=" text-xl text-gray-500 leading-tight">
-                <i class="fa-solid fa-ship mr-2 text-[#f18325]"></i>{{ __('Agency Profile') }}
+                <i class="fa-solid fa-ship mr-2 text-[#B6844A]"></i>{{ __('Agency Profile') }}
             </h2>
         </div>
     </x-slot>

@@ -12,7 +12,7 @@
         <div class="relative flex flex-row justify-between gap-3 mt-5">
             <h6 class="font-bold text-[#6c757d] text-base">Commission Fees</h6>
 
-            <button type="button" class="text-[#f18325] text-2xl flex-shrink-0">
+            <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0">
                 <i class="fas fa-plus-circle"></i>
             </button>
         </div>
@@ -27,7 +27,7 @@
     <div class="relative flex flex-row justify-between gap-3 mt-5">
         <h6 class="text-base font-bold mt-2" style="color: rgba(0,0,0,0.54)">Commission Fees</h6>
 
-        <button type="button" class="text-[#f18325] text-2xl flex-shrink-0" onclick="openCommissionFeesModal()">
+        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openCommissionFeesModal()">
             <i class="fas fa-plus-circle"></i>
         </button>
 
@@ -69,7 +69,7 @@
         <x-reservations-modal id="commissionFeesModal" title="Add Fee" close="closeCommissionFeesModal()" saveClass="commissionFeesModalSaveBtn" :open="$isCommissionFeeModalOpen">
             <div class="relative mt-3">
                 <label for="fee_type">Fee Type</label>
-                <select name="fee_type" id="fee_type" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                <select name="fee_type" id="fee_type" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                     <option value="">-- Select Type--</option>
                     <option value="General Fee" {{ old('fee_type', $reservation->fee_type ?? '') == 'General Fee' ? 'selected' : '' }}>General Fee</option>
                 </select>

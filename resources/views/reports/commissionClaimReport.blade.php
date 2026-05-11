@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="px-4 py-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-xl text-gray-500 leading-tight">
-                <i class="fa-solid fas fa-dollar-sign mr-2 text-[#f18325]"></i>{{ __('Commission Claim') }}
+                <i class="fa-solid fas fa-dollar-sign mr-2 text-[#B6844A]"></i>{{ __('Commission Claim') }}
             </h2>
 
         </div>

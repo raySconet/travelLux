@@ -28,7 +28,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-6">
             <label for="state">State/Province/Region</label>
-            <select name="state" id="state" class="w-full border-b-2 border-[#bdbdbd] mb-1 focus:outline-none focus:border-[#f18325]">
+            <select name="state" id="state" class="w-full border-b-2 border-[#bdbdbd] mb-1 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select State/Province/Region--</option>
 
                 @foreach($states as $state)
@@ -54,7 +54,7 @@
 
     <div class="relative mt-3">
         <label for="country">Country</label>
-        <select name="country" id="country" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+        <select name="country" id="country" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
             <option value="">--Select Country--</option>
 
             @foreach($countries as $country)

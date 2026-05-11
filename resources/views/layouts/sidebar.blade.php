@@ -3,17 +3,19 @@
 @endphp
 <!-- SIDEBAR -->
 <div
-    class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform transition-all duration-500 z-40"
+    class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform transition-all duration-600 z-40"
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
 >
-    <div class="p-4.5 border-b bg-[#f18325] text-[#FFF] border-[#CCCCCC] font-semibold text-xl">
-        Archer Luxury Travel
+    <div class="border-b bg-[#292727] text-[#FFF] border-[#CCCCCC] font-semibold text-xl text-center" style="padding:4px 0px;">
+        {{-- Archer Luxury Travel --}}
+        <img src="{{ asset('images/archer-logo-white.png') }}" style="width: 50%;  height: auto; margin:auto;"  alt="Logo">
+
     </div>
 
     <ul class="space-y-3 text-base text-[#696969]" style="overflow-y: auto; height:91%;">
         <!-- Administration -->
         <li x-data="{ open: false }">
-            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#f18325]">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#B6844A]">
                 <i class="text-lg fa-solid w-[40px] fa-shield-halved"></i>
                 Administration
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''">
@@ -36,7 +38,7 @@
 
         <!-- Customers -->
         <li x-data="{ open: false }">
-            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#f18325]">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#B6844A]">
                 <i class="text-lg fa-solid fa-users w-[40px]"></i>
                 Customers
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
@@ -51,7 +53,7 @@
 
         <!-- Reservations  -->
         <li x-data="{ open: false }">
-            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#f18325]">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#B6844A]">
                 <i class="text-lg fa-solid  w-[40px] fa-tag "></i>
                 Reservations
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
@@ -65,7 +67,7 @@
 
         <!-- Reports -->
         <li x-data="{ open: false }">
-            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#f18325]">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#B6844A]">
                 <i class="text-lg fa-solid w-[40px] fa-chart-column "></i>
                 Reports
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
@@ -117,7 +119,7 @@
 
         <!-- Dashboards -->
         <li x-data="{ open: false }">
-            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#f18325]">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#B6844A]">
                 <i class="text-lg fa-solid w-[40px] fa-chart-line "></i>
                 Dashboards
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
@@ -140,7 +142,7 @@
         <!-- Commissions -->
         @if(auth()->user()->isAdmin())
             <li x-data="{ open: false }">
-                <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#f18325]">
+                <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#B6844A]">
                     <i class="text-lg fa-solid w-[40px] fa-comment-dollar "></i>
                     Commissions
                     <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>
@@ -155,7 +157,7 @@
 
         <!-- Vendors -->
         <li x-data="{ open: false }">
-            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#f18325]">
+            <button type="button" @click="open = !open" class="flex items-center w-full px-3 py-2 cursor-pointer rounded hover:bg-[rgba(0,0,0,0.04)] hover:text-[#B6844A]">
                 <i class="text-lg fa-solid w-[40px] fa-solid fa-building "></i>
                 Vendors
                 <span class="ml-auto" :class="open ? 'rotate-180' : ''"><i class="fa-solid fa-angle-down"></i></span>

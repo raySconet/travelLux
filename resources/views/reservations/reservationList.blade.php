@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
                 <h2 class=" text-xl text-gray-500 leading-tight">
-                    <i class="fa-solid fa-tag mr-2 text-[#f18325]"></i>{{ __('Reservations') }}
+                    <i class="fa-solid fa-tag mr-2 text-[#B6844A]"></i>{{ __('Reservations') }}
                 </h2>
 
                 <div class="space-x-2">
@@ -72,7 +72,7 @@
                         <thead class="bg-white">
                             <tr>
                                 <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                    <i class="fas fa-paper-plane text-[#f18325] text-base"></i>
+                                    <i class="fas fa-paper-plane text-[#B6844A] text-base"></i>
                                 </th>    
                                 <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                     Status

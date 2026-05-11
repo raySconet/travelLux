@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class="text-xl text-gray-500 leading-tight flex items-baseline">
-                <i class="fa-solid fa-pen mr-2 text-[#f18325]"></i>
+                <i class="fa-solid fa-pen mr-2 text-[#B6844A]"></i>
                 <span>Check Writer</span>
             </h2>
 
@@ -18,8 +18,8 @@
            
             <div class="flex  justify-between px-6 py-4 ">
                 <div class="flex flex-row gap-4">
-                    <button class="space-x-2 bg-[#f18325] text-white  py-2 px-4 rounded cursor-pointer border border-transparent
-                                    hover:bg-white hover:border-[#f18325] hover:text-[#f18325]
+                    <button class="space-x-2 bg-[#B6844A] text-white  py-2 px-4 rounded cursor-pointer border border-transparent
+                                    hover:bg-white hover:border-[#B6844A] hover:text-[#B6844A]
                                     transition-all duration-200">PAY ALL AGENTS</button>
                     <span class="mt-3"> Selected </span>
                 </div>
@@ -91,7 +91,7 @@
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-                                    <i class="fas fa-tag text-xl text-[#f18325]" onclick="openEditReservationCheckWriterModal()"></i>
+                                    <i class="fas fa-tag text-xl text-[#B6844A]" onclick="openEditReservationCheckWriterModal()"></i>
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
@@ -132,7 +132,7 @@
 
         <div class="flex items-center justify-between px-3 py-4 border-b-2 border-t-2 border-[#dee2e6]">
             <div class="flex items-center space-x-2">
-                <i class="fas fa-edit text-[#f18325] text-xl"></i>
+                <i class="fas fa-edit text-[#B6844A] text-xl"></i>
                 <h2 class="text-xl">Edit Reservation</h2>
             </div>
 
@@ -178,7 +178,7 @@
         </div>
 
         <div class="flex justify-between px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-            <i class="fas fa-external-link-alt text-lg text-[#f18325] mt-2 -ml-4"></i>
+            <i class="fas fa-external-link-alt text-lg text-[#B6844A] mt-2 -ml-4"></i>
 
             <div class="-mr-5">
                 <x-primary-btn type="submit" class="editReservationCheckWriterSaveBtn">

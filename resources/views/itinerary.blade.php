@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="p-4 px-4 bg-white shadow sm:rounded-none flex items-center justify-between">
             <h2 class=" text-xl text-gray-500 leading-tight">
-                <i class="fa-solid fa-plane mr-2 text-[#f18325]"></i>{{ __('Itinerary') }}
+                <i class="fa-solid fa-plane mr-2 text-[#B6844A]"></i>{{ __('Itinerary') }}
             </h2>
 
             <x-primary-btn class="flex items-center gap-2" onclick="window.location='{{ route('itinerary.create') }}'">

@@ -4,7 +4,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="relative mt-6">
             <label for="customer_referral" class="block text-sm font-medium text-gray-700">Customer Referral</label>
-            <select name="customer_referral" id="customer_referral" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="customer_referral" id="customer_referral" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">-- Select Customer --</option>
                 @foreach($referralCustomers as $referral)
                     <option value="{{ $referral->id }}" {{ old('customer_referral', $customer->customer_referral) == $referral->id ? 'selected' : '' }}>
@@ -15,7 +15,7 @@
         </div>
         <div class="relative mt-6">
             <label for="marketing_method">Marketing Method</label>
-            <select name="marketing_method" id="marketing_method" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+            <select name="marketing_method" id="marketing_method" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="-1" {{ old('marketing_method', $customer->marketing_method ?? '') == '-1' ? 'selected' : '' }}>--Select Marketing Status --</option>
                 <option value="Drive By Office" {{ old('marketing_method', $customer->marketing_method ?? '') == 'Drive By Office' ? 'selected' : '' }}>Drive By Office</option>
                 <option value="Email Marketing" {{ old('marketing_method', $customer->marketing_method ?? '') == 'Email Marketing' ? 'selected' : '' }}>Email Marketing</option>

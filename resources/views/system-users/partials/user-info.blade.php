@@ -181,7 +181,7 @@
 
         <div class="relative mt-6">
             <label for="time_zone">Time Zone</label>
-            <select name="time_zone" id="time_zone" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+            <select name="time_zone" id="time_zone" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                 <option value="-1" {{ old('time_zone', $user->time_zone ?? '') == '-1' ? 'selected' : '' }}>-- Select Time Zone --</option>
                 <option value="(UTC-12:00) International Date Line West" {{ old('time_zone', $user->time_zone ?? '') == '(UTC-12:00) International Date Line West' ? 'selected' : '' }}>(UTC-12:00) International Date Line West</option>
                 <option value="(UTC-11:00) Coordinated Universal Time - 11" {{ old('time_zone', $user->time_zone ?? '') == '(UTC-11:00) Coordinated Universal Time - 11' ? 'selected' : '' }}>(UTC-11:00) Coordinated Universal Time - 11</option>

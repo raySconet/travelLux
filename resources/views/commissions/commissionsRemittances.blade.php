@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class="text-xl text-gray-500 leading-tight flex items-baseline">
-                <i class="fa-solid fa-download mr-2 text-[#f18325]"></i>
+                <i class="fa-solid fa-download mr-2 text-[#B6844A]"></i>
                 <span>Commissions Remittances</span>
                 <span class="text-base ml-2">- Received from vendors</span>
             </h2>
@@ -115,7 +115,7 @@
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
-                                    <i class="fas fa-tag text-[#f18325] text-xl" onclick="openEditReservationModal()"></i>
+                                    <i class="fas fa-tag text-[#B6844A] text-xl" onclick="openEditReservationModal()"></i>
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
@@ -163,7 +163,7 @@
         
             <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
                 <div class="flex items-center space-x-2">
-                    <i class="fas fa-edit text-xl text-[#f18325]"></i>
+                    <i class="fas fa-edit text-xl text-[#B6844A]"></i>
                     <h2 id="vendorModalTitle" class="text-xl font-semibold text-gray-700">
                        Edit Reservation
                     </h2>
@@ -226,7 +226,7 @@
 
             <div class="flex justify-between px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
                 <div>
-                    <i class="fas fa-external-link-alt text-xl mt-2 text-[#f18325]"></i>
+                    <i class="fas fa-external-link-alt text-xl mt-2 text-[#B6844A]"></i>
                 </div>
                 <div>
                     <x-primary-btn><i class="fa fa-paper-plane"></i><span>Save</span></x-primary-btn>

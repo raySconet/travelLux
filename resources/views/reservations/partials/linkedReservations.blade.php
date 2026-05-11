@@ -9,7 +9,7 @@
     <div class="relative flex flex-row justify-between gap-3 mt-5">
         <h6 class="text-xl">Traveling With</h6>
 
-        <button type="button" class="text-[#f18325] text-2xl flex-shrink-0" onclick="openTravelingWithModal()">
+        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openTravelingWithModal()">
             <i class="fas fa-plus-circle"></i>
         </button>
     </div>     
@@ -55,7 +55,7 @@
 
         <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
             <div class="flex items-center space-x-2">
-                <i class="fas fa-plus-circle text-[#f18325] text-base"></i>
+                <i class="fas fa-plus-circle text-[#B6844A] text-base"></i>
                 <h2 class="text-base"> Add Linked Reservations </h2>
             </div>
 
@@ -67,7 +67,7 @@
         <div class="px-6 py-4 space-y-4">
             <div class="relative mt-3">
                 <label for="linked_customer">Customer</label>
-                <select name="linked_customer" id="linked_customer" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                <select name="linked_customer" id="linked_customer" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                     <option value="">-- Select Customer --</option>
 
                     @foreach($referralCustomers as $referral)

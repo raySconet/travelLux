@@ -20,7 +20,7 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <i class="fas fa-paper-plane text-[#f18325] text-xl cursor-pointer"></i>
+                <i class="fas fa-paper-plane text-[#B6844A] text-xl cursor-pointer"></i>
                 <i class="fas fa-eye text-[#bdbdbd] text-xl cursor-pointer"></i>
             </div>
         </div>
@@ -38,7 +38,7 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <i class="fa fa-redo text-[#f18325] text-xl"></i>
+            <i class="fa fa-redo text-[#B6844A] text-xl"></i>
             <i class="fas fa-eye text-[#bdbdbd] text-xl"></i>
         </div>
     </div> --}}

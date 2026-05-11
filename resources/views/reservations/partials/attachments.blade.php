@@ -18,7 +18,7 @@
 
             <button type="button"
                     id="attachReservationBtn"
-                    class="text-[#f18325] text-2xl flex-shrink-0">
+                    class="text-[#B6844A] text-2xl flex-shrink-0">
                 <i class="fas fa-plus-circle"></i>
             </button>
         </div>

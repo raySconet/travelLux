@@ -20,7 +20,7 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <i title="Send to Customer" class="fas fa-paper-plane text-[#f18325] text-xl cursor-pointer"></i>
+                <i title="Send to Customer" class="fas fa-paper-plane text-[#B6844A] text-xl cursor-pointer"></i>
 
                 <i
                     title="Preview Form"

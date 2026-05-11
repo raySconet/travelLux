@@ -47,6 +47,6 @@
 <div class="relative flex flex-row justify-start gap-3 mt-5">
     <div class="relative flex flex-col">
         <i class="fas fa-address-card text-2xl"></i>
-        <i class="fas fa-redo mt-2 text-xl text-[#f18325]"></i>
+        <i class="fas fa-redo mt-2 text-xl text-[#B6844A]"></i>
     </div>
 </div>

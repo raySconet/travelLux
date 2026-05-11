@@ -4,6 +4,6 @@
         id="flight_notes"
         name="flight_notes"
         rows="3"
-        class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1"
+        class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1"
     >{{ old('flight_notes', $reservation->flight_notes ?? '') }}</textarea>
 </div>

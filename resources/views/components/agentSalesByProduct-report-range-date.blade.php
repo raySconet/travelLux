@@ -4,7 +4,7 @@
     
         <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
             <div class="flex items-center space-x-2">
-                <i class="far fa-calendar-alt text-xl text-[#f18325]"></i>
+                <i class="far fa-calendar-alt text-xl text-[#B6844A]"></i>
                 <h2  class="text-xl font-semibold text-gray-700">
                     Report Date Range
                 </h2>
@@ -31,7 +31,7 @@
 
             <div class="relative mt-6">
                 <label for="reportRange">Or Range</label>
-                <select name="reportRange" id="reportRange" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+                <select name="reportRange" id="reportRange" class="w-full border-b mb-4 focus:outline-none focus:border-[#B6844A]">
                     <option value="-1">-- Select Range --</option>
                     <option value="-30Days">-30 Days</option>
                     <option value="-45Days">-45 Days</option>
@@ -50,7 +50,7 @@
             <div class="relative mt-6">
                 <label for="reportRangeByYear">Range By Year</label>
 
-                <select name="reportRangeByYear" id="reportRangeByYear" class="w-full border-b mb-4 focus:outline-none focus:border-[#f18325]">
+                <select name="reportRangeByYear" id="reportRangeByYear" class="w-full border-b mb-4 focus:outline-none focus:border-[#B6844A]">
                     @php
                         $currentYear = now()->year;
                     @endphp

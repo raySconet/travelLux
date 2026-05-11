@@ -2,8 +2,7 @@
     $user = auth()->user();
 @endphp
 
-{{-- <nav x-data="{ open: false }" class="bg-[#f18325] fixed top-0  w-full z-50" style="float:right; "> --}}
-<nav x-data="{ open: false }" class="bg-[#f18325] w-full">
+<nav x-data="{ open: false }" class="bg-[#292727] w-full">
     <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
         @csrf
     </form>
@@ -15,12 +14,12 @@
             <div class="flex items-center gap-8 flex-shrink-0">
                 <!-- Logo -->
                 <div class="flex items-center">
-                   
+
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden sm:flex space-x-8">
-                    
+
                 </div>
             </div>
 
@@ -38,13 +37,13 @@
                     <i class="fas fa-chart-line"></i>
                         Dashboard
                 </a>
-                
+
                 <a href="#" class="text-white text-base flex items-center gap-1">
                     <i class="fas fa-bell"></i>
                         Notifications
                 </a>
-                
-                <a href="#" 
+
+                <a href="#"
                     onclick="openLogoutModal()"
                     class="text-white text-base flex items-center gap-1">
                         <i class="fas fa-sign-out-alt"></i>

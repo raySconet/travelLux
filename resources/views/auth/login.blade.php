@@ -19,7 +19,7 @@
                 name="email"
                 :value="old('email')"
                 placeholder="Email"
-                class="pl-10 border-b-2 border-[#2B3991] w-full pt-2 pb-1 text-base focus:outline-none focus:border-b-[#f18325]"
+                class="pl-10 border-b-2 border-[#2B3991] w-full pt-2 pb-1 text-base focus:outline-none focus:border-b-[#B6844A]"
             />
         </div>
 
@@ -31,15 +31,15 @@
                 type="password"
                 name="password"
                 placeholder="Password"
-                class="pl-10 border-b-2 border-[#2B3991] w-full pt-2 pb-1 text-base focus:outline-none focus:border-b-[#f18325]"
+                class="pl-10 border-b-2 border-[#2B3991] w-full pt-2 pb-1 text-base focus:outline-none focus:border-b-[#B6844A]"
                 autocomplete="current-password"
             />
         </div>
 
         <div class="flex items-center justify-center flex-wrap mt-4">
             <div class="flex flex-col justify-center content-center">
-                <button class="bg-[#fff] text-gray-500  py-2 px-8 rounded-full cursor-pointer border border-[#f18325]
-                                hover:bg-[#f18325] hover:border-[#f18325] hover:text-[#fff]
+                <button class="bg-[#fff] text-gray-500  py-2 px-8 rounded-full cursor-pointer border border-[#B6844A]
+                                hover:bg-[#B6844A] hover:border-[#B6844A] hover:text-[#fff]
                                 transition-all duration-200 text-base mb-6">
                     Login
                 </button>

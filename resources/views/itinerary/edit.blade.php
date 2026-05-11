@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="py-4 px-4 bg-white shadow sm:rounded-none flex items-center justify-between">
                 <h2 class=" text-xl text-gray-500 leading-tight">
-                    <i class="fa-solid fa-plane mr-2 text-[#f18325]"></i>{{ __('Itinerary') }}
+                    <i class="fa-solid fa-plane mr-2 text-[#B6844A]"></i>{{ __('Itinerary') }}
                 </h2>
 
                 <div class="space-x-2">
@@ -79,11 +79,11 @@
                     </div>
                     
                     <div class="flex gap-2 mt-2">
-                        <button class="text-white px-10 py-2 rounded text-sm transition" :class="section === 'yourItems' ? 'bg-[#f18325]': 'bg-[#696969]'" @click="section = 'yourItems'">
+                        <button class="text-white px-10 py-2 rounded text-sm transition" :class="section === 'yourItems' ? 'bg-[#B6844A]': 'bg-[#696969]'" @click="section = 'yourItems'">
                             Your Items
                         </button>
 
-                        <button class="text-white px-10 py-2 rounded text-sm transition" :class="section === 'guides' ? 'bg-[#f18325]' : 'bg-[#696969]'" @click="section = 'guides'" >
+                        <button class="text-white px-10 py-2 rounded text-sm transition" :class="section === 'guides' ? 'bg-[#B6844A]' : 'bg-[#696969]'" @click="section = 'guides'" >
                             Guides
                         </button>
                     </div>
@@ -92,7 +92,7 @@
                             <label class="text-red-700 text-sm">Search in "Your Items" first.</label>
                             <label class="text-lg">Your Items</label>
                             <div class="relative mt-4">
-                                <select name="yourItems" id="yourItems" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+                                <select name="yourItems" id="yourItems" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                                     <option value="-1">Nothing selected</option>
                                 </select>
                             </div>
@@ -104,13 +104,13 @@
                             <div x-data="{ guideSearchSection: 'searchByCity' }" class="flex flex-col gap-2">
                                 <div class="flex gap-2 mt-2">
                                     <button class="text-white px-3 py-2 rounded text-sm transition"
-                                        :class="guideSearchSection === 'searchByCity' ? 'bg-[#f18325]' : 'bg-[#696969]'"
+                                        :class="guideSearchSection === 'searchByCity' ? 'bg-[#B6844A]' : 'bg-[#696969]'"
                                         @click="guideSearchSection = 'searchByCity'">
                                         Search By City
                                     </button>
 
                                     <button class="text-white px-3 py-2 rounded text-sm transition"
-                                        :class="guideSearchSection === 'searchByCountry' ? 'bg-[#f18325]' : 'bg-[#696969]'"
+                                        :class="guideSearchSection === 'searchByCountry' ? 'bg-[#B6844A]' : 'bg-[#696969]'"
                                         @click="guideSearchSection = 'searchByCountry'">
                                         Search By Country
                                     </button>
@@ -124,7 +124,7 @@
                                         </div>
 
                                         <div class="relative mt-3">
-                                            <select name="citySelect" id="citySelect" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+                                            <select name="citySelect" id="citySelect" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                                                 <option value="-1">Nothing selected</option>
                                             </select>
                                         </div>
@@ -132,7 +132,7 @@
 
                                     <div x-show="guideSearchSection === 'searchByCountry'" x-cloak class="flex flex-col gap-4">
                                         <div class="relative mt-3">
-                                            <select name="countrySelect" id="countrySelect" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#f18325]">
+                                            <select name="countrySelect" id="countrySelect" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                                                 <option value="-1">Nothing selected</option>
                                             </select>
                                         </div>

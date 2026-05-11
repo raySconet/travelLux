@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="p-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-2xl text-gray-500 leading-tight">
-                <i class="fa-solid fa-envelope mr-2 text-[#f18325]"></i>{{ __('Automated  Emails') }}
+                <i class="fa-solid fa-envelope mr-2 text-[#B6844A]"></i>{{ __('Automated  Emails') }}
             </h2>
 
             <x-primary-btn  class="flex items-center gap-2" onclick="window.location='{{ route('automatedEmails.create') }}'"><i class="far fa-plus-square"></i>Add Email</x-primary-btn>
@@ -72,7 +72,7 @@
 
                                         <button type="submit" title="{{ $automatedEmail->is_disabled == 0 ? 'Disable Email' : 'Enable Email' }}"  onclick="showLoaderOnSubmit()">
                                             @if($automatedEmail->is_disabled == 0)
-                                                <i class="fas fa-bell text-2xl text-[#f18325]"></i>
+                                                <i class="fas fa-bell text-2xl text-[#B6844A]"></i>
                                             @else
                                                 <i class="fas fa-bell-slash text-2xl text-[#bdbdbd]"></i>
                                             @endif

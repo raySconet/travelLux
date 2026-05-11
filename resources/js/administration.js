@@ -6,7 +6,7 @@ window.Alpine = Alpine;
 Alpine.start();
 $(document).ready(() => {
 
-    // start timeline task 
+    // start timeline task
     const $timelineProductSelect = $('#product_id');
     const $timelineDestinationSelect = $('#destination_id');
 
@@ -136,7 +136,7 @@ $(document).ready(() => {
         $('#productDestinationContainer').append(row);
     });
 
- 
+
     $(document).on('change', '.product-select', function () {
 
         const $row = $(this).closest('.form-row');
@@ -157,7 +157,7 @@ $(document).ready(() => {
 
     });
 
-    
+
     $(document).on('click', '.delete-row', function () {
         $(this).closest('.grid').remove();
     });
@@ -172,7 +172,7 @@ $(document).ready(() => {
             <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Title</p>
                 <div class="relative mt-3">
-                    <input type="text" data-preview="title"  placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#f18325] pt-5 pb-1" />
+                    <input type="text" data-preview="title"  placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1" />
                     <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm ">Text</label>
                 </div>
 
@@ -197,7 +197,7 @@ $(document).ready(() => {
             <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Acknowledgement (Checkbox)</p>
                 <div class="relative mt-3">
-                    <input type="text" data-preview="acknowledgement" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#f18325] pt-5 pb-1 mb-5" />
+                    <input type="text" data-preview="acknowledgement" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1 mb-5" />
                     <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm">Text</label>
                 </div>
 
@@ -226,7 +226,7 @@ $(document).ready(() => {
             <div class="form-item plain-text-block bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Plain Text Block</p>
                 <div class="relative mt-3">
-                    <input type="text" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#f18325] pt-5 pb-1" />
+                    <input type="text" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1" />
                     <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm ">Text</label>
                 </div>
 
@@ -250,7 +250,7 @@ $(document).ready(() => {
             <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Text Input</p>
                 <div class="relative mt-3">
-                    <input type="text" data-preview="customerInput" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#f18325] pt-5 pb-1 mb-5" />
+                    <input type="text" data-preview="customerInput" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1 mb-5" />
                     <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm">Text</label>
                 </div>
 
@@ -314,7 +314,7 @@ $(document).ready(() => {
 
                 <div class="choiceText flex gap-4 relative mt-3">
                     <div class=" flex-1 relative">
-                        <input type="text" data-preview="choiceText" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#f18325] pt-5 pb-1 mb-5 w-full" />
+                        <input type="text" data-preview="choiceText" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1 mb-5 w-full" />
                         <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm">Choice Text</label>
                     </div>
                     <button type="button"
@@ -348,7 +348,7 @@ $(document).ready(() => {
             <div class="form-item bg-white shadow rounded-none p-6 mt-3" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">Dropdown</p>
                 <div class="relative mt-3">
-                    <input type="text" data-preview="dropdownLabel" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#f18325] pt-5 pb-1 mb-5" />
+                    <input type="text" data-preview="dropdownLabel" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1 mb-5" />
                     <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm">Dropdown Label</label>
                 </div>
 
@@ -359,7 +359,7 @@ $(document).ready(() => {
 
                 <div class="choiceText flex gap-4 relative mt-3">
                     <div class="relative flex-1">
-                        <input type="text" placeholder=" " class="choice-input peer w-full border-b focus:outline-none focus:border-[#f18325] pt-5 pb-1 mb-5 w-full" />
+                        <input type="text" placeholder=" " class="choice-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1 mb-5 w-full" />
                         <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm">Choice Text</label>
                     </div>
                     <button type="button"
@@ -420,7 +420,7 @@ $(document).ready(() => {
                     id="content"
                     name="content"
                     rows="3"
-                    class="w-full border-b border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1">
+                    class="w-full border-b border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1">
                 </textarea>
 
                 <div class="flex place-content-end gap-4 mt-6">
@@ -453,7 +453,7 @@ $(document).ready(() => {
                     <input
                         type="text"
                         placeholder=" "
-                        class="choice-input peer w-full border-b focus:outline-none focus:border-[#f18325] pt-5 pb-1"
+                        class="choice-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1"
                     />
                     <label
                         class="absolute left-0 top-1 transition-all duration-200
@@ -554,7 +554,7 @@ $(document).ready(() => {
 
                 previewHtml += `
                     <div class="relative pt-2">
-                        <input 
+                        <input
                             type="text"
                             class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent"
                         >
@@ -579,7 +579,7 @@ $(document).ready(() => {
                                 </p>
 
                                 <div class="relative">
-                                    <input 
+                                    <input
                                         type="text"
                                         placeholder=" "
                                         class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent"
@@ -597,7 +597,7 @@ $(document).ready(() => {
                                 </p>
 
                                 <div class="relative">
-                                    <input 
+                                    <input
                                         type="date"
                                         class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent text-[#495057]"
                                     >
@@ -619,7 +619,7 @@ $(document).ready(() => {
                     <div class="${displayRow ? 'flex gap-6 items-center flex-wrap' : 'space-y-2'}">
                 `;
 
-                
+
                 const firstChoice = item.find('[data-preview="choiceText"]').val();
 
                 if (firstChoice) {
@@ -631,7 +631,7 @@ $(document).ready(() => {
                     `;
                 }
 
-                
+
                 item.find('.choice-input').each(function () {
 
                     const choice = $(this).val();
@@ -657,7 +657,7 @@ $(document).ready(() => {
                 previewHtml += `
                     <div>
                         <label class="block mb-1">${label}</label>
-                       <select class="w-full border-b border-[#bdbdbd] focus:outline-none focus:border-[#f18325] px-0 py-2 bg-transparent">
+                       <select class="w-full border-b border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] px-0 py-2 bg-transparent">
                         <option value="" class="text-[#495057]" selected disabled>--Select--</option>
                 `;
 
@@ -677,7 +677,7 @@ $(document).ready(() => {
                 `;
             }
 
-            // SIGNATURE BLOCK 
+            // SIGNATURE BLOCK
             else if (item.find('p:contains("Signature Block")').length) {
 
                 previewHtml += `
@@ -690,7 +690,7 @@ $(document).ready(() => {
                                 </p>
 
                                 <div class="relative">
-                                    <input 
+                                    <input
                                         type="text"
                                         placeholder="Type Full Name Here To sign"
                                         class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent text-[#495057]"
@@ -698,14 +698,14 @@ $(document).ready(() => {
                                 </div>
                             </div>
 
-                         
+
                             <div>
                                 <p class="mb-2 text-sm">
                                     Date
                                 </p>
 
                                 <div class="relative">
-                                    <input 
+                                    <input
                                         type="date"
                                         placeholder="Select Date"
                                         class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent text-[#495057]"

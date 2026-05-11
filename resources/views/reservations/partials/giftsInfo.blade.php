@@ -12,7 +12,7 @@
     <div class="relative flex flex-row justify-between gap-3 mt-5">
         <h6 class="text-xl">Gifts</h6>
         
-        <button type="button" class="text-[#f18325] text-2xl flex-shrink-0" onclick="openGiftsModal()">
+        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openGiftsModal()">
             <i class="fas fa-plus-circle"></i>
         </button>
     </div>
@@ -55,7 +55,7 @@
 
             <div class="relative mt-3">
                 <label for="gift_type">Gift Type</label>
-                <select name="gift_type" id="gift_type_modal" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325]">
+                <select name="gift_type" id="gift_type_modal" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                     <option value="">-- Select Gift --</option>
                     <option value="Gift To The Room" {{ old('gift_type', $reservation->gift_type ?? '') == 'Gift To The Room' ? 'selected' : '' }}>Gift To The Room</option>
                     <option value="Onboard Credit" {{ old('gift_type', $reservation->gift_type ?? '') == 'Onboard Credit' ? 'selected' : '' }}>Onboard Credit</option>
@@ -111,7 +111,7 @@
                     id="gifts_notes_modal"
                     name="notes"
                     rows="3"
-                    class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#f18325] resize-none pt-1 pb-1"
+                    class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1"
                 >{{ old('notes', $reservation->notes ?? '') }}</textarea>
             </div>
         </x-reservations-modal>

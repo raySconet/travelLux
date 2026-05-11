@@ -268,7 +268,7 @@ select option {
 
 .sidebarA:hover {
     background: #f5f5f5 !important;
-    color:#f18325 ;
+    color:#B6844A ;
 }
 .sidebarA {
     padding-left:52px;
@@ -294,6 +294,6 @@ select option {
     content: attr(data-placeholder);
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
-    color: #f18325;
+    color: #B6844A;
     font-size: 1.1rem;
 }

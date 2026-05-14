@@ -7,9 +7,9 @@
         class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1"
     >{{ old('general_notes', $customer->general_notes ?? '') }}</textarea>
 </div>
-<div class="relative mt-7">
+{{-- <div class="relative mt-7">
     <label for="customerTags">Customer Tags</label>
     <select name="customerTags" id="customerTags" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
         <option value="-1">-- Select Customer Tags--</option>
     </select>
-</div>
+</div> --}}

@@ -1,8 +1,5 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    {{-- <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
-        @csrf
-    </form> --}}
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,7 +22,6 @@
         <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
 
         <!-- Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
@@ -44,50 +40,6 @@
             [x-cloak] {
                 display: none !important;
             }
-            .bootstrap-select .dropdown-menu {
-                background: white !important;
-                border-radius: 6px;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            }
-            
-            .bootstrap-select .dropdown-menu li a {
-                padding: 6px 10px;
-                display: block;
-            }
-            
-            .bootstrap-select .dropdown-menu li a:hover {
-                background-color: #f3f4f6 !important; 
-            }
-            
-            .bootstrap-select .dropdown-menu.inner {
-                max-height: 250px !important;
-                overflow-y: auto !important;
-            }
-            
-            .bootstrap-select .dropdown-menu {
-                z-index: 9999 !important;
-            }
-
-            .bootstrap-select {
-                width: 100% !important;
-            }
-
-            .bootstrap-select > .dropdown-toggle {
-                width: 100% !important;
-                min-width: 0 !important;
-            }
-
-            .bootstrap-select .dropdown-menu {
-                width: 100% !important;
-                min-width: 100% !important;
-                max-width: 100% !important;
-                box-sizing: border-box;
-            }
-
-            .bootstrap-select {
-                position: relative;
-            }
-
         </style>
     </head>
     <body class="font-sans "
@@ -183,13 +135,10 @@
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+        <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
+            @csrf
+        </form>
 
-
-<!-- Bootstrap JS (required for selectpicker) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- bootstrap-select -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
     </body>
 
 </html>

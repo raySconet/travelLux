@@ -9,7 +9,10 @@
                     <x-primary-btn  onclick="openImportReservationBookings()"><i class="far fa-plus-square"></i><span>Import Bookings</span></x-primary-btn>
                     <x-secondary-btn><i class="fas fa-link"></i><span>Copy Link</span></x-secondary-btn>
                     <x-secondary-btn><i class="fas fa-file-pdf"></i><span>Pdf</span></x-secondary-btn>
-                    <x-secondary-buttonToDelete><i class="fas fa-copy"></i><span>Duplicate</span></x-secondary-buttonToDelete>
+                    <x-secondary-buttonToDelete onclick="openDuplicateItineraryModal('{{ $itinerary->name }}','{{ $itinerary->date }}')">
+                        <i class="fas fa-copy"></i>
+                        <span>Duplicate</span>
+                    </x-secondary-buttonToDelete>
                     <form method="POST" action="{{ route('itinerary.destroy', $itinerary->id)}}" class="inline delete-form">
                             @csrf
                             @method('DELETE')
@@ -164,3 +167,4 @@
 </x-app-layout>
 <x-import-reservation-bookings />
 <x-delete-modal />
+<x-duplicate-itinerary-modal />

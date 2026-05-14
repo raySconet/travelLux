@@ -6,26 +6,26 @@
             <img src="{{ asset('images/archer-logo.png') }}" style="width: 250px;  height: auto;"  alt="Logo"> 
         </a>
     </div>
-    <h2 class="text-[#2B3991]  text-2xl text-center mt-3">LOG IN</h2>
+    <h2 class="text-[#292727]  text-2xl text-center mt-3">LOG IN</h2>
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
 
         <div class="relative w-full mt-4">
-            <i class="fa-solid fa-user absolute left-2 top-1/2 -translate-y-1/2 text-[#2B3991] text-base"></i>
+            <i class="fa-solid fa-user absolute left-2 top-1/2 -translate-y-1/2 text-[#292727] text-base"></i>
             <input
                 id="email"
                 type="email"
                 name="email"
                 :value="old('email')"
                 placeholder="Email"
-                class="pl-10 border-b-2 border-[#2B3991] w-full pt-2 pb-1 text-base focus:outline-none focus:border-b-[#B6844A]"
+                class="pl-10 border-b-2 border-[#292727] w-full pt-2 pb-1 text-base focus:outline-none focus:border-b-[#B6844A]"
             />
         </div>
 
         
         <div class="relative w-full mt-4">
-            <i class="fa-solid fa-lock absolute left-2 top-1/2 -translate-y-1/2 text-[#2B3991] text-base"></i>
+            <i class="fa-solid fa-lock absolute left-2 top-1/2 -translate-y-1/2 text-[#292727] text-base"></i>
             <input
                 id="password"
                 type="password"
@@ -44,7 +44,7 @@
                     Login
                 </button>
                 @if (Route::has('password.request'))
-                    <a class="text-xl text-[#2B3991] mb-5" href="{{ route('password.request') }}">
+                    <a class="text-xl text-[#292727] mb-5" href="{{ route('password.request') }}">
                         Forgot password?
                     </a>
                 @endif

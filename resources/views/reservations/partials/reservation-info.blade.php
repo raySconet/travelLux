@@ -166,22 +166,39 @@
         </div>
     </div>
 
+    @php
+        $selectedCelebrations = old('celebrations',
+            !empty($reservation->celebrations)
+                ? explode(',', $reservation->celebrations)
+                : []
+        );
+
+        $selectedCelebrations = array_filter($selectedCelebrations, function ($v) {
+            return $v !== '-1' && $v !== '' && $v !== null;
+        });
+    @endphp
     <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
-        <div class="flex-1 relative mt-8">
-            <label for="celebrations" class="text-sm block mb-1">Celebrations</label>
-            <select name="celebrations"id="celebrations" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                <option value="-1">--Select Celebrations--</option>
-                <option value="Anniversary" {{ old('celebrations', $reservation->celebrations ?? '') == 'Anniversary' ? 'selected' : '' }}>Anniversary</option>
-                <option value="Birthday" {{ old('celebrations', $reservation->celebrations ?? '') == 'Birthday' ? 'selected' : '' }}>Birthday</option>
-                <option value="Family Reunion" {{ old('celebrations', $reservation->celebrations ?? '') == 'Family Reunion' ? 'selected' : '' }}>Family Reunion</option>
-                <option value="First Visit" {{ old('celebrations', $reservation->celebrations ?? '') == 'First Visit' ? 'selected' : '' }}>First Visit</option>
-                <option value="Graduation" {{ old('celebrations', $reservation->celebrations ?? '') == 'Graduation' ? 'selected' : '' }}>Graduation</option>
-                <option value="Honeymoon" {{ old('celebrations', $reservation->celebrations ?? '') == 'Honeymoon' ? 'selected' : '' }}>Honeymoon</option>
-                <option value="Life Celebration" {{ old('celebrations', $reservation->celebrations ?? '') == 'Life Celebration' ? 'selected' : '' }}>Life Celebration</option>
-                <option value="Retirement" {{ old('celebrations', $reservation->celebrations ?? '') == 'Retirement' ? 'selected' : '' }}>Retirement</option>
-                <option value="Summer Family Vacation" {{ old('celebrations', $reservation->celebrations ?? '') == 'Summer Family Vacation' ? 'selected' : '' }}>Summer Family Vacation</option>
-                <option value="Wedding" {{ old('celebrations', $reservation->celebrations ?? '') == 'Wedding' ? 'selected' : '' }}>Wedding</option>
-            </select>
+        <div class="flex-1 relative mt-8" x-data="{open: false,selected: {{ json_encode((array)$selectedCelebrations) }},options: ['Anniversary','Birthday','Family Reunion','First Visit','Graduation','Honeymoon','Life Celebration','Retirement','Summer Family Vacation','Wedding'],toggle(val) { this.selected.includes(val) ? this.selected = this.selected.filter(v => v !== val) : this.selected.push(val); },label() {return this.selected.length ? this.selected.join(', ') : '-- Select Celebrations --';}}" x-cloak>
+            <label class="text-sm block mb-1">Celebrations</label>
+            <template x-for="s in selected" :key="s">
+                <input type="hidden" name="celebrations[]" :value="s">
+            </template>
+            <button type="button" @click="open = !open" @click.outside="open = false" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 bg-white text-left flex justify-between items-center">
+                <span x-text="label()" class="text-gray-600 truncate"></span>
+                <svg class="w-4 h-4 text-gray-400 ml-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <div x-show="open" class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg max-h-60 overflow-y-auto">
+                <template x-for="opt in options" :key="opt">
+                    <div @click="toggle(opt)" class="flex items-center justify-between px-3 py-2 text-sm cursor-pointer hover:bg-gray-100">
+                        <span x-text="opt"></span>
+                        <svg x-show="selected.includes(opt)" class="w-4 h-4 text-gray-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 

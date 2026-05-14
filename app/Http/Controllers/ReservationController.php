@@ -31,7 +31,6 @@ class ReservationController extends Controller
 {
     public function index(Request $request)
     {
-    //    $status = $request->input('status', 'Active');
        $statuses = $request->input('status', ['Active']);
        $search = $request->input('search');
 
@@ -260,16 +259,19 @@ class ReservationController extends Controller
             'special_offer' => 'nullable|string|max:255',
             'spouse_email' => 'nullable|string|max:255',
             'email_to_send' => 'nullable|string|max:255',
-            'celebrations' => 'nullable|string|max:255',
+            'celebrations' => 'nullable|array',
+            'celebrations.*' => 'string|max:255',
             'celebration_notes' => 'nullable|string|max:255',
             'room_category' => 'nullable|string|max:255',
             'stateroom_number' => 'nullable|string|max:255',
             'embarkation_port' => 'nullable|string|max:255',
             'ticket_types' => 'nullable|array',
-'ticket_types.*' => 'integer',
+            'ticket_types.*' => 'integer',
             'dining_option' => 'nullable|string|max:255',
-            'add_on_options' => 'nullable|string|max:255',
-            'transportation_options' => 'nullable|string|max:255',
+            'add_on_options' => 'nullable|array',
+            'add_on_options.*' => 'integer',
+            'transportation_options' => 'nullable|array',
+            'transportation_options.*' => 'integer',
             'cruise_level' => 'nullable|string|max:255',
 
             'onboard_credit_from_cruise_line' => ['nullable','regex:/^\d+(\.\d{1,2})?$/'],
@@ -326,8 +328,14 @@ class ReservationController extends Controller
         $data['created_on'] = now();
 
         $data['ticket_types'] = !empty($data['ticket_types'])
-    ? implode(',', $data['ticket_types'])
-    : null;
+        ? implode(',', $data['ticket_types'])
+        : null;
+
+        $data['add_on_options'] = !empty($data['add_on_options']) ? implode(',', $data['add_on_options']) : null;    
+
+        $data['transportation_options'] = !empty($data['transportation_options']) ? implode(',', $data['transportation_options']) : null;
+
+        $data['celebrations'] = !empty($data['celebrations']) ? implode(',', $data['celebrations']) : null;
 
         $reservation = Reservation::create($data);
         $this->generateTimelineTasks($reservation);
@@ -391,16 +399,19 @@ class ReservationController extends Controller
             'special_offer' => 'nullable|string|max:255',
             'spouse_email' => 'nullable|string|max:255',
             'email_to_send' => 'nullable|string|max:255',
-            'celebrations' => 'nullable|string|max:255',
+            'celebrations' => 'nullable|array',
+            'celebrations.*' => 'string|max:255',
             'celebration_notes' => 'nullable|string|max:255',
             'room_category' => 'nullable|string|max:255',
             'stateroom_number' => 'nullable|string|max:255',
             'embarkation_port' => 'nullable|string|max:255',
             'ticket_types' => 'nullable|array',
-'ticket_types.*' => 'integer',
+            'ticket_types.*' => 'integer',
             'dining_option' => 'nullable|string|max:255',
-            'add_on_options' => 'nullable|string|max:255',
-            'transportation_options' => 'nullable|string|max:255',
+            'add_on_options' => 'nullable|array',
+            'add_on_options.*' => 'integer',
+            'transportation_options' => 'nullable|array',
+            'transportation_options.*' => 'integer',
             'cruise_level' => 'nullable|string|max:255',
 
             'onboard_credit_from_cruise_line' => ['nullable','regex:/^\d+(\.\d{1,2})?$/'],
@@ -453,10 +464,14 @@ class ReservationController extends Controller
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
 
-        $data['ticket_types'] = !empty($data['ticket_types'])
-    ? implode(',', $data['ticket_types'])
-    : null;
+        $data['ticket_types'] = !empty($data['ticket_types']) ? implode(',', $data['ticket_types']) : null;
 
+        $data['add_on_options'] = !empty($data['add_on_options']) ? implode(',', $data['add_on_options']) : null;
+
+        $data['transportation_options'] = !empty($data['transportation_options']) ? implode(',', $data['transportation_options']) : null;
+
+        $data['celebrations'] = !empty($data['celebrations']) ? implode(',', $data['celebrations']) : null;
+    
         $reservation->update($data);
         $this->generateTimelineTasks($reservation);
         $this->generateAutomatedEmails($reservation);

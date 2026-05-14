@@ -14,16 +14,6 @@ class SystemUsersController extends Controller
        $usersQuery = User::select('id','fname', 'lname' ,'email', 'role', 'is_disabled', 'phone_number', 'city', 'state')
                       ->where('isDeleted', 0);
 
-    //    if($search){
-    //         $usersQuery->where('fname', 'like', "%{$search}%")
-    //                    ->orwhere('lname', 'like', "%{$search}%")
-    //                    ->orwhere('email', 'like', "%{$search}%")
-    //                    ->orwhere('role', 'like', "%{$search}%")
-    //                    ->orwhere('phone_number', 'like', "%{$search}%")
-    //                    ->orwhere('city', 'like', "%{$search}%")
-    //                    ->orwhere('state', 'like', "%{$search}%");
-    //    }
-
        if ($search) {
             $usersQuery->where(function ($query) use ($search) {
                 $query->where('fname', 'like', "%{$search}%")

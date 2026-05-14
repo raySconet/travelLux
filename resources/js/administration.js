@@ -1106,5 +1106,17 @@ $(document).ready(() => {
     window.closeImportReservationBookings = function(){
         $('#importReservationBookingsModal').addClass('hidden');
     }
+
+    window.openDuplicateItineraryModal = function(name, date){
+
+        $('#duplicateItineraryModal').removeClass('hidden');
+
+        $('#name').val(name);
+        $('#date').val(date);
+    }
+
+    window.closeDuplicateItineraryModal = function(){
+        $('#duplicateItineraryModal').addClass('hidden');
+    }
     // end itinerary
 });

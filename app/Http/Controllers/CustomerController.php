@@ -14,7 +14,6 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        // $status = $request->input('status', 'Active');
        $statuses = $request->input('status', ['Active']);
 
         $agentId = $request->input('users', auth()->id());

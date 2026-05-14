@@ -41,4 +41,13 @@ class ItineraryTrip extends Model
     {
         return $this->hasMany(ItineraryImage::class, 'itinerary_id', 'id');
     }
+
+    public function itineraryEvents()
+{
+    return $this->hasMany(
+        ItineraryEvent::class,
+        'itineraryEventDayId',
+        'id'
+    );
+}
 }

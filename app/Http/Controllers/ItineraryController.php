@@ -34,10 +34,15 @@ class ItineraryController extends Controller
 
     public function store(Request $request)
     {
+        $messages = [
+            'name' => 'The Trip name is required.',
+            'date' => 'The Trip date is required.'
+        ];
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'date' => 'nullable|date',
-        ]);
+            'date' => 'required|date',
+        ], $messages);
 
         $itinerary = ItineraryTrip::create([
             'name' => $request->name,

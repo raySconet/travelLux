@@ -25,20 +25,41 @@
                 @php
                     $selectedStatuses = request()->input('status', ['Active']);
                 @endphp
-                    
-                <div class="w-90">
-                    <select name="status[]" id="statusSearch" class="selectpicker w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" multiple data-none-selected-text="-- Filter by Status --">
-                        <option value="Active" {{ in_array('Active', $selectedStatuses) ? 'selected' : '' }}>Active</option>
-                        <option value="Canceled - Commission Protected" {{ in_array('Canceled - Commission Protected', $selectedStatuses) ? 'selected' : '' }}>Canceled - Commission Protected</option>
-                        <option value="Canceled w/ Insurance Payout" {{ in_array('Canceled w/ Insurance Payout', $selectedStatuses) ? 'selected' : '' }}>Canceled w/ Insurance Payout</option>
-                        <option value="Canceled" {{ in_array('Canceled', $selectedStatuses) ? 'selected' : '' }}>Canceled</option>
-                        <option value="Duplicate" {{ in_array('Duplicate', $selectedStatuses) ? 'selected' : '' }}>Duplicate</option>
-                        <option value="" {{ in_array('', $selectedStatuses) ? 'selected' : '' }}>Paid in Full by Archer</option>
-                        <option value="Paid in Full" {{ in_array('Paid in Full', $selectedStatuses) ? 'selected' : '' }}>Paid in full Not Paid by Archer</option>
-                        <option value="Claimed" {{ in_array('Claimed', $selectedStatuses) ? 'selected' : '' }}>Claimed</option>
-                        <option value="On Hold" {{ in_array('On Hold', $selectedStatuses) ? 'selected' : '' }}>On Hold</option>
-                        <option value="Prospect" {{ in_array('Prospect', $selectedStatuses) ? 'selected' : '' }}>Prospect</option>
-                    </select>
+
+                <div class="w-90 relative" x-data="{
+                    open: false,
+                    selected: {{ json_encode($selectedStatuses) }},
+                    options: ['Active','Canceled - Commission Protected','Canceled w/ Insurance Payout','Canceled','Duplicate','Paid in Full','Claimed','On Hold','Prospect'],
+                    toggle(val) {
+                        if (this.selected.includes(val)) {
+                            this.selected = this.selected.filter(v => v !== val);
+                        } else {
+                            this.selected.push(val);
+                        }
+                    },
+                    label() {
+                        return this.selected.length ? this.selected.join(', ') : '-- Filter by Status --';
+                    }
+                    }" x-cloak>
+                    <template x-for="s in selected" :key="s">
+                        <input type="hidden" name="status[]" :value="s">
+                    </template>
+                    <button type="button" @click="open = !open" @click.outside="open = false" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 bg-white text-left flex justify-between items-center">
+                        <span x-text="label()" class="text-gray-600 truncate"></span>
+                        <svg class="w-4 h-4 text-gray-400 ml-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div x-show="open" class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg">
+                        <template x-for="opt in options" :key="opt">
+                            <div @click="toggle(opt); $nextTick(() => $el.closest('form').submit())" class="flex items-center justify-between px-3 py-2 text-sm cursor-pointer hover:bg-gray-100">
+                                <span x-text="opt"></span>
+                                <svg x-show="selected.includes(opt)" class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                        </template>
+                    </div>
                 </div>
 
                 @if(auth()->user()->isAdmin())

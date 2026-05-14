@@ -30,9 +30,7 @@
 
                     <x-input-label for="name">Name</x-input-label>
 
-                    @error('name')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                    <x-input-error :messages="$errors->get('name')" />
                 </div>
 
                 <div class="relative mt-3">
@@ -40,9 +38,7 @@
 
                     <x-input-label for="date">Date</x-input-label>
 
-                    @error('date')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                    <x-input-error :messages="$errors->get('date')" />
                 </div>
 
             </div>

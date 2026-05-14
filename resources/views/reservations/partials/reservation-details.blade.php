@@ -128,37 +128,50 @@
             <x-input-error :messages="$errors->get('days_of_tickets')" /> 
         </div>
 
-        <div class="flex-1 relative mt-7">
-            @php
-                $ticketTypeIds = old(
-                    'ticket_types',
-                    $reservation->ticket_types
-                        ? explode(',', $reservation->ticket_types)
-                        : []
-                );
-            @endphp
+        @php
+            $ticketTypeIds = old('ticket_types', $reservation->ticket_types ? explode(',', $reservation->ticket_types): []);
 
-            <label for="ticket_types" class="text-sm block mb-1">Ticket Types</label>
-
-            <select name="ticket_types[]" id="ticket_types" multiple class="selectpicker w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" data-none-selected-text="-- Select Ticket Types --">
-                <option value="1" {{ in_array('1', $ticketTypeIds) ? 'selected' : '' }}>Base</option>
-                <option value="2" {{ in_array('2', $ticketTypeIds) ? 'selected' : '' }}>Cirque du Soleil</option>
-                <option value="3" {{ in_array('3', $ticketTypeIds) ? 'selected' : '' }}>Barcelona</option>
-                <option value="4" {{ in_array('4', $ticketTypeIds) ? 'selected' : '' }}>MaxPass</option>
-                <option value="5" {{ in_array('5', $ticketTypeIds) ? 'selected' : '' }}>MNSSHP</option>
-                <option value="6" {{ in_array('6', $ticketTypeIds) ? 'selected' : '' }}>MVMCP</option>
-                <option value="7" {{ in_array('7', $ticketTypeIds) ? 'selected' : '' }}>NBA Experience</option>
-                <option value="8" {{ in_array('8', $ticketTypeIds) ? 'selected' : '' }}>Other</option>
-                <option value="9" {{ in_array('9', $ticketTypeIds) ? 'selected' : '' }}>Park Hopper</option>
-                <option value="10" {{ in_array('10', $ticketTypeIds) ? 'selected' : '' }}>SeaWorld</option>
-                <option value="11" {{ in_array('11', $ticketTypeIds) ? 'selected' : '' }}>Southern CA City Pass</option>
-                <option value="12" {{ in_array('12', $ticketTypeIds) ? 'selected' : '' }}>Universal</option>
-                <option value="13" {{ in_array('13', $ticketTypeIds) ? 'selected' : '' }}>Universal 2 park park-to-park</option>
-                <option value="14" {{ in_array('14', $ticketTypeIds) ? 'selected' : '' }}>Universal 3 park park-to-park</option>
-                <option value="15" {{ in_array('15', $ticketTypeIds) ? 'selected' : '' }}>Water Park & More/Park Hopper Plus</option>
-                <option value="16" {{ in_array('16', $ticketTypeIds) ? 'selected' : '' }}>Water Park and Sports</option>
-                <option value="17" {{ in_array('17', $ticketTypeIds) ? 'selected' : '' }}>Water Park Only</option>
-            </select>
+            $ticketTypeIds = array_filter($ticketTypeIds, function ($v) {return $v !== '-1' && $v !== '' && $v !== null; });
+        @endphp
+        <div class="flex-1 relative mt-7"
+            x-data="{
+                open: false,
+                selected: {{ json_encode(array_map('strval', (array)$ticketTypeIds)) }},
+                options: [
+                    {id:'1',label:'Base'},{id:'2',label:'Cirque du Soleil'},{id:'3',label:'Barcelona'},
+                    {id:'4',label:'MaxPass'},{id:'5',label:'MNSSHP'},{id:'6',label:'MVMCP'},
+                    {id:'7',label:'NBA Experience'},{id:'8',label:'Other'},{id:'9',label:'Park Hopper'},
+                    {id:'10',label:'SeaWorld'},{id:'11',label:'Southern CA City Pass'},{id:'12',label:'Universal'},
+                    {id:'13',label:'Universal 2 park park-to-park'},{id:'14',label:'Universal 3 park park-to-park'},
+                    {id:'15',label:'Water Park & More/Park Hopper Plus'},{id:'16',label:'Water Park and Sports'},
+                    {id:'17',label:'Water Park Only'}
+                ],
+                toggle(id) { this.selected.includes(id) ? this.selected = this.selected.filter(v => v !== id) : this.selected.push(id); },
+                label() {
+                    if (!this.selected.length) return '-- Select Ticket Types --';
+                    return this.options.filter(o => this.selected.includes(o.id)).map(o => o.label).join(', ');
+                }
+            }" x-cloak>
+            <label class="text-sm block mb-1">Ticket Types</label>
+            <template x-for="s in selected" :key="s">
+                <input type="hidden" name="ticket_types[]" :value="s">
+            </template>
+            <button type="button" @click="open = !open" @click.outside="open = false" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 bg-white text-left flex justify-between items-center">
+                <span x-text="label()" class="text-gray-600 truncate"></span>
+                <svg class="w-4 h-4 text-gray-400 ml-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <div x-show="open" class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg max-h-60 overflow-y-auto">
+                <template x-for="opt in options" :key="opt.id">
+                    <div @click="toggle(opt.id)" class="flex items-center justify-between px-3 py-2 text-sm cursor-pointer hover:bg-gray-100">
+                        <span x-text="opt.label"></span>
+                        <svg x-show="selected.includes(opt.id)" class="w-4 h-4 text-gray-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 
@@ -182,32 +195,51 @@
             </select>
         </div>
 
-        <div class="flex-1 relative mt-8">
-            <label for="add_on_options" class="text-sm block mb-1">Add-on Options</label>
-            <select name="add_on_options"id="add_on_options" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                <option value="-1">-- Select Options --</option>
-                <option value="1" {{ old('add_on_options', $reservation->add_on_options ?? '') == '1' ? 'selected' : '' }}>Blue Man Group</option>
-                <option value="2" {{ old('add_on_options', $reservation->add_on_options ?? '') == '2' ? 'selected' : '' }}>Car Rental</option>
-                <option value="3" {{ old('add_on_options', $reservation->add_on_options ?? '') == '3' ? 'selected' : '' }}>Character Breakfast</option>
-                <option value="4" {{ old('add_on_options', $reservation->add_on_options ?? '') == '4' ? 'selected' : '' }}>Club Mobay</option>
-                <option value="5" {{ old('add_on_options', $reservation->add_on_options ?? '') == '5' ? 'selected' : '' }}>Express Pass</option>
-                <option value="20"{{ old('add_on_options', $reservation->add_on_options ?? '') == '20' ? 'selected' : '' }}>Genie</option>
-                <option value="21"{{ old('add_on_options', $reservation->add_on_options ?? '') == '21' ? 'selected' : '' }}>Harry Potter Package</option>
-                <option value="6" {{ old('add_on_options', $reservation->add_on_options ?? '') == '6' ? 'selected' : '' }}>Hyatt Pre-Stay</option>
-                <option value="7" {{ old('add_on_options', $reservation->add_on_options ?? '') == '7' ? 'selected' : '' }}>In-Room Celebration</option>
-                <option value="8" {{ old('add_on_options', $reservation->add_on_options ?? '') == '8' ? 'selected' : '' }}>Land Tour</option>
-                <option value="9" {{ old('add_on_options', $reservation->add_on_options ?? '') == '9' ? 'selected' : '' }}>MaxPass</option>
-                <option value="10"{{ old('add_on_options', $reservation->add_on_options ?? '') == '10' ? 'selected' : '' }}>Memory Maker/Photo Pass</option>
-                <option value="11"{{ old('add_on_options', $reservation->add_on_options ?? '') == '11' ? 'selected' : '' }}>Outside Insurance</option>
-                <option value="12"{{ old('add_on_options', $reservation->add_on_options ?? '') == '12' ? 'selected' : '' }}>Photo Package</option>
-                <option value="13"{{ old('add_on_options', $reservation->add_on_options ?? '') == '13' ? 'selected' : '' }}>Post Cruise Stay</option>
-                <option value="14"{{ old('add_on_options', $reservation->add_on_options ?? '') == '14' ? 'selected' : '' }}>Pre Cruise Stay</option>
-                <option value="15"{{ old('add_on_options', $reservation->add_on_options ?? '') == '15' ? 'selected' : '' }}>Pre-Paid Gratuities</option>
-                <option value="16"{{ old('add_on_options', $reservation->add_on_options ?? '') == '16' ? 'selected' : '' }}>Stroller/Scooter Damage Waiver</option>
-                <option value="17"{{ old('add_on_options', $reservation->add_on_options ?? '') == '17' ? 'selected' : '' }}>Travel Protection Declined</option>
-                <option value="18"{{ old('add_on_options', $reservation->add_on_options ?? '') == '18' ? 'selected' : '' }}>Travel Protection Included</option>
-                <option value="19"{{ old('add_on_options', $reservation->add_on_options ?? '') == '19' ? 'selected' : '' }}>VIP Tour</option>
-            </select>
+        @php
+            $addOnIds = old('add_on_options', $reservation->add_on_options ? explode(',', $reservation->add_on_options): []);
+
+            $addOnIds = array_filter($addOnIds, function ($v) { return $v !== '-1' && $v !== '' && $v !== null; });
+        @endphp
+        <div class="flex-1 relative mt-8"
+            x-data="{
+                open: false,
+                selected: {{ json_encode(array_map('strval', (array)$addOnIds)) }},
+                options: [
+                    {id:'1',label:'Blue Man Group'},{id:'2',label:'Car Rental'},{id:'3',label:'Character Breakfast'},
+                    {id:'4',label:'Club Mobay'},{id:'5',label:'Express Pass'},{id:'20',label:'Genie'},
+                    {id:'21',label:'Harry Potter Package'},{id:'6',label:'Hyatt Pre-Stay'},{id:'7',label:'In-Room Celebration'},
+                    {id:'8',label:'Land Tour'},{id:'9',label:'MaxPass'},{id:'10',label:'Memory Maker/Photo Pass'},
+                    {id:'11',label:'Outside Insurance'},{id:'12',label:'Photo Package'},{id:'13',label:'Post Cruise Stay'},
+                    {id:'14',label:'Pre Cruise Stay'},{id:'15',label:'Pre-Paid Gratuities'},
+                    {id:'16',label:'Stroller/Scooter Damage Waiver'},{id:'17',label:'Travel Protection Declined'},
+                    {id:'18',label:'Travel Protection Included'},{id:'19',label:'VIP Tour'}
+                ],
+                toggle(id) { this.selected.includes(id) ? this.selected = this.selected.filter(v => v !== id) : this.selected.push(id); },
+                label() {
+                    if (!this.selected.length) return '-- Select Add-ons --';
+                    return this.options.filter(o => this.selected.includes(o.id)).map(o => o.label).join(', ');
+                }
+            }" x-cloak>
+            <label class="text-sm block mb-1">Add-on Options</label>
+            <template x-for="s in selected" :key="s">
+                <input type="hidden" name="add_on_options[]" :value="s">
+            </template>
+            <button type="button" @click="open = !open" @click.outside="open = false" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 bg-white text-left flex justify-between items-center">
+                <span x-text="label()" class="text-gray-600 truncate"></span>
+                <svg class="w-4 h-4 text-gray-400 ml-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <div x-show="open" class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg max-h-60 overflow-y-auto">
+                <template x-for="opt in options" :key="opt.id">
+                    <div @click="toggle(opt.id)" class="flex items-center justify-between px-3 py-2 text-sm cursor-pointer hover:bg-gray-100">
+                        <span x-text="opt.label"></span>
+                        <svg x-show="selected.includes(opt.id)" class="w-4 h-4 text-gray-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 
@@ -226,42 +258,61 @@
             </select>
         </div>
 
-        <div class="flex-1 relative mt-8">
-            <label for="transportation_options" class="text-sm block mb-1">Transportation Options</label>
-            <select name="transportation_options"id="transportation_options" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                <option value="-1">-- Select Options --</option>
-                <option value="1" {{ old('transportation_options', $reservation->transportation_options ?? '') == '1' ? 'selected' : '' }}>Airport to Port</option>
-                <option value="2" {{ old('transportation_options', $reservation->transportation_options ?? '') == '2' ? 'selected' : '' }}>Booking Their Own Flights</option>
-                <option value="30"{{ old('transportation_options', $reservation->transportation_options ?? '') == '30' ? 'selected' : '' }}>Carey</option>
-                <option value="3" {{ old('transportation_options', $reservation->transportation_options ?? '') == '3' ? 'selected' : '' }}>Cruise Line Flights</option>
-                <option value="4" {{ old('transportation_options', $reservation->transportation_options ?? '') == '4' ? 'selected' : '' }}>Cruise Line Transfers</option>
-                <option value="5" {{ old('transportation_options', $reservation->transportation_options ?? '') == '5' ? 'selected' : '' }}>Disneyland Express One-way</option>
-                <option value="6" {{ old('transportation_options', $reservation->transportation_options ?? '') == '6' ? 'selected' : '' }}>Disney Express Round Trip</option>
-                <option value="7" {{ old('transportation_options', $reservation->transportation_options ?? '') == '7' ? 'selected' : '' }}>Drive</option>
-                <option value="8" {{ old('transportation_options', $reservation->transportation_options ?? '') == '8' ? 'selected' : '' }}>Fly</option>
-                <option value="9" {{ old('transportation_options', $reservation->transportation_options ?? '') == '9' ? 'selected' : '' }}>Magical Express Inbound</option>
-                <option value="10"{{ old('transportation_options', $reservation->transportation_options ?? '') == '10' ? 'selected' : '' }}>Magical Express Outbound</option>
-                <option value="11"{{ old('transportation_options', $reservation->transportation_options ?? '') == '11' ? 'selected' : '' }}>No Transfers Needed</option>
-                <option value="12"{{ old('transportation_options', $reservation->transportation_options ?? '') == '12' ? 'selected' : '' }}>Personal Vehicle</option>
-                <option value="13"{{ old('transportation_options', $reservation->transportation_options ?? '') == '13' ? 'selected' : '' }}>Port to Airport</option>
-                <option value="14"{{ old('transportation_options', $reservation->transportation_options ?? '') == '14' ? 'selected' : '' }}>Port to Resort</option>
-                <option value="15"{{ old('transportation_options', $reservation->transportation_options ?? '') == '15' ? 'selected' : '' }}>Private Transfer Roundtrip</option>
-                <option value="16"{{ old('transportation_options', $reservation->transportation_options ?? '') == '16' ? 'selected' : '' }}>Private Transfer to Airport</option>
-                <option value="17"{{ old('transportation_options', $reservation->transportation_options ?? '') == '17' ? 'selected' : '' }}>Private Transfer to Port</option>
-                <option value="18"{{ old('transportation_options', $reservation->transportation_options ?? '') == '18' ? 'selected' : '' }}>Resort to Port</option>
-                <option value="19"{{ old('transportation_options', $reservation->transportation_options ?? '') == '19' ? 'selected' : '' }}>Round Trip Universal SuperStar Shuttle</option>
-                <option value="20"{{ old('transportation_options', $reservation->transportation_options ?? '') == '20' ? 'selected' : '' }}>Roundtrip Transfers</option>
-                <option value="31"{{ old('transportation_options', $reservation->transportation_options ?? '') == '31' ? 'selected' : '' }}>Shared Transfers Roundtrip</option>
-                <option value="21"{{ old('transportation_options', $reservation->transportation_options ?? '') == '21' ? 'selected' : '' }}>Shuttle From Hotel</option>
-                <option value="22"{{ old('transportation_options', $reservation->transportation_options ?? '') == '22' ? 'selected' : '' }}>Take Two Transfer</option>
-                <option value="23"{{ old('transportation_options', $reservation->transportation_options ?? '') == '23' ? 'selected' : '' }}>Universal Super Star Shuttle One-way Airport to Hotel</option>
-                <option value="24"{{ old('transportation_options', $reservation->transportation_options ?? '') == '24' ? 'selected' : '' }}>Universal Super Star Shuttle One-way Hotel to Airport</option>
-                <option value="25"{{ old('transportation_options', $reservation->transportation_options ?? '') == '25' ? 'selected' : '' }}>Universal Super Star Shuttle Round Trip</option>
-                <option value="26"{{ old('transportation_options', $reservation->transportation_options ?? '') == '26' ? 'selected' : '' }}>Universal’s Quick Transportation (Universal Hotel to WDW Hotel)</option>
-                <option value="27"{{ old('transportation_options', $reservation->transportation_options ?? '') == '27' ? 'selected' : '' }}>Universal’s Quick Transportation (WDW Hotel to Universal Hotel)</option>
-                <option value="28"{{ old('transportation_options', $reservation->transportation_options ?? '') == '28' ? 'selected' : '' }}>Universal’s SuperStar Shuttle (airport to On-site Hotel)</option>
-                <option value="29"{{ old('transportation_options', $reservation->transportation_options ?? '') == '29' ? 'selected' : '' }}>Universal’s SuperStar Shuttle (On-site Hotel to airport)</option>
-            </select>
+        @php
+            $transportationIds = old('transportation_options', $reservation->transportation_options ? explode(',', $reservation->transportation_options) : []);
+
+            $transportationIds = array_filter($transportationIds, function ($v) {return $v !== '-1' && $v !== '' && $v !== null; });
+        @endphp
+        <div class="flex-1 relative mt-8"
+            x-data="{
+                open: false,
+                selected: {{ json_encode(array_map('strval', (array)$transportationIds)) }},
+                options: [
+                    {id:'1',label:'Airport to Port'},{id:'2',label:'Booking Their Own Flights'},{id:'30',label:'Carey'},
+                    {id:'3',label:'Cruise Line Flights'},{id:'4',label:'Cruise Line Transfers'},
+                    {id:'5',label:'Disneyland Express One-way'},{id:'6',label:'Disney Express Round Trip'},
+                    {id:'7',label:'Drive'},{id:'8',label:'Fly'},{id:'9',label:'Magical Express Inbound'},
+                    {id:'10',label:'Magical Express Outbound'},{id:'11',label:'No Transfers Needed'},
+                    {id:'12',label:'Personal Vehicle'},{id:'13',label:'Port to Airport'},{id:'14',label:'Port to Resort'},
+                    {id:'15',label:'Private Transfer Roundtrip'},{id:'16',label:'Private Transfer to Airport'},
+                    {id:'17',label:'Private Transfer to Port'},{id:'18',label:'Resort to Port'},
+                    {id:'19',label:'Round Trip Universal SuperStar Shuttle'},{id:'20',label:'Roundtrip Transfers'},
+                    {id:'31',label:'Shared Transfers Roundtrip'},{id:'21',label:'Shuttle From Hotel'},
+                    {id:'22',label:'Take Two Transfer'},
+                    {id:'23',label:'Universal Super Star Shuttle One-way Airport to Hotel'},
+                    {id:'24',label:'Universal Super Star Shuttle One-way Hotel to Airport'},
+                    {id:'25',label:'Universal Super Star Shuttle Round Trip'},
+                    {id:'26',label:'Universal\'s Quick Transportation (Universal Hotel to WDW Hotel)'},
+                    {id:'27',label:'Universal\'s Quick Transportation (WDW Hotel to Universal Hotel)'},
+                    {id:'28',label:'Universal\'s SuperStar Shuttle (airport to On-site Hotel)'},
+                    {id:'29',label:'Universal\'s SuperStar Shuttle (On-site Hotel to airport)'}
+                ],
+                toggle(id) { this.selected.includes(id) ? this.selected = this.selected.filter(v => v !== id) : this.selected.push(id); },
+                label() {
+                    if (!this.selected.length) return '-- Select Transportation Options --';
+                    return this.options.filter(o => this.selected.includes(o.id)).map(o => o.label).join(', ');
+                }
+            }" x-cloak>
+            <label class="text-sm block mb-1">Transportation Options</label>
+            <template x-for="s in selected" :key="s">
+                <input type="hidden" name="transportation_options[]" :value="s">
+            </template>
+            <button type="button" @click="open = !open" @click.outside="open = false" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 bg-white text-left flex justify-between items-center">
+                <span x-text="label()" class="text-gray-600 truncate"></span>
+                <svg class="w-4 h-4 text-gray-400 ml-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <div x-show="open" class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg max-h-60 overflow-y-auto">
+                <template x-for="opt in options" :key="opt.id">
+                    <div @click="toggle(opt.id)" class="flex items-center justify-between px-3 py-2 text-sm cursor-pointer hover:bg-gray-100">
+                        <span x-text="opt.label"></span>
+                        <svg x-show="selected.includes(opt.id)" class="w-4 h-4 text-gray-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 

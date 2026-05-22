@@ -47,14 +47,7 @@ class CustomersFormController extends Controller
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
         $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
 
-        return view('customers-form.edit', compact(
-            'customerForm',
-            'customerFormRequiredRows',
-            'customerFormRequired',
-            'isNewCustomersForm',
-            'products',
-            'destinations'
-        ));
+        return view('customers-form.edit', compact('customerForm','customerFormRequiredRows','customerFormRequired','isNewCustomersForm','products','destinations'));
     }
 
     public function store(Request $request)
@@ -129,9 +122,7 @@ class CustomersFormController extends Controller
         $productIds = $request->product_id ?? [];
         $destinationIds = $request->destination_id ?? [];
 
-        $existingRows = CustomersFormRequired::where('form_id', $customerForm->id)
-            ->where('is_deleted', 0)
-            ->get();
+        $existingRows = CustomersFormRequired::where('form_id', $customerForm->id)->where('is_deleted', 0)->get();
 
         $usedIds = [];
 

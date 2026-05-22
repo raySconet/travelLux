@@ -1,0 +1,476 @@
+<div class="relative mt-3 mb-8">
+    <x-text-input type="text" id="itineraryTransportationFormTitle" name="itineraryTransportationFormTitle" />
+
+    <x-input-label for="itineraryTransportationFormTitle">Title*</x-input-label>
+</div>
+
+<div class="mb-8">
+
+    <label class="block text-[14px] text-[#212529] mb-2">
+        Note
+    </label>
+
+    <textarea class="event_note" name="itineraryTransportationFormNote" rows="12"></textarea>
+
+</div>
+
+<h3 class="text-[20px] text-[#212529] mb-1 mt-2">Time</h3>
+<div class="grid grid-cols-3 gap-4">
+    
+    <div class="relative mt-1">
+        <x-text-input type="time" id="itineraryTransportationFormTime" name="itineraryTransportationFormTime" />
+
+        <x-input-label for="itineraryTransportationFormTime">Time</x-input-label>
+    </div>
+
+    <div class="relative mt-2">
+        <label for="itineraryTransportationFormDuration">Duration</label>
+        <select name="itineraryTransportationFormDuration" id="itineraryTransportationFormDuration" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+            <option value="15m">15 minutes</option>
+            <option value="30m">30 minutes</option>
+            <option value="45m">45 minutes</option>
+            <option value="1h">1 hour</option>
+            <option value="1h15m">1 hour 15 minutes</option>
+            <option value="1h30m">1 hour 30 minutes</option>
+            <option value="1h45m">1 hour 45 minutes</option>
+            <option value="2h">2 hours</option>
+            <option value="2h15m">2 hours 15 minutes</option>
+            <option value="2h30m">2 hours 30 minutes</option>
+            <option value="2h45m">2 hours 45 minutes</option>
+            <option value="3h">3 hours</option>
+            <option value="3h15m">3 hours 15 minutes</option>
+            <option value="3h30m">3 hours 30 minutes</option>
+            <option value="3h45m">3 hours 45 minutes</option>
+            <option value="4h">4 hours</option>
+            <option value="4h15m">4 hours 15 minutes</option>
+            <option value="4h30m">4 hours 30 minutes</option>
+            <option value="4h45m">4 hours 45 minutes</option>
+            <option value="5h">5 hours</option>
+            <option value="5h15m">5 hours 15 minutes</option>
+            <option value="5h30m">5 hours 30 minutes</option>
+            <option value="5h45m">5 hours 45 minutes</option>
+            <option value="6h">6 hours</option>
+            <option value="6h15m">6 hours 15 minutes</option>
+            <option value="6h30m">6 hours 30 minutes</option>
+            <option value="6h45m">6 hours 45 minutes</option>
+            <option value="7h">7 hours</option>
+            <option value="7h15m">7 hours 15 minutes</option>
+            <option value="7h30m">7 hours 30 minutes</option>
+            <option value="7h45m">7 hours 45 minutes</option>
+            <option value="8h">8 hours</option>
+            <option value="8h15m">8 hours 15 minutes</option>
+            <option value="8h30m">8 hours 30 minutes</option>
+            <option value="8h45m">8 hours 45 minutes</option>
+            <option value="9h">9 hours</option>
+            <option value="9h15m">9 hours 15 minutes</option>
+            <option value="9h30m">9 hours 30 minutes</option>
+            <option value="9h45m">9 hours 45 minutes</option>
+            <option value="10h">10 hours</option>
+            <option value="10h15m">10 hours 15 minutes</option>
+            <option value="10h30m">10 hours 30 minutes</option>
+            <option value="10h45m">10 hours 45 minutes</option>
+            <option value="11h">11 hours</option>
+            <option value="11h15m">11 hours 15 minutes</option>
+            <option value="11h30m">11 hours 30 minutes</option>
+            <option value="11h45m">11 hours 45 minutes</option>
+            <option value="12h">12 hours</option>
+            <option value="12h15m">12 hours 15 minutes</option>
+            <option value="12h30m">12 hours 30 minutes</option>
+            <option value="12h45m">12 hours 45 minutes</option>
+            <option value="13h">13 hours</option>
+            <option value="13h15m">13 hours 15 minutes</option>
+            <option value="13h30m">13 hours 30 minutes</option>
+            <option value="13h45m">13 hours 45 minutes</option>
+            <option value="14h">14 hours</option>
+            <option value="14h15m">14 hours 15 minutes</option>
+            <option value="14h30m">14 hours 30 minutes</option>
+            <option value="14h45m">14 hours 45 minutes</option>
+            <option value="15h">15 hours</option>
+            <option value="15h15m">15 hours 15 minutes</option>
+            <option value="15h30m">15 hours 30 minutes</option>
+            <option value="15h45m">15 hours 45 minutes</option>
+            <option value="16h">16 hours</option>
+            <option value="16h15m">16 hours 15 minutes</option>
+            <option value="16h30m">16 hours 30 minutes</option>
+            <option value="16h45m">16 hours 45 minutes</option>
+            <option value="17h">17 hours</option>
+            <option value="17h15m">17 hours 15 minutes</option>
+            <option value="17h30m">17 hours 30 minutes</option>
+            <option value="17h45m">17 hours 45 minutes</option>
+            <option value="18h">18 hours</option>
+            <option value="18h15m">18 hours 15 minutes</option>
+            <option value="18h30m">18 hours 30 minutes</option>
+            <option value="18h45m">18 hours 45 minutes</option>
+            <option value="19h">19 hours</option>
+            <option value="19h15m">19 hours 15 minutes</option>
+            <option value="19h30m">19 hours 30 minutes</option>
+            <option value="19h45m">19 hours 45 minutes</option>
+            <option value="20h">20 hours</option>
+            <option value="20h15m">20 hours 15 minutes</option>
+            <option value="20h30m">20 hours 30 minutes</option>
+            <option value="20h45m">20 hours 45 minutes</option>
+            <option value="21h">21 hours</option>
+            <option value="21h15m">21 hours 15 minutes</option>
+            <option value="21h30m">21 hours 30 minutes</option>
+            <option value="21h45m">21 hours 45 minutes</option>
+            <option value="22h">22 hours</option>
+            <option value="22h15m">22 hours 15 minutes</option>
+            <option value="22h30m">22 hours 30 minutes</option>
+            <option value="22h45m">22 hours 45 minutes</option>
+            <option value="23h">23 hours</option>
+            <option value="23h15m">23 hours 15 minutes</option>
+            <option value="23h30m">23 hours 30 minutes</option>
+            <option value="23h45m">23 hours 45 minutes</option>
+            <option value="1d">1 day</option>
+            <option value="1d1h">1 day 1 hour</option>
+            <option value="1d2h">1 day 2 hours</option>
+            <option value="1d3h">1 day 3 hours</option>
+            <option value="1d4h">1 day 4 hours</option>
+            <option value="1d5h">1 day 5 hours</option>
+            <option value="1d6h">1 day 6 hours</option>
+            <option value="1d7h">1 day 7 hours</option>
+            <option value="1d8h">1 day 8 hours</option>
+            <option value="1d9h">1 day 9 hours</option>
+            <option value="1d10h">1 day 10 hours</option>
+            <option value="1d11h">1 day 11 hours</option>
+            <option value="1d12h">1 day 12 hours</option>
+            <option value="1d13h">1 day 13 hours</option>
+            <option value="1d14h">1 day 14 hours</option>
+            <option value="1d15h">1 day 15 hours</option>
+            <option value="1d16h">1 day 16 hours</option>
+            <option value="1d17h">1 day 17 hours</option>
+            <option value="1d18h">1 day 18 hours</option>
+            <option value="1d19h">1 day 19 hours</option>
+            <option value="1d20h">1 day 20 hours</option>
+            <option value="1d21h">1 day 21 hours</option>
+            <option value="1d22h">1 day 22 hours</option>
+            <option value="1d23h">1 day 23 hours</option>
+            <option value="2d">2 days</option>
+            <option value="2d1h">2 days 1 hour</option>
+            <option value="2d2h">2 days 2 hours</option>
+            <option value="2d3h">2 days 3 hours</option>
+            <option value="2d4h">2 days 4 hours</option>
+            <option value="2d5h">2 days 5 hours</option>
+            <option value="2d6h">2 days 6 hours</option>
+            <option value="2d7h">2 days 7 hours</option>
+            <option value="2d8h">2 days 8 hours</option>
+            <option value="2d9h">2 days 9 hours</option>
+            <option value="2d10h">2 days 10 hours</option>
+            <option value="2d11h">2 days 11 hours</option>
+            <option value="2d12h">2 days 12 hours</option>
+            <option value="2d13h">2 days 13 hours</option>
+            <option value="2d14h">2 days 14 hours</option>
+            <option value="2d15h">2 days 15 hours</option>
+            <option value="2d16h">2 days 16 hours</option>
+            <option value="2d17h">2 days 17 hours</option>
+            <option value="2d18h">2 days 18 hours</option>
+            <option value="2d19h">2 days 19 hours</option>
+            <option value="2d20h">2 days 20 hours</option>
+            <option value="2d21h">2 days 21 hours</option>
+            <option value="2d22h">2 days 22 hours</option>
+            <option value="2d23h">2 days 23 hours</option>
+            <option value="3d">3 days</option>
+            <option value="3d1h">3 days 1 hour</option>
+            <option value="3d2h">3 days 2 hours</option>
+            <option value="3d3h">3 days 3 hours</option>
+            <option value="3d4h">3 days 4 hours</option>
+            <option value="3d5h">3 days 5 hours</option>
+            <option value="3d6h">3 days 6 hours</option>
+            <option value="3d7h">3 days 7 hours</option>
+            <option value="3d8h">3 days 8 hours</option>
+            <option value="3d9h">3 days 9 hours</option>
+            <option value="3d10h">3 days 10 hours</option>
+            <option value="3d11h">3 days 11 hours</option>
+            <option value="3d12h">3 days 12 hours</option>
+            <option value="3d13h">3 days 13 hours</option>
+            <option value="3d14h">3 days 14 hours</option>
+            <option value="3d15h">3 days 15 hours</option>
+            <option value="3d16h">3 days 16 hours</option>
+            <option value="3d17h">3 days 17 hours</option>
+            <option value="3d18h">3 days 18 hours</option>
+            <option value="3d19h">3 days 19 hours</option>
+            <option value="3d20h">3 days 20 hours</option>
+            <option value="3d21h">3 days 21 hours</option>
+            <option value="3d22h">3 days 22 hours</option>
+            <option value="3d23h">3 days 23 hours</option>
+            <option value="4d">4 days</option>
+            <option value="4d1h">4 days 1 hour</option>
+            <option value="4d2h">4 days 2 hours</option>
+            <option value="4d3h">4 days 3 hours</option>
+            <option value="4d4h">4 days 4 hours</option>
+            <option value="4d5h">4 days 5 hours</option>
+            <option value="4d6h">4 days 6 hours</option>
+            <option value="4d7h">4 days 7 hours</option>
+            <option value="4d8h">4 days 8 hours</option>
+            <option value="4d9h">4 days 9 hours</option>
+            <option value="4d10h">4 days 10 hours</option>
+            <option value="4d11h">4 days 11 hours</option>
+            <option value="4d12h">4 days 12 hours</option>
+            <option value="4d13h">4 days 13 hours</option>
+            <option value="4d14h">4 days 14 hours</option>
+            <option value="4d15h">4 days 15 hours</option>
+            <option value="4d16h">4 days 16 hours</option>
+            <option value="4d17h">4 days 17 hours</option>
+            <option value="4d18h">4 days 18 hours</option>
+            <option value="4d19h">4 days 19 hours</option>
+            <option value="4d20h">4 days 20 hours</option>
+            <option value="4d21h">4 days 21 hours</option>
+            <option value="4d22h">4 days 22 hours</option>
+            <option value="4d23h">4 days 23 hours</option>
+            <option value="5d">5 days</option>
+            <option value="5d1h">5 days 1 hour</option>
+            <option value="5d2h">5 days 2 hours</option>
+            <option value="5d3h">5 days 3 hours</option>
+            <option value="5d4h">5 days 4 hours</option>
+            <option value="5d5h">5 days 5 hours</option>
+            <option value="5d6h">5 days 6 hours</option>
+            <option value="5d7h">5 days 7 hours</option>
+            <option value="5d8h">5 days 8 hours</option>
+            <option value="5d9h">5 days 9 hours</option>
+            <option value="5d10h">5 days 10 hours</option>
+            <option value="5d11h">5 days 11 hours</option>
+            <option value="5d12h">5 days 12 hours</option>
+            <option value="5d13h">5 days 13 hours</option>
+            <option value="5d14h">5 days 14 hours</option>
+            <option value="5d15h">5 days 15 hours</option>
+            <option value="5d16h">5 days 16 hours</option>
+            <option value="5d17h">5 days 17 hours</option>
+            <option value="5d18h">5 days 18 hours</option>
+            <option value="5d19h">5 days 19 hours</option>
+            <option value="5d20h">5 days 20 hours</option>
+            <option value="5d21h">5 days 21 hours</option>
+            <option value="5d22h">5 days 22 hours</option>
+            <option value="5d23h">5 days 23 hours</option>
+            <option value="6d">6 days</option>
+            <option value="6d1h">6 days 1 hour</option>
+            <option value="6d2h">6 days 2 hours</option>
+            <option value="6d3h">6 days 3 hours</option>
+            <option value="6d4h">6 days 4 hours</option>
+            <option value="6d5h">6 days 5 hours</option>
+            <option value="6d6h">6 days 6 hours</option>
+            <option value="6d7h">6 days 7 hours</option>
+            <option value="6d8h">6 days 8 hours</option>
+            <option value="6d9h">6 days 9 hours</option>
+            <option value="6d10h">6 days 10 hours</option>
+            <option value="6d11h">6 days 11 hours</option>
+            <option value="6d12h">6 days 12 hours</option>
+            <option value="6d13h">6 days 13 hours</option>
+            <option value="6d14h">6 days 14 hours</option>
+            <option value="6d15h">6 days 15 hours</option>
+            <option value="6d16h">6 days 16 hours</option>
+            <option value="6d17h">6 days 17 hours</option>
+            <option value="6d18h">6 days 18 hours</option>
+            <option value="6d19h">6 days 19 hours</option>
+            <option value="6d20h">6 days 20 hours</option>
+            <option value="6d21h">6 days 21 hours</option>
+            <option value="6d22h">6 days 22 hours</option>
+            <option value="6d23h">6 days 23 hours</option>
+            <option value="7d">7 days</option>
+            <option value="8d">8 days</option>
+            <option value="9d">9 days</option>
+            <option value="10d">10 days</option>
+            <option value="11d">11 days</option>
+            <option value="12d">12 days</option>
+            <option value="13d">13 days</option>
+            <option value="14d">14 days</option>
+            <option value="15d">15 days</option>
+            <option value="16d">16 days</option>
+            <option value="17d">17 days</option>
+            <option value="18d">18 days</option>
+            <option value="19d">19 days</option>
+            <option value="20d">20 days</option>
+            <option value="21d">21 days</option>
+            <option value="22d">22 days</option>
+            <option value="23d">23 days</option>
+            <option value="24d">24 days</option>
+            <option value="25d">25 days</option>
+            <option value="26d">26 days</option>
+            <option value="27d">27 days</option>
+            <option value="28d">28 days</option>
+        </select>
+    </div>
+    
+    <div class="relative mt-2">
+        <label for="itineraryTransportationFormTimezone">Timezone</label>
+        <select name="itineraryTransportationFormTimezone" id="itineraryTransportationFormTimezone" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+            <option value="-1">Automatic</option>
+            <option value="UTC-11:00">Samoa Time (Pago Pago, Samoa) (UTC-11:00)</option>
+            <option value="UTC-11:00">Niue Time (Niue) (UTC-11:00)</option>
+            <option value="UTC-11:00">Samoa Time (Midway) (UTC-11:00)</option>
+            <option value="UTC-10:00">Hawaii-Aleutian Time (HAST/HADT) (Adak, Atka, Aleutian) (UTC-10:00)</option>
+            <option value="UTC-10:00">Hawaii-Aleutian Time (HST/HDT) (Honolulu, Hawaii) (UTC-10:00)</option>
+            <option value="UTC-10:00">Cook Islands Time (Rarotonga) (UTC-10:00)</option>
+            <option value="UTC-10:00">Tahiti Time (Tahiti) (UTC-10:00)</option>
+            <option value="UTC-10:00">Hawaii-Aleutian Time (HAST/HADT) (Johnston) (UTC-10:00)</option>
+            <option value="UTC-09:00">Alaska Time (AKST/AKDT) (Anchorage, Juneau, Metlakatla, Nome) (UTC-09:00)</option>
+            <option value="UTC-09:30">Marquesas Time (Marquesas) (UTC-09:30)</option>
+            <option value="UTC-09:00">Gambier Time (Gambier) (UTC-09:00)</option>
+            <option value="UTC-08:00">Pacific Time (PST/PDT) (Tijuana, Ensenada, BajaNorte) (UTC-08:00)</option>
+            <option value="UTC-08:00">Pacific Time (PST/PDT) (Los Angeles, Vancouver, Dawson, Whitehorse) (UTC-08:00)</option>
+            <option value="UTC-08:00">Northwest Mexico Time (Santa Isabel) (UTC-08:00)</option>
+            <option value="UTC-07:00">Mexican Pacific Time (Chihuahua, Mazatlan, BajaSur) (UTC-07:00)</option>
+            <option value="UTC-07:00">Mountain Time (MST/MDT) (Denver, Edmonton, Cambridge Bay, Inuvik) (UTC-07:00)</option>
+            <option value="UTC-07:00">Mountain Time (MST/MDT) (Phoenix, Dawson Creek, Creston, Fort Nelson) (UTC-07:00)</option>
+            <option value="UTC-07:00">Mexican Pacific Time (Hermosillo) (UTC-07:00)</option>
+            <option value="UTC-06:00">Central Time (CST/CDT) (Regina, Swift Current, East-Saskatchewan, Saskatchewan) (UTC-06:00)</option>
+            <option value="UTC-06:00">Central Time (CST/CDT) (Guatemala, Belize, Costa Rica, Tegucigalpa) (UTC-06:00)</option>
+            <option value="UTC-06:00">Galapagos Time (Galapagos) (UTC-06:00)</option>
+            <option value="UTC-06:00">Central Time (CST/CDT)</option>
+            <option value="UTC-06:00">Easter Island Standard Time (Easter Island) (UTC-06:00)</option>
+            <option value="UTC-05:00">Eastern Time (EST/EDT) (New York, Toronto, Havana, Kingston) (UTC-05:00)</option>
+            <option value="UTC-05:00">Eastern Time (EST/EDT) (Jamaica, Panama, Lima, Bogota, Montreal) (UTC-05:00)</option>
+            <option value="UTC-05:00">Colombia Time (CT) (Bogota, Rio Branco, Acre) (UTC-05:00)</option>
+            <option value="UTC-05:00">Ecuador Time (ECT) (Ecuador, Peru) (UTC-05:00)</option>
+            <option value="UTC-05:00">Eastern Standard Time (EST) (Cayman Islands) (UTC-05:00)</option>
+            <option value="UTC-04:00">Atlantic Time (AST/ADT) (Halifax, San Juan, Santo Domingo, Caracas) (UTC-04:00)</option>
+            <option value="UTC-04:00">Atlantic Standard Time (AST) (Bermuda) (UTC-04:00)</option>
+            <option value="UTC-04:00">Bolivia Time (BOT) (La Paz, Manaus, Porto Velho) (UTC-04:00)</option>
+            <option value="UTC-04:00">Atlantic Time (AST) (St. John's) (UTC-04:00)</option>
+            <option value="UTC-04:00">Atlantic Time (AST) (Barbados) (UTC-04:00)</option>
+            <option value="UTC-04:30">Venezuelan Standard Time (VET) (Caracas, La Paz, Manaus, Porto Velho) (UTC-04:30)</option>
+            <option value="UTC-03:30">Newfoundland Time (NST/NDT) (St. John's) (UTC-03:30)</option>
+            <option value="UTC-03:00">Paraguay Time (PYT/PYST) (Asuncion, Campo Grande, Cuiaba) (UTC-03:00)</option>
+            <option value="UTC-03:00">Brasilia Time (BRT/BRST) (Brasilia, Belem, Buenos Aires, Montevideo) (UTC-03:00)</option>
+            <option value="UTC-03:00">Chile Time (CLT/CLST) (Santiago, Punta Arenas) (UTC-03:00)</option>
+            <option value="UTC-03:00">Falkland Islands Time (FKT/FKST) (Stanley) (UTC-03:00)</option>
+            <option value="UTC-02:00">South Georgia Time (SGT) (South Georgia) (UTC-02:00)</option>
+            <option value="UTC-02:00">Brasilia Time (Fernando de Noronha) (UTC-02:00)</option>
+            <option value="UTC-01:00">Azores Time (AZOT/AZOST) (Azores) (UTC-01:00)</option>
+            <option value="UTC-01:00">Cape Verde Time (CVT) (Cape Verde) (UTC-01:00)</option>
+            <option value="UTC+00:00">Greenwich Mean Time (GMT/BST) (London, Lisbon, Dublin, Edinburgh) (UTC+00:00)</option>
+            <option value="UTC+00:00">Western European Time (WET/WEST) (Dublin, Lisbon, London) (UTC+00:00)</option>
+            <option value="UTC+00:00">Coordinated Universal Time (UTC) (Various Locations) (UTC+00:00)</option>
+            <option value="UTC+00:00">Universal Time Coordinated (UTC) (Various Locations) (UTC+00:00)</option>
+            <option value="UTC+00:00">Gambia Time (GTM) (The Gambia, Senegal) (UTC+00:00)</option>
+            <option value="UTC+01:00">Central European Time (CET/CEST) (Berlin, Paris, Madrid, Rome, Brussels) (UTC+01:00)</option>
+            <option value="UTC+01:00">West Africa Time (WAT) (Lagos, Algiers, Luanda) (UTC+01:00)</option>
+            <option value="UTC+01:00">Central European Time (CET/CEST) (Amsterdam, Belgrade, Bratislava, Budapest) (UTC+01:00)</option>
+            <option value="UTC+01:00">Central European Time (CET/CEST) (Prague, Vienna, Warsaw, Zagreb) (UTC+01:00)</option>
+            <option value="UTC+01:00">Central European Time (CET/CEST) (Brussels, Copenhagen, Madrid, Paris) (UTC+01:00)</option>
+            <option value="UTC+02:00">Eastern European Time (EET/EEST) (Athens, Bucharest, Istanbul, Sofia) (UTC+02:00)</option>
+            <option value="UTC+02:00">Eastern European Time (EET/EEST) (Cairo, Helsinki, Jerusalem, Kyiv) (UTC+02:00)</option>
+            <option value="UTC+02:00">Israel Standard Time (IST) (Jerusalem, Tel Aviv, Amman) (UTC+02:00)</option>
+            <option value="UTC+02:00">Eastern European Time (EET/EEST) (Bucharest, Helsinki, Jerusalem, Kyiv) (UTC+02:00)</option>
+            <option value="UTC+02:00">Kaliningrad Time (KALT/KAST) (Kaliningrad) (UTC+02:00)</option>
+            <option value="UTC+02:00">South Africa Standard Time (SAST) (Johannesburg, Pretoria, Harare) (UTC+02:00)</option>
+            <option value="UTC+02:00">Central Africa Time (CAT) (Maputo, Windhoek, Lusaka) (UTC+02:00)</option>
+            <option value="UTC+02:30">Eastern African Time (EAT) (Nairobi, Djibouti, Mogadishu) (UTC+02:30)</option>
+            <option value="UTC+03:00">Arabian Standard Time (AST) (Kuwait, Riyadh, Baghdad) (UTC+03:00)</option>
+            <option value="UTC+03:00">East Africa Time (EAT) (Nairobi, Dar es Salaam, Addis Ababa) (UTC+03:00)</option>
+            <option value="UTC+03:00">Armenia Standard Time (AMT) (Yerevan) (UTC+03:00)</option>
+            <option value="UTC+03:00">Georgia Standard Time (GET) (Tbilisi) (UTC+03:00)</option>
+            <option value="UTC+03:30">Iran Standard Time (IRST/IRDT) (Tehran) (UTC+03:30)</option>
+            <option value="UTC+04:00">Azerbaijan Standard Time (AZT/AZST) (Baku) (UTC+04:00)</option>
+            <option value="UTC+04:00">Mauritius Standard Time (MUT) (Port Louis) (UTC+04:00)</option>
+            <option value="UTC+04:00">Seychelles Time (SCT) (Mahe) (UTC+04:00)</option>
+            <option value="UTC+04:00">Saratov Time (SART) (Saratov) (UTC+04:00)</option>
+            <option value="UTC+04:00">Saratov Time (Ulyanovsk) (UTC+04:00)</option>
+            <option value="UTC+04:30">Afghanistan Time (AFT) (Kabul) (UTC+04:30)</option>
+            <option value="UTC+05:00">Pakistan Standard Time (PKT) (Islamabad, Karachi, Lahore) (UTC+05:00)</option>
+            <option value="UTC+05:00">Turkmenistan Standard Time (TMT) (Ashgabat) (UTC+05:00)</option>
+            <option value="UTC+05:00">Tajikistan Time (TJT) (Dushanbe) (UTC+05:00)</option>
+            <option value="UTC+05:00">Uzbekistan Time (UZT) (Tashkent) (UTC+05:00)</option>
+            <option value="UTC+05:00">Yekaterinburg Time (YEKT/YEKST) (Yekaterinburg) (UTC+05:00)</option>
+            <option value="UTC+05:00">Indian Standard Time (IST) (Mumbai, Kolkata, New Delhi) (UTC+05:00)</option>
+            <option value="UTC+05:30">Indian Standard Time (IST) (Kolkata, Chennai, Bangalore, Mumbai) (UTC+05:30)</option>
+            <option value="UTC+05:45">Nepal Time (NPT) (Kathmandu) (UTC+05:45)</option>
+            <option value="UTC+06:00">Bangladesh Standard Time (BST) (Dhaka) (UTC+06:00)</option>
+            <option value="UTC+06:00">Bhutan Time (BTT) (Thimphu) (UTC+06:00)</option>
+            <option value="UTC+06:00">Omsk Time (OMST/OMSST) (Omsk) (UTC+06:00)</option>
+            <option value="UTC+06:30">Cocos Islands Time (CCT) (West Island) (UTC+06:30)</option>
+            <option value="UTC+07:00">Indochina Time (ICT) (Bangkok, Hanoi, Jakarta) (UTC+07:00)</option>
+            <option value="UTC+07:00">Krasnoyarsk Time (KRAT/KRAST) (Krasnoyarsk) (UTC+07:00)</option>
+            <option value="UTC+07:00">Indochina Time (ICT) (Ho Chi Minh City) (UTC+07:00)</option>
+            <option value="UTC+07:00">Indochina Time (ICT) (Phnom Penh) (UTC+07:00)</option>
+            <option value="UTC+08:00">China Standard Time (CST) (Beijing, Hong Kong, Taipei) (UTC+08:00)</option>
+            <option value="UTC+08:00">Singapore Standard Time (SGT) (Singapore, Kuala Lumpur, Manila) (UTC+08:00)</option>
+            <option value="UTC+08:00">Western Standard Time (AWST/AWDT) (Perth) (UTC+08:00)</option>
+            <option value="UTC+08:00">Western Standard Time (WST/WDT) (Perth) (UTC+08:00)</option>
+            <option value="UTC+08:00">Irkutsk Time (IRKT/IRKST) (Irkutsk) (UTC+08:00)</option>
+            <option value="UTC+08:00">Central Indonesia Time (WITA) (Makassar) (UTC+08:00)</option>
+            <option value="UTC+08:00">Hong Kong Time (HKT) (Hong Kong, Macau, Beijing) (UTC+08:00)</option>
+            <option value="UTC+08:45">Western Australia Standard Time (WAST) (Eucla) (UTC+08:45)</option>
+            <option value="UTC+09:00">Japan Standard Time (JST) (Tokyo, Osaka, Sapporo) (UTC+09:00)</option>
+            <option value="UTC+09:00">Korea Standard Time (KST) (Seoul, Pyongyang) (UTC+09:00)</option>
+            <option value="UTC+09:00">Yakutsk Time (YAKT/YAKST) (Yakutsk) (UTC+09:00)</option>
+            <option value="UTC+09:00">Timor-Leste Time (TLT) (Dili) (UTC+09:00)</option>
+            <option value="UTC+09:30">Australian Central Standard Time (ACST/ACDT) (Adelaide, Darwin) (UTC+09:30)</option>
+            <option value="UTC+09:30">Central Western Standard Time (CWST/CWDT) (Eucla) (UTC+09:30)</option>
+            <option value="UTC+09:30">Australian Central Standard Time (ACST) (Darwin) (UTC+09:30)</option>
+            <option value="UTC+10:00">Eastern Standard Time (EST) (Brisbane, Canberra, Melbourne, Sydney) (UTC+10:00)</option>
+            <option value="UTC+10:00">Papua New Guinea Time (PGT) (Port Moresby) (UTC+10:00)</option>
+            <option value="UTC+10:00">Chamorro Standard Time (ChST) (Guam, Saipan) (UTC+10:00)</option>
+            <option value="UTC+10:00">Vladivostok Time (VLAT/VLAST) (Vladivostok) (UTC+10:00)</option>
+            <option value="UTC+10:30">Lord Howe Standard Time (LHST) (Lord Howe Island) (UTC+10:30)</option>
+            <option value="UTC+11:00">Solomon Islands Time (SBT) (Honiara) (UTC+11:00)</option>
+            <option value="UTC+11:00">Magadan Time (MAGT/MAGST) (Magadan) (UTC+11:00)</option>
+            <option value="UTC+11:00">Vanuatu Time (VUT) (Port Vila) (UTC+11:00)</option>
+            <option value="UTC+11:30">Norfolk Island Time (NFT) (Norfolk Island) (UTC+11:30)</option>
+            <option value="UTC+12:00">Fiji Time (FJT) (Suva, Nuku'alofa, Funafuti) (UTC+12:00)</option>
+            <option value="UTC+12:00">Kamchatka Time (PETT/PETST) (Anadyr) (UTC+12:00)</option>
+            <option value="UTC+12:00">Tuvalu Time (TVT) (Funafuti) (UTC+12:00)</option>
+            <option value="UTC+12:00">Gilbert Island Time (GILT) (Tarawa) (UTC+12:00)</option>
+            <option value="UTC+12:00">Marshall Islands Time (MHT) (Majuro) (UTC+12:00)</option>
+            <option value="UTC+12:45">Chatham Island Standard Time (CHAST) (Chatham Islands) (UTC+12:45)</option>
+            <option value="UTC+13:00">Phoenix Islands Time (PHOT) (Kiritimati) (UTC+13:00)</option>
+            <option value="UTC+13:00">Tonga Time (TOT) (Nuku'alofa) (UTC+13:00)</option>
+            <option value="UTC+14:00">Line Islands Time (LINT) (Kiritimati) (UTC+14:00)</option>
+        </select>
+    </div>
+</div>
+<h3 class="text-[20px] text-[#212529] mb-1">Details</h3>
+<div class="grid grid-cols-3 gap-4">
+
+    <div class="relative mt-1">
+        <x-text-input type="text" id="itineraryTransportationFormBookedThrough" name="itineraryTransportationFormBookedThrough" />
+
+        <x-input-label for="itineraryTransportationFormBookedThroug">Booked Through</x-input-label>
+    </div>
+
+    <div class="relative mt-1">
+        <x-text-input type="text" id="itineraryTransportationFormConfirmation" name="itineraryTransportationFormConfirmation" />
+
+        <x-input-label for="itineraryTransportationFormConfirmation">Confirmation #</x-input-label>
+    </div>
+
+    <div class="relative mt-1">
+        <x-text-input type="text" id="itineraryTransportationFormCarrier" name="itineraryTransportationFormCarrier" />
+
+        <x-input-label for="itineraryTransportationFormCarrier">Carrier</x-input-label>
+    </div>
+</div>
+<div class="grid grid-cols-3 gap-4 mt-2 mb-2">
+    <div class="relative mt-1">
+        <x-text-input type="text" id="itineraryTransportationFormTransportationNumber" name="itineraryTransportationFormTransportationNumber" />
+
+        <x-input-label for="itineraryTransportationFormTransportationNumber">Transportation Number</x-input-label>
+    </div>
+</div>
+<h3 class="text-[20px] text-[#212529] mb-1">Price</h3>
+<div class="grid grid-cols-2 gap-4">
+    <div class="relative mt-1">
+        <x-text-input type="text" id="itineraryTransportationFormAmount" name="itineraryTransportationFormAmount" />
+
+        <x-input-label for="itineraryActivityFormAmount">Amount</x-input-label>
+    </div>
+
+    <div class="relative mt-1">
+        <label for="itineraryTransportationFormAmountCurrency">Currency</label>
+        <select name="itineraryTransportationFormAmountCurrency" id="itineraryTransportationFormAmountCurrency" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+            <option value="$ (AUD)">$ (AUD)</option>
+            <option value="$ (CAD)">$ (CAD)</option>
+            <option value="Fr">Fr (CHF)</option>
+            <option value="€">€ (EUR)</option>
+            <option value="£">£ (GBP)</option>
+            <option value="¥">¥ (JPY)</option>
+            <option value="$ (MXN)">$ (MXN)</option>
+            <option value="$ (NZD)">$ (NZD)</option>
+            <option value="$" selected>$ (USD)</option>
+        </select>
+    </div>
+</div>
+<div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
+    <x-primary-btn type="submit">
+        <span>Save</span>
+    </x-primary-btn>
+</div>

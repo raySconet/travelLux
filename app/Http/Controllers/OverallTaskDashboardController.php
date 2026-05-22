@@ -9,9 +9,7 @@ class OverallTaskDashboardController extends Controller
 {
     public function index()
     {
-       $users = User::select('id','fname', 'lname','email')
-                    ->where('isDeleted',0)
-                    ->get();
+       $users = User::select('id','fname', 'lname','email')->where('isDeleted',0)->get();
        return view('dashboards.overallTaskDashboard', compact('users'));
     }
 

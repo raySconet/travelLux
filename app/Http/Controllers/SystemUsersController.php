@@ -11,8 +11,7 @@ class SystemUsersController extends Controller
     public function index(Request $request)
     {
        $search = $request->input('search'); 
-       $usersQuery = User::select('id','fname', 'lname' ,'email', 'role', 'is_disabled', 'phone_number', 'city', 'state')
-                      ->where('isDeleted', 0);
+       $usersQuery = User::select('id','fname', 'lname' ,'email', 'role', 'is_disabled', 'phone_number', 'city', 'state')->where('isDeleted', 0);
 
        if ($search) {
             $usersQuery->where(function ($query) use ($search) {
@@ -118,7 +117,6 @@ class SystemUsersController extends Controller
 
     public function update(Request $request, User $user)
     {
-        // dd($request->all());
         $data = $request->validate([
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',

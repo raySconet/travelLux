@@ -1,5 +1,5 @@
 <div>
-    <div x-data="reservationDropdowns({{ $customers->toJson() }}, {{ $reservation->customer_id ?? 'null' }}, {{ $reservation->agent_id ?? 'null' }})">
+    <div x-data="reservationDropdowns({{ $customers->toJson() }},{{ $reservation->customer_id ?? 'null' }},{{ $reservation->agent_id ?? 'null' }},'{{ old('email_to_send', $reservation->email_to_send ?? '') }}')">
         <div class="flex flex-col gap-1">
             <label for="agent_id" class="text-sm">Assigned To</label>
             <select name="agent_id" id="agent_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" x-model="selectedAgent">
@@ -67,6 +67,20 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </template>
+
+        <template x-if="emailOptions.length > 0">
+            <div class="mt-8">
+                <label for="email_to_send" class="text-sm block mb-1">
+                    Email To Send To
+                </label>
+
+                <select name="email_to_send" id="email_to_send" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" x-model="selectedEmailToSend">
+                    <template x-for="email in emailOptions" :key="email.value">
+                        <option :value="email.value" x-text="email.label"></option>
+                    </template>
+                </select>
             </div>
         </template>
     </div>
@@ -489,22 +503,81 @@
 </div>
 
 <script>
-function reservationDropdowns(customers, currentCustomerId = null, currentAgentId = null) {
-    return {
-        customers: customers,
-        selectedAgent: currentAgentId ?? -1,
-        selectedCustomer: currentCustomerId ?? -1,
-
-        
+function reservationDropdowns(customers, currentCustomerId = null, currentAgentId = null, savedEmailToSend = '') {
+   return {
+       customers: customers,
+       selectedAgent: currentAgentId ?? -1,
+       selectedCustomer: currentCustomerId ?? -1,
+       selectedEmailToSend: '',
+       init() {
+           this.$nextTick(() => {
+               if (savedEmailToSend) {
+                   this.selectedEmailToSend = savedEmailToSend;
+               }
+           });
+           this.$watch('selectedCustomer', (value) => {
+               let customer = this.customers.find(c => c.id == value);
+               if (!customer || !customer.family_members?.length) {
+                   this.selectedEmailToSend = '';
+                   return;
+               }
+               if (!this.selectedEmailToSend && customer.email) {
+                   this.selectedEmailToSend = customer.email;
+               }
+           });
+       },
         get filteredCustomers() {
             if(this.selectedAgent == -1) return this.customers;
+
             return this.customers.filter(c => c.agent_id == this.selectedAgent);
         },
 
         get currentCustomer() {
             return this.customers.find(c => c.id == this.selectedCustomer);
+        },
+
+        get emailOptions() {
+
+            let customer = this.currentCustomer;
+
+            if (!customer) {
+                return [];
+            }
+
+            let familyMembers = customer.family_members || [];
+
+            if (familyMembers.length === 0) {
+                return [];
+            }
+
+            let options = [];
+
+            if (customer.email) {
+                options.push({
+                    value: customer.email,
+                    label: customer.email + ' (Primary)'
+                });
+            }
+
+            familyMembers.forEach(member => {
+
+                if (member.email) {
+
+                    let fullName =
+                        [member.fname, member.lname]
+                        .filter(Boolean)
+                        .join(' ');
+
+                    options.push({
+                        value: member.email,
+                        label: member.email + (fullName ? ' - ' + fullName : '')
+                    });
+                }
+            });
+
+            return options;
         }
-    }
+   }
 }
 </script>
 

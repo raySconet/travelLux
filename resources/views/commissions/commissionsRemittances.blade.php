@@ -15,7 +15,7 @@
     </x-slot>
 
 
-    <div class="bg-[#90caf9] shadow sm:rounded-lg p-6 w-406 ml-3 mt-2">
+    <div class="bg-[#90caf9] shadow sm:rounded-lg p-6 w-[98%] mt-2 ml-3">
         <p class="text-base font-semibold text-white">Search For Reservations</p>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
             <div class="relative mt-3">
@@ -57,7 +57,7 @@
         </div>
     </div>
 
-    <div class="bg-[#c8e6c9] shadow sm:rounded-lg p-6 mt-5 w-406 ml-3">
+    <div class="bg-[#c8e6c9] shadow sm:rounded-lg p-6 mt-5 w-[98%] ml-3">
         <div class="flex flex-row justify-between">
             <div class="flex flex-row gap-1">
                 <i class="fas fa-check text-[#00a86b] mt-1 text-2xl font-extrabold"></i>

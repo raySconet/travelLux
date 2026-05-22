@@ -1,4 +1,6 @@
+/* ################################### */
 /* start of system users */
+/* ################################### */
 .topButtonsGroup {
    display: flex;
    justify-content: center;
@@ -55,9 +57,13 @@
 .form-input:focus {
     border-bottom-color: #B6844A;
 }
+/* ################################### */
 /* end of system users */
+/* ################################### */
 
+/* ################################### */
 /* start of itinerary */
+/* ################################### */
 .cover-wrapper {
     background: #ffffff; 
     padding: 10px;
@@ -91,4 +97,6 @@
     justify-content: space-between;
     align-items: center;
 }
+/* ################################### */
 /* end of itinerary */
+/* ################################### */

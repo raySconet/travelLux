@@ -6,7 +6,9 @@ window.Alpine = Alpine;
 Alpine.start();
 $(document).ready(() => {
 
-    // start timeline task
+    // ----------------------------------------------------------- //
+    // start timeline task //
+    // ----------------------------------------------------------- //
     const $timelineProductSelect = $('#product_id');
     const $timelineDestinationSelect = $('#destination_id');
 
@@ -45,14 +47,20 @@ $(document).ready(() => {
 
         filterTimelineDestinations();
     }
-    // end timeline task
+    // ----------------------------------------------------------- //
+    // end timeline task //
+    // ----------------------------------------------------------- //
 
-    // start forms manager
+
+
+    // ----------------------------------------------------------- //
+    // start form manager //
+    // ----------------------------------------------------------- //
     if (window.existingRows && window.existingRows.length > 0) {
 
         window.existingRows.forEach(row => {
 
-            let productOptions = '<option value="">--Select product--</option>';
+            let productOptions = '<option value="-1">--Select product--</option>';
 
             window.products.forEach(p => {
                 productOptions += `
@@ -61,7 +69,7 @@ $(document).ready(() => {
                     </option>`;
             });
 
-            let destinationOptions = '<option value="">--Select destination--</option>';
+            let destinationOptions = '<option value="-1">--Select destination--</option>';
 
             window.destinations.forEach(d => {
                 if (d.product_id == row.product_id) {
@@ -103,7 +111,7 @@ $(document).ready(() => {
 
     $('#addRowBtn').on('click', function () {
 
-        let productOptions = '<option value="">--Select product--</option>';
+        let productOptions = '<option value="-1">--Select product--</option>';
 
         window.products.forEach(p => {
             productOptions += `<option value="${p.id}">${p.product_name}</option>`;
@@ -122,7 +130,7 @@ $(document).ready(() => {
             <div class="relative mt-3 md:col-span-2">
                 <label class="text-sm">Destination</label>
                 <select name="destination_id[]" class="destination-select w-full  border-b-2 border-[#dee2e6]">
-                    <option value="">--Select destination--</option>
+                    <option value="-1">--Select destination--</option>
                 </select>
             </div>
 
@@ -143,7 +151,7 @@ $(document).ready(() => {
         const productId = $(this).val();
         const $destination = $row.find('.destination-select');
 
-        $destination.html('<option value="">--Select destination--</option>');
+        $destination.html('<option value="-1">--Select destination--</option>');
 
         window.destinations.forEach(d => {
             if (d.product_id == productId) {
@@ -759,10 +767,13 @@ $(document).ready(() => {
     $('form').on('submit', function () {
         generatePreview();
     });
+    // ----------------------------------------------------------- //
+    // end form manager //
+    // ----------------------------------------------------------- //
 
-    // end forms manager
-
-    // start automated Emails
+    // ----------------------------------------------------------- //
+    // start automated emails //
+    // ----------------------------------------------------------- //
     const $masterProduct = $('#product_list option').clone();
     const $masterDestination = $('#destination_list option').clone();
     const $masterResort = $('#resort_list option').clone();
@@ -774,28 +785,28 @@ $(document).ready(() => {
             <div class="relative">
                 <label>Product</label>
                 <select name="product_list[]" class="product_list w-full border-b-2 border-[#bdbdbd] mb-4">
-                    <option value="">--Select Product--</option>
+                    <option value="-1">--Select Product--</option>
                 </select>
             </div>
 
             <div class="relative">
                 <label>Destination</label>
                 <select  name="destination_list[]"  class="destination_list w-full border-b-2 border-[#bdbdbd] mb-4">
-                    <option value="">--Select Destination--</option>
+                    <option value="-1">--Select Destination--</option>
                 </select>
             </div>
 
             <div class="relative">
                 <label>Resort/Ship</label>
                 <select name="resort_list[]" class="resort_list w-full border-b-2 border-[#bdbdbd] mb-4">
-                    <option value="">--Select Resort/Ship--</option>
+                    <option value="-1">--Select Resort/Ship--</option>
                 </select>
             </div>
 
             <div class="relative">
                 <label>Cruise/Type</label>
                 <select name="cruise_itinerary_list[]" class="cruise_list w-full border-b-2 border-[#bdbdbd] mb-4">
-                    <option value="">--Select Cruise/Type--</option>
+                    <option value="-1">--Select Cruise/Type--</option>
                 </select>
             </div>
 
@@ -818,20 +829,20 @@ $(document).ready(() => {
         $product.html($masterProduct.clone());
 
         $product.val('');
-        $destination.html('<option value="">--Select Destination--</option>');
-        $resort.html('<option value="">--Select Resort/Ship--</option>');
-        $cruise.html('<option value="">--Select Cruise/Type--</option>');
+        $destination.html('<option value="-1">--Select Destination--</option>');
+        $resort.html('<option value="-1">--Select Resort/Ship--</option>');
+        $cruise.html('<option value="-1">--Select Cruise/Type--</option>');
 
         function filterDest() {
 
             const productId = $product.val();
 
-            $destination.html('<option value="">--Select Destination--</option>');
+            $destination.html('<option value="-1">--Select Destination--</option>');
 
             if (!productId) {
 
-                $resort.html('<option value="">--Select Resort/Ship--</option>');
-                $cruise.html('<option value="">--Select Cruise/Type--</option>');
+                $resort.html('<option value="-1">--Select Resort/Ship--</option>');
+                $cruise.html('<option value="-1">--Select Cruise/Type--</option>');
 
                 return;
             }
@@ -854,11 +865,11 @@ $(document).ready(() => {
 
             const destId = $destination.val();
 
-            $resort.html('<option value="">--Select Resort/Ship--</option>');
+            $resort.html('<option value="-1">--Select Resort/Ship--</option>');
 
             if (!destId) {
 
-                $cruise.html('<option value="">--Select Cruise/Type--</option>');
+                $cruise.html('<option value="-1">--Select Cruise/Type--</option>');
 
                 return;
             }
@@ -881,7 +892,7 @@ $(document).ready(() => {
 
             const resortId = $resort.val();
 
-            $cruise.html('<option value="">--Select Cruise/Type--</option>');
+            $cruise.html('<option value="-1">--Select Cruise/Type--</option>');
 
             if (!resortId) {
                 return;
@@ -938,7 +949,7 @@ $(document).ready(() => {
         function filterEmailDestinations() {
             const product = $emailProduct.val();
 
-            $emailDestination.html('<option value="">--Select Destination--</option>');
+            $emailDestination.html('<option value="-1">--Select Destination--</option>');
 
             allDestinations.each(function () {
                 const $opt = $(this);
@@ -954,7 +965,7 @@ $(document).ready(() => {
         function filterEmailResorts() {
             const destination = $emailDestination.val();
 
-            $emailResort.html('<option value="">--Select Resort/Ship--</option>');
+            $emailResort.html('<option value="-1">--Select Resort/Ship--</option>');
 
             allResorts.each(function () {
                 const $opt = $(this);
@@ -970,7 +981,7 @@ $(document).ready(() => {
         function filterEmailCruises() {
             const resort = $emailResort.val();
 
-            $emailCruise.html('<option value="">--Select Cruise/Type--</option>');
+            $emailCruise.html('<option value="-1">--Select Cruise/Type--</option>');
 
             allCruises.each(function () {
                 const $opt = $(this);
@@ -1096,9 +1107,16 @@ $(document).ready(() => {
             `);
         }
     };
-    // end automated emails
+    // ----------------------------------------------------------- //
+    // end automated emails //
+    // ----------------------------------------------------------- //
 
-    // start itinerary
+
+    // ----------------------------------------------------------- //
+    // start itinerary //
+    // ----------------------------------------------------------- //
+
+    // start import bookings
     window.openImportReservationBookings = function(){
         $('#importReservationBookingsModal').removeClass('hidden');
     }
@@ -1106,7 +1124,9 @@ $(document).ready(() => {
     window.closeImportReservationBookings = function(){
         $('#importReservationBookingsModal').addClass('hidden');
     }
+    // end import bookings
 
+    // start duplicate itinerary
     window.openDuplicateItineraryModal = function(name, date){
 
         $('#duplicateItineraryModal').removeClass('hidden');
@@ -1118,5 +1138,1734 @@ $(document).ready(() => {
     window.closeDuplicateItineraryModal = function(){
         $('#duplicateItineraryModal').addClass('hidden');
     }
-    // end itinerary
+    // end duplicate itinerary
+
+    // start edit itinerary
+    window.openEditItineraryModal = function(){
+
+        $('#editItineraryName').val(itineraryData.name);
+        $('#editItineraryDate').val(itineraryData.date);
+
+        $('#editItineraryModal').removeClass('hidden');
+    }
+
+    window.closeEditItineraryModal = function(){
+        $('#editItineraryModal').addClass('hidden')
+    }
+
+    $('#editItineraryForm').on('submit', function(e){
+
+        e.preventDefault();
+
+        $.ajax({
+            url: `/itinerary/${itineraryData.id}`,
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                _method: 'PUT',
+                name: $('#editItineraryName').val(),
+                date: $('#editItineraryDate').val(),
+            },
+
+            success: function(response){
+
+                itineraryData.name = $('#editItineraryName').val();
+                itineraryData.date = $('#editItineraryDate').val();
+
+                $('#editItineraryModal').addClass('hidden');
+
+                $('#editItineraryNamePencil')
+                    .closest('h4')
+                    .find('span')
+                    .text(itineraryData.name);
+            },
+
+            error: function(xhr){
+                console.log(xhr.responseText);
+            }
+        });
+    });
+    // end edit itinerary
+
+    // start add day
+    $(document).on('click', '#addDayBtn', function () {
+
+        const itineraryId = $(this).data('itinerary-id');
+
+        $.ajax({
+            url: `/itinerary/${itineraryId}/add-day`,
+            type: 'POST',
+
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+
+            success: function () {
+
+                location.reload();
+            }
+        });
+    });
+
+    window.openDeleteDayModal = function(){
+        $('#deleteDayModal').removeClass('hidden');
+    }
+
+    let selectedDayId = null;
+
+    $(document).on('click', '.delete-day-btn', function () {
+
+        selectedDayId = $(this).data('day-id');
+
+        $('#deleteDayModal').removeClass('hidden');
+    });
+
+    window.closeDeleteDayModal = function () {
+
+        $('#deleteDayModal').addClass('hidden');
+
+        selectedDayId = null;
+    }
+
+    $(document).on('click', '#confirmDeleteDayBtn', function () {
+
+        if (!selectedDayId) return;
+
+        $.ajax({
+            url: `/itinerary/day/${selectedDayId}`,
+            type: 'DELETE',
+
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+
+            success: function () {
+
+                closeDeleteDayModal();
+
+                location.reload();
+            }
+        });
+    });
+    // end add day
+
+    // start render itinerary day events
+    let selectedDay = null;
+    $(document).on('click', '.itinerary-day', function () {
+
+        $('.itinerary-day').removeClass('bg-gray-100');
+        $(this).addClass('bg-gray-100');
+
+        selectedDay = $(this).data('day');
+
+        renderDayHeader(selectedDay);   
+        renderDayEvents(selectedDay);
+        toggleDayActions();
+    });
+
+    function renderDayEvents(day) {
+
+        let html = '';
+
+        if (!day.events || day.events.length === 0) {
+            html = `
+                <div class="text-gray-400 text-lg text-center mt-20">
+                </div>
+            `;
+        } else {
+    
+            day.events.forEach(event => {
+                let formattedTime = '';
+
+                if ( event.eventTime && event.eventTime !== '-1') {
+
+                    const [hours, minutes] = event.eventTime.split(':');
+
+                    const hour = parseInt(hours);
+
+                    const suffix = hour >= 12 ? 'PM' : 'AM';
+
+                    const formattedHour = hour % 12 || 12;
+
+                    formattedTime = `${formattedHour}:${minutes} ${suffix}`;
+                }
+
+                let htmlBlock = '';
+
+                if (event.eventType == 1 && event.itineraryEventFormActivitySubcategory == 1) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-calendar-day text-[#2C3E50]"></i>
+
+                                    <span class="text-sm text-gray-700 font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+                                </div>
+
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryActivityFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryActivityFormNote ?? ''}
+                            </div>
+
+                            <div class="border-t-2 border-[#eee] my-2"></div>
+
+                            <div class="grid grid-cols-4 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryActivityFormBookedThrough
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Booked Through</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryActivityFormBookedThrough}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryActivityFormConfirmation
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Confirmation</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryActivityFormConfirmation}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryActivityFormProvider
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Provider</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryActivityFormProvider}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    (event.itineraryActivityFormAmount || event.itineraryActivityFormCurrency)
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Price</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryActivityFormCurrency ?? ''}
+                                                    ${event.itineraryActivityFormAmount ?? ''}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+                        </div>
+                    `;
+                } else if (event.eventType == 1 && event.itineraryEventFormActivitySubcategory == 2) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-utensils text-[#90d5ec]"></i>
+
+                                    <span class="text-sm text-[#009fd5] font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+                                </div>
+
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryActivityFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryActivityFormNote ?? ''}
+                            </div>
+
+                            <div class="border-t-2 border-[#eee] my-2"></div>
+
+                            <div class="grid grid-cols-4 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryActivityFormBookedThrough
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Booked Through</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryActivityFormBookedThrough}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryActivityFormConfirmation
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Confirmation</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryActivityFormConfirmation}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryActivityFormProvider
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Provider</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryActivityFormProvider}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    (event.itineraryActivityFormAmount || event.itineraryActivityFormCurrency)
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Price</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryActivityFormCurrency ?? ''}    
+                                                    ${event.itineraryActivityFormAmount ?? ''}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+                        </div>
+                    `;
+                } else if (event.eventType == 2 && event.itineraryEventFormLodgingSubcategory == 1) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-bed text-[#fea700]"></i>
+
+                                    <span class="text-sm text-[#fea700] font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+
+                                    <span class="text-[#fea700] font-extrabold">CHECK-OUT</span>
+                                </div>
+
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryLodgingFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryLodgingFormNote ?? ''}
+                            </div>
+
+                            <div class="border-t-2 border-[#eee] my-2"></div>
+
+                            <div class="grid grid-cols-4 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryLodgingFormBookedThrough
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Booked Through</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryLodgingFormBookedThrough}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryLodgingFormConfirmation
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Confirmation</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryLodgingFormConfirmation}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryLodgingFormRoomBedType
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Room/Bed Type</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryLodgingFormRoomBedType}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    (event.itineraryLodgingFormAmount || event.itineraryLodgingFormAmountCurrency)
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Price</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryLodgingFormAmountCurrency ?? ''}
+                                                    ${event.itineraryLodgingFormAmount ?? ''}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+                        </div>
+                    `;
+                } else if (event.eventType == 2 && event.itineraryEventFormLodgingSubcategory == 2) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-bed text-[#fea700]"></i>
+
+                                    <span class="text-sm text-[#fea700] font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+
+                                    <span class="text-[#fea700] font-extrabold">CHECK-IN</span>
+                                </div>
+
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryLodgingFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryLodgingFormNote ?? ''}
+                            </div>
+
+                            <div class="border-t-2 border-[#eee] my-2"></div>
+
+                            <div class="grid grid-cols-4 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryLodgingFormBookedThrough
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Booked Through</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryLodgingFormBookedThrough}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryLodgingFormConfirmation
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Confirmation</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryLodgingFormConfirmation}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryLodgingFormRoomBedType
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Room/Bed Type</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryLodgingFormRoomBedType}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    (event.itineraryLodgingFormAmount || event.itineraryLodgingFormAmountCurrency)
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Price</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryLodgingFormAmountCurrency ?? ''}
+                                                    ${event.itineraryLodgingFormAmount ?? ''}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+                        </div>
+                    `;
+                } else if (event.eventType == 3 && event.itineraryEventFormFlightSubCategory == 1) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-plane text-[#ca5]"></i>
+
+                                    <span class="text-sm text-[#ca5] font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+
+                                    <span class="text-[#ca5] font-extrabold">DEPARTURE</span>
+                                </div>
+
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryFlightFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryFlightFormNote ?? ''}
+                            </div>
+
+                            <div class="border-t-2 border-[#eee] my-2"></div>
+
+                            <div class="grid grid-cols-4 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryFlightFormBookedThrough
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Booked Through</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormBookedThrough}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryFlightFormConfirmation
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Confirmation</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormConfirmation}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryFlightFormAirline
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Airline</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormAirline}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryFlightFormFlightNumber
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Airline</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormFlightNumber}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+
+                            
+                            <div class="grid grid-cols-4 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryFlightFormGate
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Gate</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormGate}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryFlightFormTerminal
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Terminal</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormTerminal}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryFlightFormSeatTicketDetails
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Seat/ Ticket Details</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormSeatTicketDetails}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    (event.itineraryFlightFormAmount || event.itineraryFlightFormAmountCurrency)
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Price</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormAmountCurrency ?? ''}
+                                                    ${event.itineraryFlightFormAmount ?? ''}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+                        </div>
+                    `;
+                } else if (event.eventType == 3 && event.itineraryEventFormFlightSubCategory == 2) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-plane text-[#ca5]"></i>
+
+                                    <span class="text-sm text-[#ca5] font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+
+                                    <span class="text-[#ca5] font-extrabold">ARRIVAL</span>
+                                </div>
+                                
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryFlightFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryFlightFormNote ?? ''}
+                            </div>
+
+                            <div class="border-t-2 border-[#eee] my-2"></div>
+
+                            <div class="grid grid-cols-5 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryFlightFormBookedThrough
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Booked Through</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormBookedThrough}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryFlightFormConfirmation
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Confirmation</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormConfirmation}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryFlightFormAirline
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Airline</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormAirline}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryFlightFormFlightNumber
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Airline</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormFlightNumber}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryFlightFormGate
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Gate</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormGate}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+
+                            
+                            <div class="grid grid-cols-3 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryFlightFormTerminal
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Terminal</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormTerminal}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryFlightFormSeatTicketDetails
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Seat/ Ticket Details</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormSeatTicketDetails}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    (event.itineraryFlightFormAmount || event.itineraryFlightFormAmountCurrency)
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Price</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryFlightFormAmountCurrency ?? ''}
+                                                    ${event.itineraryFlightFormAmount ?? ''}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+                        </div>
+                    `;
+                } else if (event.eventType == 4 && event.itineraryTransportationFormSubCategory == 1) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-train text-[#f49ac1]"></i>
+
+                                    <span class="text-sm text-[#f49ac1] font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+
+                                    <span class="text-[#f49ac1] font-extrabold">DEPARTURE</span>
+                                </div>
+
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryTransportationFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryTransportationFormNote ?? ''}
+                            </div>
+
+                            <div class="border-t-2 border-[#eee] my-2"></div>
+
+                            <div class="grid grid-cols-3 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryTransportationFormBookedThrough
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Booked Through</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryTransportationFormBookedThrough}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryTransportationFormConfirmation
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Confirmation</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryTransportationFormConfirmation}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryTransportationFormCarrier
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Carrier</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryTransportationFormCarrier}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryTransportationFormTransportationNumber
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Transportation Number</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryTransportationFormTransportationNumber}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    (event.itineraryTransportationFormAmount || event.itineraryTransportationFormAmountCurrency)
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Price</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryTransportationFormAmountCurrency ?? ''}
+                                                    ${event.itineraryTransportationFormAmount ?? ''}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+                        </div>
+                    `;
+                } else if (event.eventType == 4 && event.itineraryTransportationFormSubCategory == 2) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-train text-[#f49ac1]"></i>
+
+                                    <span class="text-sm text-[#f49ac1] font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+
+                                    <span class="text-[#f49ac1] font-extrabold">ARRIVAL</span>
+                                </div>
+
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryTransportationFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryTransportationFormNote ?? ''}
+                            </div>
+
+                            <div class="border-t-2 border-[#eee] my-2"></div>
+
+                            <div class="grid grid-cols-3 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryTransportationFormBookedThrough
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Booked Through</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryTransportationFormBookedThrough}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryTransportationFormConfirmation
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Confirmation</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryTransportationFormConfirmation}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryTransportationFormCarrier
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Carrier</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryTransportationFormCarrier}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryTransportationFormTransportationNumber
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Transportation Number</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryTransportationFormTransportationNumber}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    (event.itineraryTransportationFormAmount || event.itineraryTransportationFormAmountCurrency)
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Price</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryTransportationFormAmountCurrency ?? ''}
+                                                    ${event.itineraryTransportationFormAmount ?? ''}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+                        </div>
+                    `;
+                } else if (event.eventType == 5 && event.itineraryCruiseFormSubCategory == 1) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-ship text-[#6c9]"></i>
+
+                                    <span class="text-sm text-[#6c9] font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+
+                                    <span class="text-[#6c9] font-extrabold">DEPARTURE</span>
+                                </div>
+
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryCruiseFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryCruiseFormNote ?? ''}
+                            </div>
+
+                            <div class="border-t-2 border-[#eee] my-2"></div>
+
+                            <div class="grid grid-cols-4 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryCruiseFormCabinNumber
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Cabin Number</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormCabinNumber}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryCruiseFormCabinType
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Cabin Type</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormCabinType}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryCruiseFormCarrier
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Carrier</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormCarrier}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryCruiseFormConfirmation
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Confirmation</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormConfirmation}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryCruiseFormBookedThrough
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Booked Through</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormBookedThrough}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    (event.itineraryCruiseFormAmount || event.itineraryCruiseFormAmountCurrency)
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Price</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormAmountCurrency ?? ''}
+                                                    ${event.itineraryCruiseFormAmount ?? ''}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+                        </div>
+                    `;
+                } else if (event.eventType == 5 && event.itineraryCruiseFormSubCategory == 2) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-ship text-[#6c9]"></i>
+
+                                    <span class="text-sm text-[#6c9] font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+
+                                    <span class="text-[#6c9] font-extrabold">ARRIVAL</span>
+                                </div>
+
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryCruiseFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryCruiseFormNote ?? ''}
+                            </div>
+
+                            <div class="border-t-2 border-[#eee] my-2"></div>
+
+                            <div class="grid grid-cols-4 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryCruiseFormCabinNumber
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Cabin Number</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormCabinNumber}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryCruiseFormCabinType
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Cabin Type</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormCabinType}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryCruiseFormCarrier
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Carrier</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormCarrier}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    event.itineraryCruiseFormConfirmation
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Confirmation</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormConfirmation}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-4 text-sm">
+
+                                ${
+                                    event.itineraryCruiseFormBookedThrough
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Booked Through</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormBookedThrough}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                                ${
+                                    (event.itineraryCruiseFormAmount || event.itineraryCruiseFormAmountCurrency)
+                                        ? `
+                                            <div>
+                                                <div class="font-bold text-base">Price</div>
+                                                <div class="text-[#212121] mt-1">
+                                                    ${event.itineraryCruiseFormAmountCurrency ?? ''}
+                                                    ${event.itineraryCruiseFormAmount ?? ''}
+                                                </div>
+                                            </div>
+                                        `
+                                        : ''
+                                }
+
+                            </div>
+                        </div>
+                    `;
+                } else if (event.eventType == 6 && event.itineraryEventFormInfoSubCategory == 1) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-info-circle text-[#627e8c]"></i>
+
+                                    <span class="text-sm text-[#627e8c] font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+
+                                </div>
+
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryInfoFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryInfoFormNote ?? ''}
+                            </div>
+
+                        </div>
+                    `;
+                } else if (event.eventType == 6 && event.itineraryEventFormInfoSubCategory == 2) {
+                    htmlBlock = `
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+
+                            <div class="flex justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-info-circle text-[#627e8c]"></i>
+
+                                    <span class="text-sm text-[#627e8c] font-extrabold">
+                                        ${formattedTime}
+                                    </span>
+
+                                </div>
+
+                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                            </div>
+
+                            <div class="text-2xl">
+                                ${event.itineraryInfoFormTitle ?? ''}
+                            </div>
+
+                            <div class="text-base">
+                                ${event.itineraryInfoFormNote ?? ''}
+                            </div>
+
+                        </div>
+                    `;
+                }
+
+                html += htmlBlock;
+            });
+        }
+
+        $('#dayEventsContainer').html(html);
+    }
+
+    // start delete event
+    let selectedEventId = null;
+
+    $(document).on('click', '.delete-event-btn', function () {
+
+        selectedEventId = $(this).data('event-id');
+
+        $.ajax({
+            url: `/itinerary/event/${selectedEventId}`,
+            type: 'DELETE',
+
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+
+            success: function () {
+
+                if (selectedDay) {
+
+                    selectedDay.events = selectedDay.events.filter(event => {
+                        return event.id != selectedEventId;
+                    });
+
+                    renderDayEvents(selectedDay);
+                }
+            }
+        });
+    });
+    // end delete event
+
+    function toggleDayActions() {
+
+        if (selectedDay && selectedDay.id) {
+
+            if (isEditingDay) {
+
+                $('#doneBtn').removeClass('hidden');
+
+                $('#editBtn, #addEventBtn').addClass('hidden');
+
+            } else {
+
+                $('#editBtn, #addEventBtn').removeClass('hidden');
+
+                $('#doneBtn').addClass('hidden');
+            }
+
+        } else {
+
+            $('#editBtn, #addEventBtn, #doneBtn').addClass('hidden');
+        }
+    }
+
+    $(document).on('click', '#editBtn', function () {
+
+        if (!selectedDay) return;
+
+        isEditingDay = true;
+
+        $('#dayViewMode').addClass('hidden');
+        $('#dayEditMode').removeClass('hidden');
+
+        $('#editDayDate').val(selectedDay.dayDate ?? '');
+
+        $('#editDayTitle').val(selectedDay.dayTitle ?? '');
+
+        toggleDayActions();
+    });
+
+    $(document).on('click', '#doneBtn', function () {
+
+        if (!selectedDay) return;
+
+        $.ajax({
+            url: `/itinerary/day/${selectedDay.id}`,
+            type: 'PUT',
+
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                date: $('#editDayDate').val(),
+                title: $('#editDayTitle').val()
+            },
+
+            success: function () {
+
+                selectedDay.dayTitle = $('#editDayTitle').val();
+
+                selectedDay.dayDate = $('#editDayDate').val();
+
+                isEditingDay = false;
+
+                $('#dayEditMode').addClass('hidden');
+
+                $('#dayViewMode').removeClass('hidden');
+
+                renderDayHeader(selectedDay);
+
+                const sidebarDay = $('.itinerary-day').filter(function () {
+                    return $(this).data('day').id == selectedDay.id;
+                });
+
+                sidebarDay.find('span.text-sm').text(
+                    selectedDay.dayDate
+                        ? new Date(selectedDay.dayDate + "T00:00:00")
+                            .toLocaleDateString('en-US', {
+                                month: 'long',
+                                day: '2-digit'
+                            })
+                        : ''
+                );
+
+                sidebarDay.attr('data-day', JSON.stringify(selectedDay));
+
+                toggleDayActions();
+            },
+
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+
+    let isEditingDay = false;
+
+    $(document).ready(function () {
+
+        toggleDayActions();
+
+        const firstDay = $('.itinerary-day').first();
+
+        if (firstDay.length) {
+
+            firstDay.trigger('click');
+        }
+    });
+
+    function renderDayHeader(day) {
+
+        const header = document.getElementById('dayHeader');
+
+        if (!day) {
+            header.classList.add('hidden');
+            return;
+        }
+
+        header.classList.remove('hidden');
+
+        const divider = document.querySelector('#dayViewMode .w-px');
+
+        document.getElementById('dayMonth').innerText = '';
+        document.getElementById('dayDate').innerText = '';
+
+        if (day.dayDate) {
+
+            const fullDate = new Date(day.dayDate + "T00:00:00");
+
+            if (!isNaN(fullDate.getTime())) {
+
+                document.getElementById('dayMonth').innerText =
+                    fullDate.toLocaleString('en-US', { month: 'long' });
+
+                document.getElementById('dayDate').innerText =
+                    fullDate.getDate();
+
+                divider.classList.remove('hidden');
+            }
+
+        } else {
+
+            divider.classList.add('hidden');
+        }
+
+        document.getElementById('dayNumber').innerText = `Day ${day.dayNumber ?? ''}`;
+
+        document.getElementById('dayTitle').innerText = day.dayTitle ?? '';
+
+        $('#dayEditMode').addClass('hidden');
+
+        $('#dayViewMode').removeClass('hidden');
+
+        isEditingDay = false;
+
+        toggleDayActions();
+    }
+    // end render itinerary day events
+    
+    // start manage event
+    window.openManageEventItineraryModal = function () {
+
+        $('#manageEventItineraryModal').removeClass('hidden');
+
+        setTimeout(() => {
+
+            if (!$('.event_note').next('.note-editor').length) {
+
+                $('.event_note').summernote({
+                    height: 350,
+
+                    toolbar: [
+                        ['style', ['style']],
+                        ['font', ['bold', 'italic', 'underline', 'clear']],
+                        ['fontname', ['fontname']],
+                        ['fontsize', ['fontsize']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture']],
+                        ['view', ['codeview']]
+                    ]
+                });
+
+            }
+
+        }, 100);
+    }
+
+    window.closeManageEventItineraryModal = function(){
+        $('#manageEventItineraryModal').addClass('hidden');
+    }
+
+
+    const categories = [
+        {
+            id: 1,
+            name: 'Activity',
+            slug: 'activity',
+            icon: 'fa-solid fa-calendar-days',
+
+            subcategories: [
+                {
+                    id: 11,
+                    name: 'Activity',
+                    slug: 'activity',
+                    icon: 'fa-solid fa-calendar-days'
+                },
+                {
+                    id: 12,
+                    name: 'Food/Drink',
+                    slug: 'food-drink',
+                    icon: 'fa-solid fa-utensils'
+                }
+            ]
+        },
+
+        {
+            id: 2,
+            name: 'Lodging',
+            slug: 'lodging',
+            icon: 'fa-solid fa-bed',
+
+            subcategories: [
+                {
+                    id: 21,
+                    name: 'Check-in',
+                    slug: 'check-in',
+                },
+                {
+                    id: 22,
+                    name: 'Check-out',
+                    slug: 'check-out',
+                }
+            ]
+        },
+
+        {
+            id: 3,
+            name: 'Flight',
+            slug: 'flight',
+            icon: 'fa-solid fa-plane',
+
+            subcategories: [
+                {
+                    id: 31,
+                    name: 'Departure',
+                    slug: 'departure',
+                    icon: 'fa-solid fa-plane-departure'
+                },
+                {
+                    id: 32,
+                    name: 'Arrival',
+                    slug: 'arrival',
+                    icon: 'fa-solid fa-plane-arrival'
+                }
+            ]
+        },
+
+        {
+            id: 4,
+            name: 'Transportation',
+            slug: 'transportation',
+            icon: 'fa-solid fa-bus',
+
+            subcategories: [
+                {
+                    id: 41,
+                    name: 'Departure',
+                    slug: 'departure-transportation',
+                },
+                {
+                    id: 42,
+                    name: 'Arrival',
+                    slug: 'arrival-transportation',
+                }
+            ]
+        },
+
+        {
+            id: 5,
+            name: 'Cruise',
+            slug: 'cruise',
+            icon: 'fa-solid fa-ship',
+
+            subcategories: [
+                {
+                    id: 51,
+                    name: 'Departure',
+                    slug: 'departure-cruise',
+                },
+                {
+                    id: 52,
+                    name: 'Arrival',
+                    slug: 'arrival-cruise',
+                }
+            ]
+        },
+
+        {
+            id: 6,
+            name: 'Info',
+            slug: 'info',
+            icon: 'fa-solid fa-circle-info',
+
+            subcategories: [
+                {
+                    id: 61,
+                    name: 'Info',
+                    slug: 'info',
+                    icon: 'fa-solid fa-circle-info'
+                },
+                {
+                    id: 62,
+                    name: 'City Guide',
+                    slug: 'city-guide',
+                    icon: 'fa-solid fa-book-open'
+                }
+            ]
+        }
+    ];
+
+    let selectedCategory = categories[0];
+    let selectedSubcategory = categories[0].subcategories[0];
+
+    function renderCategories() {
+
+        let html = '';
+
+        categories.forEach(category => {
+
+            const activeClass =
+                selectedCategory.id === category.id
+                    ? 'bg-[#6c757d] text-white'
+                    : 'bg-white text-[#495057] hover:bg-[#f1f3f5]';
+
+            html += `
+                <button
+                    type="button"
+                    class="category-btn h-[32px] px-3 border border-[#6c757d] text-[14px] flex items-center gap-2 transition-all ${activeClass}"
+                    data-id="${category.id}"
+                >
+                    <i class="${category.icon}"></i>
+                    <span>${category.name}</span>
+                </button>
+            `;
+        });
+
+        $('#categoryContainer').html(html);
+    }
+
+    function renderSubcategories() {
+
+        let html = '';
+
+        selectedCategory.subcategories.forEach(sub => {
+
+            const activeClass =
+                selectedSubcategory.id === sub.id
+                    ? 'bg-[#6c757d] text-white'
+                    : 'bg-white text-[#495057] hover:bg-[#f1f3f5]';
+
+            html += `
+                <button
+                    type="button"
+                    class="subcategory-btn h-[32px] px-3 border border-[#6c757d] text-[14px] flex items-center gap-2 transition-all ${activeClass}"
+                    data-id="${sub.id}"
+                >
+                    <i class="${sub.icon}"></i>
+                    <span>${sub.name}</span>
+                </button>
+            `;
+        });
+
+        $('#subcategoryContainer').html(html);
+    }
+
+    function renderSections() {
+
+        $('.dynamic-section').addClass('hidden');
+
+        const key = `${selectedCategory.slug}-${selectedSubcategory.slug}`;
+
+        $(`.${key}-section`).removeClass('hidden');
+    }
+
+    function initEventManager() {
+
+        renderCategories();
+        renderSubcategories();
+        renderSections();
+    }
+
+    $(document).on('click', '.category-btn', function () {
+
+        const id = $(this).data('id');
+
+        selectedCategory = categories.find(c => c.id == id);
+
+        selectedSubcategory = selectedCategory.subcategories[0];
+
+        renderCategories();
+        renderSubcategories();
+        renderSections();
+    });
+
+    $(document).on('click', '.subcategory-btn', function () {
+
+        const id = $(this).data('id');
+
+        selectedSubcategory = selectedCategory.subcategories.find(s => s.id == id);
+
+        renderSubcategories();
+        renderSections();
+    });
+
+    initEventManager();
+    // end manage event
+
+    // ----------------------------------------------------------- //
+    // end itinerary //
+    // ----------------------------------------------------------- //
 });

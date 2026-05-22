@@ -19,10 +19,7 @@ class TimelineTasksController extends Controller
                                             ->select('id','product_id','destination_id','task_name','priority','due_days','before_after','date_type','created_by','is_deleted')
                                             ->where('is_deleted', 0);
 
-        $products = Product::orderBy('product_name')
-                                ->where('is_deleted', 0)
-                                ->get();
-
+        $products = Product::orderBy('product_name')->where('is_deleted', 0)->get();
         
         if ($productId) {
             $destinations = Destination::orderBy('destination_name')

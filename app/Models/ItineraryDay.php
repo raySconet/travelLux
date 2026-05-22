@@ -14,6 +14,7 @@ class ItineraryDay extends Model
         'dayNumber',
         'itinerary_trip_id',
         'dayTitle',
+        'dayDate',
         'isDeleted'
     ];
 

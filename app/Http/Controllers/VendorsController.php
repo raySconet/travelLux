@@ -11,8 +11,7 @@ class VendorsController extends Controller
     {
         $search = $request->input('search');
 
-        $productsQuery = Product::orderBy('product_name')
-                                ->where('is_deleted', 0);
+        $productsQuery = Product::orderBy('product_name')->where('is_deleted', 0);
 
         if ($search) {
             $productsQuery->where('product_name', 'like', "%{$search}%")

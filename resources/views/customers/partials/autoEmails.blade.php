@@ -13,22 +13,32 @@
         <table class="min-w-full text-sm">
             <thead>
                 <tr class="border-b-2 border-t-2 border-[#dee2e6]">
-                    <th class="w-1/2 px-3 py-2 text-left font-bold">Auto Email</th>
-                    <th class="w-1/2 px-3 py-2 text-left font-bold">Date</th>
+                    <th class="w-3/4 px-3 py-2 text-left font-bold">Auto Email</th>
+                    <th class="w-1/4 px-3 py-2 text-left font-bold">Date</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td colspan="4" class="text-center py-6">
-                        No data available in table
-                    </td>
-                </tr>
+                @if($automatedEmails->isEmpty())
+                    <tr>
+                        <td colspan="2" class="text-center py-6">
+                            No data available in table
+                        </td>
+                    </tr>
+                @else
+                    @foreach($automatedEmails as $email)
+                        <tr class="border-b border-[#dee2e6]">
+                            <td class="px-3 py-2">
+                                {{ $email->automatedEmail->subject ?? '-' }}
+                            </td>
+                            <td class="px-3 py-2">
+                                {{ $email->date ?? '-' }}
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
             </tbody>
         </table>
     </div>
 
-    <div class="flex justify-end text-sm text-gray-400 mt-4">
-        Previous &nbsp;  &nbsp; Next
-    </div>
 </div>  
 @endif  

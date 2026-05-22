@@ -75,12 +75,20 @@ $(document).ready(() => {
         showLoader();
     };
 
+    // $(document).ajaxStart(function () {
+    //     $('#ajaxLoader').fadeIn();
+    // });
+
+    // $(document).ajaxStop(function () {
+    //     $('#ajaxLoader').fadeOut(300);
+    // });
+
     $(document).ajaxStart(function () {
-        $('#ajaxLoader').fadeIn();
+       showLoader();
     });
 
     $(document).ajaxStop(function () {
-        $('#ajaxLoader').fadeOut(300);
+        hideLoader();
     });
 
 

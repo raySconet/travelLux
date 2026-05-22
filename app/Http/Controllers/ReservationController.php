@@ -37,9 +37,7 @@ class ReservationController extends Controller
 
        $agentId = $request->input('users', auth()->id());
 
-       $users = User::select('id','fname', 'lname','email')
-                    ->where('isDeleted',0)
-                    ->get();
+       $users = User::select('id','fname', 'lname','email')->where('isDeleted',0)->get();
 
        $reservationsQuery = Reservation::with('agent', 'customer', 'product', 'destination')
                                         ->select('id', 'status', 'created_on', 'reservation_number', 'reservation_name', 'customer_id', 'agent_id', 'product_id', 'destination_id', 'checkin_date', 'final_payment_due_date')
@@ -71,40 +69,45 @@ class ReservationController extends Controller
     public function create(Reservation $reservation)
     {
         $reservation = new Reservation();
-        $users = User::select('id','fname', 'lname' ,'email', 'commission')
-                    ->where('isDeleted',0)
-                    ->get();
+        $users = User::select('id','fname', 'lname' ,'email', 'commission')->where('isDeleted',0)->get();
+
         $isNewReservation = true;
 
-        $customers = Customer::select('id','fname','lname','agent_id','email', 'cellphone')->where('is_deleted',0)->get();
+        $customers = Customer::with(['familyMembers' => function ($q) {
+                                $q->where('is_deleted', 0)
+                                ->whereNotNull('email')
+                                ->where('email', '!=', '');
+                            }])
+                        ->select('id','fname','lname','agent_id','email','cellphone')
+                        ->where('is_deleted',0)
+                        ->get();
 
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
         $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
         $resortShips = ResortShip::orderBy('resort_ship_name')->where('is_deleted',0)->get();
         $cruiseItineraries = CruiseItinerary::orderBy('cruise_name')->where('is_deleted',0)->get();
 
-        $referralCustomers = Customer::where('agent_id', auth()->id())
-                                ->where('is_deleted',0)
-                                ->orderBy('lname')
-                                ->get();
+        $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted',0)->orderBy('lname')->get();
 
-        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)
-                                ->where('created_by', auth()->id())
-                                ->orderBy('date', 'desc')
-                                ->get();                        
-
+        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)->where('created_by', auth()->id())->orderBy('date', 'desc')->get();                        
     
         return view('reservations.reservationDetails', compact('users', 'reservation', 'isNewReservation', 'products', 'customers', 'destinations', 'resortShips','cruiseItineraries','referralCustomers','itineraryTrips'));
     }
 
     public function edit(Reservation $reservation)
     {
-        $users = User::select('id','fname', 'lname', 'email', 'phone_number')
-            ->where('isDeleted',0)
-            ->get();
+        $users = User::select('id','fname', 'lname', 'email', 'phone_number')->where('isDeleted',0)->get();
+
         $isNewReservation = false;
 
-        $customers = Customer::select('id','fname','lname', 'email','cellphone','agent_id')->where('is_deleted',0)->get();
+        $customers = Customer::with(['familyMembers' => function ($q) {
+                                $q->where('is_deleted', 0)
+                                ->whereNotNull('email')
+                                ->where('email', '!=', '');
+                            }])
+                        ->select('id','fname','lname','agent_id','email','cellphone')
+                        ->where('is_deleted',0)
+                        ->get();
 
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
         $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
@@ -112,42 +115,45 @@ class ReservationController extends Controller
         $cruiseItineraries = CruiseItinerary::orderBy('cruise_name')->where('is_deleted',0)->get();
 
         $availableForms = CustomersForm::where('is_deleted', 0)
-                                        ->where('is_active', 1)
-                                        ->whereHas('customersFormRequired', function($q){
-                                            $q->where('all_reservations_required', 1);
-                                        })->get();
+                            ->where('is_active', 1)
+                            ->whereHas('customersFormRequired', function ($q) use ($reservation) {
 
-        $referralCustomers = Customer::where('agent_id', auth()->id())
-                                ->where('is_deleted',0)
-                                ->orderBy('lname')
-                                ->get();  
+                                $q->where(function ($subQ) use ($reservation) {
 
-        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)
-                                ->where('created_by', auth()->id())
-                                ->orderBy('date', 'desc')
-                                ->get();                         
+                                    $subQ->where('all_reservations_required', 1)
+
+                                        ->orWhere(function ($matchQ) use ($reservation) {
+
+                                            $matchQ->where('product_id', $reservation->product_id)
+                                                ->where('destination_id', $reservation->destination_id);
+
+                                        });
+
+                                });
+
+                                $q->where('is_deleted', 0);
+
+                            })
+                            ->get();
+
+        $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted',0)->orderBy('lname')->get();  
+
+        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)->where('created_by', auth()->id())->orderBy('date', 'desc')->get();                         
                                 
-        $linkedReservations = ReservationLink::where('reservation_id', $reservation->id)
-                                            ->where('is_linked', 1) 
-                                            ->with('linkedReservation')
-                                            ->get();
+        $linkedReservations = ReservationLink::where('reservation_id', $reservation->id)->where('is_linked', 1) ->with('linkedReservation')->get();
 
         return view('reservations.reservationDetails', compact('users', 'reservation' ,'isNewReservation','products', 'customers', 'destinations', 'resortShips','cruiseItineraries','availableForms','referralCustomers', 'linkedReservations','itineraryTrips'));
     }
 
     private function generateTimelineTasks($reservation)
     {
-        ReservationTask::where('reservation_id', $reservation->id)
-            ->where('is_timeline_task', 1)
-            ->delete();
+        ReservationTask::where('reservation_id', $reservation->id)->where('is_timeline_task', 1)->delete();
 
         if (!$reservation->product_id || !$reservation->destination_id) {
             return;
         }
 
-        $timelineTasks = TimelineTask::where('product_id', $reservation->product_id)
-            ->where('destination_id', $reservation->destination_id)
-            ->get();
+        $timelineTasks = TimelineTask::where('product_id', $reservation->product_id)->where('destination_id', $reservation->destination_id)->get();
 
         foreach ($timelineTasks as $task) {
 
@@ -564,28 +570,18 @@ class ReservationController extends Controller
 
         $copy->reservation_name = $reservation->reservation_name . ' (Copy)';
 
-        $users = User::select('id','fname','lname','email','commission')
-            ->where('isDeleted', 0)
-            ->get();
+        $users = User::select('id','fname','lname','email','commission')->where('isDeleted', 0)->get();
 
-        $customers = Customer::select('id','fname','lname','agent_id','email','cellphone')
-            ->where('is_deleted', 0)
-            ->get();
+        $customers = Customer::select('id','fname','lname','agent_id','email','cellphone')->where('is_deleted', 0)->get();
 
         $products = Product::orderBy('product_name')->where('is_deleted', 0)->get();
         $destinations = Destination::orderBy('destination_name')->where('is_deleted', 0)->get();
         $resortShips = ResortShip::orderBy('resort_ship_name')->where('is_deleted', 0)->get();
         $cruiseItineraries = CruiseItinerary::orderBy('cruise_name')->where('is_deleted', 0)->get();
 
-        $referralCustomers = Customer::where('agent_id', auth()->id())
-            ->where('is_deleted', 0)
-            ->orderBy('lname')
-            ->get();
+        $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted', 0)->orderBy('lname')->get();
 
-        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)
-            ->where('created_by', auth()->id())
-            ->orderBy('date', 'desc')
-            ->get();
+        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)->where('created_by', auth()->id())->orderBy('date', 'desc')->get();
 
         $isNewReservation = true;
 
@@ -684,7 +680,6 @@ class ReservationController extends Controller
 
     public function storePayment(Request $request, Reservation $reservation)
     {
-        // dd($request->all());
         $messages = [
             'notes.required' => 'The Payment Amount field is required',
             'payment_type.required' => 'The Payment Type is required.',
@@ -892,11 +887,6 @@ class ReservationController extends Controller
 
     public function updateGift(Request $request, ReservationGift $gift)
     {
-        // dd([
-        //     'method' => $request->method(),
-        //     'all' => $request->all(),
-        // ]);
-
         $data = $request->validate([
             'gift_date' => 'required|date',
             'gift_type' => 'required|string',
@@ -969,11 +959,6 @@ class ReservationController extends Controller
 
     public function updatePhoneNote(Request $request, ReservationPhoneNote $phoneNote)
     {
-        // dd([
-        //     'method' => $request->method(),
-        //     'all' => $request->all(),
-        // ]);
-
         $data = $request->validate([
             'category' => 'nullable|string',
             'caller_name' => 'nullable|string',
@@ -1113,13 +1098,9 @@ class ReservationController extends Controller
     {
         $currentId = $request->current_reservation_id;
 
-        $linkedIds = ReservationLink::where('reservation_id', $currentId)
-                                    ->pluck('linked_reservation_id')
-                                    ->toArray();
+        $linkedIds = ReservationLink::where('reservation_id', $currentId)->pluck('linked_reservation_id')->toArray();
 
-        $reverseLinkedIds = ReservationLink::where('linked_reservation_id', $currentId)
-                                        ->pluck('reservation_id')
-                                        ->toArray();
+        $reverseLinkedIds = ReservationLink::where('linked_reservation_id', $currentId)->pluck('reservation_id')->toArray();
 
         $allLinkedIds = array_merge($linkedIds, $reverseLinkedIds);
 

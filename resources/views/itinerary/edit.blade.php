@@ -8,7 +8,10 @@
                 <div class="space-x-2">
                     <x-primary-btn  onclick="openImportReservationBookings()"><i class="far fa-plus-square"></i><span>Import Bookings</span></x-primary-btn>
                     <x-secondary-btn><i class="fas fa-link"></i><span>Copy Link</span></x-secondary-btn>
-                    <x-secondary-btn><i class="fas fa-file-pdf"></i><span>Pdf</span></x-secondary-btn>
+                    <x-secondary-btn onclick="window.location='{{ route('itinerary.pdf', $itinerary->id) }}'">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Pdf</span>
+                    </x-secondary-btn>
                     <x-secondary-buttonToDelete onclick="openDuplicateItineraryModal('{{ $itinerary->name }}','{{ $itinerary->date }}')">
                         <i class="fas fa-copy"></i>
                         <span>Duplicate</span>
@@ -21,7 +24,7 @@
                                 <i class="fas fa-trash"></i><span>Delete</span>
                             </x-secondary-buttonToDelete>
                     </form>
-                    <x-primary-btn onclick="window.history.back()"><i class="far fa-minus-square"></i><span>Close Trip</span></x-primary-btn>
+                    <x-primary-btn onclick="window.location='{{ route('itinerary.index') }}'"><i class="far fa-minus-square"></i><span>Close Trip</span></x-primary-btn>
                 </div>
         </div>
     </x-slot>
@@ -38,10 +41,10 @@
             <div class="cover-overlay">
                 <h4 class="flex items-center gap-2 text-lg">
                     <span>{{ $itinerary->name }}</span>
-                    <i class="fas fa-pencil-alt text-base" id="editItineraryNamePencil"></i>
+                    <i class="fas fa-pencil-alt text-base cursor-pointer" onclick="openEditItineraryModal()" id="editItineraryNamePencil"></i>
                 </h4>
 
-                <h5 class="flex items-center gap-2 text-base" id="changeItineraryCoverPhotoBtn">
+                <h5 class="flex items-center gap-2 text-base"  id="changeItineraryCoverPhotoBtn">
                     <i class="far fa-image"></i>
                     Change cover photo
                 </h5>
@@ -50,43 +53,129 @@
     </div>
 
     <div class="bg-white shadow rounded-none mt-4 p-4 ml-3">
-        <div class="grid grid-cols-4 gap-6">
-            <div class="col-span-1 flex flex-col gap-4">
-                <x-primary-btn class="flex items-center justify-center gap-2 w-full max-w-[200px] px-4">
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-2 flex flex-col gap-2 border-r border-[#ccc] pr-2">
+                <x-primary-btn id="addDayBtn" data-itinerary-id="{{ $itinerary->id }}" class="flex items-center justify-center gap-2 w-full px-8">
                     <i class="far fa-plus-square mt-1"></i>
                     Add Day
                 </x-primary-btn>
 
                
                 <div class="flex items-center justify-between border-t-2 border-b-2 border-[#dee2e6] px-2 py-1">
-                    <span class="text-sm font-medium">Attachment</span>
+                    <span class="font-medium text-base">Attachments</span>
                     <button class="text-[#ccc] text-lg">
                         <i class="fas fa-paperclip"></i>
                     </button>
                 </div>
+
+                @foreach ($itinerary->itineraryDays as $day)
+
+                    <div class="flex flex-col border-b-2 border-[#dee2e6] px-2 py-2 hover:bg-gray-50 cursor-pointer itinerary-day" data-day='@json($day->toArray())'>
+
+                        <span class="font-medium text-sm text-gray-500">
+                            {{ $day->dayDate ? \Carbon\Carbon::parse($day->dayDate)->format('F d') : '' }}
+                        </span>
+
+                        <div class="flex items-center justify-between">
+
+                            <div class="flex flex-col">
+                                
+                                <span class="font-medium text-base">
+                                    Day {{ $day->dayNumber }}
+                                </span>
+
+                            </div>
+
+                            <button class="text-[#ccc] text-base delete-day-btn" data-day-id="{{ $day->id }}">
+                                <i class="fas fa-times"></i>
+                            </button>
+
+                        </div>
+                    </div>
+
+                @endforeach
             </div>
 
-            <div class="col-span-3 grid grid-cols-4 gap-6" x-data="{ section: 'yourItems' }">             
-                <div class="col-span-3"></div>
-                <div class="col-span-1 flex flex-col gap-1 items-end">
+                <div class="col-span-10 grid grid-cols-12 gap-6" x-data="{ section: 'yourItems' }">             
+                    <div class="col-span-8">
+
+                    <div id="dayHeader" class="hidden">
+
+                        <div id="dayViewMode">
+                            <div class="flex items-center gap-4">
+
+                                <div class="flex flex-col text-center min-w-[80px]">
+                                    <p id="dayMonth" class="text-base"></p>
+                                    <p id="dayDate" class="text-base"></p>
+                                </div>
+
+                                <div class="w-px h-12 bg-[#ccc]"></div>
+
+                                <div class="flex flex-col">
+                                    <p id="dayNumber" class="text-lg font-medium text-gray-800"></p>
+                                </div>
+
+                            </div>
+
+                            <p id="dayTitle" class="text-lg mt-1 mb-2"></p>
+                        </div>
+
+                        <div id="dayEditMode" class="hidden">
+                            <div class="flex gap-4 items-center mb-2">
+
+                                <div class="relative mt-2 w-[450px]">
+                                    <x-text-input type="date" id="editDayDate" name="dayDate" class="w-full" />
+
+                                    <x-input-label for="dayDate">Date</x-input-label>
+                                </div>
+
+                                <div class="relative mt-2 w-[450px]">
+                                    <x-text-input type="text" id="editDayTitle" name="dayTitle" class="w-full" />
+
+                                    <x-input-label for="dayTitle">Title</x-input-label>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="dayEventsContainer" class="flex flex-col gap-4">
+                        
+                    
+
+                    </div>
+
+                </div>
+                
+                <div class="col-span-4 flex flex-col gap-1 items-end">
+                    
                     <div class="flex gap-2">
-                        <x-primary-btn class="flex gap-2">
+
+                        <x-primary-btn id="editBtn" class="flex gap-2 hidden">
                             <i class="fas fa-edit mt-1"></i>
                             Edit
                         </x-primary-btn>
 
-                        <x-primary-btn class="flex gap-2">
+                        <x-primary-btn id="doneBtn" class="flex gap-2 hidden px-19">
+                            Done
+                        </x-primary-btn>
+
+                        <x-primary-btn id="addEventBtn" onclick="openManageEventItineraryModal()" class="flex gap-2 hidden">
                             <i class="far fa-plus-square mt-1"></i>
                             Add Event
                         </x-primary-btn>
+
                     </div>
-                    
-                    <div class="flex gap-2 mt-2">
-                        <button class="text-white px-10 py-2 rounded text-sm transition" :class="section === 'yourItems' ? 'bg-[#B6844A]': 'bg-[#696969]'" @click="section = 'yourItems'">
+
+                    <div class="flex gap-2 mt-2 w-full">
+                        <button class="flex-1 text-white px-4 xl:px-8 py-2 rounded text-sm transition"
+                            :class="section === 'yourItems' ? 'bg-[#B6844A]': 'bg-[#696969]'" @click="section = 'yourItems'">
                             Your Items
                         </button>
 
-                        <button class="text-white px-10 py-2 rounded text-sm transition" :class="section === 'guides' ? 'bg-[#B6844A]' : 'bg-[#696969]'" @click="section = 'guides'" >
+                        <button  class="flex-1 text-white px-4 xl:px-8 py-2 rounded text-sm transition"
+                            :class="section === 'guides' ? 'bg-[#B6844A]' : 'bg-[#696969]'" @click="section = 'guides'">
                             Guides
                         </button>
                     </div>
@@ -168,3 +257,15 @@
 <x-import-reservation-bookings />
 <x-delete-modal />
 <x-duplicate-itinerary-modal />
+<x-manage-event-modal />
+<x-delete-day-modal />
+<x-edit-itinerary-modal />
+<script>
+    const ITINERARY_BASE_DATE = @json($itinerary->date);
+
+    const itineraryData = {
+        id: @json($itinerary->id),
+        name: @json($itinerary->name),
+        date: @json($itinerary->date),
+    };
+</script>

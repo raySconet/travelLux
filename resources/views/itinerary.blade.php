@@ -56,7 +56,7 @@
                     <tbody class="divide-y">
                         @foreach ($itineraries as $itinerary)
                             <tr class="hover:bg-gray-50 cursor-pointer"
-                                onclick="window.location='{{ route('itinerary.edit', $itinerary->id) }}'">
+                                onclick="showLoaderOnSubmit();window.location='{{ route('itinerary.edit', $itinerary->id) }}'">
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $itinerary->name }}

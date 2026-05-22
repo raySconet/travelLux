@@ -171,8 +171,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/itinerary', [ItineraryController::class, 'index'])->name('itinerary.index');
     Route::get('/itinerary/create', [ItineraryController::class, 'create'])->name('itinerary.create');
     Route::post('/itinerary/store', [ItineraryController::class, 'store'])->name('itinerary.store');
+    Route::put('/itinerary/{itinerary}', [ItineraryController::class, 'update'])->name('itinerary.update');
     Route::get('/itinerary/{itinerary}', [ItineraryController::class, 'edit'])->name('itinerary.edit');
     Route::delete('/itinerary/{itinerary}', [ItineraryController::class, 'destroy'])->name('itinerary.destroy');
+    
+    Route::post('/itinerary/{itinerary}/add-day', [ItineraryController::class, 'addDay'])->name('itinerary.addDay');
+    Route::put('/itinerary/day/{day}', [ItineraryController::class, 'updateDay'])->name('itineraryDay.update');
+    Route::delete('/itinerary/day/{day}', [ItineraryController::class, 'destroyDay'])->name('itineraryDay.destroy');
+
+    Route::delete('/itinerary/event/{event}', [ItineraryController::class, 'destroyEvent'])->name('itineraryEvent.destroy');
+
+    Route::get('/itinerary/{itinerary}/pdf', [ItineraryController::class, 'downloadPdf'])->name('itinerary.pdf');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/customer-list', [CustomerController::class, 'index'])->name('customers.customerList');

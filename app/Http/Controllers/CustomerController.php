@@ -19,10 +19,7 @@ class CustomerController extends Controller
         $agentId = $request->input('users', auth()->id());
         $search = $request->input('search');
 
-        $users = User::select('id','fname','lname','email')
-                        ->where('isDeleted',0)
-                        ->get();
-
+        $users = User::select('id','fname','lname','email')->where('isDeleted',0)->get();
 
         $customersQuery = Customer::with('agent')
                                     ->select('id','fname','mname','lname','cellphone','email','status','agent_id')
@@ -64,27 +61,63 @@ class CustomerController extends Controller
     }
 
 
-    public function edit(Customer $customer)
-    {
-        $isNewCustomer = false;
+    // public function edit(Customer $customer)
+    // {
+    //     $isNewCustomer = false;
         
 
-        $states = State::orderBy('name')->get();
-        $countries = Country::orderBy('name')->get();
+    //     $states = State::orderBy('name')->get();
+    //     $countries = Country::orderBy('name')->get();
 
-        $availableForms = CustomersForm::where('is_deleted', 0)
-                                        ->where('is_active', 1)
-                                        ->whereHas('customersFormRequired', function ($q) {
-                                            $q->where('all_customers_required', 1);
-                                        })->get();
+    //     $availableForms = CustomersForm::where('is_deleted', 0)
+    //                                     ->where('is_active', 1)
+    //                                     ->whereHas('customersFormRequired', function ($q) {
+    //                                         $q->where('all_customers_required', 1);
+    //                                     })->get();
 
-        $referralCustomers = Customer::where('agent_id', auth()->id())
-                              ->where('is_deleted', 0)
-                              ->orderBy('lname')
-                              ->get();                                
+    //     $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted', 0)->orderBy('lname')->get();                                
 
-        return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms','referralCustomers'));
-    }
+    //     return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms','referralCustomers'));
+    // }
+
+    public function edit(Customer $customer)
+{
+    $isNewCustomer = false;
+
+    $states = State::orderBy('name')->get();
+    $countries = Country::orderBy('name')->get();
+
+    $availableForms = CustomersForm::where('is_deleted', 0)
+        ->where('is_active', 1)
+        ->whereHas('customersFormRequired', function ($q) {
+            $q->where('all_customers_required', 1);
+        })->get();
+
+    $referralCustomers = Customer::where('agent_id', auth()->id())
+        ->where('is_deleted', 0)
+        ->orderBy('lname')
+        ->get();
+
+    // ✅ FETCH AUTOMATED EMAILS (NO RESERVATION)
+    $automatedEmails = $customer->automatedEmails()
+        ->where(function ($q) {
+            $q->whereNull('reservation_id')
+              ->orWhere('reservation_id', '');
+        })
+        ->with('automatedEmail')
+        ->orderBy('date', 'desc')
+        ->get();
+
+    return view('customers.customerDetails', compact(
+        'customer',
+        'isNewCustomer',
+        'states',
+        'countries',
+        'availableForms',
+        'referralCustomers',
+        'automatedEmails'
+    ));
+}
 
     public function inviteNewCustomer(){
         return view('customers.inviteNewCustomer');

@@ -48,7 +48,7 @@ class ProfileController extends Controller
             'city' => 'required|string|max:255',
             'state' => 'required|string|max:255',
             'postal_code' => 'required|string|max:255',
-            'profile_photo' => 'nullable|string',
+            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         if (!empty($data['password'])) {
@@ -63,6 +63,23 @@ class ProfileController extends Controller
 
         $data['last_modified_by'] = auth()->id();
         $data['updated_at'] = now();
+
+        if ($request->hasFile('profile_photo')) {
+
+            $file = $request->file('profile_photo');
+
+            $extension = $file->getClientOriginalExtension();
+
+            $fileName = $user->id . '.' . $extension;
+
+            $file->storeAs(
+                'attachments/users',
+                $fileName,
+                'public'
+            );
+
+            $data['profile_photo'] = $fileName;
+        }
 
         $user->update($data);
 

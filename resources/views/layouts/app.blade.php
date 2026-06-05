@@ -1,3 +1,4 @@
+@props(['viewOnly' => false])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -42,36 +43,45 @@
             }
         </style>
     </head>
-    <body class="font-sans "
-        x-data="{ sidebarOpen: true, first: true, second: true, third: true }">
-        @include('layouts.sidebar')
 
+    <body class="font-sans" x-data="{ sidebarOpen: true, first: true, second: true, third: true }">
+
+        @if(!($viewOnly ?? false))
+            @include('layouts.sidebar')
+        @endif
 
         <!-- MAIN WRAPPER -->
         <div class="min-h-screen bg-gray-100 transform transition-all duration-600"
-            :class="sidebarOpen ? 'md:pl-64' : 'md:pl-0'">
+            @if(!($viewOnly ?? false))
+                :class="sidebarOpen ? 'md:pl-64' : 'md:pl-0'"
+            @endif
+        >
+            
 
-            <!-- TOP NAV (your existing navigation) -->
-            <div class="flex items-center bg-[#292727]  shadow sticky top-0 z-40">
-               <a id="menu-toggle"
-                    @click="sidebarOpen = !sidebarOpen;
-                            first = !first; second = !second; third = !third;"
-                    href="javascript:void(0);"
-                    class="sidebarBtn flex items-center justify-center z-100 w-10 h-16  pl-8">
+            @if(!($viewOnly ?? false))
+                <!-- TOP NAV -->
+                <div class="flex items-center bg-[#292727] shadow sticky top-0 z-40">
+                    <a id="menu-toggle"
+                        @click="sidebarOpen = !sidebarOpen;
+                                first = !first; second = !second; third = !third;"
+                        href="javascript:void(0);"
+                        class="sidebarBtn flex items-center justify-center z-100 w-10 h-16 pl-8">
+
                         <div class="menuIcon">
                             <div class="line1" :class="first ? 'animateFirstLine' : ''"></div>
                             <div class="line2" :class="second ? 'animateSecondLine' : ''"></div>
                             <div class="line3" :class="third ? 'animateThirdLine' : ''"></div>
                         </div>
-                </a>
+                    </a>
 
-                @include('layouts.navigation')
-            </div>
+                    @include('layouts.navigation')
+                </div>
+            @endif
 
             <!-- PAGE HEADING -->
             @isset($header)
-                <header class="shadow text-white ">
-                    <div class="  py-3 px-2 sm:px-6">
+                <header class="shadow text-white">
+                    <div class="py-3 px-2 sm:px-6">
                         {{ $header }}
                     </div>
                 </header>
@@ -133,6 +143,8 @@
         <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/xrange.js"></script>
 
 
         <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">

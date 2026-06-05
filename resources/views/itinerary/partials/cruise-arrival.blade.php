@@ -1,7 +1,9 @@
 <div class="relative mt-3 mb-8">
-    <x-text-input type="text" id="itineraryCruiseFormTitle" name="itineraryCruiseFormTitle" />
+    <x-text-input type="text"  name="itineraryCruiseFormTitle" />
 
     <x-input-label for="itineraryCruiseFormTitle">Title*</x-input-label>
+
+    <p class="validation-error text-red-500 text-sm mt-1 hidden"></p>
 </div>
 
 <div class="mb-8">
@@ -17,14 +19,14 @@
 <div class="grid grid-cols-3 gap-4">
     
     <div class="relative mt-1">
-        <x-text-input type="time" id="itineraryCruiseFormTime" name="itineraryCruiseFormTime" />
+        <x-text-input type="time"  name="itineraryCruiseFormTime" />
 
         <x-input-label for="itineraryCruiseFormTime">Time</x-input-label>
     </div>
 
     <div class="relative mt-2">
         <label for="itineraryCruiseFormDuration">Duration</label>
-        <select name="itineraryCruiseFormDuration" id="itineraryCruiseFormDuration" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryCruiseFormDuration"  class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="15m">15 minutes</option>
             <option value="30m">30 minutes</option>
             <option value="45m">45 minutes</option>
@@ -291,7 +293,7 @@
     
     <div class="relative mt-2">
         <label for="itineraryCruiseFormTimezone">Timezone</label>
-        <select name="itineraryCruiseFormTimezone" id="itineraryCruiseFormTimezone" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryCruiseFormTimezone" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="-1">Automatic</option>
             <option value="UTC-11:00">Samoa Time (Pago Pago, Samoa) (UTC-11:00)</option>
             <option value="UTC-11:00">Niue Time (Niue) (UTC-11:00)</option>
@@ -421,32 +423,32 @@
 <div class="grid grid-cols-3 gap-4">
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryCruiseFormBookedThrough" name="itineraryCruiseFormBookedThrough" />
+        <x-text-input type="text"  name="itineraryCruiseFormBookedThrough" />
 
         <x-input-label for="itineraryCruiseFormBookedThrough">Booked Through</x-input-label>
     </div>
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryCruiseFormConfirmation" name="itineraryCruiseFormConfirmation" />
+        <x-text-input type="text"  name="itineraryCruiseFormConfirmation" />
 
         <x-input-label for="itineraryCruiseFormConfirmation">Confirmation #</x-input-label>
     </div>
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryCruiseFormCarrier" name="itineraryCruiseFormCarrier" />
+        <x-text-input type="text"  name="itineraryCruiseFormCarrier" />
 
         <x-input-label for="itineraryCruiseFormCarrier">Carrier</x-input-label>
     </div>
 </div>
 <div class="grid grid-cols-3 gap-4 mt-2 mb-2">
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryCruiseFormCabinType" name="itineraryCruiseFormCabinType" />
+        <x-text-input type="text"  name="itineraryCruiseFormCabinType" />
 
         <x-input-label for="itineraryCruiseFormCabinType">Cabin Type</x-input-label>
     </div>
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryCruiseFormCabinNumber" name="itineraryCruiseFormCabinNumber" />
+        <x-text-input type="text"  name="itineraryCruiseFormCabinNumber" />
 
         <x-input-label for="itineraryCruiseFormCabinNumber">Cabin Number</x-input-label>
     </div>
@@ -454,14 +456,14 @@
 <h3 class="text-[20px] text-[#212529] mb-1">Price</h3>
 <div class="grid grid-cols-2 gap-4">
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryCruiseFormAmount" name="itineraryCruiseFormAmount" />
+        <x-text-input type="text"  name="itineraryCruiseFormAmount" />
 
         <x-input-label for="itineraryCruiseFormAmount">Amount</x-input-label>
     </div>
 
     <div class="relative mt-1">
         <label for="itineraryCruiseFormAmountCurrency">Currency</label>
-        <select name="itineraryCruiseFormAmountCurrency" id="itineraryCruiseFormAmountCurrency" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryCruiseFormAmountCurrency"  class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="$ (AUD)">$ (AUD)</option>
             <option value="$ (CAD)">$ (CAD)</option>
             <option value="Fr">Fr (CHF)</option>
@@ -473,9 +475,4 @@
             <option value="$" selected>$ (USD)</option>
         </select>
     </div>
-</div>
-<div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-    <x-primary-btn type="submit">
-        <span>Save</span>
-    </x-primary-btn>
 </div>

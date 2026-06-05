@@ -5,9 +5,9 @@
                 <i class="fa-solid fa-plane-departure mr-2 text-[#B6844A]"></i>{{ __('All Trips By Travel Date') }}
             </h2>
             
-            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A]"><i class="fas fa-cloud-download-alt"></i>Download</button>
+            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer"><i class="fas fa-cloud-download-alt"></i>Download</button>
 
-            <button class="flex items-center gap-2"><i class="far fa-calendar-alt text-[#212121] text-2xl" onclick="openReportDateRangeModal()"></i>-</button>
+            <button class="flex items-center gap-2"><i class="far fa-calendar-alt text-[#212121] text-2xl cursor-pointer" onclick="openReportDateRangeModal()"></i>-</button>
 
         </div>
     </x-slot>

@@ -31,6 +31,7 @@
                 <option value="">Select Role</option>
                 <option value="1" {{ old('role', $user->role ?? '') == '1' ? 'selected' : '' }}>Administrator</option>
                 <option value="2" {{ old('role', $user->role ?? '') == '2' ? 'selected' : '' }}>Agent</option>
+                <option value="3" {{ old('role', $user->role ?? '') == '3' ? 'selected' : '' }}>Sub-Admin</option>
             </select>
 
             <x-input-error  :messages="$errors->get('role')" />

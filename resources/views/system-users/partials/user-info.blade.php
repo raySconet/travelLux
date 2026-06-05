@@ -1,9 +1,16 @@
 <div>
     <div class="systemUserIconContainer">
-        <img src="{{ asset('images/mickey.png') }}" style="width: 60px;  height: 60px; margin-bottom:10px;" alt="Mickey!">
+        @php
+            $profilePhoto = $user->profile_photo
+                ? asset('storage/attachments/users/' . $user->profile_photo)
+                : asset('images/mickey.png');
+        @endphp
 
-        <button type="button" class="btn archerBtn" id="editProfilePhoto">Edit</button>
-        <input type="file" id="profile_photo" name="profile_photo" style="display:none;" />
+        <img src="{{ $profilePhoto }}" id="profilePhotoPreview" style="width: 60px; height: 60px; margin-bottom:10px; object-fit:cover; border-radius:50%;" alt="Profile Photo" >
+
+        <button type="button" class="btn" id="editProfilePhoto">Edit</button>
+
+        <input type="file" id="profile_photo" name="profile_photo" accept="image/*" style="display:none;"/>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
@@ -130,7 +137,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 items-center">
         <div class="relative mt-5 md:col-span-2">
-            <x-text-input type="text" name="username" class="w-full" value="{{ old('username', $user->username ?? '') }}" />
+            <x-text-input type="text" name="username"  id="username" class="w-full" value="{{ old('username', $user->username ?? '') }}" />
             <x-input-label for="username">User Name</x-input-label>
         </div>
 

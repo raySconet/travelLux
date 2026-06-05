@@ -172,6 +172,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/itinerary/create', [ItineraryController::class, 'create'])->name('itinerary.create');
     Route::post('/itinerary/store', [ItineraryController::class, 'store'])->name('itinerary.store');
     Route::put('/itinerary/{itinerary}', [ItineraryController::class, 'update'])->name('itinerary.update');
+    Route::get('/itinerary/{itinerary}/view', [ItineraryController::class, 'view'])->name('itinerary.view');
     Route::get('/itinerary/{itinerary}', [ItineraryController::class, 'edit'])->name('itinerary.edit');
     Route::delete('/itinerary/{itinerary}', [ItineraryController::class, 'destroy'])->name('itinerary.destroy');
     
@@ -179,9 +180,19 @@ Route::middleware('auth')->group(function () {
     Route::put('/itinerary/day/{day}', [ItineraryController::class, 'updateDay'])->name('itineraryDay.update');
     Route::delete('/itinerary/day/{day}', [ItineraryController::class, 'destroyDay'])->name('itineraryDay.destroy');
 
+    Route::post('/itinerary/event/store', [ItineraryController::class, 'storeEvent'])->name('itineraryEvent.store');
+    Route::put('/itinerary/event/{event}', [ItineraryController::class, 'updateEvent'])->name('itineraryEvent.update');
     Route::delete('/itinerary/event/{event}', [ItineraryController::class, 'destroyEvent'])->name('itineraryEvent.destroy');
 
     Route::get('/itinerary/{itinerary}/pdf', [ItineraryController::class, 'downloadPdf'])->name('itinerary.pdf');
+
+    Route::post('/itinerary/{itinerary}/attachments', [ItineraryController::class, 'storeAttachment'])->name('itinerary.attachments.store');
+    Route::delete('/itinerary/attachments/{attachment}', [ItineraryController::class, 'deleteAttachment'])->name('itinerary.attachments.delete');
+    Route::get('/itinerary/attachments/{attachment}/view', [ItineraryController::class, 'viewAttachment'])->name('itinerary.attachments.view');
+
+    Route::post('/itinerary/{itinerary}/cover-photo', [ItineraryController::class, 'updateCoverPhoto'])->name('itinerary.cover.update');
+
+    Route::post('/itinerary/{itinerary}/duplicate', [ItineraryController::class, 'duplicate'])->name('itinerary.duplicate');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/customer-list', [CustomerController::class, 'index'])->name('customers.customerList');
@@ -243,6 +254,10 @@ Route::middleware('auth')->group(function(){
     Route::post('/reservation/{reservation}/unlink', [ReservationController::class, 'unlinkReservation'])->name('reservations.unlink');
 
     Route::delete('/reservation-attachments/{attachment}', [ReservationController::class, 'destroyAttachment'])->name('reservations.attachments.destroy');
+
+    Route::get('/ajax/destinations', [ReservationController::class, 'getDestinationsByProduct']);
+    Route::get('/ajax/resorts', [ReservationController::class, 'getResortsByDestination']);
+    Route::get('/ajax/cruises', [ReservationController::class, 'getCruisesByResort']);
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');
@@ -254,9 +269,28 @@ Route::middleware('auth')->group(function(){
 });
 Route::middleware('auth')->group(function(){
     Route::get('/agentDashboard',[AgentDashboardController::class,'index'])->name('dashboards.agentDashboard');
+    Route::get('/agentDashboard/upcoming-reservations', [AgentDashboardController::class, 'upcomingReservations']);
+    Route::get('/agentDashboard/total-sales',[AgentDashboardController::class, 'totalSales']);
+    Route::get('/agentDashboard/recent-commissions',[AgentDashboardController::class, 'recentCommissions']);
+
     Route::get('/overallTaskDashboard', [OverallTaskDashboardController::class,'index'])->name('dashboards.overallTaskDashboard');
+    Route::get('/overallTaskDashboard/tasks/{priority}/{period}', [OverallTaskDashboardController::class,'tasks'])->name('dashboards.overallTaskDashboard.tasks');
+    Route::get('/overallTaskDashboard/stats/{agent?}', [OverallTaskDashboardController::class,'stats'])->name('dashboards.overallTaskDashboard.stats');
+
     Route::get('/myOverallTaskDashboard', [MyOverallTaskDashboardController::class,'index'])->name('dashboards.myOverallTaskDashboard');
+    Route::get('/myOverallTaskDashboard/tasks/{priority}/{period}',[MyOverallTaskDashboardController::class, 'tasks'])->name('dashboards.myOverallTaskDashboard.tasks');
+    Route::post('/tasks/{task}/complete-only', [MyOverallTaskDashboardController::class, 'completeOnlyTask'])->name('tasks.completeOnly');
+    Route::delete('myOverallDashboard/tasks/{task}', [MyOverallTaskDashboardController::class, 'destroy'])->name('tasks.destroy');
+
     Route::get('/ownersDashboard', [OwnersDashboardController::class,'index'])->name('dashboards.ownersDashboard');
+    Route::get('/ownersDashboard/agency-total-sales', [OwnersDashboardController::class,'agencyTotalSales']);
+    Route::get('/ownersDashboard/agent-birthdays-counts', [OwnersDashboardController::class, 'agentBirthdayCounts']);
+    Route::get('/ownersDashboard/agent-birthdays-details/{range}', [OwnersDashboardController::class, 'agentBirthdayDetails']);
+    Route::get('/ownersDashboard/customer-birthdays-counts', [OwnersDashboardController::class,'customerBirthdayCounts']);
+    Route::get('/ownersDashboard/customer-birthdays-details/{range}', [OwnersDashboardController::class,'customerBirthdayDetails']);
+    Route::get('/ownersDashboard/customer-anniversary-counts', [OwnersDashboardController::class,'customerAnniversaryCounts']);
+    Route::get('/ownersDashboard/customer-anniversary-details/{range}', [OwnersDashboardController::class,'customerAnniversaryDetails']);
+    
     Route::get('/checkingInThisWeek', [CheckingInThisWeekController::class,'index'])->name('dashboards.checkingInThisWeek');
 });
 Route::middleware('auth')->group(function(){

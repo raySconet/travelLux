@@ -48,42 +48,42 @@
                 <input type="hidden" name="activeTab" :value="section">
                 <div class="topButtonsGroup">
                     <div class="btn-group systemUsersNav" role="group">
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'home' }" @click="section = 'home'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'home' }" @click="section = 'home'">
                             <i title="Home Address" style="font-size:20px;" class="fas fa-map-marker-alt"></i>
                         </button>
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'rewards' }" @click="section = 'rewards'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'rewards' }" @click="section = 'rewards'">
                             <i title="Rewards" style="font-size:20px;" class="fas fa-trophy"></i>
                         </button>
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'family' }" @click="section = 'family'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'family' }" @click="section = 'family'">
                             <i title="Family" style="font-size:20px;" class="fas fa-user-friends"></i>
                         </button>
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'forms'}"  @click="section = 'forms'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'forms'}"  @click="section = 'forms'">
                             <i title="Forms" style="font-size:20px;" class="fab fa-wpforms"></i>
                         </button>    
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'surveys'}" @click="section = 'surveys'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'surveys'}" @click="section = 'surveys'">
                             <i title="Surveys" style="font-size:20px;" class="fas fa-comments"></i>
                         </button> 
                         @if(!$isNewCustomer)
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'selfServiceInvitations'}" @click="section = 'selfServiceInvitations'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'selfServiceInvitations'}" @click="section = 'selfServiceInvitations'">
                             <i title="Self Service Invitations" style="font-size:20px;" class="fas fa-address-card"></i>
                         </button>  
                         @endif
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'travelHistory'}" @click="section = 'travelHistory'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'travelHistory'}" @click="section = 'travelHistory'">
                             <i title="Travel History" style="font-size:20px;" class="fas fa-history"></i>
                         </button>     
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'referredBy'}" @click="section = 'referredBy'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'referredBy'}" @click="section = 'referredBy'">
                             <i title="Referred By" style="font-size:20px;" class="fas fa-tag"></i>
                         </button> 
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'autoEmails'}" @click="section = 'autoEmails'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'autoEmails'}" @click="section = 'autoEmails'">
                             <i title="Sent Auto Emails" style="font-size:20px;" class="fas fa-envelope"></i>
                         </button>       
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'generalNotes'}" @click="section = 'generalNotes'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'generalNotes'}" @click="section = 'generalNotes'">
                             <i title="General Notes" style="font-size:20px;" class="fas fa-sticky-note"></i>
                         </button>    
                     </div>
                 </div>
 
-                <div class="mt-4">
+                {{-- <div class="mt-4">
                     <div x-show="section === 'home'" x-cloak>
                         @include('customers.partials.home-address')
                     </div>
@@ -123,6 +123,70 @@
                     <div x-show="section === 'generalNotes'" x-cloak>
                         @include('customers.partials.generalNotes')
                     </div>    
+                </div> --}}
+
+                <div class="mt-4">
+
+                    <template x-if="section === 'home'">
+                        <div>
+                            @include('customers.partials.home-address')
+                        </div>
+                    </template>
+
+                    <template x-if="section === 'rewards'">
+                        <div>
+                            @include('customers.partials.airline-cruises-rewards')
+                        </div>
+                    </template>
+
+                    <template x-if="section === 'family'">
+                        <div>
+                            @include('customers.partials.family')
+                        </div>
+                    </template>
+
+                    <template x-if="section === 'forms'">
+                        <div>
+                            @include('customers.partials.forms')
+                        </div>
+                    </template>
+
+                    <template x-if="section === 'surveys'">
+                        <div>
+                            @include('customers.partials.surveys')
+                        </div>
+                    </template>
+
+                    <template x-if="section === 'selfServiceInvitations'">
+                        <div>
+                            @include('customers.partials.selfServiceInvitations')
+                        </div>
+                    </template>
+
+                    <template x-if="section === 'travelHistory'">
+                        <div>
+                            @include('customers.partials.travelHistory')
+                        </div>
+                    </template>
+
+                    <template x-if="section === 'referredBy'">
+                        <div>
+                            @include('customers.partials.referredBy')
+                        </div>
+                    </template>
+
+                    <template x-if="section === 'autoEmails'">
+                        <div>
+                            @include('customers.partials.autoEmails')
+                        </div>
+                    </template>
+
+                    <template x-if="section === 'generalNotes'">
+                        <div>
+                            @include('customers.partials.generalNotes')
+                        </div>
+                    </template>
+
                 </div>
             </div>
         </div>

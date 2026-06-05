@@ -19,7 +19,7 @@
             <button type="button"
                     id="attachReservationBtn"
                     class="text-[#B6844A] text-2xl flex-shrink-0">
-                <i class="fas fa-plus-circle"></i>
+                <i class="fas fa-plus-circle cursor-pointer"></i>
             </button>
         </div>
     </div>
@@ -56,7 +56,7 @@
 
                     <a href="{{ asset('storage/attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension) }}" target="_blank">
 
-                        <i title="Download Attachment" class="fas fa-cloud-download-alt text-[#bdbdbd] text-xl mt-3"></i>
+                        <i title="Download Attachment" class="fas fa-cloud-download-alt text-[#bdbdbd] text-xl mt-3 cursor-pointer"></i>
 
                     </a>
 
@@ -67,7 +67,7 @@
 
                         <button type="submit">
 
-                            <i title="Delete Attachment" class="fas fa-trash text-[#bdbdbd] text-xl mt-3" onclick="openDeleteModal(this)"></i>
+                            <i title="Delete Attachment" class="fas fa-trash text-[#bdbdbd] text-xl mt-3 cursor-pointer" onclick="openDeleteModal(this)"></i>
 
                         </button>
 

@@ -136,7 +136,7 @@
                 <h2 class="text-xl">Edit Reservation</h2>
             </div>
 
-            <button type="button" onclick="closeEditReservationCheckWriterModal()" class="text-gray-400 hover:text-gray-600">
+            <button type="button" onclick="closeEditReservationCheckWriterModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                 ✕
             </button>
         </div>

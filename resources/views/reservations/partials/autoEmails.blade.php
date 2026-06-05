@@ -31,7 +31,7 @@
                             {{ $item->date ? \Carbon\Carbon::parse($item->date)->format('m/d/Y') : '' }}
                         </td>
                         <td class="w-1/12 flex mt-3 space-x-6 text-lg mr-4"> 
-                            <i title="Resend to Customer" class="fas fa-paper-plane text-[#B6844A]"></i> 
+                            <i title="Resend to Customer" class="fas fa-paper-plane text-[#B6844A] cursor-pointer"></i> 
                             <i title="View Email" class="fas fa-eye text-[#bdbdbd] cursor-pointer" onclick='openReservationAutomatedEmailModal(@json($item->automatedEmail->message),@json($reservation->agent->fname ?? ""),@json($reservation->agent->lname ?? ""),@json($reservation->agent->phone_number ?? ""),@json($reservation->agent->email ?? ""))'></i>
                         </td>
                     </tr>
@@ -58,7 +58,7 @@
         <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
             <h2 class="text-base">Reservation Automated Email</h2>
 
-            <button type="button" onclick="closeReservationAutomatedEmailModal()" class="text-gray-400 hover:text-gray-600">
+            <button type="button" onclick="closeReservationAutomatedEmailModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                 ✕
             </button>
         </div>

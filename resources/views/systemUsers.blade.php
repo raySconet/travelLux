@@ -72,7 +72,13 @@
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $user->role === 1 ? 'Administrator' : 'Agent' }}
+                                    @if($user->role == 1)
+                                        Administrator
+                                    @elseif($user->role == 2)
+                                        Agent
+                                    @else
+                                        Sub-Admin
+                                    @endif
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">

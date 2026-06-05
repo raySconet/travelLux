@@ -1,19 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
-                <h2 class=" text-xl text-gray-500 leading-tight">
-                    <i class="fa-solid fa-tag mr-2 text-[#B6844A]"></i>{{ __('Reservations') }}
-                </h2>
+            <h2 class=" text-xl text-gray-500 leading-tight">
+                <i class="fa-solid fa-tag mr-2 text-[#B6844A]"></i>{{ __('Reservations') }}
+            </h2>
 
-                <div class="space-x-2">
-                    @if(auth()->user()->isAdmin())
-                        <x-secondary-buttonToDelete type="button" onclick="handleBulkDelete()">
-                            <i class="fas fa-trash"></i>
-                            <span>Delete Reservations</span>
-                        </x-secondary-buttonToDelete>
-                    @endif
-                    <x-primary-btn type="button" onclick="showLoaderOnSubmit(); window.location='{{ route('reservations.create') }}'"><i class="far fa-plus-square"></i><span>Add Reservations</span></x-primary-btn>
-                </div>
+            <div class="space-x-2">
+                @if(auth()->user()->isAdmin())
+                    <x-secondary-buttonToDelete type="button" onclick="handleBulkDelete()">
+                        <i class="fas fa-trash"></i>
+                        <span>Delete Reservations</span>
+                    </x-secondary-buttonToDelete>
+                @endif
+                <x-primary-btn type="button" onclick="showLoaderOnSubmit(); window.location='{{ route('reservations.create') }}'"><i class="far fa-plus-square"></i><span>Add Reservations</span></x-primary-btn>
+            </div>
         </div>
     </x-slot>
 
@@ -52,7 +52,7 @@
                     </button>
                     <div x-show="open" class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg">
                         <template x-for="opt in options" :key="opt">
-                            <div @click="toggle(opt); $nextTick(() => $el.closest('form').submit())" class="flex items-center justify-between px-3 py-2 text-sm cursor-pointer hover:bg-gray-100">
+                            <div @click="toggle(opt); showLoaderOnSubmit(); $nextTick(() => $el.closest('form').submit())" class="flex items-center justify-between px-3 py-2 text-sm cursor-pointer hover:bg-gray-100">
                                 <span x-text="opt"></span>
                                 <svg x-show="selected.includes(opt)" class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -63,7 +63,7 @@
                 </div>
 
                 @if(auth()->user()->isAdmin())
-                    <select name="users" id="users" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1"  onchange="this.form.submit()">
+                    <select name="users" id="users" class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1"  onchange="showLoaderOnSubmit();this.form.submit()">
                         <option value="-1" {{ $agentId == -1 ? 'selected' : ''}}>All Agents</option>
                         @foreach ($users as $user)
                             <option value="{{ $user->id }}" {{ $agentId == $user->id ? 'selected' : ''}}>
@@ -99,7 +99,7 @@
                         <thead class="bg-white">
                             <tr>
                                 <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                    <i class="fas fa-paper-plane text-[#B6844A] text-base"></i>
+                                    <i class="fas fa-paper-plane text-[#B6844A] text-base cursor-pointer" title="Send Details to Customer"></i>
                                 </th>    
                                 <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                     Status

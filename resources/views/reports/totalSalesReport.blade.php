@@ -5,9 +5,9 @@
                 <i class="fa-solid fa-chart-area mr-2 text-[#B6844A]"></i>{{ __('Total Sales') }}
             </h2>
             
-            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A]"><i class="fas fa-cloud-download-alt"></i>Download</button>
+            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer"><i class="fas fa-cloud-download-alt"></i>Download</button>
 
-            <button class="flex items-center gap-2"><i class="far fa-calendar-alt text-[#212121] text-2xl" onclick="openReportDateRangeModal()"></i>-</button>
+            <button class="flex items-center gap-2"><i class="far fa-calendar-alt text-[#212121] text-2xl cursor-pointer" onclick="openReportDateRangeModal()"></i>-</button>
 
         </div>
     </x-slot>
@@ -17,13 +17,13 @@
             <div class="bg-white shadow sm:rounded-lg p-3" x-data="{ section: 'checkinDate' }">
                 <div class="topButtonsGroup" style="justify-content: left">
                     <div class="btn-group systemUsersNav" role="group">
-                        <button type="button" class="systemUsersSectionBtn" style="padding: 5px 8px !important; font-size:13px;" :class="{ 'active': section === 'checkinDate' }" @click="section = 'checkinDate'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" style="padding: 5px 8px !important; font-size:13px;" :class="{ 'active': section === 'checkinDate' }" @click="section = 'checkinDate'">
                             Checkin Date
                         </button>
-                        <button type="button" class="systemUsersSectionBtn" style="padding: 5px 8px !important; font-size:13px;" :class="{ 'active': section === 'bookDate' }" @click="section = 'bookDate'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" style="padding: 5px 8px !important; font-size:13px;" :class="{ 'active': section === 'bookDate' }" @click="section = 'bookDate'">
                             Book Date
                         </button>
-                        <button type="button" class="systemUsersSectionBtn" style="padding: 5px 8px !important; font-size:13px;" :class="{ 'active': section === 'checkinAndBookDate' }" @click="section = 'checkinAndBookDate'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" style="padding: 5px 8px !important; font-size:13px;" :class="{ 'active': section === 'checkinAndBookDate' }" @click="section = 'checkinAndBookDate'">
                             Checkin & Book Date
                         </button>
                     </div>

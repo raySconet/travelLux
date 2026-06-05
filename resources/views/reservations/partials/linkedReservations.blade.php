@@ -10,7 +10,7 @@
         <h6 class="text-xl">Traveling With</h6>
 
         <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openTravelingWithModal()">
-            <i class="fas fa-plus-circle"></i>
+            <i class="fas fa-plus-circle cursor-pointer"></i>
         </button>
     </div>     
 
@@ -59,7 +59,7 @@
                 <h2 class="text-base"> Add Linked Reservations </h2>
             </div>
 
-            <button type="button" onclick="closeTravelingWithModal()" class="text-gray-400 hover:text-gray-600">
+            <button type="button" onclick="closeTravelingWithModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                 ✕
             </button>
         </div>

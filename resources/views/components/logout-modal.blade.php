@@ -9,7 +9,7 @@
                 <h2 class="text-lg">Logout</h2>
             </div>
 
-            <button type="button" onclick="closeLogoutModal()" class="text-gray-400 hover:text-gray-400">
+            <button type="button" onclick="closeLogoutModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                 ✕
             </button>
         </div>

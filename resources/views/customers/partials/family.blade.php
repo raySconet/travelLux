@@ -10,7 +10,7 @@
         <h6 class="text-lg">Family</h6>
 
         <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openAddFamilyMemberModal()">
-            <i class="fas fa-plus-circle"></i>
+            <i class="fas fa-plus-circle cursor-pointer"></i>
         </button>
     </div>
 
@@ -32,7 +32,7 @@
                 @method('DELETE')
 
                 <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                    <i class="fa fa-trash text-base"></i>
+                    <i class="fa fa-trash text-base cursor-pointer"></i>
                 </button>
             </form>
         </div>
@@ -58,7 +58,7 @@
                         <h2 class="text-base">Add Family Member</h2>
                     </div>
 
-                    <button type="button" onclick="closeAddFamilyMemberModal()" class="text-gray-400 hover:text-gray-600">
+                    <button type="button" onclick="closeAddFamilyMemberModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                         ✕
                     </button>
                 </div>

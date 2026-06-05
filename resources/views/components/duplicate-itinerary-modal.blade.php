@@ -1,39 +1,50 @@
 <div id="duplicateItineraryModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
-    
+
     <div class="bg-white w-full max-w-3xl rounded-lg shadow-lg relative">
-        
+
         <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
             <div class="flex items-center space-x-2">
                 <i class="fas fa-copy text-[#B6844A] text-base"></i>
                 <h2 class="text-base">Duplicate</h2>
             </div>
 
-            <button type="button" onclick="closeDuplicateItineraryModal()" class="text-gray-400 hover:text-gray-600">
+            <button type="button" onclick="closeDuplicateItineraryModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                 ✕
             </button>
         </div>
 
-        <div class="px-6 py-4 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        <form id="duplicateItineraryForm">
 
-                <div class="relative mt-3">
-                    <x-text-input type="text" id="name" name="name" />
+            <div class="px-6 py-4 space-y-4">
 
-                    <x-input-label for="name">Title</x-input-label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+
+                    <div class="relative mt-3">
+                        <x-text-input type="text" id="duplicateName" name="name" />
+
+                        <x-input-label for="duplicateName">Title</x-input-label>
+                    </div>
+
+                    <div class="relative mt-3">
+                        <x-text-input type="date" id="duplicateDate" name="date" />
+
+                        <x-input-label for="duplicateDate">Date</x-input-label>
+                    </div>
+
                 </div>
 
-                <div class="relative mt-3">
-                    <x-text-input type="date" id="date" name="date" />
-
-                    <x-input-label for="date">Date</x-input-label>
-                </div>
             </div>
-        </div>
 
-        <div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-            <x-primary-btn type="submit">
-                <span>Save</span>
-            </x-primary-btn>
-        </div>
+            <div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
+
+                <x-primary-btn type="submit">
+                    <span>Save</span>
+                </x-primary-btn>
+
+            </div>
+
+        </form>
+
     </div>
+
 </div>

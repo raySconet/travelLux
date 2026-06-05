@@ -7,7 +7,7 @@
             <div class="flex items-center justify-between px-5 py-3 border-b border-[#dee2e6]">
                 <h2 class="text-[18px] font-normal text-[#212529]">Manage Event</h2>
 
-                <button type="button" onclick="closeManageEventItineraryModal()" class="text-[#545b62] hover:text-[#343a40] text-[18px]">
+                <button type="button" onclick="closeManageEventItineraryModal()" class="text-[#545b62] hover:text-[#343a40] text-[18px] cursor-pointer">
                     ✕
                 </button>
             </div>
@@ -66,7 +66,11 @@
 
                     </div>
 
-                    <div>
+                    <form id="manageEventForm">
+
+                        <input type="hidden" id="eventType" name="eventType">
+                        <input type="hidden" id="subcategoryId" name="subcategoryId">
+                        <input type="hidden" id="itineraryEventDayId" name="itineraryEventDayId">
 
                         <div class="pt-5">
 
@@ -135,7 +139,15 @@
 
                         </div>
 
-                    </div>
+                        <div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
+
+                            <x-primary-btn type="submit">
+                                <span>Save</span>
+                            </x-primary-btn>
+
+                        </div>
+
+                    </form>
 
                 </div>
 

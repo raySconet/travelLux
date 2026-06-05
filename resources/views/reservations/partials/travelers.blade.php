@@ -26,7 +26,7 @@
                 <div class="flex items-center gap-3">
                     <form method="POST" action="{{ route('travelers.toggleInclude', $traveler->id) }}" class="inline">
                         @csrf
-                        <button onclick="event.stopPropagation();" type="submit">
+                        <button onclick="showLoaderOnSubmit();event.stopPropagation();" type="submit" class="cursor-pointer">
                             @if($traveler->is_included == 0)
                                 <i class="far fa-check-circle text-[#bdbdbd] text-2xl"></i>
                             @else

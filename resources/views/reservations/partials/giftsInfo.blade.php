@@ -13,12 +13,12 @@
         <h6 class="text-xl">Gifts</h6>
         
         <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openGiftsModal()">
-            <i class="fas fa-plus-circle"></i>
+            <i class="fas fa-plus-circle cursor-pointer"></i>
         </button>
     </div>
     
     @forelse($reservation->gifts()->where('is_deleted',0)->get() as $gift)
-        <div class="flex justify-between mt-5" onclick='openEditGiftInfoModal(@json($gift))'>
+        <div class="flex justify-between mt-5 cursor-pointer" onclick='openEditGiftInfoModal(@json($gift))'>
             <div class="flex flex-col ml-2 text-sm">
                 <div class="flex gap-1">
                     <i class="fas fa-user text-base mt-1"></i>
@@ -34,7 +34,7 @@
                 @method('DELETE')
 
                 <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                    <i title="Delete Gift" class="fa fa-trash text-[#bdbdbd] text-xl mt-5"></i>
+                    <i title="Delete Gift" class="fa fa-trash text-[#bdbdbd] text-xl mt-5 cursor-pointer"></i>
                 </button>
             </form>
         </div>

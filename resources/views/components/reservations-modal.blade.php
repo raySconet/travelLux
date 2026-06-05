@@ -17,7 +17,7 @@
                 <h2 class="text-base">{{ $title }}</h2>
             </div>
 
-            <button type="button" onclick="{{ $close }}" class="text-gray-400 hover:text-gray-600">
+            <button type="button" onclick="{{ $close }}" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                 ✕
             </button>
         </div>
@@ -27,7 +27,7 @@
         </div>
 
         <div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-            <x-primary-btn type="submit" class="{{ $saveClass }}">
+            <x-primary-btn type="submit" class="{{ $saveClass }}" onclick="showLoaderOnSubmit()">
                 <i class="fa fa-paper-plane"></i>
                 <span>Save</span>
             </x-primary-btn>

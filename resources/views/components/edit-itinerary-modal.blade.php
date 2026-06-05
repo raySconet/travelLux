@@ -8,7 +8,7 @@
                 <h2 class="text-base">Edit Itinerary</h2>
             </div>
 
-            <button type="button" onclick="closeEditItineraryModal()" class="text-gray-400 hover:text-gray-600">
+            <button type="button" onclick="closeEditItineraryModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                 ✕
             </button>
         </div>

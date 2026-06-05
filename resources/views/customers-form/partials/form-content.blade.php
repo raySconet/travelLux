@@ -5,7 +5,7 @@
         {!! $customerForm->form_items_html_content ?? '' !!}
     </div>
     <el-dropdown class="inline-block">
-        <button class="bg-[#6c757d] text-white mt-3 flex items-center gap-2 py-1 px-2 mb-3 rounded">
+        <button class="bg-[#6c757d] text-white mt-3 flex items-center gap-2 py-1 px-2 mb-3 rounded cursor-pointer">
             <i class="fas fa-plus"></i>Add Form Item
         </button>
 

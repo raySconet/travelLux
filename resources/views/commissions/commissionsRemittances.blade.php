@@ -169,7 +169,7 @@
                     </h2>
                 </div>
 
-                <button onclick="closeEditReservationModal()" class="text-gray-400 hover:text-gray-600">
+                <button onclick="closeEditReservationModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                     ✕
                 </button>
             </div>

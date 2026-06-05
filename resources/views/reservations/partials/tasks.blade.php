@@ -16,26 +16,23 @@
         </h6>
 
         <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openReservationsTasksModal()">
-            <i class="fas fa-plus-circle"></i>
+            <i class="fas fa-plus-circle cursor-pointer"></i>
         </button>
     </div>
 
     <hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
     <div class="relative flex flex-col justify-between gap-3 mt-3">
         <h5 class="text-base">Timeline Tasks</h5>
-        @php
-            $timelineTasks = $reservation->tasks()->where('is_deleted', 0)->where('is_timeline_task', 1)->get();
-        @endphp
 
             @forelse($timelineTasks as $task)
                 @php
                     $isOverdue = $task->is_completed == 0 && $task->due_date && \Carbon\Carbon::parse($task->due_date)->lte(\Carbon\Carbon::today());
                 @endphp
-                <div class="flex justify-between mt-1" onclick='openEditTaskModal(@json($task))'>
+                <div class="flex justify-between mt-1 cursor-pointer" onclick='openEditTaskModal(@json($task))'>
                     <div class="flex gap-5">
                         <form method="POST" action="{{ route('tasks.toggleComplete', $task->id) }}" class="inline">
                             @csrf
-                            <button onclick="event.stopPropagation();" type="submit">
+                            <button onclick="showLoaderOnSubmit();event.stopPropagation();" type="submit" class="cursor-pointer">
                                 @if($task->is_completed == 0)
                                     <i title="Complete Task" class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl" title="Complete Task"></i>
                                 @else
@@ -71,7 +68,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                                <i title="Delete Task" class="fa fa-trash text-[#bdbdbd]"></i>
+                                <i title="Delete Task" class="fa fa-trash text-[#bdbdbd] cursor-pointer"></i>
                             </button>
                         </form>
                     </div>
@@ -84,15 +81,15 @@
     <div class="relative flex flex-col justify-between gap-3 mt-3">
         <h5 class="text-base">General Tasks.</h5>
 
-        @forelse($reservation->tasks()->where('is_deleted',0)->where('is_timeline_task',0)->get() as $task)
+        @forelse($generalTasks as $task)
             @php
                 $isOverdue = $task->is_completed == 0 && $task->due_date && \Carbon\Carbon::parse($task->due_date)->lte(\Carbon\Carbon::today());
             @endphp
-            <div class="flex justify-between mt-1" onclick='openEditTaskModal(@json($task))'>
+            <div class="flex justify-between mt-1 cursor-pointer" onclick='openEditTaskModal(@json($task))'>
                 <div class="flex gap-5">
                     <form method="POST" action="{{ route('tasks.toggleComplete', $task->id) }}" class="inline">
                         @csrf
-                        <button onclick="event.stopPropagation();" type="submit">
+                        <button onclick="event.stopPropagation();" type="submit" class="cursor-pointer">
                             @if($task->is_completed == 0)
                                 <i title="Complete Task" class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl" title="Complete Task"></i>
                             @else
@@ -128,7 +125,7 @@
                         @csrf
                         @method('DELETE')
                         <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                            <i title="Delete Task" class="fa fa-trash text-[#bdbdbd]"></i>
+                            <i title="Delete Task" class="fa fa-trash text-[#bdbdbd] cursor-pointer"></i>
                         </button>
                     </form>
                 </div>

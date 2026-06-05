@@ -178,4 +178,13 @@ class Reservation extends Model
         return $this->hasMany(ReservationAttachment::class, 'reservation_id');
     }
 
+    public function paidInFullAudits()
+    {
+        return $this->hasMany(ReservationPaidInFullAudit::class, 'reservation_id')->with('modifiedByUser')->latest('modified_on');
+    }
+
+    public function paidCommissions()
+    {
+        return $this->hasMany(PaidCommission::class, 'reservation_id', 'id');
+    }
 }

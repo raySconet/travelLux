@@ -38,7 +38,7 @@
 
                 @if(empty($customer->secondary_email))
                     <button type="button" id="addSecondaryEmail" class="text-[#B6844A] text-2xl flex-shrink-0 mt-9">
-                        <i class="fas fa-plus-circle"></i>
+                        <i class="fas fa-plus-circle cursor-pointer"></i>
                     </button>
                 @endif
             </div>

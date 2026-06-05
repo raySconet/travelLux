@@ -5,7 +5,7 @@
                 <i class="fa-solid fa-chart-pie mr-2 text-[#B6844A]"></i>{{ __('Alias Total Gross Commission') }}
             </h2>
             
-            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A]"><i class="fas fa-cloud-download-alt"></i>Download</button>
+            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer"><i class="fas fa-cloud-download-alt"></i>Download</button>
 
         </div>
     </x-slot>

@@ -1,14 +1,21 @@
-<x-app-layout>
+@php
+    $viewOnly = $viewOnly ?? false;
+@endphp
+<x-app-layout :viewOnly="$viewOnly ?? false">
     <x-slot name="header">
         <div class="py-4 px-4 bg-white shadow sm:rounded-none flex items-center justify-between">
                 <h2 class=" text-xl text-gray-500 leading-tight">
                     <i class="fa-solid fa-plane mr-2 text-[#B6844A]"></i>{{ __('Itinerary') }}
                 </h2>
 
+                @if(!$viewOnly)
                 <div class="space-x-2">
                     <x-primary-btn  onclick="openImportReservationBookings()"><i class="far fa-plus-square"></i><span>Import Bookings</span></x-primary-btn>
-                    <x-secondary-btn><i class="fas fa-link"></i><span>Copy Link</span></x-secondary-btn>
-                    <x-secondary-btn onclick="window.location='{{ route('itinerary.pdf', $itinerary->id) }}'">
+                    <x-secondary-btn onclick="copyItineraryLink('{{ route('itinerary.view', $itinerary->id) }}')">
+                        <i class="fas fa-link"></i>
+                        <span>Copy Link</span>
+                    </x-secondary-btn>
+                    <x-secondary-btn onclick="openPdf('{{ route('itinerary.pdf', $itinerary->id) }}')">
                         <i class="fas fa-file-pdf"></i>
                         <span>Pdf</span>
                     </x-secondary-btn>
@@ -17,15 +24,16 @@
                         <span>Duplicate</span>
                     </x-secondary-buttonToDelete>
                     <form method="POST" action="{{ route('itinerary.destroy', $itinerary->id)}}" class="inline delete-form">
-                            @csrf
-                            @method('DELETE')
+                        @csrf
+                        @method('DELETE')
 
-                            <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)">
-                                <i class="fas fa-trash"></i><span>Delete</span>
-                            </x-secondary-buttonToDelete>
+                        <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)">
+                            <i class="fas fa-trash"></i><span>Delete</span>
+                        </x-secondary-buttonToDelete>
                     </form>
                     <x-primary-btn onclick="window.location='{{ route('itinerary.index') }}'"><i class="far fa-minus-square"></i><span>Close Trip</span></x-primary-btn>
                 </div>
+                @endif
         </div>
     </x-slot>
 
@@ -35,19 +43,34 @@
 
         <div class="cover-image-container">
             <a href="/">
-                <img src="{{ asset('images/archer-logo.png') }}" alt="Logo" class="cover-image" />
+                @php
+                    $cover = $itinerary->itineraryImages()
+                        ->where('is_deleted', 0)
+                        ->latest()
+                        ->first();
+
+                    $coverUrl = $cover
+                        ? asset('storage/attachments/itineraries/covers/' . $cover->id . '.' . $cover->extension)
+                        : asset('images/archer-logo.png');
+                @endphp
+
+                <img src="{{ $coverUrl }}" class="cover-image" />
             </a>
 
             <div class="cover-overlay">
                 <h4 class="flex items-center gap-2 text-lg">
                     <span>{{ $itinerary->name }}</span>
-                    <i class="fas fa-pencil-alt text-base cursor-pointer" onclick="openEditItineraryModal()" id="editItineraryNamePencil"></i>
+                    @if(!$viewOnly)
+                        <i class="fas fa-pencil-alt text-base cursor-pointer" onclick="openEditItineraryModal()" id="editItineraryNamePencil"></i>
+                    @endif
                 </h4>
 
-                <h5 class="flex items-center gap-2 text-base"  id="changeItineraryCoverPhotoBtn">
+                @if(!$viewOnly)
+                <h5 class="flex items-center gap-2 text-base cursor-pointer"  id="changeItineraryCoverPhotoBtn">
                     <i class="far fa-image"></i>
                     Change cover photo
                 </h5>
+                @endif
             </div>
         </div>
     </div>
@@ -55,14 +78,18 @@
     <div class="bg-white shadow rounded-none mt-4 p-4 ml-3">
         <div class="grid grid-cols-12 gap-6">
             <div class="col-span-2 flex flex-col gap-2 border-r border-[#ccc] pr-2">
+                @if(!$viewOnly)
                 <x-primary-btn id="addDayBtn" data-itinerary-id="{{ $itinerary->id }}" class="flex items-center justify-center gap-2 w-full px-8">
-                    <i class="far fa-plus-square mt-1"></i>
+                    <i class="far fa-plus-square"></i>
                     Add Day
                 </x-primary-btn>
+                @endif
 
-               
-                <div class="flex items-center justify-between border-t-2 border-b-2 border-[#dee2e6] px-2 py-1">
+
+                <div id="attachmentsBtn" class="flex items-center justify-between border-t-2 border-b-2 border-[#dee2e6] px-2 py-1 hover:bg-gray-50 cursor-pointer">
+                    <input type="file" id="itineraryAttachmentsInput" multiple hidden>
                     <span class="font-medium text-base">Attachments</span>
+
                     <button class="text-[#ccc] text-lg">
                         <i class="fas fa-paperclip"></i>
                     </button>
@@ -86,7 +113,7 @@
 
                             </div>
 
-                            <button class="text-[#ccc] text-base delete-day-btn" data-day-id="{{ $day->id }}">
+                            <button class="text-[#ccc] text-base delete-day-btn cursor-pointer" data-day-id="{{ $day->id }}">
                                 <i class="fas fa-times"></i>
                             </button>
 
@@ -148,6 +175,7 @@
 
                 </div>
                 
+                @if(!$viewOnly)
                 <div class="col-span-4 flex flex-col gap-1 items-end">
                     
                     <div class="flex gap-2">
@@ -169,12 +197,12 @@
                     </div>
 
                     <div class="flex gap-2 mt-2 w-full">
-                        <button class="flex-1 text-white px-4 xl:px-8 py-2 rounded text-sm transition"
+                        <button class="flex-1 text-white px-4 xl:px-8 py-2 rounded text-sm transition cursor-pointer"
                             :class="section === 'yourItems' ? 'bg-[#B6844A]': 'bg-[#696969]'" @click="section = 'yourItems'">
                             Your Items
                         </button>
 
-                        <button  class="flex-1 text-white px-4 xl:px-8 py-2 rounded text-sm transition"
+                        <button  class="flex-1 text-white px-4 xl:px-8 py-2 rounded text-sm transition cursor-pointer"
                             :class="section === 'guides' ? 'bg-[#B6844A]' : 'bg-[#696969]'" @click="section = 'guides'">
                             Guides
                         </button>
@@ -195,13 +223,13 @@
                             <label class="text-lg">Guide Search</label>
                             <div x-data="{ guideSearchSection: 'searchByCity' }" class="flex flex-col gap-2">
                                 <div class="flex gap-2 mt-2">
-                                    <button class="text-white px-3 py-2 rounded text-sm transition"
+                                    <button class="text-white px-3 py-2 rounded text-sm transition cursor-pointer"
                                         :class="guideSearchSection === 'searchByCity' ? 'bg-[#B6844A]' : 'bg-[#696969]'"
                                         @click="guideSearchSection = 'searchByCity'">
                                         Search By City
                                     </button>
 
-                                    <button class="text-white px-3 py-2 rounded text-sm transition"
+                                    <button class="text-white px-3 py-2 rounded text-sm transition cursor-pointer"
                                         :class="guideSearchSection === 'searchByCountry' ? 'bg-[#B6844A]' : 'bg-[#696969]'"
                                         @click="guideSearchSection = 'searchByCountry'">
                                         Search By Country
@@ -247,13 +275,18 @@
 
                     </div>
                 </div>
+                @endif
 
             </div>
         </div>
     </div>
 
+    <div id="copySuccessOverlay" class="fixed inset-0 hidden items-center justify-center bg-black/40 z-[9999]">
+        <i class="fas fa-check-square text-[#B6844A] text-8xl"></i>
+    </div>
 
 </x-app-layout>
+
 <x-import-reservation-bookings />
 <x-delete-modal />
 <x-duplicate-itinerary-modal />
@@ -268,4 +301,8 @@
         name: @json($itinerary->name),
         date: @json($itinerary->date),
     };
+
+    const itineraryAttachments = @json($itinerary->attachments);
+    
+    const VIEW_ONLY = @json($viewOnly ?? false);
 </script>

@@ -1,7 +1,9 @@
 <div class="relative mt-3 mb-8">
-    <x-text-input type="text" id="itineraryActivityFormTitle" name="itineraryActivityFormTitle" />
+    <x-text-input type="text"  name="itineraryActivityFormTitle" />
 
     <x-input-label for="itineraryActivityFormTitle">Title*</x-input-label>
+    
+    <p class="validation-error text-red-500 text-sm mt-1 hidden"></p>
 </div>
 
 <div class="mb-8">
@@ -18,19 +20,19 @@
 <div class="grid grid-cols-3 gap-4">
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryActivityFormBookedThrough" name="itineraryActivityFormBookedThrough" />
+        <x-text-input type="text" name="itineraryActivityFormBookedThrough" />
 
         <x-input-label for="itineraryActivityFormBookedThrough">Booked Through</x-input-label>
     </div>
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryActivityFormConfirmation" name="itineraryActivityFormConfirmation" />
+        <x-text-input type="text" name="itineraryActivityFormConfirmation" />
 
         <x-input-label for="itineraryActivityFormConfirmation">Confirmation #</x-input-label>
     </div>
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryActivityFormProvider" name="itineraryActivityFormProvider" />
+        <x-text-input type="text"  name="itineraryActivityFormProvider" />
 
         <x-input-label for="itineraryActivityFormProvider">Provider</x-input-label>
     </div>
@@ -39,14 +41,14 @@
 <div class="grid grid-cols-3 gap-4">
     
     <div class="relative mt-1">
-        <x-text-input type="time" id="itineraryActivityFormTime" name="itineraryActivityFormTime" />
+        <x-text-input type="time"  name="itineraryActivityFormTime" />
 
         <x-input-label for="itineraryActivityFormTime">Time</x-input-label>
     </div>
 
     <div class="relative mt-2">
         <label for="itineraryActivityFormDuration">Duration</label>
-        <select name="itineraryActivityFormDuration" id="itineraryActivityFormDuration" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryActivityFormDuration"  class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="15m">15 minutes</option>
             <option value="30m">30 minutes</option>
             <option value="45m">45 minutes</option>
@@ -313,7 +315,7 @@
     
     <div class="relative mt-2">
         <label for="itineraryActivityFormTimezone">Timezone</label>
-        <select name="itineraryActivityFormTimezone" id="itineraryActivityFormTimezone" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryActivityFormTimezone"  class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="-1">Automatic</option>
             <option value="UTC-11:00">Samoa Time (Pago Pago, Samoa) (UTC-11:00)</option>
             <option value="UTC-11:00">Niue Time (Niue) (UTC-11:00)</option>
@@ -442,14 +444,14 @@
 <h3 class="text-[20px] text-[#212529] mb-1">Price</h3>
 <div class="grid grid-cols-2 gap-4">
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryActivityFormAmount" name="itineraryActivityFormAmount" />
+        <x-text-input type="text"  name="itineraryActivityFormAmount" />
 
         <x-input-label for="itineraryActivityFormAmount">Amount</x-input-label>
     </div>
 
     <div class="relative mt-1">
         <label for="itineraryActivityFormCurrency">Currency</label>
-        <select name="itineraryActivityFormCurrency" id="itineraryActivityFormCurrency" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryActivityFormCurrency"  class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="$ (AUD)">$ (AUD)</option>
             <option value="$ (CAD)">$ (CAD)</option>
             <option value="Fr">Fr (CHF)</option>
@@ -461,9 +463,4 @@
             <option value="$" selected>$ (USD)</option>
         </select>
     </div>
-</div>
-<div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-    <x-primary-btn type="submit">
-        <span>Save</span>
-    </x-primary-btn>
 </div>

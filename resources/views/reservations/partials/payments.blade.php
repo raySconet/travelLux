@@ -10,21 +10,21 @@
     </div>    
 @else
     <div class="relative flex flex-row justify-between gap-3 mt-5">
-        <h6 class="text-lg space-x-2"><span>Credit Card Authorization Form</span> <i class="fas fa-paper-plane text-[#B6844A] text-lg"></i></h6>
+        <h6 class="text-lg space-x-2"><span>Credit Card Authorization Form</span> <i class="fas fa-paper-plane text-[#B6844A] text-lg cursor-pointer" title="Send Form"></i></h6>
     </div>  
 
     <div class="relative flex flex-row justify-between gap-3 mt-5">
         <h6 class="text-lg">Reservation Payments</h6>
 
         <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openReservationPaymentsModal()">
-            <i class="fas fa-plus-circle"></i>
+            <i class="fas fa-plus-circle cursor-pointer"></i>
         </button>
     </div>
 
     <div class="relative flex flex-col">
         @forelse($reservation->payments->where('is_deleted', 0) as $payment)
             <hr class="mt-6 w-full border-b-1 border-[#dee2e6]">
-            <div class="flex justify-between text-base mb-4 mt-2" onclick='openEditPaymentModal(@json($payment))'>
+            <div class="flex justify-between text-base mb-4 mt-2 cursor-pointer" onclick='openEditPaymentModal(@json($payment))'>
                 <div class="flex flex-col text-sm">
                     <div class="flex space-x-2 text-base">
                         <i class="fas fa-calendar-alt mt-1"></i>
@@ -40,7 +40,7 @@
                     @csrf
                     @method('DELETE')
                     <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                        <i title="Delete Payment" class="fas fa-trash text-[#bdbdbd] mt-3 text-xl"></i>
+                        <i title="Delete Payment" class="fas fa-trash text-[#bdbdbd] mt-3 text-xl cursor-pointer"></i>
                     </button>
                 </form>
             </div>

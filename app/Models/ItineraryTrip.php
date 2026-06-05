@@ -27,9 +27,9 @@ class ItineraryTrip extends Model
         return $this->hasMany(Reservation::class, 'itinerary_trip_id', 'id');
     }
 
-    public function itineraryAttachments()
+    public function attachments()
     {
-        return $this->hasMany(ItineraryAttachment::class, 'trip_id', 'id');
+        return $this->hasMany(ItineraryAttachment::class, 'trip_id', 'id')->where('isDeleted', 0);
     }
 
     public function itineraryDays()

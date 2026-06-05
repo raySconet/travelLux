@@ -13,16 +13,16 @@
         <h6 class="text-xl">Phone Notes</h6>
 
         <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openPhoneNotesModal()">
-            <i class="fas fa-plus-circle"></i>
+            <i class="fas fa-plus-circle cursor-pointer"></i>
         </button>
     </div>    
 
     @forelse($reservation->phoneNotes()->where('is_deleted',0)->get() as $phoneNote)
-        <div class="flex justify-between mt-5" onclick='openEditPhoneNote(@json($phoneNote))'>
+        <div class="flex justify-between mt-5 cursor-pointer" onclick='openEditPhoneNote(@json($phoneNote))'>
             <div class="flex gap-4">
                 <form method="POST" action="{{ route('phoneNotes.toggleCancel', $phoneNote->id) }}" class="inline">
                     @csrf
-                    <button onclick="event.stopPropagation();" type="submit">
+                    <button onclick="showLoaderOnSubmit();event.stopPropagation();" type="submit" class="cursor-pointer">
                         @if($phoneNote->is_canceled == 0)
                             <i title="Cancel this note" class="fas fa-minus-circle text-2xl text-[#bdbdbd] mt-7"></i>
                         @else
@@ -79,7 +79,7 @@
                 @method('DELETE')
 
                 <button type="button" method="POST" onclick="event.stopPropagation(); openDeleteModal(this)">
-                    <i title="Delete note" class="fas fa-trash text-[#bdbdbd] text-2xl mt-7"></i>
+                    <i title="Delete note" class="fas fa-trash text-[#bdbdbd] text-2xl mt-7 cursor-pointer"></i>
                 </button>
             </form>
         </div>

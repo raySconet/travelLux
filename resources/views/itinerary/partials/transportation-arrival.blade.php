@@ -1,7 +1,9 @@
 <div class="relative mt-3 mb-8">
-    <x-text-input type="text" id="itineraryTransportationFormTitle" name="itineraryTransportationFormTitle" />
+    <x-text-input type="text"  name="itineraryTransportationFormTitle" />
 
     <x-input-label for="itineraryTransportationFormTitle">Title*</x-input-label>
+
+    <p class="validation-error text-red-500 text-sm mt-1 hidden"></p>
 </div>
 
 <div class="mb-8">
@@ -17,14 +19,14 @@
 <div class="grid grid-cols-3 gap-4">
     
     <div class="relative mt-1">
-        <x-text-input type="time" id="itineraryTransportationFormTime" name="itineraryTransportationFormTime" />
+        <x-text-input type="time"  name="itineraryTransportationFormTime" />
 
         <x-input-label for="itineraryTransportationFormTime">Time</x-input-label>
     </div>
 
     <div class="relative mt-2">
         <label for="itineraryTransportationFormDuration">Duration</label>
-        <select name="itineraryTransportationFormDuration" id="itineraryTransportationFormDuration" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryTransportationFormDuration"  class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="15m">15 minutes</option>
             <option value="30m">30 minutes</option>
             <option value="45m">45 minutes</option>
@@ -291,7 +293,7 @@
     
     <div class="relative mt-2">
         <label for="itineraryTransportationFormTimezone">Timezone</label>
-        <select name="itineraryTransportationFormTimezone" id="itineraryTransportationFormTimezone" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryTransportationFormTimezone"  class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="-1">Automatic</option>
             <option value="UTC-11:00">Samoa Time (Pago Pago, Samoa) (UTC-11:00)</option>
             <option value="UTC-11:00">Niue Time (Niue) (UTC-11:00)</option>
@@ -421,26 +423,26 @@
 <div class="grid grid-cols-3 gap-4">
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryTransportationFormBookedThrough" name="itineraryTransportationFormBookedThrough" />
+        <x-text-input type="text"  name="itineraryTransportationFormBookedThrough" />
 
         <x-input-label for="itineraryTransportationFormBookedThrough">Booked Through</x-input-label>
     </div>
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryTransportationFormConfirmation" name="itineraryTransportationFormConfirmation" />
+        <x-text-input type="text"  name="itineraryTransportationFormConfirmation" />
 
         <x-input-label for="itineraryTransportationFormConfirmation">Confirmation #</x-input-label>
     </div>
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryTransportationFormCarrier" name="itineraryTransportationFormCarrier" />
+        <x-text-input type="text"  name="itineraryTransportationFormCarrier" />
 
         <x-input-label for="itineraryTransportationFormCarrier">Carrier</x-input-label>
     </div>
 </div>
 <div class="grid grid-cols-3 gap-4 mt-2 mb-2">
     <div class="relative mt-1">
-        <x-text-input for="text" id="itineraryTransportationFormTransportationNumber" name="itineraryTransportationFormTransportationNumber" />
+        <x-text-input for="text"  name="itineraryTransportationFormTransportationNumber" />
 
         <x-input-label for="itineraryTransportationFormTransportationNumber">Transportation Number</x-input-label>
     </div>
@@ -448,14 +450,14 @@
 <h3 class="text-[20px] text-[#212529] mb-1">Price</h3>
 <div class="grid grid-cols-2 gap-4">
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryTransportationFormAmount" name="itineraryTransportationFormAmount" />
+        <x-text-input type="text"  name="itineraryTransportationFormAmount" />
 
         <x-input-label for="itineraryTransportationFormAmount">Amount</x-input-label>
     </div>
 
     <div class="relative mt-1">
         <label for="itineraryTransportationFormAmountCurrency">Currency</label>
-        <select name="itineraryTransportationFormAmountCurrency" id="itineraryTransportationFormAmountCurrency" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryTransportationFormAmountCurrency"  class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="$ (AUD)">$ (AUD)</option>
             <option value="$ (CAD)">$ (CAD)</option>
             <option value="Fr">Fr (CHF)</option>
@@ -467,9 +469,4 @@
             <option value="$" selected>$ (USD)</option>
         </select>
     </div>
-</div>
-<div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-    <x-primary-btn type="submit">
-        <span>Save</span>
-    </x-primary-btn>
 </div>

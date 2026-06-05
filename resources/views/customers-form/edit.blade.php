@@ -38,10 +38,10 @@
                 <input type="hidden" name="activeTab" :value="section">
                 <div class="topButtonsGroup">
                     <div class="btn-group systemUsersNav" role="group">
-                        <button type="button"  class="systemUsersSectionBtn" :class="{ 'active': section === 'general' }" @click="section = 'general'">
+                        <button type="button"  class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'general' }" @click="section = 'general'">
                             <span style="font-size:15px;">General Info</span>
                         </button>
-                        <button type="button"  class="systemUsersSectionBtn" :class="{ ' active': section === 'formContent' }" @click="section = 'formContent'">
+                        <button type="button"  class="systemUsersSectionBtn cursor-pointer" :class="{ ' active': section === 'formContent' }" @click="section = 'formContent'">
                             <span style="font-size:15px;">Form Content</span> 
                         </button>
                     </div>

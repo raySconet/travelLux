@@ -10,7 +10,7 @@
                 </h2>
             </div>
 
-            <button onclick="closeReportDateRangeModal()" class="text-gray-400 hover:text-gray-600">
+            <button onclick="closeReportDateRangeModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                 ✕ 
             </button>
         </div>

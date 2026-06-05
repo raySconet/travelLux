@@ -1,16 +1,23 @@
 <div>
-    <div x-data="reservationDropdowns({{ $customers->toJson() }},{{ $reservation->customer_id ?? 'null' }},{{ $reservation->agent_id ?? 'null' }},'{{ old('email_to_send', $reservation->email_to_send ?? '') }}')">
-        <div class="flex flex-col gap-1">
-            <label for="agent_id" class="text-sm">Assigned To</label>
-            <select name="agent_id" id="agent_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" x-model="selectedAgent">
-                <option value="">All Agents</option>
-                @foreach ($users as $user)
-                    <option value="{{ $user->id }}" data-commission="{{ $user->commission ?? 0 }}">{{ $user->fname . ' ' . $user->lname }}</option>
-                @endforeach
-            </select>
-            
-            <x-input-error :messages="$errors->get('agent_id')" />
-        </div>
+    <div x-data="reservationDropdowns(window.customersPayload,{{ $reservation->customer_id ?? 'null' }},{{ $reservation->agent_id ?? 'null' }},'{{ old('email_to_send', $reservation->email_to_send ?? '') }}')">
+        @if(auth()->user()->isAdmin())
+            <div class="flex flex-col gap-1">
+                <label for="agent_id" class="text-sm">Assigned To</label>
+
+                <select name="agent_id" id="agent_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" x-model="selectedAgent">
+                    <option value="">All Agents</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}" data-commission="{{ $user->commission ?? 0 }}">
+                            {{ $user->fname . ' ' . $user->lname }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <x-input-error :messages="$errors->get('agent_id')" />
+            </div>
+        @else
+            <input type="hidden" name="agent_id" id="agent_id" value="{{ auth()->id() }}" data-commission="{{ auth()->user()->commission ?? 0 }}" >
+        @endif
 
         <div class="flex items-center mt-5 gap-3">
             <i class="fas fa-user-plus text-2xl text-[#B6844A]" title="Quick Customer Add" onclick="openReservationAddCustomerModal()"></i>
@@ -177,19 +184,57 @@
                 <option value="Canceled w/ Insurance Payout" {{ old('status', $reservation->status ?? '') == 'Canceled w/ Insurance Payout' ? 'selected' : '' }}>Canceled w/ Insurance Payout</option>
                 <option value="Canceled - Commission Protected" {{ old('status', $reservation->status ?? '') == 'Canceled - Commission Protected' ? 'selected' : '' }}>Canceled - Commission Protected</option>
             </select>
+
+            @if(!empty($reservation->paid_in_full_date))
+                <p class="text-red-600 text-sm mt-1">
+                    First Time Paid in Full:
+                    {{ \Carbon\Carbon::parse($reservation->paid_in_full_date)->format('Y-m-d') }}
+                </p>
+            @endif
+
+            @if($reservation->paidInFullAudits->count())
+                <div x-data="{ open: false }" class="mt-3">
+
+                    <button type="button" @click="open = !open" class="text-sm bg-[#B6844A] text-white px-3 py-1 rounded" >
+                        Modifications After Paid in Full
+                        <i class="fas" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                    </button>
+
+                    <div x-show="open"  x-transition x-cloak class="mt-2 border-l-2 pl-3">
+                        @foreach($reservation->paidInFullAudits as $audit)
+                            <div class="mb-2 text-sm">
+                                <div class="font-semibold">
+                                    {{ $audit->field_name }}
+                                </div>
+
+                                <div>
+                                    <span class="text-red-500">Old:</span> {{ $audit->old_value }}
+                                </div>
+
+                                <div>
+                                    <span class="text-green-600">New:</span> {{ $audit->new_value }}
+                                </div>
+                                
+                                <div class="text-gray-400 text-xs">
+                                    Modified by
+                                    {{ $audit->modifiedByUser?->fname }}
+                                    {{ $audit->modifiedByUser?->lname }}
+                                    on
+                                    {{ \Carbon\Carbon::parse($audit->modified_on)->format('Y-m-d') }}
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                </div>
+            @endif
         </div>
     </div>
 
     @php
-        $selectedCelebrations = old('celebrations',
-            !empty($reservation->celebrations)
-                ? explode(',', $reservation->celebrations)
-                : []
-        );
+        $selectedCelebrations = old('celebrations', !empty($reservation->celebrations) ? explode(',', $reservation->celebrations) : [] );
 
-        $selectedCelebrations = array_filter($selectedCelebrations, function ($v) {
-            return $v !== '-1' && $v !== '' && $v !== null;
-        });
+        $selectedCelebrations = array_filter($selectedCelebrations, function ($v) { return $v !== '-1' && $v !== '' && $v !== null; });
     @endphp
     <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
         <div class="flex-1 relative mt-8" x-data="{open: false,selected: {{ json_encode((array)$selectedCelebrations) }},options: ['Anniversary','Birthday','Family Reunion','First Visit','Graduation','Honeymoon','Life Celebration','Retirement','Summer Family Vacation','Wedding'],toggle(val) { this.selected.includes(val) ? this.selected = this.selected.filter(v => v !== val) : this.selected.push(val); },label() {return this.selected.length ? this.selected.join(', ') : '-- Select Celebrations --';}}" x-cloak>
@@ -502,11 +547,70 @@
     @endif
 </div>
 
+<!-- Reservation Add Customer Modal -->
+<div id="reservationAddCustomerModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
+    <div class="bg-white w-full max-w-4xl rounded-lg shadow-lg relative max-h-[95vh] overflow-y-auto">
+
+        <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-user-plus text-[#B6844A] text-base"></i>
+                <h2 class="text-base">Add Customer</h2>
+            </div>
+
+            <button type="button" onclick="closeReservationAddCustomerModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
+                ✕
+            </button>
+        </div>
+
+        <div class="px-6 py-4 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
+                <div class="relative mt-2">
+                    <x-text-input type="text" id="fname" name="fname" />
+
+                    <x-input-label for="fname">First Name</x-input-label>
+                </div>
+
+                <div class="relative mt-2">
+                    <x-text-input type="text" id="lname" name="lname" />
+
+                    <x-input-label for="lname">Last Name</x-input-label>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
+                <div class="relative mt-2">
+                    <x-text-input type="text" id="email" name="email" />
+
+                    <x-input-label for="email">Email Address</x-input-label>
+                </div>
+
+                <div class="relative mt-2">
+                    <x-text-input type="text" id="home_phone" name="home_phone" />
+
+                    <x-input-label for="home_phone">Home Phone</x-input-label>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
+            <x-primary-btn type="submit" class="reservationAddCustomerSaveBtn">
+                <i class="fas fa-paper-plane"></i>
+                <span>Save</span>
+            </x-primary-btn>
+
+            <x-secondary-btn type="button" onclick="closeReservationAddCustomerModal()">
+                <i class="fa fa-times-circle"></i>
+                <span>Cancel</span>
+            </x-secondary-btn>
+        </div>
+
+    </div>
+</div>
 <script>
 function reservationDropdowns(customers, currentCustomerId = null, currentAgentId = null, savedEmailToSend = '') {
    return {
        customers: customers,
-       selectedAgent: currentAgentId ?? -1,
+       selectedAgent: {{ auth()->user()->isAdmin() ? 'currentAgentId ?? -1' : auth()->id() }},
        selectedCustomer: currentCustomerId ?? -1,
        selectedEmailToSend: '',
        init() {
@@ -563,10 +667,7 @@ function reservationDropdowns(customers, currentCustomerId = null, currentAgentI
 
                 if (member.email) {
 
-                    let fullName =
-                        [member.fname, member.lname]
-                        .filter(Boolean)
-                        .join(' ');
+                    let fullName = [member.fname, member.lname].filter(Boolean).join(' ');
 
                     options.push({
                         value: member.email,
@@ -579,64 +680,13 @@ function reservationDropdowns(customers, currentCustomerId = null, currentAgentI
         }
    }
 }
+window.reservationDefaults = {
+    productId: "{{ old('product_id', $reservation->product_id ?? '') }}",
+    destinationId: "{{ old('destination_id', $reservation->destination_id ?? '') }}",
+    resortId: "{{ old('resort_id', $reservation->resort_id ?? '') }}",
+    cruiseId: "{{ old('cruise_itinerary_id', $reservation->cruise_itinerary_id ?? '') }}"
+};
+
+window.customersPayload = @json($customersPayload);
+
 </script>
-
-<!-- Reservation Add Customer Modal -->
-<div id="reservationAddCustomerModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
-    <div class="bg-white w-full max-w-4xl rounded-lg shadow-lg relative max-h-[95vh] overflow-y-auto">
-
-        <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
-            <div class="flex items-center space-x-2">
-                <i class="fas fa-user-plus text-[#B6844A] text-base"></i>
-                <h2 class="text-base">Add Customer</h2>
-            </div>
-
-            <button type="button" onclick="closeReservationAddCustomerModal()" class="text-gray-400 hover:text-gray-600">
-                ✕
-            </button>
-        </div>
-
-        <div class="px-6 py-4 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
-                <div class="relative mt-2">
-                    <x-text-input type="text" id="fname" name="fname" />
-
-                    <x-input-label for="fname">First Name</x-input-label>
-                </div>
-
-                <div class="relative mt-2">
-                    <x-text-input type="text" id="lname" name="lname" />
-
-                    <x-input-label for="lname">Last Name</x-input-label>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
-                <div class="relative mt-2">
-                    <x-text-input type="text" id="email" name="email" />
-
-                    <x-input-label for="email">Email Address</x-input-label>
-                </div>
-
-                <div class="relative mt-2">
-                    <x-text-input type="text" id="home_phone" name="home_phone" />
-
-                    <x-input-label for="home_phone">Home Phone</x-input-label>
-                </div>
-            </div>
-        </div>
-
-        <div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-            <x-primary-btn type="submit" class="reservationAddCustomerSaveBtn">
-                <i class="fas fa-paper-plane"></i>
-                <span>Save</span>
-            </x-primary-btn>
-
-            <x-secondary-btn type="button" onclick="closeReservationAddCustomerModal()">
-                <i class="fa fa-times-circle"></i>
-                <span>Cancel</span>
-            </x-secondary-btn>
-        </div>
-
-    </div>
-</div>

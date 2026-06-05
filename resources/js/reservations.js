@@ -73,14 +73,28 @@ $(document).ready(function() {
 
     // agent commission calculation
     function updateAgentCommission() {
-        let totalAgency = parseFloat($('#agency_commission').val()) || 0;
-        let selectedOption = $('#agent_id option:selected');
-        let agentRate = parseFloat(selectedOption.data('commission')) || 0;
 
+        let totalAgency = parseFloat($('#agency_commission').val()) || 0;
+
+        let agentRate = 0;
+
+        if ($('#agent_id').is('select')) {
+            let selectedOption = $('#agent_id option:selected');
+            agentRate = parseFloat(selectedOption.data('commission')) || 0;
+        } else {
+            agentRate = parseFloat($('#agent_id').data('commission')) || 0;
+        }
 
         let agentCommission = (totalAgency * agentRate) / 100;
+
         $('#agent_commission').val(agentCommission.toFixed(2));
     }
+
+    $('#agency_commission').on('input', updateAgentCommission);
+
+    $(document).on('change', '#agent_id', updateAgentCommission);
+
+    updateAgentCommission();
 
     $('#agency_commission').on('input', updateAgentCommission);
 
@@ -89,112 +103,199 @@ $(document).ready(function() {
 
 
     //Reservation Dropdown Filtering
-    const $productSelect = $('#product_id');
-    const $destinationSelect = $('#destination_id');
-    const $resortSelect = $('#resort_id');
-    const $cruiseSelect = $('#cruise_itinerary_id');
+    const savedProductId = window.reservationDefaults?.productId ?? '';
+    const savedDestinationId = window.reservationDefaults?.destinationId ?? '';
+    const savedResortId = window.reservationDefaults?.resortId ?? '';
+    const savedCruiseId = window.reservationDefaults?.cruiseId ?? '';
 
-    if ($productSelect.length && $destinationSelect.length && $resortSelect.length && $cruiseSelect.length) {
-        const allDestinationOptions = $destinationSelect.find('option').clone();
-        const allResortOptions = $resortSelect.find('option').clone();
-        const allCruiseOptions = $cruiseSelect.find('option').clone();
+    $('#product_id').on('change', function () {
 
-        const oldDestination = $destinationSelect.val();
-        const oldResort = $resortSelect.val();
-        const oldCruise = $cruiseSelect.val();
+        let productId = $(this).val();
 
-        function filterDestinations() {
-            const selectedProduct = $productSelect.val();
+        window.disableGlobalLoader = true;
 
-            $destinationSelect.html('<option value="">--Select Destination--</option>');
+        $.get('/ajax/destinations', { product_id: productId }, function (data) {
 
-            allDestinationOptions.each(function() {
-                const $option = $(this);
+            let html = '<option value="">--Select Destination--</option>';
 
-                if ($option.val() !== '' && $option.data('product').toString() === selectedProduct) {
-                    $destinationSelect.append($option.clone());
-                }
+            data.forEach(d => {
+
+                html += `<option value="${d.id}">${d.destination_name}</option>`;
+
             });
 
-            if ($destinationSelect.find('option[value="' + oldDestination + '"]').length) {
-                $destinationSelect.val(oldDestination);
-            } else {
-                $destinationSelect.val('');
-            }
+            $('#destination_id').html(html);
 
-            filterResorts();
-        }
+            $('#resort_id').html('<option value="">--Select Resort/Ship--</option>');
 
-        function filterResorts() {
-            const selectedDestination = $destinationSelect.val();
+            $('#cruise_itinerary_id').html('<option value="">--Select Cruise Itinerary--</option>');
 
-            $resortSelect.html('<option value="">--Select Resort/Ship--</option>');
+        }).always(function () {
 
-            if (!selectedDestination) {
-                filterCruises();
-                return;
-            }
+            window.disableGlobalLoader = false;
 
-            allResortOptions.each(function() {
-                const $option = $(this);
+        });
 
-                if ($option.val() !== '' && $option.data('destination').toString() === selectedDestination) {
-                    $resortSelect.append($option.clone());
-                }
+    });
+
+    $('#destination_id').on('change', function () {
+
+        let destinationId = $(this).val();
+
+        window.disableGlobalLoader = true;
+
+        $.get('/ajax/resorts', { destination_id: destinationId }, function (data) {
+
+            let html = '<option value="">--Select Resort/Ship--</option>';
+
+            data.forEach(r => {
+
+                html += `<option value="${r.id}">${r.resort_ship_name}</option>`;
+
             });
 
-            if ($resortSelect.find('option[value="' + oldResort + '"]').length) {
-                $resortSelect.val(oldResort);
-            } else {
-                $resortSelect.val('');
-            }
+            $('#resort_id').html(html);
 
-            filterCruises();
-        }
+            $('#cruise_itinerary_id').html('<option value="">--Select Cruise Itinerary--</option>');
 
-        function filterCruises() {
-            const selectedResort = $resortSelect.val();
+        }).always(function () {
 
-            $cruiseSelect.html('<option value="">--Select Cruise Itinerary--</option>');
+            window.disableGlobalLoader = false;
 
-            if (!selectedResort) {
-                return;
-            }
+        });
 
-            allCruiseOptions.each(function() {
-                const $option = $(this);
+    });
 
-                if ($option.val() !== '' && $option.data('resort').toString() === selectedResort) {
-                    $cruiseSelect.append($option.clone());
-                }
+    $('#resort_id').on('change', function () {
+
+        let resortId = $(this).val();
+
+        window.disableGlobalLoader = true;
+
+        $.get('/ajax/cruises', { resort_id: resortId }, function (data) {
+
+            let html = '<option value="">--Select Cruise Itinerary--</option>';
+
+            data.forEach(c => {
+
+                html += `<option value="${c.id}">${c.cruise_name}</option>`;
+
             });
 
-            if ($cruiseSelect.find('option[value="' + oldCruise + '"]').length) {
-                $cruiseSelect.val(oldCruise);
-            } else {
-                $cruiseSelect.val('');
+            $('#cruise_itinerary_id').html(html);
+
+        }).always(function () {
+
+            window.disableGlobalLoader = false;
+
+        });
+
+    });
+
+    function loadDestinations(productId, selectDestId, selectResortId, selectCruiseId) {
+
+        if (!productId) return;
+
+        window.disableGlobalLoader = true;
+
+        $.get('/ajax/destinations', { product_id: productId }, function (data) {
+
+            let html = '<option value="">--Select Destination--</option>';
+
+            data.forEach(d => {
+
+                html += `<option value="${d.id}">${d.destination_name}</option>`;
+
+            });
+
+            $('#destination_id').html(html);
+
+            if (selectDestId) {
+
+                $('#destination_id').val(selectDestId);
+
+                loadResorts(selectDestId, selectResortId, selectCruiseId);
+
             }
-        }
 
-        $productSelect.on('change', function() {
-            $destinationSelect.val('');
-            $resortSelect.val('');
-            $cruiseSelect.val('');
-            filterDestinations();
+        }).always(function () {
+
+            window.disableGlobalLoader = false;
+
         });
 
-        $destinationSelect.on('change', function() {
-            $resortSelect.val('');
-            $cruiseSelect.val('');
-            filterResorts();
+    }
+
+    function loadResorts(destinationId, selectResortId, selectCruiseId) {
+
+        if (!destinationId) return;
+
+        window.disableGlobalLoader = true;
+
+        $.get('/ajax/resorts', { destination_id: destinationId }, function (data) {
+
+            let html = '<option value="">--Select Resort/Ship--</option>';
+
+            data.forEach(r => {
+
+                html += `<option value="${r.id}">${r.resort_ship_name}</option>`;
+
+            });
+
+            $('#resort_id').html(html);
+
+            if (selectResortId) {
+
+                $('#resort_id').val(selectResortId);
+
+                loadCruises(selectResortId, selectCruiseId);
+
+            }
+
+        }).always(function () {
+
+            window.disableGlobalLoader = false;
+
         });
 
-        $resortSelect.on('change', function() {
-            $cruiseSelect.val('');
-            filterCruises();
+    }
+
+    function loadCruises(resortId, selectCruiseId) {
+
+        if (!resortId) return;
+
+        window.disableGlobalLoader = true;
+
+        $.get('/ajax/cruises', { resort_id: resortId }, function (data) {
+
+            let html = '<option value="">--Select Cruise Itinerary--</option>';
+
+            data.forEach(c => {
+
+                html += `<option value="${c.id}">${c.cruise_name}</option>`;
+
+            });
+
+            $('#cruise_itinerary_id').html(html);
+
+            if (selectCruiseId) {
+
+                $('#cruise_itinerary_id').val(selectCruiseId);
+
+            }
+
+        }).always(function () {
+
+            window.disableGlobalLoader = false;
+
         });
 
-        filterDestinations();
+    }
+
+    if (savedProductId) {
+
+        loadDestinations(savedProductId, savedDestinationId, savedResortId, savedCruiseId);
+
     }
     // end reservation dropdown filtering
 
@@ -218,11 +319,8 @@ $(document).ready(function() {
         const dateEl = $modal.find('[x-data]')[0];
 
         if (dateEl && dateEl._x_dataStack) {
-
             const alpineData = Alpine.$data(dateEl);
-
             alpineData.setDate('');
-
         }
     }
 
@@ -392,7 +490,7 @@ $(document).ready(function() {
 
                             <button 
                                 type="button"
-                                class="link-reservation space-x-2 bg-[#B6844A] text-white py-1 px-2 rounded hover:bg-white hover:text-[#B6844A] hover:border-[#B6844A] border transition"
+                                class="link-reservation space-x-2 bg-[#B6844A] text-white py-1 px-2 rounded hover:bg-white hover:text-[#B6844A] hover:border-[#B6844A] border transition cursor-pointer"
                                 data-id="${res.id}">
                                 <i class="fas fa-link"></i> Link
                             </button>
@@ -732,14 +830,11 @@ $(document).ready(function() {
 
                     <div class="space-x-4">
 
-                        <i title="Download Attachment"
-                        class="fas fa-cloud-download-alt text-[#bdbdbd] text-xl mt-3"></i>
+                        <i title="Download Attachment" class="fas fa-cloud-download-alt text-[#bdbdbd] text-xl mt-3"></i>
 
-                        <button type="button"
-                                onclick="removeReservationFile('${rowId}', '${file.name}')">
+                        <button type="button" onclick="removeReservationFile('${rowId}', '${file.name}')">
 
-                            <i title="Delete Attachment"
-                            class="fas fa-trash text-[#bdbdbd] text-xl mt-3"></i>
+                        <i title="Delete Attachment" class="fas fa-trash text-[#bdbdbd] text-xl mt-3"></i>
 
                         </button>
 
@@ -776,5 +871,29 @@ $(document).ready(function() {
         }
     }
     // end reservation attachments
+
+    // start reservattion itinerary pdf 
+    window.openReservationItineraryAttentionModal = function (){
+        $('#reservationItineraryAttentionModal').removeClass('hidden');
+    }
+
+    window.closeReservationItineraryAttentionModal = function(){
+        $('#reservationItineraryAttentionModal').addClass('hidden');
+    }
+
+    $('#openItineraryPdfBtn').on('click', function () {
+
+        const itineraryId = $('#itinerary_trip_id').val();
+
+        if (itineraryId == -1 || !itineraryId) {
+            openReservationItineraryAttentionModal();
+            return;
+        }
+
+        const pdfUrl = `/itinerary/${itineraryId}/pdf`;
+
+        openPdf(pdfUrl);
+    });
+    // end reservation itinerary pdf
 
 });

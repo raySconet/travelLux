@@ -41,7 +41,8 @@ window.dateDropdown = function(initialDate = '', minYear = 1920, maxYear = 2040)
    }
 };
 
-function showLoader() {
+window.showLoader = function () {
+
     if ($(".loaderContainer").length) return;
 
     const loader = `
@@ -53,16 +54,31 @@ function showLoader() {
     $("body").append(loader);
 }
 
-function hideLoader() {
+window.hideLoader = function () {
+
     $(".loaderContainer").fadeOut(300, function () {
         $(this).remove();
     });
+
 }
 
 $(document).on("submit", "form", function () {
     showLoader();
 });
 
+window.openPdf = function (url) {
+
+    showLoader();
+
+    setTimeout(function () {
+
+        window.open(url, '_blank');
+
+        hideLoader();
+
+    }, 500);
+
+};
 
 window.Alpine = Alpine;
 
@@ -75,16 +91,12 @@ $(document).ready(() => {
         showLoader();
     };
 
-    // $(document).ajaxStart(function () {
-    //     $('#ajaxLoader').fadeIn();
-    // });
-
-    // $(document).ajaxStop(function () {
-    //     $('#ajaxLoader').fadeOut(300);
-    // });
+    window.disableGlobalLoader = false;
 
     $(document).ajaxStart(function () {
-       showLoader();
+        if (!window.disableGlobalLoader) {
+            showLoader();
+        }
     });
 
     $(document).ajaxStop(function () {
@@ -101,9 +113,9 @@ $(document).ready(() => {
             return;
         }
 
-        const workbook = XLSX.utils.table_to_book(table, { sheet: "Archer Luxury Travel CRM" });
+        const workbook = XLSX.utils.table_to_book(table, { sheet: "Travelux CRM" });
 
-        const ws = workbook.Sheets["Archer Luxury Travel CRM"];
+        const ws = workbook.Sheets["Travelux CRM"];
         const range = XLSX.utils.decode_range(ws['!ref']);
         for (let C = range.s.c; C <= range.e.c; ++C) {
             const cell_address = { c: C, r: 0 }; 
@@ -112,7 +124,7 @@ $(document).ready(() => {
             ws[cell_ref].s = { font: { bold: true } };
         }
 
-        XLSX.writeFile(workbook, 'Archer Luxury Travel CRM.xlsx');
+        XLSX.writeFile(workbook, 'Travelux CRM.xlsx');
     });
     // end excel button for data table
 

@@ -1,7 +1,9 @@
 <div class="relative mt-3 mb-8">
-    <x-text-input type="text" id="itineraryFlightFormTitle" name="itineraryFlightFormTitle" />
+    <x-text-input type="text"  name="itineraryFlightFormTitle" />
 
     <x-input-label for="itineraryFlightFormTitle">Title*</x-input-label>
+
+    <p class="validation-error text-red-500 text-sm mt-1 hidden"></p>
 </div>
 
 <div class="mb-8">
@@ -18,14 +20,14 @@
 <div class="grid grid-cols-3 gap-4">
     
     <div class="relative mt-1">
-        <x-text-input type="time" id="itineraryFlightFormTime" name="itineraryFlightFormTime" />
+        <x-text-input type="time"  name="itineraryFlightFormTime" />
 
         <x-input-label for="itineraryFlightFormTime">Time</x-input-label>
     </div>
 
     <div class="relative mt-2">
         <label for="itineraryFlightFormDuration">Duration</label>
-        <select name="itineraryFlightFormDuration" id="itineraryFlightFormDuration" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryFlightFormDuration"  class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="15m">15 minutes</option>
             <option value="30m">30 minutes</option>
             <option value="45m">45 minutes</option>
@@ -292,7 +294,7 @@
     
     <div class="relative mt-2">
         <label for="itineraryFlightFormTimezone">Timezone</label>
-        <select name="itineraryFlightFormTimezone" id="itineraryFlightFormTimezone" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryFlightFormTimezone"  class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="-1">Automatic</option>
             <option value="UTC-11:00">Samoa Time (Pago Pago, Samoa) (UTC-11:00)</option>
             <option value="UTC-11:00">Niue Time (Niue) (UTC-11:00)</option>
@@ -422,19 +424,19 @@
 <div class="grid grid-cols-3 gap-4">
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryFlightFormBookedThrough" name="itineraryFlightFormBookedThrough" />
+        <x-text-input type="text"  name="itineraryFlightFormBookedThrough" />
 
         <x-input-label for="itineraryFlightFormBookedThrough">Booked Through</x-input-label>
     </div>
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryFlightFormConfirmation" name="itineraryFlightFormConfirmation" />
+        <x-text-input type="text"  name="itineraryFlightFormConfirmation" />
 
         <x-input-label for="itineraryFlightFormConfirmation">Confirmation #</x-input-label>
     </div>
 
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryFlightFormAirline" name="itineraryFlightFormAirline" />
+        <x-text-input type="text"  name="itineraryFlightFormAirline" />
 
         <x-input-label for="itineraryFlightFormAirline">Airline</x-input-label>
     </div>
@@ -442,26 +444,26 @@
 <div class="grid grid-cols-3 gap-4">
 
     <div class="relative mt-3">
-        <x-text-input type="text" id="itineraryFlightFormFlightNumber" name="itineraryFlightFormFlightNumber" />
+        <x-text-input type="text"  name="itineraryFlightFormFlightNumber" />
 
         <x-input-label for="itineraryFlightFormFlightNumber">Flight Number</x-input-label>
     </div>
 
     <div class="relative mt-3">
-        <x-text-input type="text" id="itineraryFlightFormTerminal" name="itineraryFlightFormTerminal" />
+        <x-text-input type="text" name="itineraryFlightFormTerminal" />
 
         <x-input-label for="itineraryFlightFormTerminal">Terminal</x-input-label>
     </div>
 
     <div class="relative mt-3">
-        <x-text-input type="text" id="itineraryFlightFormGate" name="itineraryFlightFormGate" />
+        <x-text-input type="text"  name="itineraryFlightFormGate" />
 
         <x-input-label for="itineraryFlightFormGate">Gate</x-input-label>
     </div>
 </div>
 <div class="grid grid-cols-3 gap-4">
     <div class="relative mt-3 mb-2">
-        <x-text-input type="text" id="itineraryFlightFormSeatTicketDetails" name="itineraryFlightFormSeatTicketDetails" />
+        <x-text-input type="text" name="itineraryFlightFormSeatTicketDetails" />
 
         <x-input-label for="itineraryFlightFormSeatTicketDetails">Seat/Ticket Details</x-input-label>
     </div>
@@ -469,14 +471,14 @@
 <h3 class="text-[20px] text-[#212529] mb-1">Price</h3>
 <div class="grid grid-cols-2 gap-4">
     <div class="relative mt-1">
-        <x-text-input type="text" id="itineraryFlightFormAmount" name="itineraryFlightFormAmount" />
+        <x-text-input type="text"  name="itineraryFlightFormAmount" />
 
         <x-input-label for="itineraryFlightFormAmount">Amount</x-input-label>
     </div>
 
     <div class="relative mt-1">
         <label for="itineraryFlightFormAmountCurrency">Currency</label>
-        <select name="itineraryFlightFormAmountCurrency" id="itineraryFlightFormAmountCurrency" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+        <select name="itineraryFlightFormAmountCurrency"  class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
             <option value="$ (AUD)">$ (AUD)</option>
             <option value="$ (CAD)">$ (CAD)</option>
             <option value="Fr">Fr (CHF)</option>
@@ -488,9 +490,4 @@
             <option value="$" selected>$ (USD)</option>
         </select>
     </div>
-</div>
-<div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-    <x-primary-btn type="submit">
-        <span>Save</span>
-    </x-primary-btn>
 </div>

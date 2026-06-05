@@ -4,7 +4,7 @@
         <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
             <h2>Import Reservation Bookings</h2>
 
-            <button onclick="closeImportReservationBookings()" class="text-gray-400 hover:text-gray-600">
+            <button onclick="closeImportReservationBookings()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                 ✕ 
             </button>
         </div>

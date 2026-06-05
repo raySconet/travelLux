@@ -9,24 +9,28 @@ use App\Models\State;
 use App\Models\Country;
 use App\Models\CustomersForm;
 use App\Models\CustomerFamilyMember;
+use Illuminate\Support\Facades\Cache;
 
 class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-       $statuses = $request->input('status', ['Active']);
+        $statuses = $request->input('status', ['Active']);
 
-        $agentId = $request->input('users', auth()->id());
+        $loggedUser = auth()->user();
+
+        if ($loggedUser->isAdmin() || $loggedUser->isSubAdmin()) {
+            $agentId = $request->input('users', $loggedUser->id);
+
+        } else {
+            $agentId = $loggedUser->id;
+        }
+
         $search = $request->input('search');
-
         $users = User::select('id','fname','lname','email')->where('isDeleted',0)->get();
+        $customersQuery = Customer::with('agent')->select('id','fname','mname','lname','cellphone','email','status','agent_id')->whereIn('status', $statuses)->where('is_deleted', 0);
 
-        $customersQuery = Customer::with('agent')
-                                    ->select('id','fname','mname','lname','cellphone','email','status','agent_id')
-                                    ->where('status', $statuses)
-                                    ->where('is_deleted', 0);
-
-        if($agentId != -1){
+        if ($agentId != -1) {
             $customersQuery->where('agent_id', $agentId);
         }
 
@@ -52,72 +56,37 @@ class CustomerController extends Controller
         $states = State::orderBy('name')->get();
         $countries = Country::orderBy('name')->get();
 
-        $referralCustomers = Customer::where('agent_id', auth()->id())
-                              ->where('is_deleted', 0)
-                              ->orderBy('lname')
-                              ->get();
+        $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted', 0)->orderBy('lname')->get();
 
         return view('customers.customerDetails', compact('customer', 'isNewCustomer', 'states', 'countries','referralCustomers'));
     }
 
-
-    // public function edit(Customer $customer)
-    // {
-    //     $isNewCustomer = false;
-        
-
-    //     $states = State::orderBy('name')->get();
-    //     $countries = Country::orderBy('name')->get();
-
-    //     $availableForms = CustomersForm::where('is_deleted', 0)
-    //                                     ->where('is_active', 1)
-    //                                     ->whereHas('customersFormRequired', function ($q) {
-    //                                         $q->where('all_customers_required', 1);
-    //                                     })->get();
-
-    //     $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted', 0)->orderBy('lname')->get();                                
-
-    //     return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms','referralCustomers'));
-    // }
-
     public function edit(Customer $customer)
-{
-    $isNewCustomer = false;
+    {
+        $isNewCustomer = false;
 
-    $states = State::orderBy('name')->get();
-    $countries = Country::orderBy('name')->get();
+        $states = State::orderBy('name')->get();
+        $countries = Country::orderBy('name')->get();
 
-    $availableForms = CustomersForm::where('is_deleted', 0)
-        ->where('is_active', 1)
-        ->whereHas('customersFormRequired', function ($q) {
-            $q->where('all_customers_required', 1);
-        })->get();
+        $availableForms = CustomersForm::where('is_deleted', 0)->where('is_active', 1)
+            ->whereHas('customersFormRequired', function ($q) {
+                $q->where('all_customers_required', 1);
+            })->get();  
+  
+        $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted', 0)->orderBy('lname')->get();
 
-    $referralCustomers = Customer::where('agent_id', auth()->id())
-        ->where('is_deleted', 0)
-        ->orderBy('lname')
-        ->get();
+        $automatedEmails = $customer->automatedEmails()
+            ->select('id','customer_id','automated_email_id','reservation_id','date')
+            ->where(function ($q) {
+                $q->whereNull('reservation_id')
+                ->orWhere('reservation_id', '');
+            })
+            ->with(['automatedEmail:id,subject'])
+            ->orderByDesc('date')
+            ->get();
 
-    // ✅ FETCH AUTOMATED EMAILS (NO RESERVATION)
-    $automatedEmails = $customer->automatedEmails()
-        ->where(function ($q) {
-            $q->whereNull('reservation_id')
-              ->orWhere('reservation_id', '');
-        })
-        ->with('automatedEmail')
-        ->orderBy('date', 'desc')
-        ->get();
-
-    return view('customers.customerDetails', compact(
-        'customer',
-        'isNewCustomer',
-        'states',
-        'countries',
-        'availableForms',
-        'referralCustomers',
-        'automatedEmails'
-    ));
-}
+        return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms','referralCustomers','automatedEmails'));
+    }
 
     public function inviteNewCustomer(){
         return view('customers.inviteNewCustomer');

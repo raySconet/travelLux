@@ -21,12 +21,6 @@
             <label for="destination_id" class="text-sm block mb-1">Destination</label>
             <select name="destination_id"id="destination_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="">--Select Destination--</option>
-                @foreach($destinations as $destination)
-                    <option value="{{ $destination->id }}" data-product="{{ $destination->product_id }}"
-                        {{ old('destination_id', $reservation->destination_id) == $destination->id ? 'selected' : '' }}>
-                        {{ $destination->destination_name }}
-                    </option>
-                @endforeach        
             </select>
 
             <x-input-error :messages="$errors->get('destination_id')" />
@@ -38,12 +32,6 @@
             <label for="resort_id" class="text-sm block mb-1">Resort/Ship</label>
             <select name="resort_id"id="resort_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="">--Select Resort/Ship--</option>
-                @foreach($resortShips as $resortShip) 
-                    <option value="{{ $resortShip->id }}" data-destination="{{ $resortShip->destination_id }}" 
-                        {{ old('resort_id', $reservation->resort_id) == $resortShip->id ? 'selected' : '' }}>
-                        {{ $resortShip->resort_ship_name }}
-                    </option>
-                @endforeach        
             </select>
 
             <x-input-error :messages="$errors->get('resort_id')" />
@@ -53,12 +41,6 @@
             <label for="cruise_itinerary_id" class="text-sm block mb-1">Cruise Itinerary</label>
             <select name="cruise_itinerary_id"id="cruise_itinerary_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="">--Select Cruise/Type--</option>
-                @foreach($cruiseItineraries as $cruiseItinerary)
-                <option value="{{ $cruiseItinerary->id }}" data-resort="{{ $cruiseItinerary->resort_ship_id }}"
-                        {{ old('cruise_itinerary_id', $reservation->cruise_itinerary_id) == $cruiseItinerary->id ? 'selected' : '' }}>
-                        {{ $cruiseItinerary->cruise_name }}
-                    </option>
-                @endforeach        
             </select>
         </div>
     </div>

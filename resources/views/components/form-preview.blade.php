@@ -12,7 +12,7 @@
                 Download
             </button>
 
-            <button type="button" onclick="closeFormPreviewModal()" class="text-gray-400 hover:text-gray-600">
+            <button type="button" onclick="closeFormPreviewModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer">
                 ✕
             </button>
         </div>

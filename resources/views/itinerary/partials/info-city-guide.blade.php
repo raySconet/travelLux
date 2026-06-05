@@ -1,7 +1,9 @@
 <div class="relative mt-3 mb-8">
-    <x-text-input type="text" id="itineraryInfoFormTitle" name="itineraryInfoFormTitle" />
+    <x-text-input type="text"  name="itineraryInfoFormTitle" />
 
     <x-input-label for="itineraryInfoFormTitle">Title*</x-input-label>
+
+    <p class="validation-error text-red-500 text-sm mt-1 hidden"></p>
 </div>
 
 <div class="mb-8">
@@ -18,15 +20,9 @@
 <div class="grid grid-cols-3 gap-4">
     
     <div class="relative mt-1">
-        <x-text-input type="time" id="itineraryInfoFormTime" name="itineraryInfoFormTime" />
+        <x-text-input type="time"  name="itineraryInfoFormTime" />
 
         <x-input-label for="itineraryInfoFormTime">Time</x-input-label>
     </div>
     
-</div>
-
-<div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-    <x-primary-btn type="submit">
-        <span>Save</span>
-    </x-primary-btn>
 </div>

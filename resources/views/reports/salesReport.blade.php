@@ -5,7 +5,7 @@
                 <i class="fa-solid fa-vote-yea mr-2 text-[#B6844A]"></i>{{ __('Sales Report') }}
             </h2>
 
-            <button class="flex items-center gap-2"><i class="far fa-calendar-alt text-[#212121] text-2xl" onclick="openReportDateRangeModal()"></i>-</button>
+            <button class="flex items-center gap-2"><i class="far fa-calendar-alt text-[#212121] text-2xl cursor-pointer" onclick="openReportDateRangeModal()"></i>-</button>
 
         </div>
     </x-slot>
@@ -15,10 +15,10 @@
             <div class="p-4 bg-white shadow sm:rounded-lg" x-data="{ section: 'checkinDate' }">
                 <div class="topButtonsGroup" style="justify-content: left;">
                     <div class="btn-group systemUsersNav" role="group">
-                        <button type="button" class="systemUsersSectionBtn" style="padding: 5px 8px !important; font-size:13px;" :class="{ 'active': section === 'checkinDate' }" @click="section = 'checkinDate'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" style="padding: 5px 8px !important; font-size:13px;" :class="{ 'active': section === 'checkinDate' }" @click="section = 'checkinDate'">
                             Checkin Date
                         </button>
-                        <button type="button" class="systemUsersSectionBtn" style="padding: 5px 8px !important; font-size:13px;" :class="{ 'active': section === 'bookDate' }" @click="section = 'bookDate'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" style="padding: 5px 8px !important; font-size:13px;" :class="{ 'active': section === 'bookDate' }" @click="section = 'bookDate'">
                             Book Date
                         </button>
                     </div>

@@ -1,4 +1,5 @@
 <form method="POST"
+      enctype="multipart/form-data"
       action="{{ $isNewUser 
              ? route('system-users.store')
              : route('system-users.update', $user->id ) }}">
@@ -8,31 +9,31 @@
     @endif    
     <x-app-layout>
         <x-slot name="header">
-                <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
-                    <h2 class=" text-xl text-gray-500 leading-tight">
-                        <i class="fa-solid fa-user-circle mr-2 text-[#B6844A]"></i>{{ __('System Users') }}
-                    </h2>
+            <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
+                <h2 class=" text-xl text-gray-500 leading-tight">
+                    <i class="fa-solid fa-user-circle mr-2 text-[#B6844A]"></i>{{ __('System Users') }}
+                </h2>
 
-                    @if($isNewUser)
-                        <div class="space-x-2">
-                            <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save User</span></x-secondary-btn>
-                            <x-primary-btn type="button" onclick="window.location='{{ route('system-users') }}'"><i class="far fa-minus-square"></i><span>Close User</span></x-primary-btn>
-                        </div>
-                    @else    
-                        <div class="space-x-2">
-                            <form method="POST" action="{{ route('system-users.destroy', $user->id) }}" class="inline delete-form">
-                                @csrf
-                                @method('DELETE')
+                @if($isNewUser)
+                    <div class="space-x-2">
+                        <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save User</span></x-secondary-btn>
+                        <x-primary-btn type="button" onclick="window.location='{{ route('system-users') }}'"><i class="far fa-minus-square"></i><span>Close User</span></x-primary-btn>
+                    </div>
+                @else    
+                    <div class="space-x-2">
+                        <form method="POST" action="{{ route('system-users.destroy', $user->id) }}" class="inline delete-form">
+                            @csrf
+                            @method('DELETE')
 
-                                <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)">
-                                    <i class="fas fa-trash"></i><span>Delete</span>
-                                </x-secondary-buttonToDelete>
-                            </form>
-                            <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save User</span></x-secondary-btn>
-                            <x-primary-btn type="button" onclick="window.location='{{ route('system-users') }}'"><i class="far fa-minus-square"></i><span>Close User</span></x-primary-btn>
-                        </div>
-                    @endif    
-                </div>
+                            <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)">
+                                <i class="fas fa-trash"></i><span>Delete</span>
+                            </x-secondary-buttonToDelete>
+                        </form>
+                        <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save User</span></x-secondary-btn>
+                        <x-primary-btn type="button" onclick="window.location='{{ route('system-users') }}'"><i class="far fa-minus-square"></i><span>Close User</span></x-primary-btn>
+                    </div>
+                @endif    
+            </div>
         </x-slot>
 
         <div class="mx-auto py-2 px-4 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start ml-2">
@@ -43,13 +44,13 @@
             <div class="p-3 bg-white shadow sm:rounded-lg" x-data="{ section: 'account' }">
                 <div class="topButtonsGroup">
                     <div class="btn-group systemUsersNav" role="group">
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'account' }" @click="section = 'account'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'account' }" @click="section = 'account'">
                             <i style="font-size:20px;" class="fas fa-user-circle"></i>
                         </button>
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'home' }" @click="section = 'home'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'home' }" @click="section = 'home'">
                             <i style="font-size:20px;" class="fas fa-map-marker-alt"></i>
                         </button>
-                        <button type="button" class="systemUsersSectionBtn" :class="{ 'active': section === 'notes' }" @click="section = 'notes'">
+                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'notes' }" @click="section = 'notes'">
                             <i style="font-size:20px;" class="fas fa-sticky-note"></i>
                         </button>
                     </div>

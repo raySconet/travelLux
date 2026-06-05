@@ -28,13 +28,13 @@
         <h6 class="text-base font-bold mt-2" style="color: rgba(0,0,0,0.54)">Commission Fees</h6>
 
         <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openCommissionFeesModal()">
-            <i class="fas fa-plus-circle"></i>
+            <i class="fas fa-plus-circle cursor-pointer"></i>
         </button>
 
     </div>
     
     @forelse($reservation->commissionFees()->where('is_deleted',0)->get() as $commissionFee)
-        <div class="flex justify-between mt-5" onclick='openEditCommissionFeesModal(@json($commissionFee))'>
+        <div class="flex justify-between mt-5 cursor-pointer" onclick='openEditCommissionFeesModal(@json($commissionFee))'>
             <div class="flex flex-col ml-2">
                 <p class="text-lg"><b>Fee: ${{ $commissionFee->amount }}</b></p>
                 <p class="text-[#989898]">Type: {{ $commissionFee->fee_type }}</p>
@@ -47,7 +47,7 @@
                 @method('DELETE')
 
                 <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                    <i title="Delete Fee" class="fas fa-trash text-[#bdbdbd] text-2xl mt-7"></i>
+                    <i title="Delete Fee" class="fas fa-trash text-[#bdbdbd] text-2xl mt-7 cursor-pointer"></i>
                 </button>
             </form>
         </div>

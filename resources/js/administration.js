@@ -3,8 +3,90 @@ import './bootstrap';
 
 window.Alpine = Alpine;
 
-Alpine.start();
+// Alpine.start();
 $(document).ready(() => {
+    
+    // ----------------------------------------------------------- //
+    // start system users //
+    // ----------------------------------------------------------- //
+
+    // start email as username 
+    const emailInput = $('#email');
+    const usernameInput = $('#username');
+    const emailAsUsernameCheckbox = $('input[name="email_as_username"][value="1"]');
+
+    function syncUsernameWithEmail() {
+
+        if (emailAsUsernameCheckbox.is(':checked')) {
+
+            usernameInput.val(emailInput.val());
+
+        }
+
+    }
+
+    emailAsUsernameCheckbox.on('change', function () {
+
+        if ($(this).is(':checked')) {
+
+            syncUsernameWithEmail();
+
+            usernameInput.prop('readonly', true);
+
+        } else {
+
+            usernameInput.prop('readonly', false);
+
+        }
+
+    });
+
+    emailInput.on('input', function () {
+
+        syncUsernameWithEmail();
+
+    });
+
+    if (emailAsUsernameCheckbox.is(':checked')) {
+
+        usernameInput.prop('readonly', true);
+
+        syncUsernameWithEmail();
+
+    }
+    // end email as username
+    
+    // start profile photo
+    $('#editProfilePhoto').on('click', function () {
+
+        $('#profile_photo').trigger('click');
+
+    });
+
+    $('#profile_photo').on('change', function (e) {
+
+        const file = e.target.files[0];
+
+        if (file) {
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+
+                $('#profilePhotoPreview').attr('src', event.target.result);
+
+            };
+
+            reader.readAsDataURL(file);
+
+        }
+
+    });
+    // end profile photo
+
+    // ----------------------------------------------------------- //
+    // end system users //
+    // ----------------------------------------------------------- //
 
     // ----------------------------------------------------------- //
     // start timeline task //
@@ -1131,13 +1213,41 @@ $(document).ready(() => {
 
         $('#duplicateItineraryModal').removeClass('hidden');
 
-        $('#name').val(name);
-        $('#date').val(date);
+        $('#duplicateName').val(name );
+        $('#duplicateDate').val(date);
     }
 
     window.closeDuplicateItineraryModal = function(){
         $('#duplicateItineraryModal').addClass('hidden');
     }
+
+    $(document).on('submit', '#duplicateItineraryForm', function(e){
+
+        e.preventDefault();
+
+        $.ajax({
+            url: `/itinerary/${itineraryData.id}/duplicate`,
+            type: 'POST',
+
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                name: $('#duplicateName').val(),
+                date: $('#duplicateDate').val(),
+            },
+
+            success: function(response){
+
+                closeDuplicateItineraryModal();
+
+                window.location.href = response.redirect;
+            },
+
+            error: function(xhr){
+
+                console.log(xhr.responseText);
+            }
+        });
+    });
     // end duplicate itinerary
 
     // start edit itinerary
@@ -1294,7 +1404,7 @@ $(document).ready(() => {
 
                 if (event.eventType == 1 && event.itineraryEventFormActivitySubcategory == 1) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -1305,7 +1415,14 @@ $(document).ready(() => {
                                     </span>
                                 </div>
 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
+
                             </div>
 
                             <div class="text-2xl">
@@ -1360,7 +1477,7 @@ $(document).ready(() => {
                                 }
 
                                 ${
-                                    (event.itineraryActivityFormAmount || event.itineraryActivityFormCurrency)
+                                    (event.itineraryActivityFormAmount && event.itineraryActivityFormCurrency)
                                         ? `
                                             <div>
                                                 <div class="font-bold text-base">Price</div>
@@ -1378,7 +1495,7 @@ $(document).ready(() => {
                     `;
                 } else if (event.eventType == 1 && event.itineraryEventFormActivitySubcategory == 2) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -1389,7 +1506,13 @@ $(document).ready(() => {
                                     </span>
                                 </div>
 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
                             </div>
 
                             <div class="text-2xl">
@@ -1444,7 +1567,7 @@ $(document).ready(() => {
                                 }
 
                                 ${
-                                    (event.itineraryActivityFormAmount || event.itineraryActivityFormCurrency)
+                                    (event.itineraryActivityFormAmount && event.itineraryActivityFormCurrency)
                                         ? `
                                             <div>
                                                 <div class="font-bold text-base">Price</div>
@@ -1462,7 +1585,7 @@ $(document).ready(() => {
                     `;
                 } else if (event.eventType == 2 && event.itineraryEventFormLodgingSubcategory == 1) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -1472,10 +1595,16 @@ $(document).ready(() => {
                                         ${formattedTime}
                                     </span>
 
-                                    <span class="text-[#fea700] font-extrabold">CHECK-OUT</span>
+                                    <span class="text-[#fea700] font-extrabold">CHECK-IN</span>
                                 </div>
 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
                             </div>
 
                             <div class="text-2xl">
@@ -1530,7 +1659,7 @@ $(document).ready(() => {
                                 }
 
                                 ${
-                                    (event.itineraryLodgingFormAmount || event.itineraryLodgingFormAmountCurrency)
+                                    (event.itineraryLodgingFormAmount && event.itineraryLodgingFormAmountCurrency)
                                         ? `
                                             <div>
                                                 <div class="font-bold text-base">Price</div>
@@ -1548,7 +1677,7 @@ $(document).ready(() => {
                     `;
                 } else if (event.eventType == 2 && event.itineraryEventFormLodgingSubcategory == 2) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -1558,10 +1687,16 @@ $(document).ready(() => {
                                         ${formattedTime}
                                     </span>
 
-                                    <span class="text-[#fea700] font-extrabold">CHECK-IN</span>
+                                    <span class="text-[#fea700] font-extrabold">CHECK-OUT</span>
                                 </div>
 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
                             </div>
 
                             <div class="text-2xl">
@@ -1616,7 +1751,7 @@ $(document).ready(() => {
                                 }
 
                                 ${
-                                    (event.itineraryLodgingFormAmount || event.itineraryLodgingFormAmountCurrency)
+                                    (event.itineraryLodgingFormAmount && event.itineraryLodgingFormAmountCurrency)
                                         ? `
                                             <div>
                                                 <div class="font-bold text-base">Price</div>
@@ -1634,7 +1769,7 @@ $(document).ready(() => {
                     `;
                 } else if (event.eventType == 3 && event.itineraryEventFormFlightSubCategory == 1) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -1647,7 +1782,13 @@ $(document).ready(() => {
                                     <span class="text-[#ca5] font-extrabold">DEPARTURE</span>
                                 </div>
 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
                             </div>
 
                             <div class="text-2xl">
@@ -1759,7 +1900,7 @@ $(document).ready(() => {
                                 }
 
                                 ${
-                                    (event.itineraryFlightFormAmount || event.itineraryFlightFormAmountCurrency)
+                                    (event.itineraryFlightFormAmount && event.itineraryFlightFormAmountCurrency)
                                         ? `
                                             <div>
                                                 <div class="font-bold text-base">Price</div>
@@ -1777,7 +1918,7 @@ $(document).ready(() => {
                     `;
                 } else if (event.eventType == 3 && event.itineraryEventFormFlightSubCategory == 2) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -1790,7 +1931,13 @@ $(document).ready(() => {
                                     <span class="text-[#ca5] font-extrabold">ARRIVAL</span>
                                 </div>
                                 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
                             </div>
 
                             <div class="text-2xl">
@@ -1902,7 +2049,7 @@ $(document).ready(() => {
                                 }
 
                                 ${
-                                    (event.itineraryFlightFormAmount || event.itineraryFlightFormAmountCurrency)
+                                    (event.itineraryFlightFormAmount && event.itineraryFlightFormAmountCurrency)
                                         ? `
                                             <div>
                                                 <div class="font-bold text-base">Price</div>
@@ -1920,7 +2067,7 @@ $(document).ready(() => {
                     `;
                 } else if (event.eventType == 4 && event.itineraryTransportationFormSubCategory == 1) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -1933,7 +2080,13 @@ $(document).ready(() => {
                                     <span class="text-[#f49ac1] font-extrabold">DEPARTURE</span>
                                 </div>
 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
                             </div>
 
                             <div class="text-2xl">
@@ -2005,7 +2158,7 @@ $(document).ready(() => {
                                 }
 
                                 ${
-                                    (event.itineraryTransportationFormAmount || event.itineraryTransportationFormAmountCurrency)
+                                    (event.itineraryTransportationFormAmount && event.itineraryTransportationFormAmountCurrency)
                                         ? `
                                             <div>
                                                 <div class="font-bold text-base">Price</div>
@@ -2023,7 +2176,7 @@ $(document).ready(() => {
                     `;
                 } else if (event.eventType == 4 && event.itineraryTransportationFormSubCategory == 2) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -2036,7 +2189,13 @@ $(document).ready(() => {
                                     <span class="text-[#f49ac1] font-extrabold">ARRIVAL</span>
                                 </div>
 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
                             </div>
 
                             <div class="text-2xl">
@@ -2108,7 +2267,7 @@ $(document).ready(() => {
                                 }
 
                                 ${
-                                    (event.itineraryTransportationFormAmount || event.itineraryTransportationFormAmountCurrency)
+                                    (event.itineraryTransportationFormAmount && event.itineraryTransportationFormAmountCurrency)
                                         ? `
                                             <div>
                                                 <div class="font-bold text-base">Price</div>
@@ -2126,7 +2285,7 @@ $(document).ready(() => {
                     `;
                 } else if (event.eventType == 5 && event.itineraryCruiseFormSubCategory == 1) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -2139,7 +2298,13 @@ $(document).ready(() => {
                                     <span class="text-[#6c9] font-extrabold">DEPARTURE</span>
                                 </div>
 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
                             </div>
 
                             <div class="text-2xl">
@@ -2224,7 +2389,7 @@ $(document).ready(() => {
                                 }
 
                                 ${
-                                    (event.itineraryCruiseFormAmount || event.itineraryCruiseFormAmountCurrency)
+                                    (event.itineraryCruiseFormAmount && event.itineraryCruiseFormAmountCurrency)
                                         ? `
                                             <div>
                                                 <div class="font-bold text-base">Price</div>
@@ -2242,7 +2407,7 @@ $(document).ready(() => {
                     `;
                 } else if (event.eventType == 5 && event.itineraryCruiseFormSubCategory == 2) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -2255,7 +2420,13 @@ $(document).ready(() => {
                                     <span class="text-[#6c9] font-extrabold">ARRIVAL</span>
                                 </div>
 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
                             </div>
 
                             <div class="text-2xl">
@@ -2340,7 +2511,7 @@ $(document).ready(() => {
                                 }
 
                                 ${
-                                    (event.itineraryCruiseFormAmount || event.itineraryCruiseFormAmountCurrency)
+                                    (event.itineraryCruiseFormAmount && event.itineraryCruiseFormAmountCurrency)
                                         ? `
                                             <div>
                                                 <div class="font-bold text-base">Price</div>
@@ -2358,7 +2529,7 @@ $(document).ready(() => {
                     `;
                 } else if (event.eventType == 6 && event.itineraryEventFormInfoSubCategory == 1) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -2370,7 +2541,13 @@ $(document).ready(() => {
 
                                 </div>
 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
                             </div>
 
                             <div class="text-2xl">
@@ -2385,7 +2562,7 @@ $(document).ready(() => {
                     `;
                 } else if (event.eventType == 6 && event.itineraryEventFormInfoSubCategory == 2) {
                     htmlBlock = `
-                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3">
+                        <div class="border border-[#ccc] bg-white p-4 flex flex-col gap-3 cursor-pointer event-card" data-event='${JSON.stringify(event)}'>
 
                             <div class="flex justify-between">
                                 <div class="flex items-center gap-2">
@@ -2397,7 +2574,13 @@ $(document).ready(() => {
 
                                 </div>
 
-                                <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                ${
+                                    !VIEW_ONLY
+                                    ? `
+                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
+                                    `
+                                    : ''
+                                }
                             </div>
 
                             <div class="text-2xl">
@@ -2422,7 +2605,8 @@ $(document).ready(() => {
     // start delete event
     let selectedEventId = null;
 
-    $(document).on('click', '.delete-event-btn', function () {
+    $(document).on('click', '.delete-event-btn', function (e) {
+        e.stopPropagation();
 
         selectedEventId = $(this).data('event-id');
 
@@ -2577,11 +2761,9 @@ $(document).ready(() => {
 
             if (!isNaN(fullDate.getTime())) {
 
-                document.getElementById('dayMonth').innerText =
-                    fullDate.toLocaleString('en-US', { month: 'long' });
+                document.getElementById('dayMonth').innerText = fullDate.toLocaleString('en-US', { month: 'long' });
 
-                document.getElementById('dayDate').innerText =
-                    fullDate.getDate();
+                document.getElementById('dayDate').innerText = fullDate.getDate();
 
                 divider.classList.remove('hidden');
             }
@@ -2607,6 +2789,11 @@ $(document).ready(() => {
     
     // start manage event
     window.openManageEventItineraryModal = function () {
+        editingEventId = null;
+
+        if (!selectedDay) return;
+
+        $('#itineraryEventDayId').val(selectedDay.id);
 
         $('#manageEventItineraryModal').removeClass('hidden');
 
@@ -2616,7 +2803,6 @@ $(document).ready(() => {
 
                 $('.event_note').summernote({
                     height: 350,
-
                     toolbar: [
                         ['style', ['style']],
                         ['font', ['bold', 'italic', 'underline', 'clear']],
@@ -2635,10 +2821,29 @@ $(document).ready(() => {
         }, 100);
     }
 
-    window.closeManageEventItineraryModal = function(){
-        $('#manageEventItineraryModal').addClass('hidden');
-    }
+    // window.closeManageEventItineraryModal = function(){
+    //     $('#manageEventItineraryModal').addClass('hidden');
+    // }
 
+    window.closeManageEventItineraryModal = function () {
+
+        $('#manageEventItineraryModal').addClass('hidden');
+
+        editingEventId = null;
+
+        $('#manageEventForm')[0].reset();
+
+        $('.event_note').summernote('code', '');
+
+        $('.validation-error').text('').addClass('hidden');
+
+        selectedCategory = categories[0];
+        selectedSubcategory = categories[0].subcategories[0];
+
+        renderCategories();
+        renderSubcategories();
+        renderSections();
+    };
 
     const categories = [
         {
@@ -2768,6 +2973,7 @@ $(document).ready(() => {
         }
     ];
 
+    let editingEventId = null;
     let selectedCategory = categories[0];
     let selectedSubcategory = categories[0].subcategories[0];
 
@@ -2777,17 +2983,10 @@ $(document).ready(() => {
 
         categories.forEach(category => {
 
-            const activeClass =
-                selectedCategory.id === category.id
-                    ? 'bg-[#6c757d] text-white'
-                    : 'bg-white text-[#495057] hover:bg-[#f1f3f5]';
+            const activeClass = selectedCategory.id === category.id ? 'bg-[#6c757d] text-white' : 'bg-white text-[#495057] hover:bg-[#f1f3f5]';
 
             html += `
-                <button
-                    type="button"
-                    class="category-btn h-[32px] px-3 border border-[#6c757d] text-[14px] flex items-center gap-2 transition-all ${activeClass}"
-                    data-id="${category.id}"
-                >
+                <button type="button" class="category-btn h-[32px] px-3 border border-[#6c757d] text-[14px] flex items-center gap-2 transition-all ${activeClass} cursor-pointer" data-id="${category.id}" >
                     <i class="${category.icon}"></i>
                     <span>${category.name}</span>
                 </button>
@@ -2803,17 +3002,10 @@ $(document).ready(() => {
 
         selectedCategory.subcategories.forEach(sub => {
 
-            const activeClass =
-                selectedSubcategory.id === sub.id
-                    ? 'bg-[#6c757d] text-white'
-                    : 'bg-white text-[#495057] hover:bg-[#f1f3f5]';
+            const activeClass = selectedSubcategory.id === sub.id ? 'bg-[#6c757d] text-white' : 'bg-white text-[#495057] hover:bg-[#f1f3f5]';
 
             html += `
-                <button
-                    type="button"
-                    class="subcategory-btn h-[32px] px-3 border border-[#6c757d] text-[14px] flex items-center gap-2 transition-all ${activeClass}"
-                    data-id="${sub.id}"
-                >
+                <button type="button" class="subcategory-btn h-[32px] px-3 border border-[#6c757d] text-[14px] flex items-center gap-2 transition-all ${activeClass} cursor-pointer" data-id="${sub.id}" >
                     <i class="${sub.icon}"></i>
                     <span>${sub.name}</span>
                 </button>
@@ -2827,9 +3019,20 @@ $(document).ready(() => {
 
         $('.dynamic-section').addClass('hidden');
 
+        $('.dynamic-section').find('input, select, textarea').prop('disabled', true);
+        
+
         const key = `${selectedCategory.slug}-${selectedSubcategory.slug}`;
 
-        $(`.${key}-section`).removeClass('hidden');
+        const activeSection = $(`.${key}-section`);
+
+        activeSection.removeClass('hidden');
+
+        activeSection.find('input, select, textarea').prop('disabled', false);
+
+        $('#eventType').val(selectedCategory.id);
+
+        $('#subcategoryId').val(selectedSubcategory.id);
     }
 
     function initEventManager() {
@@ -2863,7 +3066,482 @@ $(document).ready(() => {
     });
 
     initEventManager();
+
+    $(document).on('click', '.event-card', function () {
+
+        const event = $(this).data('event');
+
+        editingEventId = event.id;
+
+        // ACTIVITY
+        if (event.eventType == 1) {
+
+            selectedCategory = categories.find(c => c.id == 1);
+
+            if (event.itineraryEventFormActivitySubcategory == 1) {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 11);
+            } else {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 12);
+            }
+        }
+
+        // LODGING
+        else if (event.eventType == 2) {
+
+            selectedCategory = categories.find(c => c.id == 2);
+
+            if (event.itineraryEventFormLodgingSubcategory == 1) {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 21);
+            } else {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 22);
+            }
+        }
+
+        // FLIGHT
+        else if (event.eventType == 3) {
+
+            selectedCategory = categories.find(c => c.id == 3);
+
+            if (event.itineraryEventFormFlightSubCategory == 1) {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 31);
+            } else {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 32);
+            }
+        }
+
+        // TRANSPORTATION
+        else if (event.eventType == 4) {
+
+            selectedCategory = categories.find(c => c.id == 4);
+
+            if (event.itineraryTransportationFormSubCategory == 1) {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 41);
+            } else {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 42);
+            }
+        }
+
+        // CRUISE
+        else if (event.eventType == 5) {
+
+            selectedCategory = categories.find(c => c.id == 5);
+
+            if (event.itineraryCruiseFormSubCategory == 1) {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 51);
+            } else {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 52);
+            }
+        }
+
+        // INFO
+        else if (event.eventType == 6) {
+
+            selectedCategory = categories.find(c => c.id == 6);
+
+            if (event.itineraryEventFormInfoSubCategory == 1) {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 61);
+            } else {
+                selectedSubcategory = selectedCategory.subcategories.find(s => s.id == 62);
+            }
+        }
+
+        renderCategories();
+        renderSubcategories();
+        renderSections();
+
+        $('#manageEventItineraryModal').removeClass('hidden');
+
+        setTimeout(() => {
+
+            // ACTIVITY
+            $('[name="itineraryActivityFormTitle"]').val(event.itineraryActivityFormTitle);
+            $('[name="itineraryActivityFormBookedThrough"]').val(event.itineraryActivityFormBookedThrough);
+            $('[name="itineraryActivityFormConfirmation"]').val(event.itineraryActivityFormConfirmation);
+            $('[name="itineraryActivityFormProvider"]').val(event.itineraryActivityFormProvider);
+            $('[name="itineraryActivityFormTime"]').val(event.itineraryActivityFormTime);
+            $('[name="itineraryActivityFormDuration"]').val(event.itineraryActivityFormDuration);
+            $('[name="itineraryActivityFormTimezone"]').val(event.itineraryActivityFormTimezone);
+            $('[name="itineraryActivityFormAmount"]').val(event.itineraryActivityFormAmount);
+            $('[name="itineraryActivityFormCurrency"]').val(event.itineraryActivityFormCurrency);
+
+            // LODGING
+            $('[name="itineraryLodgingFormTitle"]').val(event.itineraryLodgingFormTitle);
+            $('[name="itineraryLodgingFormBookedThrough"]').val(event.itineraryLodgingFormBookedThrough);
+            $('[name="itineraryLodgingFormConfirmation"]').val(event.itineraryLodgingFormConfirmation);
+            $('[name="itineraryLodgingFormRoomBedType"]').val(event.itineraryLodgingFormRoomBedType);
+            $('[name="itineraryLodgingFormTime"]').val(event.itineraryLodgingFormTime);
+            $('[name="itineraryLodgingFormDuration"]').val(event.itineraryLodgingFormDuration);
+            $('[name="itineraryLodgingFormTimezone"]').val(event.itineraryLodgingFormTimezone);
+            $('[name="itineraryLodgingFormAmount"]').val(event.itineraryLodgingFormAmount);
+            $('[name="itineraryLodgingFormAmountCurrency"]').val(event.itineraryLodgingFormAmountCurrency);
+
+            // FLIGHT
+            $('[name="itineraryFlightFormTitle"]').val(event.itineraryFlightFormTitle);
+            $('[name="itineraryFlightFormBookedThrough"]').val(event.itineraryFlightFormBookedThrough);
+            $('[name="itineraryFlightFormConfirmation"]').val(event.itineraryFlightFormConfirmation);
+            $('[name="itineraryFlightFormAirline"]').val(event.itineraryFlightFormAirline);
+            $('[name="itineraryFlightFormFlightNumber"]').val(event.itineraryFlightFormFlightNumber);
+            $('[name="itineraryFlightFormTerminal"]').val(event.itineraryFlightFormTerminal);
+            $('[name="itineraryFlightFormGate"]').val(event.itineraryFlightFormGate);
+            $('[name="itineraryFlightFormSeatTicketDetails"]').val(event.itineraryFlightFormSeatTicketDetails);
+            $('[name="itineraryFlightFormTime"]').val(event.itineraryFlightFormTime);
+            $('[name="itineraryFlightFormDuration"]').val(event.itineraryFlightFormDuration);
+            $('[name="itineraryFlightFormTimezone"]').val(event.itineraryFlightFormTimezone);
+            $('[name="itineraryFlightFormAmount"]').val(event.itineraryFlightFormAmount);
+            $('[name="itineraryFlightFormAmountCurrency"]').val(event.itineraryFlightFormAmountCurrency);
+
+            // TRANSPORTATION
+            $('[name="itineraryTransportationFormTitle"]').val(event.itineraryTransportationFormTitle);
+            $('[name="itineraryTransportationFormBookedThrough"]').val(event.itineraryTransportationFormBookedThrough);
+            $('[name="itineraryTransportationFormConfirmation"]').val(event.itineraryTransportationFormConfirmation);
+            $('[name="itineraryTransportationFormCarrier"]').val(event.itineraryTransportationFormCarrier);
+            $('[name="itineraryTransportationFormTransportationNumber"]').val(event.itineraryTransportationFormTransportationNumber);
+            $('[name="itineraryTransportationFormTime"]').val(event.itineraryTransportationFormTime);
+            $('[name="itineraryTransportationFormDuration"]').val(event.itineraryTransportationFormDuration);
+            $('[name="itineraryTransportationFormTimezone"]').val(event.itineraryTransportationFormTimezone);
+            $('[name="itineraryTransportationFormAmount"]').val(event.itineraryTransportationFormAmount);
+            $('[name="itineraryTransportationFormAmountCurrency"]').val(event.itineraryTransportationFormAmountCurrency);
+
+            // CRUISE
+            $('[name="itineraryCruiseFormTitle"]').val(event.itineraryCruiseFormTitle);
+            $('[name="itineraryCruiseFormBookedThrough"]').val(event.itineraryCruiseFormBookedThrough);
+            $('[name="itineraryCruiseFormConfirmation"]').val(event.itineraryCruiseFormConfirmation);
+            $('[name="itineraryCruiseFormCarrier"]').val(event.itineraryCruiseFormCarrier);
+            $('[name="itineraryCruiseFormCabinType"]').val(event.itineraryCruiseFormCabinType);
+            $('[name="itineraryCruiseFormCabinNumber"]').val(event.itineraryCruiseFormCabinNumber);
+            $('[name="itineraryCruiseFormTime"]').val(event.itineraryCruiseFormTime);
+            $('[name="itineraryCruiseFormDuration"]').val(event.itineraryCruiseFormDuration);
+            $('[name="itineraryCruiseFormTimezone"]').val(event.itineraryCruiseFormTimezone);
+            $('[name="itineraryCruiseFormAmount"]').val(event.itineraryCruiseFormAmount);
+            $('[name="itineraryCruiseFormAmountCurrency"]').val(event.itineraryCruiseFormAmountCurrency);
+
+            // INFO
+            $('[name="itineraryInfoFormTitle"]').val(event.itineraryInfoFormTitle);
+            $('[name="itineraryInfoFormTime"]').val(event.itineraryInfoFormTime);
+
+            // NOTES
+            let note = '';
+
+            if (event.eventType == 1) {
+                note = event.itineraryActivityFormNote ?? '';
+            }
+
+            else if (event.eventType == 2) {
+                note = event.itineraryLodgingFormNote ?? '';
+            }
+
+            else if (event.eventType == 3) {
+                note = event.itineraryFlightFormNote ?? '';
+            }
+
+            else if (event.eventType == 4) {
+                note = event.itineraryTransportationFormNote ?? '';
+            }
+
+            else if (event.eventType == 5) {
+                note = event.itineraryCruiseFormNote ?? '';
+            }
+
+            else if (event.eventType == 6) {
+                note = event.itineraryInfoFormNote ?? '';
+            }
+
+            $('.event_note').summernote('code', note);
+
+        }, 100);
+    });
+
+    $('#manageEventForm').on('submit', function (e) {
+
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        if (editingEventId) {
+            formData.append('_method', 'PUT');
+        }
+
+        $.ajax({
+           url: editingEventId
+            ? `/itinerary/event/${editingEventId}`
+            : '/itinerary/event/store',
+
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+
+            success: function (response) {
+
+                if (editingEventId) {
+
+                    const index = selectedDay.events.findIndex(e => e.id == editingEventId);
+
+                    if (index !== -1) {
+                        selectedDay.events[index] = response.event;
+                    }
+
+                } else {
+
+                    selectedDay.events.push(response.event);
+                }
+
+                selectedDay.events.sort((a, b) => {
+                    return (a.eventTime || '').localeCompare(b.eventTime || '');
+                });
+
+                renderDayEvents(selectedDay);
+
+                closeManageEventItineraryModal();
+
+                $('#manageEventForm')[0].reset();
+
+                $('.event_note').summernote('code', '');
+
+                editingEventId = null;
+            },
+
+            // error: function (xhr) {
+            //     console.log(xhr.responseText);
+            // }
+            error: function (xhr) {
+
+            $('.validation-error')
+                .text('')
+                .addClass('hidden');
+
+            if (xhr.status === 422) {
+
+                let errors = xhr.responseJSON.errors;
+
+                Object.keys(errors).forEach(function(field) {
+
+                    const input = $(`[name="${field}"]`);
+
+                    input.closest('.relative')
+                        .find('.validation-error')
+                        .text(errors[field][0])
+                        .removeClass('hidden');
+                });
+            }
+        }
+        });
+    });
     // end manage event
+
+    // start itinerary attachments
+    function renderAttachmentsSection() {
+
+        let attachmentsHtml = '';
+
+        if (itineraryAttachments.length > 0) {
+
+            itineraryAttachments.forEach(file => {
+
+                attachmentsHtml += `
+                    <div class="border border-[#ccc] bg-white p-2 flex flex-col gap-3 cursor-pointer attachment-row">
+
+                        <div class="flex justify-between gap-3">
+
+                            <div class="flex flex-col">
+                                <a href="/storage/attachments/itineraries/${file.id}.${file.extension}" target="_blank" class="text-base text-[#007bff]">
+                                    ${file.name}.${file.extension}
+                                </a>
+                            </div>
+
+                            ${
+                                !VIEW_ONLY
+                                ? `
+                                    <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-attachment" data-id="${file.id}"></i>
+                                `
+                                : ''
+                            }
+
+                        </div>
+
+                    </div>
+                `;
+            });
+
+        } else {
+
+            attachmentsHtml = `
+                <div class="text-gray-400 text-center mt-8">
+                    
+                </div>
+            `;
+        }
+
+        $('#dayHeader').addClass('hidden');
+
+        $('#dayEventsContainer').html(`
+            <div class="flex flex-col gap-5">
+
+                ${
+                    !VIEW_ONLY
+                    ? `
+                        <div>
+                            <button id="addItineraryAttachmentBtn"
+                                class="space-x-2 bg-[#B6844A] text-white font-semibold py-2 px-7 rounded cursor-pointer border border-transparent
+                                hover:bg-white hover:border-[#B6844A] hover:text-[#B6844A]
+                                transition-all duration-200 ">
+
+                                <i class="fas fa-paperclip mr-2"></i>
+                                Attachments
+                            </button>
+                        </div>
+                    `
+                    : ''
+                }
+
+                <div id="itineraryAttachmentsList">
+                    ${attachmentsHtml}
+                </div>
+
+            </div>
+        `);
+
+        $('.itinerary-day').removeClass('bg-gray-100');
+
+        selectedDay = null;
+
+        toggleDayActions();
+    }
+
+    $(document).on('click', '#attachmentsBtn', function () {
+
+        renderAttachmentsSection();
+    });
+
+    $(document).on('click', '#addItineraryAttachmentBtn', function () {
+
+        $('#itineraryAttachmentsInput').trigger('click');
+    });
+
+    $(document).on('change', '#itineraryAttachmentsInput', function () {
+
+        const files = this.files;
+
+        if (!files.length) return;
+
+        const formData = new FormData();
+
+        Array.from(files).forEach(file => {
+            formData.append('attachments[]', file);
+        });
+
+        $.ajax({
+            url: `/itinerary/${itineraryData.id}/attachments`,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+
+            success: function(response) {
+
+                response.attachments.forEach(file => {
+
+                    itineraryAttachments.push(file);
+                });
+
+                renderAttachmentsSection();
+
+                $('#itineraryAttachmentsInput').val('');
+            },
+
+            error: function(xhr) {
+
+                console.log(xhr.responseText);
+            }
+        });
+    });
+
+    $(document).on('click', '.delete-attachment', function () {
+
+        const id = $(this).data('id');
+
+        $.ajax({
+            url: `/itinerary/attachments/${id}`,
+            type: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function () {
+
+                const index = itineraryAttachments.findIndex(a => a.id == id);
+                if (index !== -1) {
+                    itineraryAttachments.splice(index, 1);
+                }
+
+                renderAttachmentsSection();
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+    // end itinerary attachments
+
+    // start change cover photo
+    $('#changeItineraryCoverPhotoBtn').on('click', function () {
+        $('#coverPhotoInput').click();
+    });
+
+    $('#coverPhotoInput').on('change', function () {
+
+        const file = this.files[0];
+
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        $.ajax({
+            url: `/itinerary/${itineraryData.id}/cover-photo`,
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (res) {
+                location.reload(); 
+            }
+        });
+    });
+    // end change cover photo
+    
+    // start pdf copy link
+    window.copyItineraryLink = function (url) {
+
+        navigator.clipboard.writeText(url)
+            .then(function () {
+
+                $('#copySuccessOverlay').removeClass('hidden').addClass('flex');
+
+                setTimeout(function () {
+
+                    $('#copySuccessOverlay').addClass('hidden').removeClass('flex');
+
+                }, 1500);
+
+            })
+            .catch(function () {
+
+                alert('Failed to copy link');
+
+            });
+    };
+    // end pdf copy link
 
     // ----------------------------------------------------------- //
     // end itinerary //

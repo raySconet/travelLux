@@ -97,7 +97,7 @@ class SystemUsersController extends Controller
             'task_seperate_email_per_task' => 'nullable|integer',
             'task_send_email_at' => 'nullable|string|max:255',
             'general_notes' => 'nullable|string',
-            'profile_photo' => 'nullable|string',
+            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'profile_submit_flag' => 'nullable|integer',
             'is_disabled' => 'nullable|integer',
             'isDeleted' => 'nullable|integer',
@@ -107,6 +107,25 @@ class SystemUsersController extends Controller
         $data['created_by'] = auth()->id();
         $data['created_at'] = now();
         $data['updated_at'] = now();
+
+        if ($request->hasFile('profile_photo')) {
+
+            $file = $request->file('profile_photo');
+
+            $extension = $file->getClientOriginalExtension();
+
+            $tempUser = User::max('id') + 1;
+
+            $fileName = $tempUser . '.' . $extension;
+
+            $file->storeAs(
+                'attachments/users',
+                $fileName,
+                'public'
+            );
+
+            $data['profile_photo'] = $fileName;
+        }
 
         User::create($data);
 
@@ -157,7 +176,7 @@ class SystemUsersController extends Controller
             'task_seperate_email_per_task' => 'nullable|integer',
             'task_send_email_at' => 'nullable|string|max:255',
             'general_notes' => 'nullable|string',
-            'profile_photo' => 'nullable|string',
+            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'profile_submit_flag' => 'nullable|integer',
             'is_disabled' => 'nullable|integer',
             'isDeleted' => 'nullable|integer',
@@ -172,7 +191,26 @@ class SystemUsersController extends Controller
         $data['last_modified_by'] = auth()->id();
         $data['updated_at'] = now();
 
+
+        if ($request->hasFile('profile_photo')) {
+
+            $file = $request->file('profile_photo');
+
+            $extension = $file->getClientOriginalExtension();
+
+            $fileName = $user->id . '.' . $extension;
+
+            $file->storeAs(
+                'attachments/users',
+                $fileName,
+                'public'
+            );
+
+            $data['profile_photo'] = $fileName;
+        }
+
         $user->update($data);
+
 
         return redirect()
             ->route('system-users')

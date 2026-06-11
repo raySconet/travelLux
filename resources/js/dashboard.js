@@ -76,7 +76,198 @@ $(document).ready(function() {
         });
     });
 
+    function renderTaskTable(tasks, details) {
+
+        let currentPage = 1;
+        const perPage = 5;
+
+        let filteredTasks = [...tasks];
+        let currentSearch = '';
+
+        function renderTable() {
+
+            let start = (currentPage - 1) * perPage;
+            let end = start + perPage;
+
+            let pageTasks = filteredTasks.slice(start, end);
+
+            const wasSearching = document.activeElement && document.activeElement.classList.contains('task-search');
+
+            let html = `
+                <div class="mb-4 text-center">
+                    <button class="close-table text-lg cursor-pointer">
+                        Go Back
+                    </button>
+                </div>
+
+                <div class="flex justify-end mb-4">
+                    <input type="text" class="task-search border-b outline-none" placeholder="Quick Search" value="${currentSearch}">
+                </div>
+
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Actions</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Name</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Due Date</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Customer</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            if (pageTasks.length === 0) {
+
+                html += `
+                    <tr>
+                        <td colspan="5" class="px-4 py-8 text-center text-gray-500 border-t-2 border-[#dee2e6]">
+                            No data available in this table
+                        </td>
+                    </tr>
+                `;
+
+            } else {
+
+                pageTasks.forEach(task => {
+
+                    let customer = '';
+
+                    if (task.reservation && task.reservation.customer) {
+
+                        let c = task.reservation.customer;
+
+                        customer = c.lname + ', ' + c.fname;
+
+                        if (c.mname) {
+                            customer += ' ' + c.mname;
+                        }
+                    }
+
+                    html += `
+                        <tr>
+                            <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
+                                <i class="far fa-check-circle complete-task cursor-pointer text-[#bdbdbd] text-base mr-2" data-id="${task.id}"></i>
+                                <i class="fa fa-trash delete-task cursor-pointer text-[#bdbdbd] text-base" data-id="${task.id}"></i>
+                            </td>
+
+                            <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
+                                ${task.task_name}
+                            </td>
+
+                            <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
+                                ${task.due_date}
+                            </td>
+
+                            <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
+                                ${customer}
+                            </td>
+
+                            <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
+                                <a href="/reservation-list/${task.reservation_id}">
+                                    <i title="Go To Reservation" class="fas fa-tag text-[#B6844A] text-base"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            if (filteredTasks.length > 0) {
+
+                const totalPages = Math.ceil(filteredTasks.length / perPage);
+
+                html += `
+                    <div class="flex justify-end gap-3 mt-4">
+
+                        <button class="prev-btn px-3 py-1 bg-gray-200 rounded cursor-pointer" ${currentPage === 1 ? 'disabled' : ''}>
+                            Prev
+                        </button>
+
+                        <span class="mt-1">
+                            Page ${currentPage} of ${totalPages}
+                        </span>
+
+                        <button class="next-btn px-3 py-1 bg-gray-200 rounded cursor-pointer" ${currentPage === totalPages ? 'disabled' : ''}>
+                            Next
+                        </button>
+
+                    </div>
+                `;
+            }
+
+            details.html(html);
+
+            if (wasSearching) {
+
+                const input = details.find('.task-search');
+
+                input.focus();
+
+                const len = input.val().length;
+
+                if (input[0]) {
+                    input[0].setSelectionRange(len, len);
+                }
+            }
+        }
+
+        renderTable();
+
+        details.off('click', '.next-btn').on('click', '.next-btn', function(){
+
+            if (currentPage < Math.ceil(filteredTasks.length / perPage)) {
+
+                currentPage++;
+                renderTable();
+            }
+        });
+
+        details.off('click', '.prev-btn').on('click', '.prev-btn', function(){
+
+            if (currentPage > 1) {
+
+                currentPage--;
+                renderTable();
+            }
+        });
+
+        details.off('input', '.task-search').on('input', '.task-search', function(){
+
+            currentSearch = $(this).val().toLowerCase();
+
+            filteredTasks = tasks.filter(function(task){
+
+                let customer = '';
+
+                if (task.reservation && task.reservation.customer) {
+
+                    let c = task.reservation.customer;
+
+                    customer = c.lname + ', ' + c.fname;
+
+                    if (c.mname) {
+                        customer += ' ' + c.mname;
+                    }
+                }
+
+                return ( String(task.task_name || '').toLowerCase().includes(currentSearch) || String(task.due_date || '').toLowerCase().includes(currentSearch) || customer.toLowerCase().includes(currentSearch));
+            });
+
+            currentPage = 1;
+
+            renderTable();
+        });
+    }
+
+
     $(document).on('click', '.task-link-overall', function(e) {
+
         e.preventDefault();
 
         let priority = $(this).data('priority');
@@ -88,135 +279,18 @@ $(document).ready(function() {
         let agentId = $('#agents').val();
 
         runSilentAjax(() => {
-            return $.get('/overallTaskDashboard/tasks/' + priority + '/' + period,{ agent_id: agentId }, function(tasks) {
 
-                let currentPage = 1;
-                const perPage = 5;
+            return $.get('/overallTaskDashboard/tasks/' + priority + '/' + period, { agent_id: agentId }, function(tasks) {
 
-                function renderTable() {
-                    let start = (currentPage - 1) * perPage;
-                    let end = start + perPage;
-
-                    let pageTasks = tasks.slice(start, end);
-                    
-
-                    let html = `
-                        <div class="mb-4 text-center">
-                            <button class="close-table text-lg cursor-pointer">Go Back</button>
-                        </div>
-
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Actions</th>
-                                    <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Name</th>
-                                    <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Due Date</th>
-                                    <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Customer</th>
-                                    <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    `;
-
-                    if (pageTasks.length === 0) {
-                        html += `
-                            <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-gray-500 border-t-2 border-[#dee2e6]">
-                                    No data available in this table
-                                </td>
-                            </tr>
-                        `;
-                    } else {
-                        pageTasks.forEach(task => {
-
-                            let customer = '';
-
-                            if (task.reservation && task.reservation.customer) {
-                                if (task.reservation && task.reservation.customer) {
-
-                                    let c = task.reservation.customer;
-
-                                    customer = c.lname + ', ' + c.fname;
-
-                                    if (c.mname) {
-                                        customer += ' ' + c.mname;
-                                    }
-                                }
-                            }
-
-                            html += `
-                                <tr>
-                                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-                                        <i class="far fa-check-circle complete-task cursor-pointer text-[#bdbdbd] text-base mr-2" data-id="${task.id}"></i>
-                                        <i class="fa fa-trash delete-task cursor-pointer text-[#bdbdbd] text-base" data-id="${task.id}"></i>
-                                    </td>
-                                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">${task.task_name}</td>
-                                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">${task.due_date}</td>
-                                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">${customer}</td>
-                                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-                                        <a href="/reservation-list/${task.reservation_id}">
-                                            <i title="Go To Reservation" class="fas fa-tag text-[#B6844A] text-base"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                    }
-
-                    html += `
-                            </tbody>
-                        </table>
-                    `;
-
-                    if (tasks.length > 0) {
-                        const totalPages = Math.ceil(tasks.length / perPage);
-
-                        html += `
-                            <div class="flex justify-end gap-3 mt-4">
-                                <button class="prev-btn px-3 py-1 bg-gray-200 rounded cursor-pointer"
-                                    ${currentPage === 1 ? 'disabled' : ''}>
-                                    Prev
-                                </button>
-
-                                <span class="mt-1">
-                                    Page ${currentPage} of ${totalPages}
-                                </span>
-
-                                <button class="next-btn px-3 py-1 bg-gray-200 rounded cursor-pointer"
-                                    ${currentPage === totalPages ? 'disabled' : ''}>
-                                    Next
-                                </button>
-                            </div>
-                        `;
-                    }
-
-                    details.html(html);
-                }
-
-                renderTable();
-                
-
-                details.off('click', '.next-btn').on('click', '.next-btn', function () {
-                    if (currentPage * perPage < tasks.length) {
-                        currentPage++;
-                        renderTable();
-                    }
-                });
-
-                details.off('click', '.prev-btn').on('click', '.prev-btn', function () {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        renderTable();
-                    }
-                });
-                
+                renderTaskTable(tasks, details);
 
                 card.find('.grid').hide();
                 card.find('.viewAll').closest('div').hide();
                 details.removeClass('hidden');
-
             });
+
         });
+
     });
    // ----------------------------------------------------------- //
     // end overall dashboard //
@@ -226,6 +300,7 @@ $(document).ready(function() {
     // start my overall task dashboard //
     // ----------------------------------------------------------- //
     $(document).on('click', '.task-link', function(e) {
+
         e.preventDefault();
 
         let priority = $(this).data('priority');
@@ -235,135 +310,18 @@ $(document).ready(function() {
         let details = card.find('.task-details');
 
         runSilentAjax(() => {
+
             return $.get('/myOverallTaskDashboard/tasks/' + priority + '/' + period, function(tasks) {
 
-                let currentPage = 1;
-                const perPage = 5;
-
-                function renderTable() {
-                    let start = (currentPage - 1) * perPage;
-                    let end = start + perPage;
-
-                    let pageTasks = tasks.slice(start, end);
-                    
-
-                    let html = `
-                        <div class="mb-4 text-center">
-                            <button class="close-table text-lg cursor-pointer">Go Back</button>
-                        </div>
-
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Actions</th>
-                                    <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Name</th>
-                                    <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Due Date</th>
-                                    <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">Customer</th>
-                                    <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    `;
-
-                    if (pageTasks.length === 0) {
-                        html += `
-                            <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-gray-500 border-t-2 border-[#dee2e6]">
-                                    No data available in this table
-                                </td>
-                            </tr>
-                        `;
-                    } else {
-                        pageTasks.forEach(task => {
-
-                            let customer = '';
-
-                            if (task.reservation && task.reservation.customer) {
-                               if (task.reservation && task.reservation.customer) {
-
-                                    let c = task.reservation.customer;
-
-                                    customer = c.lname + ', ' + c.fname;
-
-                                    if (c.mname) {
-                                        customer += ' ' + c.mname;
-                                    }
-                                }
-                            }
-
-                            html += `
-                                <tr>
-                                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-                                        <i class="far fa-check-circle complete-task cursor-pointer text-[#bdbdbd] text-base mr-2" data-id="${task.id}"></i>
-                                        <i class="fa fa-trash delete-task cursor-pointer text-[#bdbdbd] text-base" data-id="${task.id}"></i>
-                                    </td>
-                                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">${task.task_name}</td>
-                                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">${task.due_date}</td>
-                                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">${customer}</td>
-                                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-                                        <a href="/reservation-list/${task.reservation_id}">
-                                            <i title="Go To Reservation" class="fas fa-tag text-[#B6844A] text-base"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                    }
-
-                    html += `
-                            </tbody>
-                        </table>
-                    `;
-
-                    if (tasks.length > 0) {
-                        const totalPages = Math.ceil(tasks.length / perPage);
-
-                        html += `
-                            <div class="flex justify-end gap-3 mt-4">
-                                <button class="prev-btn px-3 py-1 bg-gray-200 rounded cursor-pointer"
-                                    ${currentPage === 1 ? 'disabled' : ''}>
-                                    Prev
-                                </button>
-
-                                <span class="mt-1">
-                                    Page ${currentPage} of ${totalPages}
-                                </span>
-
-                                <button class="next-btn px-3 py-1 bg-gray-200 rounded cursor-pointer"
-                                    ${currentPage === totalPages ? 'disabled' : ''}>
-                                    Next
-                                </button>
-                            </div>
-                        `;
-                    }
-
-                    details.html(html);
-                }
-
-                renderTable();
-                
-
-                details.off('click', '.next-btn').on('click', '.next-btn', function () {
-                    if (currentPage * perPage < tasks.length) {
-                        currentPage++;
-                        renderTable();
-                    }
-                });
-
-                details.off('click', '.prev-btn').on('click', '.prev-btn', function () {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        renderTable();
-                    }
-                });
-                
+                renderTaskTable(tasks, details);
 
                 card.find('.grid').hide();
                 card.find('.viewAll').closest('div').hide();
                 details.removeClass('hidden');
-
             });
+
         });
+
     });
 
     $(document).on('click', '.close-table', function() {
@@ -489,15 +447,13 @@ $(document).ready(function() {
 
                         html += `
                             <div class="flex justify-end gap-3 mt-4">
-                                <button class="prev-upcoming px-3 py-1 bg-gray-200 rounded"
-                                    ${currentPage === 1 ? 'disabled' : ''}>
+                                <button class="prev-upcoming px-3 py-1 bg-gray-200 rounded" ${currentPage === 1 ? 'disabled' : ''}>
                                     Prev
                                 </button>
 
                                 <span class="mt-1">Page ${currentPage} of ${totalPages}</span>
 
-                                <button class="next-upcoming px-3 py-1 bg-gray-200 rounded"
-                                    ${currentPage === totalPages ? 'disabled' : ''}>
+                                <button class="next-upcoming px-3 py-1 bg-gray-200 rounded" ${currentPage === totalPages ? 'disabled' : ''}>
                                     Next
                                 </button>
                             </div>
@@ -686,8 +642,7 @@ $(document).ready(function() {
                     }
 
                     $('#recentCommissionsPagination').html(`
-                        <button class="commission-prev px-3 py-1 bg-gray-200 rounded"
-                            ${currentPage === 1 ? 'disabled' : ''}>
+                        <button class="commission-prev px-3 py-1 bg-gray-200 rounded" ${currentPage === 1 ? 'disabled' : ''}>
                             Prev
                         </button>
 
@@ -695,8 +650,7 @@ $(document).ready(function() {
                             Page ${currentPage} of ${totalPages}
                         </span>
 
-                        <button class="commission-next px-3 py-1 bg-gray-200 rounded"
-                            ${currentPage === totalPages ? 'disabled' : ''}>
+                        <button class="commission-next px-3 py-1 bg-gray-200 rounded" ${currentPage === totalPages ? 'disabled' : ''}>
                             Next
                         </button>
                     `);
@@ -788,6 +742,120 @@ $(document).ready(function() {
     // start owner dashboard //
     // ----------------------------------------------------------- //
 
+    function renderSearchableDashboardList({rows,details,searchClass,closeClass,prevClass,nextClass,emptyMessage,itemRenderer}) {
+
+        let currentPage = 1;
+        const perPage = 5;
+        let filteredRows = [...rows];
+        let currentSearch = '';
+
+        function render() {
+
+            const start = (currentPage - 1) * perPage;
+            const pageRows = filteredRows.slice(start, start + perPage);
+
+            const activeElement = document.activeElement;
+            const keepFocus = activeElement && activeElement.classList.contains(searchClass);
+
+            let html = `
+                <div class="mb-4 text-center">
+                    <button class="${closeClass} text-lg cursor-pointer">
+                        Go Back
+                    </button>
+                </div>
+
+                <div class="flex justify-end mb-4">
+                    <input type="text" class="${searchClass} border-b outline-none" placeholder="Quick Search" value="${currentSearch}">
+                </div>
+            `;
+
+            if (!pageRows.length) {
+
+                html += `
+                    <div class="text-center text-gray-500 mt-8">
+                        ${emptyMessage}
+                    </div>
+                `;
+
+            } else {
+
+                pageRows.forEach(row => {
+                    html += itemRenderer(row);
+                });
+            }
+
+            if (filteredRows.length > perPage) {
+
+                const totalPages = Math.ceil(filteredRows.length / perPage);
+
+                html += `
+                    <div class="flex justify-end gap-3 mt-4">
+
+                        <button class="${prevClass} px-3 py-1 bg-gray-200 rounded cursor-pointer" ${currentPage === 1 ? 'disabled' : ''}>
+                            Prev
+                        </button>
+
+                        <span class="mt-1">
+                            Page ${currentPage} of ${totalPages}
+                        </span>
+
+                        <button class="${nextClass} px-3 py-1 bg-gray-200 rounded cursor-pointer" ${currentPage === totalPages ? 'disabled' : ''}>
+                            Next
+                        </button>
+
+                    </div>
+                `;
+            }
+
+            details.html(html);
+
+            if (keepFocus) {
+
+                const input = details.find(`.${searchClass}`);
+
+                input.focus();
+
+                const len = input.val().length;
+
+                if (input[0]) {
+                    input[0].setSelectionRange(len, len);
+                }
+            }
+        }
+
+        render();
+
+        details.off('click', `.${nextClass}`).on('click', `.${nextClass}`, function(){
+            if (currentPage < Math.ceil(filteredRows.length / perPage)) {
+                currentPage++;
+                render();
+            }
+        });
+
+        details.off('click', `.${prevClass}`).on('click', `.${prevClass}`, function(){
+            if (currentPage > 1) {
+                currentPage--;
+                render();
+            }
+        });
+
+        details.off('input', `.${searchClass}`).on('input', `.${searchClass}`, function(){
+
+            currentSearch = $(this).val().toLowerCase();
+
+            filteredRows = rows.filter(function(row){
+
+                return Object.values(row).some(function(value){
+                    return String(value || '').toLowerCase().includes(currentSearch);
+                });
+            });
+
+            currentPage = 1;
+
+            render();
+        });
+    }
+
     // start agents birthday
     if ($('#birthday-today').length) {
 
@@ -817,97 +885,35 @@ $(document).ready(function() {
 
             return $.get('/ownersDashboard/agent-birthdays-details/' + range, function(rows){
 
-                let currentPage = 1;
-                const perPage = 5;
+                renderSearchableDashboardList({
 
-                function renderBirthdays() {
+                    rows,
+                    details,
 
-                    let start = (currentPage - 1) * perPage;
-                    let end = start + perPage;
+                    searchClass: 'birthday-search',
+                    closeClass: 'close-birthdays',
+                    prevClass: 'birthday-prev',
+                    nextClass: 'birthday-next',
 
-                    let pageRows = rows.slice(start, end);
+                    emptyMessage: 'No Birthdays.',
 
-                    let html = `
-                        <div class="mb-4 text-center">
-                            <button class="close-birthdays text-lg cursor-pointer">
-                                Go Back
-                            </button>
-                        </div>
+                    itemRenderer: function(r){
 
-                        <div class="flex justify-end mb-4">
-                            <input type="text" class="birthday-search border-b outline-none" placeholder="Quick Search">
-                        </div>
-                    `;
+                        return `
+                            <div class="bg-[#fff] shadow mb-3 p-4 birthday-row" style="box-shadow: 0 5px 5px -11px rgba(0,0,0,.2),0 1px 4px -22px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);">
 
-                    if (pageRows.length === 0) {
-
-                        html += `
-                            <div class="text-center text-gray-500 mt-8">
-                                No Birthdays.
-                            </div>
-                        `;
-
-                    } else {
-
-                        pageRows.forEach(r => {
-
-                            html += `
-                                <div class="bg-[#fff] shadow mb-3 p-4 birthday-row" style="box-shadow: 0 5px 5px -11px rgba(0,0,0,.2),0 1px 4px -22px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);">
-
-                                    <div class="flex items-center gap-3">
-                                        <i class="fas fa-user"></i>
-                                        <span class="birthday-name">${r.name}</span>
-                                    </div>
-
-                                    <div class="ml-8">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        <span class="birthday-date">${r.date}</span>
-                                    </div>
-
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-user"></i>
+                                    <span class="birthday-name">${r.name}</span>
                                 </div>
-                            `;
-                        });
-                    }
 
-                    if (rows.length > 5) {
+                                <div class="ml-8">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span class="birthday-date">${r.date}</span>
+                                </div>
 
-                        const totalPages = Math.ceil(rows.length / perPage);
-
-                        html += `
-                            <div class="flex justify-end gap-3 mt-4">
-                                <button class="birthday-prev px-3 py-1 bg-gray-200 rounded cursor-pointer"
-                                    ${currentPage === 1 ? 'disabled' : ''}>
-                                    Prev
-                                </button>
-
-                                <span class="mt-1">
-                                    Page ${currentPage} of ${totalPages}
-                                </span>
-
-                                <button class="birthday-next px-3 py-1 bg-gray-200 rounded cursor-pointer"
-                                    ${currentPage === totalPages ? 'disabled' : ''}>
-                                    Next
-                                </button>
                             </div>
                         `;
-                    }
-
-                    details.html(html);
-                }
-
-                renderBirthdays();
-
-                details.off('click', '.birthday-next').on('click', '.birthday-next', function () {
-                    if (currentPage < Math.ceil(rows.length / perPage)) {
-                        currentPage++;
-                        renderBirthdays();
-                    }
-                });
-
-                details.off('click', '.birthday-prev').on('click', '.birthday-prev', function () {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        renderBirthdays();
                     }
                 });
 
@@ -961,124 +967,41 @@ $(document).ready(function() {
 
             return $.get('/ownersDashboard/customer-birthdays-details/' + range, function(rows){
 
-                let currentPage = 1;
-                const perPage = 5;
+                renderSearchableDashboardList({
 
-                let filteredRows = [...rows];
-                let currentSearch = '';
+                    rows,
+                    details,
 
-                function renderCustomerBirthdays() {
+                    searchClass: 'quickSearchInput',
+                    closeClass: 'close-customer-birthdays',
+                    prevClass: 'customer-birthday-prev',
+                    nextClass: 'customer-birthday-next',
 
-                    let start = (currentPage - 1) * perPage;
-                    let end = start + perPage;
+                    emptyMessage: 'No Birthdays.',
 
-                    let pageRows = filteredRows.slice(start, end);
+                    itemRenderer: function(r){
 
-                    let html = `
-                        <div class="mb-4 text-center">
-                            <button class="close-customer-birthdays text-lg cursor-pointer">
-                                Go Back
-                            </button>
-                        </div>
+                        return `
+                            <div class="bg-[#fff] shadow mb-3 p-4" style="box-shadow: 0 5px 5px -11px rgba(0,0,0,.2),0 1px 4px -22px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);">
 
-                        <div class="flex justify-end mb-4">
-                            <input type="text" class="quickSearchInput border-b outline-none" placeholder="Quick Search" value="${currentSearch}">
-                        </div>
-                    `;
-
-                    if (pageRows.length === 0) {
-
-                        html += `
-                            <div class="text-center text-gray-500 mt-8">
-                                No Birthdays.
-                            </div>
-                        `;
-
-                    } else {
-
-                        pageRows.forEach(r => {
-
-                            html += `
-                                <div class="bg-[#fff] shadow mb-3 p-4" style="box-shadow: 0 5px 5px -11px rgba(0,0,0,.2),0 1px 4px -22px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);">
-
-                                    <div class="flex items-center gap-3">
-                                        <i class="fas fa-user"></i>
-                                        <span class="customer-birthday-name">
-                                            ${r.name}
-                                        </span>
-                                    </div>
-
-                                    <div class="ml-8">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        <span class="customer-birthday-date">
-                                            ${r.date}
-                                        </span>
-                                    </div>
-
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-user"></i>
+                                    <span>${r.name}</span>
                                 </div>
-                            `;
-                        });
-                    }
 
-                    if (filteredRows.length > 5) {
+                                <div class="ml-8">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>${r.date}</span>
+                                </div>
 
-                        const totalPages = Math.ceil(filteredRows.length / perPage);
-
-                        html += `
-                            <div class="flex justify-end gap-3 mt-4">
-                                <button
-                                    class="customer-birthday-prev px-3 py-1 bg-gray-200 rounded cursor-pointer"
-                                    ${currentPage === 1 ? 'disabled' : ''}>
-                                    Prev
-                                </button>
-
-                                <span class="mt-1">
-                                    Page ${currentPage} of ${totalPages}
-                                </span>
-
-                                <button
-                                    class="customer-birthday-next px-3 py-1 bg-gray-200 rounded cursor-pointer"
-                                    ${currentPage === totalPages ? 'disabled' : ''}>
-                                    Next
-                                </button>
                             </div>
                         `;
                     }
-
-                    details.html(html);
-                }
-
-                renderCustomerBirthdays();
-
-                details.off('click', '.customer-birthday-next').on('click', '.customer-birthday-next', function(){
-                    if (currentPage < Math.ceil(filteredRows.length / perPage)) {
-                        currentPage++;
-                        renderCustomerBirthdays();
-                    }
-                });
-
-                details.off('click', '.customer-birthday-prev').on('click', '.customer-birthday-prev', function(){
-                    if (currentPage > 1) {
-                        currentPage--;
-                        renderCustomerBirthdays();
-                    }
-                });
-
-                details.off('keyup', '.quickSearchInput').on('keyup', '.quickSearchInput', function(){
-                    currentSearch = $(this).val().toLowerCase();
-
-                    filteredRows = rows.filter(function(r){
-
-                        return ((r.name && r.name.toLowerCase().includes(currentSearch)) || (r.date && r.date.toLowerCase().includes(currentSearch)));
-                    });
-
-                    currentPage = 1;
-
-                    renderCustomerBirthdays();
                 });
 
                 card.find('.customer-birthday-grid').hide();
                 card.find('.customer-birthday-link[data-range="all"]').closest('.text-center').hide();
+
                 details.removeClass('hidden');
             });
 
@@ -1128,112 +1051,36 @@ $(document).ready(function() {
 
             return $.get('/ownersDashboard/customer-anniversary-details/' + range, function(rows){
 
-                let currentPage = 1;
-                const perPage = 5;
+                renderSearchableDashboardList({
 
-                let filteredRows = [...rows];
-                let currentSearch = '';
+                    rows,
+                    details,
 
-                function render() {
+                    searchClass: 'anniversary-search',
+                    closeClass: 'close-customer-anniversary',
+                    prevClass: 'customer-anniversary-prev',
+                    nextClass: 'customer-anniversary-next',
 
-                    let start = (currentPage - 1) * perPage;
-                    let end = start + perPage;
+                    emptyMessage: 'No Anniversaries.',
 
-                    let pageRows = filteredRows.slice(start, end);
+                    itemRenderer: function(r){
 
-                    let html = `
-                        <div class="mb-4 text-center">
-                            <button class="close-customer-anniversary text-lg cursor-pointer">
-                                Go Back
-                            </button>
-                        </div>
+                        return `
+                            <div class="bg-[#fff] shadow mb-3 p-4" style="box-shadow: 0 5px 5px -11px rgba(0,0,0,.2),0 1px 4px -22px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);">
 
-                        <div class="flex justify-end mb-4">
-                            <input type="text" class="anniversary-search border-b outline-none" placeholder="Quick Search" value="${currentSearch}">
-                        </div>
-                    `;
-
-                    if (pageRows.length === 0) {
-
-                        html += `
-                            <div class="text-center text-gray-500 mt-8">
-                                No Anniversaries.
-                            </div>
-                        `;
-                    } else {
-
-                        pageRows.forEach(r => {
-
-                            html += `
-                                <div class="bg-[#fff] shadow mb-3 p-4" style="box-shadow: 0 5px 5px -11px rgba(0,0,0,.2),0 1px 4px -22px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);">
-
-                                    <div class="flex items-center gap-3">
-                                        <i class="fas fa-user"></i>
-                                        <span class="customer-anniversary-name">${r.name}</span>
-                                    </div>
-
-                                    <div class="ml-8">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        <span class="customer-anniversary-date">${r.date}</span>
-                                    </div>
-
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-user"></i>
+                                    <span>${r.name}</span>
                                 </div>
-                            `;
-                        });
-                    }
 
-                    if (filteredRows.length > 5) {
+                                <div class="ml-8">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>${r.date}</span>
+                                </div>
 
-                        const totalPages = Math.ceil(filteredRows.length / perPage);
-
-                        html += `
-                            <div class="flex justify-end gap-3 mt-4">
-                                <button class="customer-anniversary-prev px-3 py-1 bg-gray-200 rounded"
-                                    ${currentPage === 1 ? 'disabled' : ''}>
-                                    Prev
-                                </button>
-
-                                <span class="mt-1">
-                                    Page ${currentPage} of ${totalPages}
-                                </span>
-
-                                <button class="customer-anniversary-next px-3 py-1 bg-gray-200 rounded"
-                                    ${currentPage === totalPages ? 'disabled' : ''}>
-                                    Next
-                                </button>
                             </div>
                         `;
                     }
-
-                    details.html(html);
-                }
-
-                render();
-
-                details.off('click', '.customer-anniversary-next').on('click', '.customer-anniversary-next', function(){
-                    if (currentPage < Math.ceil(filteredRows.length / perPage)) {
-                        currentPage++;
-                        render();
-                    }
-                });
-
-                details.off('click', '.customer-anniversary-prev').on('click', '.customer-anniversary-prev', function(){
-                    if (currentPage > 1) {
-                        currentPage--;
-                        render();
-                    }
-                });
-
-                details.off('keyup', '.anniversary-search').on('keyup', '.anniversary-search', function(){
-                    currentSearch = $(this).val().toLowerCase();
-
-                    filteredRows = rows.filter(r =>
-                        (r.name && r.name.toLowerCase().includes(currentSearch)) ||
-                        (r.date && r.date.toLowerCase().includes(currentSearch))
-                    );
-
-                    currentPage = 1;
-                    render();
                 });
 
                 card.find('.customer-anniversary-grid').hide();

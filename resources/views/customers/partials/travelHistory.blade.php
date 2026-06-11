@@ -32,7 +32,7 @@
                     <p><p>{{ $reservation->product?->product_name ?? ' ' }} / {{ $reservation->destination?->destination_name ?? ' ' }}</p></p>
                     <p>{{ $reservation->reservation_number }}</p>
                 </div>
-                <a href="{{ route('reservations.reservationDetails', $reservation->id) }}">
+                <a href="{{ route('reservations.reservationDetails', $reservation->id) }}" onclick="showLoaderOnSubmit()">
                     <i class="fas fa-external-link-alt text-[#bdbdbd] text-lg cursor-pointer"></i>
                 </a>
             </div>
@@ -59,7 +59,7 @@
                     <p><p>{{ $reservation->product?->product_name ?? ' ' }} / {{ $reservation->destination?->destination_name ?? ' ' }}</p></p>
                     <p>{{ $reservation->reservation_number }}</p>
                 </div>
-                <a href="{{ route('reservations.reservationDetails', $reservation->id) }}">
+                <a href="{{ route('reservations.reservationDetails', $reservation->id) }}" onclick="showLoaderOnSubmit()">
                     <i class="fas fa-external-link-alt text-[#bdbdbd] text-lg cursor-pointer"></i>
                 </a>
             </div>

@@ -41,10 +41,30 @@ class ReservationController extends Controller
 
        $users = User::select('id','fname', 'lname','email')->where('isDeleted',0)->get();
 
-       $reservationsQuery = Reservation::with('agent', 'customer', 'product', 'destination')
-                                        ->select('id', 'status', 'created_on', 'reservation_number', 'reservation_name', 'customer_id', 'agent_id', 'product_id', 'destination_id', 'checkin_date', 'final_payment_due_date')
-                                        ->whereIn('status', $statuses)
-                                        ->where('is_deleted',0);
+        $reservationsQuery = Reservation::with('agent', 'customer', 'product', 'destination')
+                                         ->select('id', 'status', 'created_on', 'reservation_number', 'reservation_name', 'customer_id', 'agent_id', 'product_id', 'destination_id', 'checkin_date', 'final_payment_due_date')
+                                         ->where('is_deleted', 0);
+
+        $reservationsQuery->where(function ($query) use ($statuses) {
+
+            $regularStatuses = array_diff($statuses,['Paid in Full Paid by Archer','Paid in Full Not Paid by Archer']);
+
+            if (!empty($regularStatuses)) {
+                $query->whereIn('status', $regularStatuses);
+            }
+
+            if (in_array('Paid in Full Paid by Archer', $statuses)) {
+                $query->orWhere(function ($q) {
+                    $q->where('status', 'Paid in Full')->where('agent_commission_received', 1);
+                });
+            }
+
+            if (in_array('Paid in Full Not Paid by Archer', $statuses)) {
+                $query->orWhere(function ($q) {
+                    $q->where('status', 'Paid in Full')->where('agent_commission_received', 0);
+                });
+            }
+        });
 
         if($agentId !=-1){
             $reservationsQuery->where('agent_id', $agentId);
@@ -142,22 +162,13 @@ class ReservationController extends Controller
         $availableForms = CustomersForm::where('is_deleted', 0)
                             ->where('is_active', 1)
                             ->whereHas('customersFormRequired', function ($q) use ($reservation) {
-
                                 $q->where(function ($subQ) use ($reservation) {
-
-                                    $subQ->where('all_reservations_required', 1)
-
-                                        ->orWhere(function ($matchQ) use ($reservation) {
-
-                                            $matchQ->where('product_id', $reservation->product_id)
-                                                ->where('destination_id', $reservation->destination_id);
-
-                                        });
+                                    $subQ->where('all_reservations_required', 1)->orWhere(function ($matchQ) use ($reservation) {
+                                        $matchQ->where('product_id', $reservation->product_id)->where('destination_id', $reservation->destination_id);
+                                    });
 
                                 });
-
                                 $q->where('is_deleted', 0);
-
                             })
                             ->get();
                     

@@ -83,7 +83,7 @@
                     </div>
                 </div>
 
-                {{-- <div class="mt-4">
+                <div class="mt-4">
                     <div x-show="section === 'home'" x-cloak>
                         @include('customers.partials.home-address')
                     </div>
@@ -123,71 +123,8 @@
                     <div x-show="section === 'generalNotes'" x-cloak>
                         @include('customers.partials.generalNotes')
                     </div>    
-                </div> --}}
-
-                <div class="mt-4">
-
-                    <template x-if="section === 'home'">
-                        <div>
-                            @include('customers.partials.home-address')
-                        </div>
-                    </template>
-
-                    <template x-if="section === 'rewards'">
-                        <div>
-                            @include('customers.partials.airline-cruises-rewards')
-                        </div>
-                    </template>
-
-                    <template x-if="section === 'family'">
-                        <div>
-                            @include('customers.partials.family')
-                        </div>
-                    </template>
-
-                    <template x-if="section === 'forms'">
-                        <div>
-                            @include('customers.partials.forms')
-                        </div>
-                    </template>
-
-                    <template x-if="section === 'surveys'">
-                        <div>
-                            @include('customers.partials.surveys')
-                        </div>
-                    </template>
-
-                    <template x-if="section === 'selfServiceInvitations'">
-                        <div>
-                            @include('customers.partials.selfServiceInvitations')
-                        </div>
-                    </template>
-
-                    <template x-if="section === 'travelHistory'">
-                        <div>
-                            @include('customers.partials.travelHistory')
-                        </div>
-                    </template>
-
-                    <template x-if="section === 'referredBy'">
-                        <div>
-                            @include('customers.partials.referredBy')
-                        </div>
-                    </template>
-
-                    <template x-if="section === 'autoEmails'">
-                        <div>
-                            @include('customers.partials.autoEmails')
-                        </div>
-                    </template>
-
-                    <template x-if="section === 'generalNotes'">
-                        <div>
-                            @include('customers.partials.generalNotes')
-                        </div>
-                    </template>
-
                 </div>
+
             </div>
         </div>
     </x-app-layout>

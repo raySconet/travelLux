@@ -1,5 +1,10 @@
 @php
     $viewOnly = $viewOnly ?? false;
+    $signedUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+        'itinerary.view',
+        now()->addDays(30),
+        ['itinerary' => $itinerary->id]
+    );
 @endphp
 <x-app-layout :viewOnly="$viewOnly ?? false">
     <x-slot name="header">
@@ -11,7 +16,7 @@
                 @if(!$viewOnly)
                 <div class="space-x-2">
                     <x-primary-btn  onclick="openImportReservationBookings()"><i class="far fa-plus-square"></i><span>Import Bookings</span></x-primary-btn>
-                    <x-secondary-btn onclick="copyItineraryLink('{{ route('itinerary.view', $itinerary->id) }}')">
+                    <x-secondary-btn onclick="copyItineraryLink('{{ $signedUrl }}')">
                         <i class="fas fa-link"></i>
                         <span>Copy Link</span>
                     </x-secondary-btn>
@@ -44,14 +49,9 @@
         <div class="cover-image-container">
             <a href="/">
                 @php
-                    $cover = $itinerary->itineraryImages()
-                        ->where('is_deleted', 0)
-                        ->latest()
-                        ->first();
+                    $cover = $itinerary->itineraryImages()->where('is_deleted', 0)->latest()->first();
 
-                    $coverUrl = $cover
-                        ? asset('storage/attachments/itineraries/covers/' . $cover->id . '.' . $cover->extension)
-                        : asset('images/archer-logo.png');
+                    $coverUrl = $cover ? asset('storage/attachments/itineraries/covers/' . $cover->id . '.' . $cover->extension) : asset('images/archer-logo.png');
                 @endphp
 
                 <img src="{{ $coverUrl }}" class="cover-image" />

@@ -187,4 +187,14 @@ class Reservation extends Model
     {
         return $this->hasMany(PaidCommission::class, 'reservation_id', 'id');
     }
+
+    public function customerSurveys()
+    {
+        return $this->hasMany(CustomerSurvey::class, 'reservation_id', 'id');
+    }
+
+    public function formSent()
+    {
+        return $this->hasMany(FormSent::class, 'reservation_id', 'id');
+    }
 }

@@ -172,7 +172,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/itinerary/create', [ItineraryController::class, 'create'])->name('itinerary.create');
     Route::post('/itinerary/store', [ItineraryController::class, 'store'])->name('itinerary.store');
     Route::put('/itinerary/{itinerary}', [ItineraryController::class, 'update'])->name('itinerary.update');
-    Route::get('/itinerary/{itinerary}/view', [ItineraryController::class, 'view'])->name('itinerary.view');
+    Route::get('/itinerary/{itinerary}/view', [ItineraryController::class, 'view'])->middleware('signed')->name('itinerary.view');
     Route::get('/itinerary/{itinerary}', [ItineraryController::class, 'edit'])->name('itinerary.edit');
     Route::delete('/itinerary/{itinerary}', [ItineraryController::class, 'destroy'])->name('itinerary.destroy');
     

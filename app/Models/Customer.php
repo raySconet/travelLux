@@ -206,4 +206,18 @@ class Customer extends Model
         return $this->hasMany(CustomerAutomatedEmail::class, 'customer_id');
     }
 
+    public function formSent()
+    {
+        return $this->hasMany(FormSent::class, 'customer_id', 'id');
+    }
+
+    public function customerInvitations()
+    {
+        return $this->hasMany(CustomerInvitation::class, 'customer_id', 'id');
+    }
+
+    public function customerIntakeForms()
+    {
+        return $this->hasMany(CustomerIntakeForm::class, 'customer_id', 'id');
+    }
 }

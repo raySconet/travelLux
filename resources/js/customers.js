@@ -121,4 +121,26 @@ $(document).ready(function() {
         $('#customersAddFamilyMemberModal').addClass('hidden');
     }
     // end add family member
+
+    // start survey preview
+    window.openSurveyPreviewModal = function(content){
+        $('#surveyPreviewContent').html(content);
+        $('#surveyPreviewModal').removeClass('hidden');
+    }
+
+    window.closeSurveyPreviewModal = function(){
+        $('#surveyPreviewModal').addClass('hidden');
+    }
+    // end survey preview
+
+    // start form intake preview
+    window.openFormIntakePreviewModal = function(content){
+        $('#formIntakePreviewContent').html(content);
+        $('#formIntakePreviewModal').removeClass('hidden');
+    }
+
+    window.closeFormIntakePreviewModal = function(){
+        $('#formIntakePreviewModal').addClass('hidden');
+    }
+    // end form intake preview
 });

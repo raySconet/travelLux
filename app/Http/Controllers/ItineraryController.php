@@ -78,19 +78,6 @@ class ItineraryController extends Controller
     public function edit(ItineraryTrip $itinerary)
     {
         $itinerary->load([
-            'itineraryDays' => function ($query) {
-                $query->where('isDeleted', 0)
-                    ->with([
-                        'events' => function ($eventQuery) {
-                            $eventQuery->where('isDeleted', 0)
-                                ->orderBy('eventTime', 'ASC');
-                        }
-                    ])
-                    ->orderBy('dayNumber', 'ASC');
-            }
-        ]);
-
-        $itinerary->load([
             'attachments',
             'itineraryDays' => function ($query) {
                 $query->where('isDeleted', 0)
@@ -144,9 +131,7 @@ class ItineraryController extends Controller
 
     public function addDay(ItineraryTrip $itinerary)
     {
-        $lastDay = ItineraryDay::where('itinerary_trip_id', $itinerary->id)
-            ->where('isDeleted', 0)
-            ->max('dayNumber');
+        $lastDay = ItineraryDay::where('itinerary_trip_id', $itinerary->id)->where('isDeleted', 0)->max('dayNumber');
 
         $nextDayNumber = $lastDay ? $lastDay + 1 : 1;
 

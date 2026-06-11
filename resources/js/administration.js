@@ -297,16 +297,13 @@ $(document).ready(() => {
                 </div>
 
                 <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button"
-                        class="text-[#000] text-xl delete-row2 flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
                         <i class="fas fa-trash"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-up"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-down"></i>
                     </button>
                 </div>
@@ -321,16 +318,13 @@ $(document).ready(() => {
                 </div>
 
                 <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button"
-                        class="text-[#000] text-xl delete-row2 flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
                         <i class="fas fa-trash"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-up"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-down"></i>
                     </button>
                 </div>
@@ -350,16 +344,13 @@ $(document).ready(() => {
                 </div>
 
                 <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button"
-                        class="text-[#000] text-xl delete-row2 flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
                         <i class="fas fa-trash"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-up"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-down"></i>
                     </button>
                 </div>
@@ -374,16 +365,13 @@ $(document).ready(() => {
                 </div>
 
                 <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button"
-                        class="text-[#000] text-xl delete-row2 flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
                         <i class="fas fa-trash"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-up"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-down"></i>
                     </button>
                 </div>
@@ -407,8 +395,7 @@ $(document).ready(() => {
                         <input type="text" data-preview="choiceText" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1 mb-5 w-full" />
                         <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm">Choice Text</label>
                     </div>
-                    <button type="button"
-                        class="text-[#bdbdbd] text-xl delete-row3 flex  mt-3">
+                    <button type="button" class="text-[#bdbdbd] text-xl delete-row3 flex  mt-3">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -417,16 +404,13 @@ $(document).ready(() => {
                     transition-all duration-200 mt-3"><i class="fas fa-plus"></i>Add Choice</button>
 
                 <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button"
-                        class="text-[#000] text-xl delete-row2 flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
                         <i class="fas fa-trash"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-up"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-down"></i>
                     </button>
                 </div>
@@ -452,8 +436,7 @@ $(document).ready(() => {
                         <input type="text" placeholder=" " class="choice-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1 mb-5 w-full" />
                         <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm">Choice Text</label>
                     </div>
-                    <button type="button"
-                        class="text-[#bdbdbd] text-xl delete-row3 flex  mt-3">
+                    <button type="button" class="text-[#bdbdbd] text-xl delete-row3 flex  mt-3">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -462,16 +445,13 @@ $(document).ready(() => {
                     transition-all duration-200 mt-3"><i class="fas fa-plus"></i>Add Choice</button>
 
                 <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button"
-                        class="text-[#000] text-xl delete-row2 flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
                         <i class="fas fa-trash"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl flex  mt-3">
                         <i class="fas fa-arrow-up"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-down"></i>
                     </button>
                 </div>
@@ -487,16 +467,13 @@ $(document).ready(() => {
                 </div>
 
                 <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button"
-                        class="text-[#000] text-xl delete-row2 flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
                         <i class="fas fa-trash"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-up"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-down"></i>
                     </button>
                 </div>
@@ -514,16 +491,13 @@ $(document).ready(() => {
                 </textarea>
 
                 <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button"
-                        class="text-[#000] text-xl delete-row2 flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
                         <i class="fas fa-trash"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
                         <i class="fas fa-arrow-up"></i>
                     </button>
-                    <button type="button"
-                        class="text-[#000] text-xl flex  mt-3">
+                    <button type="button" class="text-[#000] text-xl flex  mt-3">
                         <i class="fas fa-arrow-down"></i>
                     </button>
                 </div>
@@ -545,16 +519,12 @@ $(document).ready(() => {
                         placeholder=" "
                         class="choice-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1"
                     />
-                    <label
-                        class="absolute left-0 top-1 transition-all duration-200
-                            peer-placeholder-shown:top-2
-                            peer-focus:top-0 peer-focus:text-sm">
+                    <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2 peer-focus:top-0 peer-focus:text-sm">
                         Choice Text
                     </label>
                 </div>
 
-                <button type="button"
-                    class="text-[#bdbdbd] text-xl delete-row3 mt-3">
+                <button type="button" class="text-[#bdbdbd] text-xl delete-row3 mt-3">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -747,7 +717,7 @@ $(document).ready(() => {
                 previewHtml += `
                     <div>
                         <label class="block mb-1">${label}</label>
-                       <select class="w-full border-b border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] px-0 py-2 bg-transparent">
+                        <select class="w-full border-b border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] px-0 py-2 bg-transparent">
                         <option value="" class="text-[#495057]" selected disabled>--Select--</option>
                 `;
 
@@ -1284,10 +1254,7 @@ $(document).ready(() => {
 
                 $('#editItineraryModal').addClass('hidden');
 
-                $('#editItineraryNamePencil')
-                    .closest('h4')
-                    .find('span')
-                    .text(itineraryData.name);
+                $('#editItineraryNamePencil').closest('h4').find('span').text(itineraryData.name);
             },
 
             error: function(xhr){
@@ -2821,10 +2788,6 @@ $(document).ready(() => {
         }, 100);
     }
 
-    // window.closeManageEventItineraryModal = function(){
-    //     $('#manageEventItineraryModal').addClass('hidden');
-    // }
-
     window.closeManageEventItineraryModal = function () {
 
         $('#manageEventItineraryModal').addClass('hidden');
@@ -3305,9 +3268,6 @@ $(document).ready(() => {
                 editingEventId = null;
             },
 
-            // error: function (xhr) {
-            //     console.log(xhr.responseText);
-            // }
             error: function (xhr) {
 
             $('.validation-error')

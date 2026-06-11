@@ -8,8 +8,8 @@
             </h2>
 
             <div class="space-x-2">
-                <x-primary-btn><i class="far fa-plus-square"></i><span>Add Agent Reservation</span></x-primary-btn>
-                <x-primary-btn><i class="far fa-plus-square"></i><span>Add Unknown Reservation</span></x-primary-btn>
+                <x-primary-btn onclick="openAddAgentReservationModal()"><i class="far fa-plus-square"></i><span>Add Agent Reservation</span></x-primary-btn>
+                <x-primary-btn onclick="openAddUnknownReservationModal()"><i class="far fa-plus-square"></i><span>Add Unknown Reservation</span></x-primary-btn>
             </div>
         </div>
     </x-slot>
@@ -237,3 +237,5 @@
         </div>
     </div>
 </x-app-layout>
+<x-add-agent-reservation-modal :customers="$customers" :users="$users" :products="$products" />
+<x-add-unknown-reservation-modal />

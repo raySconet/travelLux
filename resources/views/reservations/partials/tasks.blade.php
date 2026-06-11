@@ -89,7 +89,7 @@
                 <div class="flex gap-5">
                     <form method="POST" action="{{ route('tasks.toggleComplete', $task->id) }}" class="inline">
                         @csrf
-                        <button onclick="event.stopPropagation();" type="submit" class="cursor-pointer">
+                        <button onclick="showLoaderOnSubmit();event.stopPropagation();" type="submit" class="cursor-pointer">
                             @if($task->is_completed == 0)
                                 <i title="Complete Task" class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl" title="Complete Task"></i>
                             @else

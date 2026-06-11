@@ -29,7 +29,7 @@
                 <div class="w-90 relative" x-data="{
                     open: false,
                     selected: {{ json_encode($selectedStatuses) }},
-                    options: ['Active','Canceled - Commission Protected','Canceled w/ Insurance Payout','Canceled','Duplicate','Paid in Full','Claimed','On Hold','Prospect'],
+                    options: ['Active','Canceled - Commission Protected','Canceled w/ Insurance Payout','Canceled','Duplicate','Paid in Full Paid by Archer','Paid in Full Not Paid by Archer','Claimed','On Hold','Prospect'],
                     toggle(val) {
                         if (this.selected.includes(val)) {
                             this.selected = this.selected.filter(v => v !== val);

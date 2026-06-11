@@ -21,7 +21,11 @@ class CustomersForm extends Model
 
     public function customersFormRequired()
     {
-        return $this->hasMany(CustomersFormRequired::class, 'form_id')
-            ->where('is_deleted', 0);
+        return $this->hasMany(CustomersFormRequired::class, 'form_id')->where('is_deleted', 0);
+    }
+
+    public function formSent()
+    {
+        return $this->hasMany(FormSent::class, 'form_id', 'id');
     }
 }

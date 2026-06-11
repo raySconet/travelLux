@@ -72,7 +72,9 @@ class CustomerController extends Controller
             ->whereHas('customersFormRequired', function ($q) {
                 $q->where('all_customers_required', 1);
             })->get();  
-  
+
+        $sentForms = $customer->formSent()->with('form:id,form_name')->orderByDesc('sent_on')->get();
+
         $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted', 0)->orderBy('lname')->get();
 
         $automatedEmails = $customer->automatedEmails()
@@ -85,7 +87,19 @@ class CustomerController extends Controller
             ->orderByDesc('date')
             ->get();
 
-        return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms','referralCustomers','automatedEmails'));
+        $customer->load([
+            'reservations.customerSurveys' => function ($q) {
+                $q->where('submit_flag', 1);
+            }
+        ]);
+
+        $invitations = $customer->customerInvitations()->orderByDesc('created_on')->get();
+
+        $intakeForms = $customer->customerIntakeForms()
+    ->orderByDesc('created_on')
+    ->get();
+
+        return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms','referralCustomers','automatedEmails','sentForms','invitations','intakeForms'));
     }
 
     public function inviteNewCustomer(){

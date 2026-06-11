@@ -31,7 +31,7 @@
                     <div class="hover:shadow-2xl transition-shadow duration-200">
                         <p class="text-xl mt-1">Today</p>
 
-                        <a href="#" class="birthday-link" data-range="today">
+                        <a href="#" class="birthday-link" data-range="today" onclick="showLoaderOnSubmit()">
                             <p id="birthday-today" class="text-9xl leading-none text-[#1565c0]">0</p>
                         </a>
 
@@ -41,7 +41,7 @@
                     <div class="hover:shadow-2xl transition-shadow duration-200">
                         <p class="text-xl mt-1">7 Days</p>
 
-                        <a href="#" class="birthday-link" data-range="week">
+                        <a href="#" class="birthday-link" data-range="week" onclick="showLoaderOnSubmit()">
                             <p id="birthday-week" class="text-9xl text-[#1565c0]">0</p>
                         </a>
 
@@ -51,7 +51,7 @@
                     <div class="hover:shadow-2xl transition-shadow duration-200">
                         <p class="text-xl mt-1">30 Days</p>
 
-                        <a href="#" class="birthday-link" data-range="month">
+                        <a href="#" class="birthday-link" data-range="month" onclick="showLoaderOnSubmit()">
                             <p id="birthday-month" class="text-5xl text-[#1565c0]">0</p>
                         </a>
 
@@ -61,7 +61,7 @@
                     <div class="hover:shadow-2xl transition-shadow duration-200">
                         <p class="text-xl mt-1">6 Months</p>
 
-                        <a href="#" class="birthday-link" data-range="sixMonths">
+                        <a href="#" class="birthday-link" data-range="sixMonths" onclick="showLoaderOnSubmit()">
                             <p id="birthday-sixmonths" class="text-5xl text-[#1565c0]">0</p>
                         </a>
 
@@ -70,7 +70,7 @@
                 </div>
 
                 <div class="text-center mt-6">
-                    <a href="#" class="birthday-link text-base" data-range="all">
+                    <a href="#" class="birthday-link text-base" data-range="all" onclick="showLoaderOnSubmit()">
                         View All
                     </a>
                 </div>
@@ -97,7 +97,7 @@
                     <div class="hover:shadow-2xl transition-shadow duration-200">
                         <p class="text-xl mt-1">Today</p>
 
-                        <a href="#" class="customer-birthday-link" data-range="today">
+                        <a href="#" class="customer-birthday-link" data-range="today" onclick="showLoaderOnSubmit()">
                             <p id="customer-birthday-today" class="text-9xl leading-none text-[#1565c0]">0</p>
                         </a>
 
@@ -107,7 +107,7 @@
                     <div class="hover:shadow-2xl transition-shadow duration-200">
                         <p class="text-xl mt-1">7 Days</p>
 
-                        <a href="#" class="customer-birthday-link" data-range="week">
+                        <a href="#" class="customer-birthday-link" data-range="week" onclick="showLoaderOnSubmit()">
                             <p id="customer-birthday-week" class="text-9xl text-[#1565c0]">0</p>
                         </a>
 
@@ -117,14 +117,14 @@
                     <div class="hover:shadow-2xl transition-shadow duration-200">
                         <p class="text-xl mt-1">30 Days</p>
 
-                        <a href="#" class="customer-birthday-link" data-range="month">
+                        <a href="#" class="customer-birthday-link" data-range="month" onclick="showLoaderOnSubmit()">
                             <p id="customer-birthday-month" class="text-5xl text-[#1565c0]">0</p>
                         </a>
 
                         <p class="text-sm text-[#212121] mt-1">Birthdays</p>
                     </div>
 
-                    <div class="hover:shadow-2xl transition-shadow duration-200">
+                    <div class="hover:shadow-2xl transition-shadow duration-200" onclick="showLoaderOnSubmit()">
                         <p class="text-xl mt-1">6 Months</p>
 
                         <a href="#" class="customer-birthday-link" data-range="sixMonths">
@@ -137,7 +137,7 @@
                 </div>
 
                 <div class="text-center mt-6">
-                    <a href="#" class="customer-birthday-link text-base" data-range="all">
+                    <a href="#" class="customer-birthday-link text-base" data-range="all" onclick="showLoaderOnSubmit()">
                         View All
                     </a>
                 </div>
@@ -158,7 +158,7 @@
 
                     <div class="hover:shadow-2xl transition-shadow duration-200">
                         <p class="text-xl mt-1">Today</p>
-                        <a href="#" class="customer-anniversary-link" data-range="today">
+                        <a href="#" class="customer-anniversary-link" data-range="today" onclick="showLoaderOnSubmit()">
                             <p id="customer-anniversary-today" class="text-9xl leading-none text-[#1565c0]">0</p>
                         </a>
                         <p class="text-sm text-[#212121] mt-1">Anniversaries</p>
@@ -166,7 +166,7 @@
 
                     <div class="hover:shadow-2xl transition-shadow duration-200">
                         <p class="text-xl mt-1">7 Days</p>
-                        <a href="#" class="customer-anniversary-link" data-range="week">
+                        <a href="#" class="customer-anniversary-link" data-range="week" onclick="showLoaderOnSubmit()">
                             <p id="customer-anniversary-week" class="text-9xl text-[#1565c0]">0</p>
                         </a>
                         <p class="text-sm text-[#212121] mt-1">Anniversaries</p>
@@ -174,7 +174,7 @@
 
                     <div class="hover:shadow-2xl transition-shadow duration-200">
                         <p class="text-xl mt-1">30 Days</p>
-                        <a href="#" class="customer-anniversary-link" data-range="month">
+                        <a href="#" class="customer-anniversary-link" data-range="month" onclick="showLoaderOnSubmit()">
                             <p id="customer-anniversary-month" class="text-5xl text-[#1565c0]">0</p>
                         </a>
                         <p class="text-sm text-[#212121] mt-1">Anniversaries</p>
@@ -182,7 +182,7 @@
 
                     <div class="hover:shadow-2xl transition-shadow duration-200">
                         <p class="text-xl mt-1">6 Months</p>
-                        <a href="#" class="customer-anniversary-link" data-range="sixMonths">
+                        <a href="#" class="customer-anniversary-link" data-range="sixMonths" onclick="showLoaderOnSubmit()">
                             <p id="customer-anniversary-sixmonths" class="text-5xl text-[#1565c0]">0</p>
                         </a>
                         <p class="text-sm text-[#212121] mt-1">Anniversaries</p>
@@ -191,7 +191,7 @@
                 </div>
 
                 <div class="text-center mt-6">
-                    <a href="#" class="customer-anniversary-link text-base" data-range="all">
+                    <a href="#" class="customer-anniversary-link text-base" data-range="all" onclick="showLoaderOnSubmit()">
                         View All
                     </a>
                 </div>

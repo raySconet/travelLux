@@ -15,23 +15,14 @@ class CheckingInThisWeekController extends Controller
         $startOfWeek = Carbon::now()->startOfWeek();
         $endOfWeek = Carbon::now()->endOfWeek();
 
-        $thisWeekReservations = Reservation::where('agent_id', $userId)
-            ->whereBetween('checkin_date', [$startOfWeek, $endOfWeek])
-            ->where('is_deleted',0)
-            ->get();
+        $thisWeekReservations = Reservation::where('agent_id', $userId)->whereBetween('checkin_date', [$startOfWeek, $endOfWeek])->where('is_deleted',0)->get();
 
         $startOfNextWeek = Carbon::now()->addWeek()->startOfWeek();
         $endOfNextWeek = Carbon::now()->addWeek()->endOfWeek();
 
-        $nextWeekReservations = Reservation::where('agent_id', $userId)
-            ->whereBetween('checkin_date', [$startOfNextWeek, $endOfNextWeek])
-            ->where('is_deleted',0)
-            ->get();
+        $nextWeekReservations = Reservation::where('agent_id', $userId)->whereBetween('checkin_date', [$startOfNextWeek, $endOfNextWeek])->where('is_deleted',0)->get();
 
-        return view('dashboards.checkingInThisWeek', compact(
-            'thisWeekReservations',
-            'nextWeekReservations'
-        ));
+        return view('dashboards.checkingInThisWeek', compact('thisWeekReservations','nextWeekReservations'));
     }
 
 }

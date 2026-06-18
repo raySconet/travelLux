@@ -18,9 +18,9 @@
            
             <div class="flex  justify-between px-6 py-4 ">
                 <div class="flex flex-row gap-4">
-                    <button class="space-x-2 bg-[#B6844A] text-white  py-2 px-4 rounded cursor-pointer border border-transparent
-                                    hover:bg-white hover:border-[#B6844A] hover:text-[#B6844A]
-                                    transition-all duration-200">PAY ALL AGENTS</button>
+                    <button class="space-x-2 bg-[#B6844A] text-white  py-2 px-4 rounded cursor-pointer border border-transparent hover:bg-white hover:border-[#B6844A] hover:text-[#B6844A] transition-all duration-200">
+                        PAY ALL AGENTS
+                    </button>
                     <span class="mt-3"> Selected </span>
                 </div>
                 <div class="relative">

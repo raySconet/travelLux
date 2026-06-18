@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\ReservationPaidInFullAudit;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use App\Models\FormSent;
 
 class ReservationController extends Controller
 {
@@ -70,14 +71,17 @@ class ReservationController extends Controller
             $reservationsQuery->where('agent_id', $agentId);
         }
 
-        if($search) {
-            $reservationsQuery->where(function($query) use ($search) {
-                $query->whereHas('customer', function($q) use ($search) {
+        if ($search) {
+            $reservationsQuery->where(function ($query) use ($search) {
+                $query->whereHas('customer', function ($q) use ($search) {
                     $q->where('fname', 'like', "%{$search}%")
-                    ->orWhere('lname', 'like', "%{$search}%")
-                    ->orWhere('mname', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('cellphone', 'like', "%{$search}%");
+                    ->orWhere('lname', 'like', "%{$search}%");
+                })
+                ->orWhereHas('product', function ($q) use ($search) {
+                    $q->where('product_name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('destination', function ($q) use ($search) {
+                    $q->where('destination_name', 'like', "%{$search}%");
                 })
                 ->orWhere('reservation_number', 'like', "%{$search}%")
                 ->orWhere('reservation_name', 'like', "%{$search}%");
@@ -157,6 +161,12 @@ class ReservationController extends Controller
         $isNewReservation = false;
 
         $user = auth()->user();
+        if (!$user->isAdmin()) {
+
+            if ($reservation->agent_id != $user->id) {
+                abort(403);
+            }
+        }
 
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
         $availableForms = CustomersForm::where('is_deleted', 0)
@@ -208,8 +218,10 @@ class ReservationController extends Controller
                 })
                 ->values();
         });
-        
-        return view('reservations.reservationDetails', compact('users', 'reservation' ,'isNewReservation','products',  'availableForms','referralCustomers', 'linkedReservations','itineraryTrips', 'overdueTasksCount', 'timelineTasks', 'generalTasks', 'customersPayload'));
+
+        $sentForms = FormSent::with('form')->where('reservation_id', $reservation->id)->orderByDesc('sent_on')->get();
+
+        return  view('reservations.reservationDetails', compact('users', 'reservation' ,'isNewReservation','products',  'availableForms','referralCustomers', 'linkedReservations','itineraryTrips', 'overdueTasksCount', 'timelineTasks', 'generalTasks', 'customersPayload','sentForms'));
     }
 
     private function generateTimelineTasks($reservation)

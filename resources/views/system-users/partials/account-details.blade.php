@@ -15,7 +15,7 @@
         <div>
             <div class="flex items-center gap-2">
                 <input type="hidden" name="automated_emails_page_access" value="0">
-                <input type="checkbox" class="h-4 w-4" value="1" {{ old('automated_emails_page_access', $user->automated_emails_page_access ?? 0) == 1 ? 'checked' : '' }}>
+                <input type="checkbox" class="h-4 w-4" name="automated_emails_page_access" value="1" {{ old('automated_emails_page_access', $user->automated_emails_page_access ?? 0) == 1 ? 'checked' : '' }}>
                 <label class="text-sm">Access To Automated Emails Page</label>
             </div>
         </div>

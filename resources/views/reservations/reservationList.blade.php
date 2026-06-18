@@ -79,7 +79,7 @@
                     value="{{ request('search')}}"
                     placeholder="Quick Search"
                     class="w-90 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none"
-                    oninput="clearTimeout(this.delay); this.delay=setTimeout(() => this.form.submit(), 500)""
+                    oninput="clearTimeout(this.delay); this.delay=setTimeout(() => this.form.submit(), 500)"
                 >
             </form>
 
@@ -133,7 +133,6 @@
                                 </th>                
                             </tr>
                         </thead>
-
 
                         <tbody class="divide-y">
                             @forelse ($reservations as $reservation)

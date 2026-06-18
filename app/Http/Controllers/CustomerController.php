@@ -63,6 +63,15 @@ class CustomerController extends Controller
 
     public function edit(Customer $customer)
     {
+        $user = auth()->user();
+
+        if (!$user->isAdmin()) {
+
+            if ($customer->agent_id != $user->id) {
+                abort(403);
+            }
+        }
+
         $isNewCustomer = false;
 
         $states = State::orderBy('name')->get();
@@ -87,17 +96,11 @@ class CustomerController extends Controller
             ->orderByDesc('date')
             ->get();
 
-        $customer->load([
-            'reservations.customerSurveys' => function ($q) {
-                $q->where('submit_flag', 1);
-            }
-        ]);
+        $customer->load(['reservations.customerSurveys' => function ($q) { $q->where('submit_flag', 1); }]);
 
         $invitations = $customer->customerInvitations()->orderByDesc('created_on')->get();
 
-        $intakeForms = $customer->customerIntakeForms()
-    ->orderByDesc('created_on')
-    ->get();
+        $intakeForms = $customer->customerIntakeForms()->orderByDesc('created_on')->get();
 
         return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms','referralCustomers','automatedEmails','sentForms','invitations','intakeForms'));
     }

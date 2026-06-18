@@ -1,8 +1,4 @@
-<form method="POST"
-      enctype="multipart/form-data"
-      action="{{ $isNewAutomatedEmail
-             ? route('automatedEmails.store')
-             : route('automatedEmails.update', $automatedEmail->id ) }}">
+<form method="POST" enctype="multipart/form-data" action="{{ $isNewAutomatedEmail ? route('automatedEmails.store') : route('automatedEmails.update', $automatedEmail->id ) }}">
     @csrf
     @if(!$isNewAutomatedEmail)
         @method('PUT')
@@ -22,12 +18,10 @@
                 @else    
                     <div class="space-x-2">
                         @if(auth()->user()->isAdmin())
-                            <form method="POST" action="{{ route('automatedEmails.destroy', $automatedEmail->id)}}" class="inline delete-form">
-                                @csrf
-                                @method('DELETE')
-
-                                <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)"><i class="fas fa-trash"></i><span>Delete</span></x-secondary-buttonToDelete>
-                            </form> 
+                            <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(document.getElementById('deleteAutomatedEmailsForm'))">
+                                <i class="fas fa-trash"></i>
+                                <span>Delete</span>
+                            </x-secondary-buttonToDelete>
                         @endif    
                         <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save</span></x-secondary-btn>
                         <x-primary-btn type="button" onclick="window.location='{{ route('automatedEmails') }}'"><i class="far fa-minus-square"></i><span>Close Email</span></x-primary-btn>
@@ -43,4 +37,10 @@
         </div>
     </x-app-layout>
 </form>
+@if(!$isNewAutomatedEmail)
+    <form method="POST" action="{{ route('automatedEmails.destroy', $automatedEmail->id) }}" id="deleteAutomatedEmailsForm">
+        @csrf
+        @method('DELETE')
+    </form>
+@endif
 <x-delete-modal />

@@ -8,8 +8,17 @@ use Illuminate\Support\Facades\Hash;
 
 class SystemUsersController extends Controller
 {
+    private function checkAdmin()
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+    }
+
     public function index(Request $request)
     {
+       $this->checkAdmin();
+
        $search = $request->input('search'); 
        $usersQuery = User::select('id','fname', 'lname' ,'email', 'role', 'is_disabled', 'phone_number', 'city', 'state')->where('isDeleted', 0);
 
@@ -32,12 +41,14 @@ class SystemUsersController extends Controller
 
     public function edit(User $user)
     {
+        $this->checkAdmin();
         $isNewUser = false;
         return view('system-users.edit' , compact('user', 'isNewUser'));
     }
 
     public function create()
     {
+        $this->checkAdmin();
         $user = new User(); 
         $isNewUser = true;
         return view('system-users.edit', compact('user', 'isNewUser'));
@@ -45,6 +56,7 @@ class SystemUsersController extends Controller
 
     public function store(Request $request)
     {
+        $this->checkAdmin();
         $messages = [
             'fname.required' => 'First Name Is required.',
             'lname.required' => 'Last Name Is required.',
@@ -105,25 +117,13 @@ class SystemUsersController extends Controller
 
         $data['password'] = Hash::make($data['password']);
         $data['created_by'] = auth()->id();
-        $data['created_at'] = now();
-        $data['updated_at'] = now();
 
         if ($request->hasFile('profile_photo')) {
-
             $file = $request->file('profile_photo');
-
             $extension = $file->getClientOriginalExtension();
-
             $tempUser = User::max('id') + 1;
-
             $fileName = $tempUser . '.' . $extension;
-
-            $file->storeAs(
-                'attachments/users',
-                $fileName,
-                'public'
-            );
-
+            $file->storeAs('attachments/users',$fileName,'public');
             $data['profile_photo'] = $fileName;
         }
 
@@ -136,6 +136,7 @@ class SystemUsersController extends Controller
 
     public function update(Request $request, User $user)
     {
+        $this->checkAdmin();
         $data = $request->validate([
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
@@ -189,44 +190,29 @@ class SystemUsersController extends Controller
         }
 
         $data['last_modified_by'] = auth()->id();
-        $data['updated_at'] = now();
-
 
         if ($request->hasFile('profile_photo')) {
-
             $file = $request->file('profile_photo');
-
             $extension = $file->getClientOriginalExtension();
-
             $fileName = $user->id . '.' . $extension;
-
-            $file->storeAs(
-                'attachments/users',
-                $fileName,
-                'public'
-            );
-
+            $file->storeAs('attachments/users',$fileName,'public');
             $data['profile_photo'] = $fileName;
         }
 
         $user->update($data);
 
-
-        return redirect()
-            ->route('system-users')
-            ->with('success', 'User updated successfully');
+        return redirect()->route('system-users')->with('success', 'User updated successfully');
     }
 
     public function destroy(User $user)
     {
+        $this->checkAdmin();
         $user->update([
             'isDeleted' => 1,
             'last_modified_by' => auth()->id(),
             'updated_at' => now(),
         ]);
 
-        return redirect()
-            ->route('system-users')
-            ->with('success', 'User deleted successfully');
+        return redirect()->route('system-users')->with('success', 'User deleted successfully');
     }
 }

@@ -6,8 +6,17 @@ use Illuminate\Http\Request;
 
 class BookedTripsByStateReportController extends Controller
 {
+    private function checkAdmin()
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+    }
+
     public function index()
     {
+       $this->checkAdmin();
+       
        return view('reports.bookedTripsByStateReport');
     }
 

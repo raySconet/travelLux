@@ -45,11 +45,11 @@
                     <tbody class="divide-y">
                         @forelse ($customerForms as $customerForm)
                             <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('customersForm.edit', $customerForm->id) }}'">
-                                <td class="w-3/4 px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}"">
+                                <td class="w-3/4 px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $customerForm->form_name }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}"">
+                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     @if($customerForm->is_active == 1)
                                         <i class="fas fa-circle text-green-500 ml-3"></i>
                                     @else

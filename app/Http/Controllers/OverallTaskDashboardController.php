@@ -9,8 +9,16 @@ use Illuminate\Http\Request;
 
 class OverallTaskDashboardController extends Controller
 {
+    private function checkAdmin()
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+    }
+
     public function index()
     {
+        $this->checkAdmin();
         $users = User::select('id','fname','lname')->where('isDeleted',0)->get();
         $stats = $this->getStats();
 
@@ -115,6 +123,7 @@ class OverallTaskDashboardController extends Controller
 
     public function tasks(Request $request, $priority, $period)
     {
+        $this->checkAdmin();
         $today = Carbon::today();
         $twoWeeks = Carbon::today()->addDays(14);
         $thirtyDays = Carbon::today()->addDays(30);

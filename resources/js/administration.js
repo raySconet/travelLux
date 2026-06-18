@@ -179,7 +179,7 @@ $(document).ready(() => {
                         </select>
                     </div>
 
-                    <button type="button" class="text-[#bdbdbd] text-xl delete-row flex mt-6">
+                    <button type="button" class="text-[#bdbdbd] text-xl delete-row flex mt-6 cursor-pointer">
                         <i class="fas fa-trash"></i>
                     </button>
 
@@ -216,7 +216,7 @@ $(document).ready(() => {
                 </select>
             </div>
 
-            <button type="button" class="text-[#bdbdbd] text-xl delete-row flex mt-6">
+            <button type="button" class="text-[#bdbdbd] text-xl delete-row flex mt-6 cursor-pointer">
                 <i class="fas fa-trash"></i>
             </button>
 
@@ -253,6 +253,24 @@ $(document).ready(() => {
     });
 
 
+    function itemActions() {
+        return `
+            <div class="flex place-content-end gap-4 mt-6">
+                <button type="button" class="text-[#000] text-xl delete-row2 flex mt-3 cursor-pointer">
+                    <i class="fas fa-trash"></i>
+                </button>
+
+                <button type="button" class="text-[#000] text-xl move-up flex mt-3 cursor-pointer">
+                    <i class="fas fa-arrow-up"></i>
+                </button>
+
+                <button type="button" class="text-[#000] text-xl move-down flex mt-3 cursor-pointer">
+                    <i class="fas fa-arrow-down"></i>
+                </button>
+            </div>
+        `;
+    }
+
     $(document).on('click', '.add-item', function (e) {
         e.preventDefault();
         let type = $(this).data('type');
@@ -266,21 +284,7 @@ $(document).ready(() => {
                     <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm ">Text</label>
                 </div>
 
-
-                <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button"
-                        class="text-[#000] text-xl delete-row2 flex  mt-3">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button"
-                        class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button type="button"
-                        class="text-[#000] text-xl flex  mt-3">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                </div>
+                ${itemActions()}
             </div>`;
         }else if(type === 'acknowledgement'){
             html = `
@@ -296,17 +300,7 @@ $(document).ready(() => {
                     <label for="acknowledgement">Required</label>
                 </div>
 
-                <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                </div>
+                ${itemActions()}
             </div>`;
         }else if(type === 'plainTextBlock'){
             html = `
@@ -317,17 +311,7 @@ $(document).ready(() => {
                     <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm ">Text</label>
                 </div>
 
-                <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                </div>
+                ${itemActions()}
             </div>`;
         }else if(type === 'customerInputBlock'){
             html = `
@@ -343,17 +327,7 @@ $(document).ready(() => {
                     <label for="customerInputBlockRequired">Required</label>
                 </div>
 
-                <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                </div>
+                ${itemActions()}
             </div>`;
         }else if(type === 'customerDeclaration'){
             html = `
@@ -364,17 +338,7 @@ $(document).ready(() => {
                     <label for="customerDeclarationRequired">Required</label>
                 </div>
 
-                <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                </div>
+                ${itemActions()}
             </div>`;
         }else if(type === 'choice'){
             html = `
@@ -395,25 +359,16 @@ $(document).ready(() => {
                         <input type="text" data-preview="choiceText" placeholder=" " class="field-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1 mb-5 w-full" />
                         <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm">Choice Text</label>
                     </div>
-                    <button type="button" class="text-[#bdbdbd] text-xl delete-row3 flex  mt-3">
+                    <button type="button" class="text-[#bdbdbd] text-xl delete-row3 flex mt-3 cursor-pointer">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
 
                 <button type="button" class="addChoiceBtn space-x-2 bg-[#bdbdbd] border text-white py-2 px-8 rounded cursor-pointer  hover:bg-white hover:border-[#bdbdbd] hover:text-[#bdbdbd]
-                    transition-all duration-200 mt-3"><i class="fas fa-plus"></i>Add Choice</button>
+                    transition-all duration-200 mt-3"><i class="fas fa-plus"></i>Add Choice
+                </button>
 
-                <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                </div>
+                ${itemActions()}
 
             </div>
             <div class="addChoice mt-4 space-y-3"></div>`;
@@ -436,25 +391,16 @@ $(document).ready(() => {
                         <input type="text" placeholder=" " class="choice-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1 mb-5 w-full" />
                         <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2  peer-focus:top-0 peer-focus:text-sm">Choice Text</label>
                     </div>
-                    <button type="button" class="text-[#bdbdbd] text-xl delete-row3 flex  mt-3">
+                    <button type="button" class="text-[#bdbdbd] text-xl delete-row3 flex mt-3 cursor-pointer">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
 
                 <button  type="button" class="addChoiceBtn space-x-2 bg-[#bdbdbd] border text-white py-2 px-8 rounded cursor-pointer  hover:bg-white hover:border-[#bdbdbd] hover:text-[#bdbdbd]
-                    transition-all duration-200 mt-3"><i class="fas fa-plus"></i>Add Choice</button>
+                    transition-all duration-200 mt-3"><i class="fas fa-plus"></i>Add Choice
+                </button>
 
-                <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl flex  mt-3">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                </div>
+                ${itemActions()}
             </div>
             <div class="addChoice mt-4 space-y-3"></div>`;
         }else if(type === 'signatureBlock'){
@@ -466,17 +412,7 @@ $(document).ready(() => {
                     <label for="signatureBlockRequired">Required</label>
                 </div>
 
-                <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                </div>
+                ${itemActions()}
             </div>`;
         }else if(type === 'HTML'){
             html = `
@@ -490,17 +426,7 @@ $(document).ready(() => {
                     class="w-full border-b border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1">
                 </textarea>
 
-                <div class="flex place-content-end gap-4 mt-6">
-                    <button type="button" class="text-[#000] text-xl delete-row2 flex  mt-3">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl  flex  mt-3">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button type="button" class="text-[#000] text-xl flex  mt-3">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                </div>
+                ${itemActions()}
             </div>`;
         }
         $('#form-items-container').append(html);
@@ -524,7 +450,7 @@ $(document).ready(() => {
                     </label>
                 </div>
 
-                <button type="button" class="text-[#bdbdbd] text-xl delete-row3 mt-3">
+                <button type="button" class="text-[#bdbdbd] text-xl delete-row3 mt-3 cursor-pointer">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -545,7 +471,7 @@ $(document).ready(() => {
         generatePreview();
     });
 
-    $(document).on('click', '.fa-arrow-up', function () {
+    $(document).on('click', '.move-up', function () {
         const $item = $(this).closest('.form-item');
         const $prev = $item.prev('.form-item');
         if ($prev.length) {
@@ -555,16 +481,16 @@ $(document).ready(() => {
     });
 
 
-    $(document).on('click', '.fa-arrow-down', function () {
-            const $item = $(this).closest('.form-item');
-            const $next = $item.next('.form-item');
-            if ($next.length) {
-                $item.insertAfter($next);
-            }
-            generatePreview();
-        });
+    $(document).on('click', '.move-down', function () {
+        const $item = $(this).closest('.form-item');
+        const $next = $item.next('.form-item');
+        if ($next.length) {
+            $item.insertAfter($next);
+        }
+        generatePreview();
+    });
 
-        function generatePreview() {
+    function generatePreview() {
 
         let previewHtml = '';
 
@@ -799,6 +725,16 @@ $(document).ready(() => {
             $(this).attr('value', $(this).val());
         });
 
+        clonedItems.find('input[type="checkbox"]').each(function () {
+
+            if ($(this).is(':checked')) {
+                $(this).attr('checked', 'checked');
+            } else {
+                $(this).removeAttr('checked');
+            }
+
+        });
+
         clonedItems.find('textarea').each(function () {
             $(this).text($(this).val());
         });
@@ -863,7 +799,7 @@ $(document).ready(() => {
             </div>
 
             <div class="flex justify-center items-center">
-                <button type="button" class="delete-row text-[#989898] text-2xl mb-3">
+                <button type="button" class="delete-row text-[#989898] text-2xl mb-3 cursor-pointer">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>

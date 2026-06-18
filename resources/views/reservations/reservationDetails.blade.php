@@ -1,8 +1,4 @@
-<form method="POST" id="reservationForm"
-      enctype="multipart/form-data"
-      action="{{ $isNewReservation
-            ? route('reservations.store')
-            : route('reservations.update' , $reservation->id)}}">
+<form method="POST" id="reservationForm" enctype="multipart/form-data" action="{{ $isNewReservation ? route('reservations.store') : route('reservations.update' , $reservation->id)}}">
     @csrf
     @if(!$isNewReservation)
         @method('PUT')
@@ -22,17 +18,10 @@
                     </div>
                 @else
                     <div class="space-x-2">
-                        @if(auth()->user()->isAdmin())
-                            <form method="POST" action="{{ route('reservations.destroy', $reservation->id )}}" class="inline delete-form">
-                                @csrf
-                                @method('DELETE')
-
-                                <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)">
-                                    <i class="fas fa-trash"></i><span>Delete</span>
-                                </x-secondary-buttonToDelete>
-
-                            </form>
-                        @endif
+                        <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(document.getElementById('deleteReservationsForm'))">
+                            <i class="fas fa-trash"></i>
+                            <span>Delete</span>
+                        </x-secondary-buttonToDelete>
                         <x-secondary-buttonToDelete type="button" id="duplicateReservationBtn" data-id="{{ $reservation->id }}">
                             <i class="fas fa-copy"></i><span>Duplicate</span>
                         </x-secondary-buttonToDelete>
@@ -177,5 +166,11 @@
         </div>
     </x-app-layout>
 </form>    
+@if(!$isNewReservation)
+    <form method="POST" action="{{ route('reservations.destroy', $reservation->id) }}" id="deleteReservationsForm">
+        @csrf
+        @method('DELETE')
+    </form>
+@endif
 <x-delete-modal />
 <x-reservation-itinerary-attention-modal />

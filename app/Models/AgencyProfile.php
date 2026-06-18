@@ -10,8 +10,6 @@ class AgencyProfile extends Model
 
     protected $primaryKey = 'id';
 
-    // public $timestamps = false;
-
     protected $fillable = [
         'company_name',
         'contact_person_name',

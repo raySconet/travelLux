@@ -18,12 +18,16 @@
                     <x-text-input type="text" id="company_name" name="company_name" value="{{ old('company_name', $agencyProfile->company_name ?? '') }}" class="text-[#495057] mt-2" />
 
                     <x-input-label for="company_name">Company Name</x-input-label>
+
+                    <x-input-error :messages="$errors->get('company_name')" />
                 </div>
 
                 <div class="relative mt-3">
                     <x-text-input type="text" id="contact_person_name" name="contact_person_name" value="{{ old('contact_person_name', $agencyProfile->contact_person_name ?? '') }}" class="text-[#495057] mt-2" />
 
                     <x-input-label for="contact_person_name">Contact Person Name</x-input-label>
+
+                    <x-input-error :messages="$errors->get('contact_person_name')" />
                 </div>
             </div>
 

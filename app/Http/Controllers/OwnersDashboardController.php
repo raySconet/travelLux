@@ -10,13 +10,22 @@ use App\Models\Customer;
 
 class OwnersDashboardController extends Controller
 {
+    private function checkAdmin()
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+    }
+
     public function index()
     {
+        $this->checkAdmin();
         return view('dashboards.ownersDashboard');
     }
 
     public function agencyTotalSales()
     {
+        $this->checkAdmin();
         $years = [
             now()->subYear()->year,
             now()->year,
@@ -41,6 +50,7 @@ class OwnersDashboardController extends Controller
 
     public function agentBirthdayCounts()
     {
+        $this->checkAdmin();
         $today = Carbon::today();
 
         return response()->json([
@@ -71,6 +81,7 @@ class OwnersDashboardController extends Controller
 
     public function agentBirthdayDetails($range)
     {
+        $this->checkAdmin();
         $today = Carbon::today();
 
         $query = User::query()->where('isDeleted', 0)->select('fname', 'lname', 'birth_date');
@@ -147,6 +158,7 @@ class OwnersDashboardController extends Controller
 
     public function customerBirthdayCounts()
     {
+        $this->checkAdmin();
         $today = Carbon::today();
 
         $baseQuery = function () use ($today) {
@@ -187,6 +199,7 @@ class OwnersDashboardController extends Controller
 
     public function customerBirthdayDetails($range)
     {
+        $this->checkAdmin();
         $today = Carbon::today();
 
         $query = Customer::query()->where('is_deleted', 0)->select('fname', 'lname', 'birth_date');
@@ -266,6 +279,7 @@ class OwnersDashboardController extends Controller
 
     public function customerAnniversaryCounts()
     {
+        $this->checkAdmin();
         $today = Carbon::today();
 
         return response()->json([
@@ -298,6 +312,7 @@ class OwnersDashboardController extends Controller
 
     public function customerAnniversaryDetails($range)
     {
+        $this->checkAdmin();
         $today = Carbon::today();
 
         $query = Customer::query()->where('is_deleted', 0)->select('fname', 'lname', 'anniversary_date');

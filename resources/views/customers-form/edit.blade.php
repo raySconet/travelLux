@@ -1,7 +1,4 @@
-<form method="POST"
-      action="{{ $isNewCustomersForm 
-            ? route('customersForm.store')
-            : route('customersForm.update', $customerForm->id) }}">  
+<form method="POST" action="{{ $isNewCustomersForm ? route('customersForm.store') : route('customersForm.update', $customerForm->id) }}">  
     @csrf
     @if(!$isNewCustomersForm)
         @method('PUT')
@@ -20,12 +17,10 @@
                     </div>
                 @else
                     <div class="space-x-2">
-                        <form method="POST" action="{{ route('customersForm.destroy', $customerForm->id)}}" class="inline delete-form">
-                            @csrf
-                            @method('DELETE')
-
-                            <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(this)"><i class="fas fa-trash"></i><span>Delete</span></x-secondary-buttonToDelete>
-                        </form>
+                        <x-secondary-buttonToDelete type="button" onclick="openDeleteModal(document.getElementById('deleteCustomersForm'))">
+                            <i class="fas fa-trash"></i>
+                            <span>Delete</span>
+                        </x-secondary-buttonToDelete>
                         <x-secondary-btn type="submit"><i class="fas fa-save"></i><span>Save</span></x-secondary-btn>
                         <x-primary-btn type="button" onclick="window.location='{{ route('customersForms') }}'"><i class="far fa-minus-square"></i><span>Close</span></x-primary-btn>
                     </div>
@@ -61,4 +56,10 @@
         </div>
     </x-app-layout>
 </form>
+@if(!$isNewCustomersForm)
+    <form method="POST" action="{{ route('customersForm.destroy', $customerForm->id) }}" id="deleteCustomersForm">
+        @csrf
+        @method('DELETE')
+    </form>
+@endif
 <x-delete-modal />

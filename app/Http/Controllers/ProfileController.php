@@ -22,6 +22,16 @@ class ProfileController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
+        $messages = [
+            'fname.required' => 'First Name Is required.',
+            'lname.required' => 'Last Name Is  required.',
+            'email.required' => 'Email Is required.',
+            'email.email' => 'Email Address Not Valid.',
+            'username.required' => 'Username Is Required.',
+            'password.required' => 'Password Is required.',
+            'passowrd.confirmed' => 'Passwords do not match.',
+        ];
+
         $user = $request->user();
 
         $data = $request->validate([
@@ -29,11 +39,11 @@ class ProfileController extends Controller
             'lname' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:191', Rule::unique('users', 'email')->ignore($user->id)],
             'username' => 'required|string|max:255',
-            'password' => 'nullable|min:6|confirmed',
+            'password' => 'required|min:6|confirmed',
 
-            'backup_email' => 'required|email|max:191',
-            'phone_number' => 'required|string|max:255',
-            'cell_phone_number' => 'required|string|max:255',
+            'backup_email' => 'nullable|email|max:191',
+            'phone_number' => 'nullable|string|max:255',
+            'cell_phone_number' => 'nullable|string|max:255',
             'birth_date' => 'nullable|date',
             'hire_date' => 'nullable|date',
             'facebook_profile' => 'nullable|string|max:255',
@@ -41,15 +51,15 @@ class ProfileController extends Controller
             'twitter_account' => 'nullable|string|max:255',
             'time_zone' => 'nullable|string|max:255',
             'email_as_username' => 'nullable|integer',
-            'ssn' => 'required|string|max:255',
+            'ssn' => 'nullable|string|max:255',
             'ein' => 'nullable|string|max:255',
-            'first_address_line' => 'required|string|max:255',
+            'first_address_line' => 'nullable|string|max:255',
             'second_address_line' => 'nullable|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:255',
-            'postal_code' => 'required|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'postal_code' => 'nullable|string|max:255',
             'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-        ]);
+        ], $messages);
 
         if (!empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
@@ -62,7 +72,6 @@ class ProfileController extends Controller
         }
 
         $data['last_modified_by'] = auth()->id();
-        $data['updated_at'] = now();
 
         if ($request->hasFile('profile_photo')) {
 
@@ -72,11 +81,7 @@ class ProfileController extends Controller
 
             $fileName = $user->id . '.' . $extension;
 
-            $file->storeAs(
-                'attachments/users',
-                $fileName,
-                'public'
-            );
+            $file->storeAs('attachments/users',$fileName,'public');
 
             $data['profile_photo'] = $fileName;
         }

@@ -18,11 +18,10 @@
         </div>
 
         <div>
-            {{-- <x-secondary-buttonToDelete><i class="fas fa-file-pdf"></i><span>Pdf</span></x-secondary-buttonToDelete> --}}
             <x-secondary-buttonToDelete type="button" id="openItineraryPdfBtn">
-    <i class="fas fa-file-pdf"></i>
-    <span>Pdf</span>
-</x-secondary-buttonToDelete>
+                <i class="fas fa-file-pdf"></i>
+                <span>Pdf</span>
+            </x-secondary-buttonToDelete>
         </div>
     </div>
 </div>

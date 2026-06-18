@@ -77,6 +77,15 @@ class ItineraryController extends Controller
 
     public function edit(ItineraryTrip $itinerary)
     {
+        $user = auth()->user();
+
+        if (!$user->isAdmin()) {
+
+            if ($itinerary->agent_id != $user->id) {
+                abort(403);
+            }
+        }
+
         $itinerary->load([
             'attachments',
             'itineraryDays' => function ($query) {

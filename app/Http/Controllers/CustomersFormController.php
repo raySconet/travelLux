@@ -10,8 +10,16 @@ use App\Models\Destination;
 
 class CustomersFormController extends Controller
 {
+    private function checkAdmin()
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+    }
+    
     public function index(Request $request)
     {
+       $this->checkAdmin();
        $search = $request->input('search'); 
        $customerFormsQuery = CustomersForm::select('id','form_name', 'is_active')
                                     ->where('is_deleted',0);
@@ -25,8 +33,9 @@ class CustomersFormController extends Controller
        return view('customersForm', compact('customerForms'));
     }
 
-    public function create(CustomersForm $customerForm)
+    public function create()
     {
+        $this->checkAdmin();
         $customerForm = new CustomersForm();
         $isNewCustomersForm = true;
 
@@ -38,6 +47,7 @@ class CustomersFormController extends Controller
 
     public function edit(CustomersForm $customerForm)
     {
+        $this->checkAdmin();
         $isNewCustomersForm = false;
 
         $customerFormRequiredRows = $customerForm->customersFormRequired()->get();
@@ -52,6 +62,7 @@ class CustomersFormController extends Controller
 
     public function store(Request $request)
     {
+        $this->checkAdmin();
         $messages = [
             'form_name.required' => 'Form Name Is Required.',
             'form_subject.required' => 'Form Subject Is Required.',
@@ -67,8 +78,6 @@ class CustomersFormController extends Controller
         ], $messages);
 
         $data['created_by'] = auth()->id();
-        $data['created_at'] = now();
-
 
         $form = CustomersForm::create($data);
 
@@ -100,6 +109,7 @@ class CustomersFormController extends Controller
 
     public function update(Request $request, CustomersForm $customerForm)
     {
+        $this->checkAdmin();
         $messages = [
             'form_name.required' => 'Form Name Is Required.',
             'form_subject.required' => 'Form Subject Is Required.'
@@ -115,7 +125,6 @@ class CustomersFormController extends Controller
         ], $messages);
 
         $data['last_modified_by'] = auth()->id();
-        $data['updated_at'] = now();
 
         $customerForm->update($data);
 
@@ -162,13 +171,8 @@ class CustomersFormController extends Controller
                 $usedIds[] = $newRow->id;
             }
         }
-
       
-        CustomersFormRequired::where('form_id', $customerForm->id)
-            ->whereNotIn('id', $usedIds)
-            ->update([
-                'is_deleted' => 1
-            ]);
+        CustomersFormRequired::where('form_id', $customerForm->id)->whereNotIn('id', $usedIds)->update(['is_deleted' => 1]);
 
         return redirect()
                 ->route('customersForm.edit', $customerForm->id)
@@ -178,6 +182,7 @@ class CustomersFormController extends Controller
 
     public function destroy(CustomersForm $customerForm)
     {
+        $this->checkAdmin();
         $customerForm->update([
             'is_deleted' => 1,
             'last_modified_by' => auth()->id(),

@@ -51,13 +51,7 @@
         <div class="flex flex-col gap-2" style="background-color: rgba(241, 131, 37,0.2)">
             <p class="text-right text-base mt-2 mr-2">Total Reservation Cost:<b>$ {{ number_format($reservation->reservation_cost, 2) }}</b></p>
             @php
-                // $totalPayments = $reservation->payments()
-                //     ->where('is_deleted', 0)
-                //     ->sum('amount');
-
-                $totalPayments = $reservation->payments
-    ->where('is_deleted', 0)
-    ->sum('amount');
+                $totalPayments = $reservation->payments->where('is_deleted', 0)->sum('amount');
 
                 $balanceDue = ($reservation->reservation_cost ?? 0) - $totalPayments;
             @endphp

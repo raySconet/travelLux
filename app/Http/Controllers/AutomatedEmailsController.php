@@ -17,9 +17,7 @@ class AutomatedEmailsController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $users = User::select('id','fname','lname','email')
-                    ->where('isDeleted',0)
-                    ->get();
+        $users = User::select('id','fname','lname','email')->where('isDeleted',0)->get();
 
         $agentId = $request->input('agent_id', -1);
 
@@ -76,10 +74,11 @@ class AutomatedEmailsController extends Controller
 
     public function toggle(AutomatedEmail $automatedEmail)
     {
-        $automatedEmail->is_disabled = $automatedEmail->is_disabled == 0 ? 1 : 0;
-        $automatedEmail->last_modified_by = auth()->id();
-        $automatedEmail->last_modified_on = now();
-        $automatedEmail->save();
+        $automatedEmail->update([
+            'is_disabled' => !$automatedEmail->is_disabled,
+            'last_modified_by' => auth()->id(),
+            'last_modified_on' => now(),
+        ]);
 
         return redirect()->route('automatedEmails');
     }
@@ -100,7 +99,7 @@ class AutomatedEmailsController extends Controller
             'subject' => 'required|string|max:255',
             'before_after' => 'required|string|max:255',
             'days' =>'required|integer',
-            'message' => 'required|string|max:255',
+            'message' => 'required|string',
             'bcc_agent' => 'nullable|integer',
             'product_list' => 'nullable|array',
             'destination_list' => 'nullable|array',
@@ -112,23 +111,11 @@ class AutomatedEmailsController extends Controller
         ], $messages);
 
         $data['created_by'] = auth()->id();
-        $data['created_at'] = now();
 
-        $data['product_list'] = isset($data['product_list'])
-            ? implode(',', array_map(fn($v) => $v ?: -1, $data['product_list']))
-            : null;
-
-        $data['destination_list'] = isset($data['destination_list'])
-            ? implode(',', array_map(fn($v) => $v ?: -1, $data['destination_list']))
-            : null;
-
-        $data['resort_list'] = isset($data['resort_list'])
-            ? implode(',', array_map(fn($v) => $v ?: -1, $data['resort_list']))
-            : null;
-
-        $data['cruise_itinerary_list'] = isset($data['cruise_itinerary_list'])
-            ? implode(',', array_map(fn($v) => $v ?: -1, $data['cruise_itinerary_list']))
-            : null;
+        $data['product_list'] = isset($data['product_list']) ? implode(',', array_map(fn($v) => $v ?: -1, $data['product_list'])) : null;
+        $data['destination_list'] = isset($data['destination_list']) ? implode(',', array_map(fn($v) => $v ?: -1, $data['destination_list'])) : null;
+        $data['resort_list'] = isset($data['resort_list']) ? implode(',', array_map(fn($v) => $v ?: -1, $data['resort_list'])) : null;
+        $data['cruise_itinerary_list'] = isset($data['cruise_itinerary_list']) ? implode(',', array_map(fn($v) => $v ?: -1, $data['cruise_itinerary_list'])) : null;
 
         $email = AutomatedEmail::create($data);
 
@@ -140,7 +127,6 @@ class AutomatedEmailsController extends Controller
                 $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $extension = $file->getClientOriginalExtension();
                 $size = $file->getSize();
-
                 
                 $attachment = AutomatedEmailAttachment::create([
                     'automated_email_id' => $email->id,
@@ -151,15 +137,8 @@ class AutomatedEmailsController extends Controller
                     'created_on' => now(),
                 ]);
 
-                
                 $fileName = $attachment->id . '.' . $extension;
-
-                
-                $path = $file->storeAs(
-                    'attachments/automatedEmails',
-                    $fileName,
-                    'public'
-                );
+                $path = $file->storeAs('attachments/automatedEmails',$fileName,'public');
 
                 
                 if (!$path) {
@@ -189,7 +168,7 @@ class AutomatedEmailsController extends Controller
             'subject' => 'required|string|max:255',
             'before_after' => 'required|string|max:255',
             'days' => 'required|integer',
-            'message' => 'required|string|max:255',
+            'message' => 'required|string',
             'bcc_agent' => 'nullable|integer',
             'product_list' => 'nullable|array',
             'destination_list' => 'nullable|array',
@@ -200,24 +179,12 @@ class AutomatedEmailsController extends Controller
             'is_deleted' => 'nullable|integer'
         ], $messages);
 
-        $data['product_list'] = isset($data['product_list'])
-            ? implode(',', array_map(fn($v) => $v ?: -1, $data['product_list']))
-            : null;
-
-        $data['destination_list'] = isset($data['destination_list'])
-            ? implode(',', array_map(fn($v) => $v ?: -1, $data['destination_list']))
-            : null;
-
-        $data['resort_list'] = isset($data['resort_list'])
-            ? implode(',', array_map(fn($v) => $v ?: -1, $data['resort_list']))
-            : null;
-
-        $data['cruise_itinerary_list'] = isset($data['cruise_itinerary_list'])
-            ? implode(',', array_map(fn($v) => $v ?: -1, $data['cruise_itinerary_list']))
-            : null;
+        $data['product_list'] = isset($data['product_list']) ? implode(',', array_map(fn($v) => $v ?: -1, $data['product_list'])) : null;
+        $data['destination_list'] = isset($data['destination_list']) ? implode(',', array_map(fn($v) => $v ?: -1, $data['destination_list'])) : null;
+        $data['resort_list'] = isset($data['resort_list']) ? implode(',', array_map(fn($v) => $v ?: -1, $data['resort_list'])) : null;
+        $data['cruise_itinerary_list'] = isset($data['cruise_itinerary_list']) ? implode(',', array_map(fn($v) => $v ?: -1, $data['cruise_itinerary_list'])) : null;
 
         $data['last_modified_by'] = auth()->id();
-        $data['updated_at'] = now();
 
         $automatedEmail->update($data);
 
@@ -239,11 +206,7 @@ class AutomatedEmailsController extends Controller
 
                 $fileName = $attachment->id . '.' . $extension;
 
-                $file->storeAs(
-                    'attachments/automatedEmails',
-                    $fileName,
-                    'public'
-                );
+                $file->storeAs('attachments/automatedEmails',$fileName,'public');
             }
         }
 
@@ -255,7 +218,6 @@ class AutomatedEmailsController extends Controller
         $automatedEmail->update([
             'is_deleted' => 1,
             'last_modified_by' => auth()->id(),
-            'updated_at' => now(),
         ]);
 
         return redirect()
@@ -265,10 +227,7 @@ class AutomatedEmailsController extends Controller
 
     public function destroyAttachment(AutomatedEmailAttachment $attachment)
     {
-        Storage::disk('public')->delete(
-            'attachments/automatedEmails/' .
-            $attachment->id . '.' . $attachment->file_extension
-        );
+        Storage::disk('public')->delete('attachments/automatedEmails/' .$attachment->id . '.' . $attachment->file_extension);
 
         $attachment->delete();
 

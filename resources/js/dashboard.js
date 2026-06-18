@@ -673,16 +673,20 @@ $(document).ready(function() {
         });
     }
 
-    $(document).ready(function() {
+    // $(document).ready(function() {
 
+    //     loadRecentCommissions();
+
+    //     $('#commissionRange').on('change', function() {
+
+    //         loadRecentCommissions($(this).val());
+
+    //     });
+    // });
+
+    if (window.location.pathname === '/agentDashboard') {
         loadRecentCommissions();
-
-        $('#commissionRange').on('change', function() {
-
-            loadRecentCommissions($(this).val());
-
-        });
-    });
+    }
 
     $(document).on('change', '#commissionRange', function () {
         showLoaderOnSubmit();

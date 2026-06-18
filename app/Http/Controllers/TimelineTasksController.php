@@ -9,8 +9,16 @@ use App\Models\Destination;
 
 class TimelineTasksController extends Controller
 {
+    private function checkAdmin()
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+    }
+
     public function index(Request $request)
     {
+        $this->checkAdmin();
         $search = $request->input('search');
         $productId = $request->input('product_id');
         $destinationId = $request->input('destination_id');
@@ -72,6 +80,7 @@ class TimelineTasksController extends Controller
 
     public function edit(TimelineTask $timelineTask)
     {
+        $this->checkAdmin();
         $isNewTimelineTask = false;
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
         $destinations = Destination::orderBy('destination_name')->where('is_deleted',0)->get();
@@ -80,6 +89,7 @@ class TimelineTasksController extends Controller
 
     public function create(TimelineTask $timelineTask)
     {
+        $this->checkAdmin();
         $timelineTask = new TimelineTask();
         $isNewTimelineTask = true;
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
@@ -89,6 +99,7 @@ class TimelineTasksController extends Controller
 
     public function store(Request $request)
     {
+        $this->checkAdmin();
         $messages = [
             'product_id.required' => 'The Product field is required.',
             'destination_id.required' => 'The Destination field is required.',
@@ -101,7 +112,7 @@ class TimelineTasksController extends Controller
         $data = $request->validate([
             'product_id' => 'required|integer',
             'destination_id' => 'required|integer',
-            'task_name' => 'required|string:max:255',
+            'task_name' => 'required|string|max:255',
             'priority' => 'required|string|max:255',
             'before_after' => 'required|string|max:255',
             'date_type' => 'required|string|max:255',
@@ -120,6 +131,7 @@ class TimelineTasksController extends Controller
 
     public function update(Request $request, TimelineTask $timelineTask)
     {
+        $this->checkAdmin();
         $messages = [
             'product_id.required' => 'The Product field is required.',
             'destination_id.required' => 'The Destination field is required.',
@@ -140,7 +152,7 @@ class TimelineTasksController extends Controller
         ], $messages);
 
         $data['last_modified_by'] = auth()->id();
-        $data['last_modfified_on'] = now();
+        $data['last_modified_on'] = now();
 
         $timelineTask->update($data);
 
@@ -151,6 +163,7 @@ class TimelineTasksController extends Controller
 
     public function destroy(TimelineTask $timelineTask)
     {
+        $this->checkAdmin();
         $timelineTask->update([
             'is_deleted' => 1,
             'last_modified_by' => auth()->id(),

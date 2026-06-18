@@ -20,7 +20,7 @@
         @endif
 
         <div class="flex items-center mt-5 gap-3">
-            <i class="fas fa-user-plus text-2xl text-[#B6844A]" title="Quick Customer Add" onclick="openReservationAddCustomerModal()"></i>
+            <i class="fas fa-user-plus text-2xl text-[#B6844A] cursor-pointer" title="Quick Customer Add" onclick="openReservationAddCustomerModal()"></i>
 
             <div class="flex-1">
                 <label for="customer" class="text-sm block mb-1">Customer</label>

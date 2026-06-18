@@ -121,7 +121,7 @@
                 <div id="upcomingReservationsContainer">
 
                     <div class="text-center mt-4">
-                        <a href="#" class="text-base upcoming-link hidden">
+                        <a href="#" class="text-base upcoming-link hidden" onclick="showLoaderOnSubmit()">
                             View Details
                         </a>
 

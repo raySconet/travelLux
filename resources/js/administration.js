@@ -364,8 +364,8 @@ $(document).ready(() => {
                     </button>
                 </div>
 
-                <button type="button" class="addChoiceBtn space-x-2 bg-[#bdbdbd] border text-white py-2 px-8 rounded cursor-pointer  hover:bg-white hover:border-[#bdbdbd] hover:text-[#bdbdbd]
-                    transition-all duration-200 mt-3"><i class="fas fa-plus"></i>Add Choice
+                <button type="button" class="addChoiceBtn space-x-2 bg-[#bdbdbd] border text-white py-2 px-8 rounded cursor-pointer  hover:bg-white hover:border-[#bdbdbd] hover:text-[#bdbdbd] transition-all duration-200 mt-3">
+                    <i class="fas fa-plus"></i>Add Choice
                 </button>
 
                 ${itemActions()}
@@ -396,8 +396,8 @@ $(document).ready(() => {
                     </button>
                 </div>
 
-                <button  type="button" class="addChoiceBtn space-x-2 bg-[#bdbdbd] border text-white py-2 px-8 rounded cursor-pointer  hover:bg-white hover:border-[#bdbdbd] hover:text-[#bdbdbd]
-                    transition-all duration-200 mt-3"><i class="fas fa-plus"></i>Add Choice
+                <button  type="button" class="addChoiceBtn space-x-2 bg-[#bdbdbd] border text-white py-2 px-8 rounded cursor-pointer  hover:bg-white hover:border-[#bdbdbd] hover:text-[#bdbdbd] transition-all duration-200 mt-3">
+                    <i class="fas fa-plus"></i>Add Choice
                 </button>
 
                 ${itemActions()}
@@ -419,12 +419,7 @@ $(document).ready(() => {
             <div class="form-item flex-item bg-white shadow rounded-none p-6 mt-1" style="box-shadow: 1px 1px 6px #808080;">
                 <p class="font-extrabold text-base mb-3">HTML</p>
                 <label class="text-sm">Content</label>
-                <textarea
-                    id="content"
-                    name="content"
-                    rows="3"
-                    class="w-full border-b border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1">
-                </textarea>
+                <textarea id="content" name="content" rows="3" class="w-full border-b border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1"></textarea>
 
                 ${itemActions()}
             </div>`;
@@ -440,11 +435,7 @@ $(document).ready(() => {
         const choiceRow = `
             <div class="choiceText flex gap-4 relative mt-3">
                 <div class="flex-1 relative">
-                    <input
-                        type="text"
-                        placeholder=" "
-                        class="choice-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1"
-                    />
+                    <input type="text" placeholder=" " class="choice-input peer w-full border-b focus:outline-none focus:border-[#B6844A] pt-5 pb-1"/>
                     <label class="absolute left-0 top-1 transition-all duration-200 peer-placeholder-shown:top-2 peer-focus:top-0 peer-focus:text-sm">
                         Choice Text
                     </label>
@@ -540,14 +531,9 @@ $(document).ready(() => {
 
                 previewHtml += `
                     <div class="relative pt-2">
-                        <input
-                            type="text"
-                            class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent"
-                        >
+                        <input type="text" class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent">
 
-                        <label class="absolute left-0 bottom-1 text-sm pointer-events-none">
-                            ${text}
-                        </label>
+                        <label class="absolute left-0 bottom-1 text-sm pointer-events-none">${text}</label>
                     </div>
                 `;
             }
@@ -560,33 +546,20 @@ $(document).ready(() => {
                         <div class="grid grid-cols-2 gap-6">
 
                             <div>
-                                <p class="mb-2 text-sm">
-                                    I,
-                                </p>
+                                <p class="mb-2 text-sm">I,</p>
 
                                 <div class="relative">
-                                    <input
-                                        type="text"
-                                        placeholder=" "
-                                        class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent"
-                                    >
+                                    <input type="text" placeholder=" " class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent">
 
-                                    <label class="absolute left-0 bottom-1 text-sm text-[#495057] pointer-events-none">
-                                        Enter Full Name Here
-                                    </label>
+                                    <label class="absolute left-0 bottom-1 text-sm text-[#495057] pointer-events-none">Enter Full Name Here</label>
                                 </div>
                             </div>
 
                             <div>
-                                <p class="mb-2 text-sm">
-                                    On
-                                </p>
+                                <p class="mb-2 text-sm">On</p>
 
                                 <div class="relative">
-                                    <input
-                                        type="date"
-                                        class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent text-[#495057]"
-                                    >
+                                    <input type="date" class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent text-[#495057]">
                                 </div>
                             </div>
 
@@ -671,31 +644,19 @@ $(document).ready(() => {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                             <div>
-                                <p class="mb-2 text-sm">
-                                    Customer Signature
-                                </p>
+                                <p class="mb-2 text-sm">Customer Signature</p>
 
                                 <div class="relative">
-                                    <input
-                                        type="text"
-                                        placeholder="Type Full Name Here To sign"
-                                        class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent text-[#495057]"
-                                    >
+                                    <input type="text" placeholder="Type Full Name Here To sign" class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent text-[#495057]">
                                 </div>
                             </div>
 
 
                             <div>
-                                <p class="mb-2 text-sm">
-                                    Date
-                                </p>
+                                <p class="mb-2 text-sm">Date</p>
 
                                 <div class="relative">
-                                    <input
-                                        type="date"
-                                        placeholder="Select Date"
-                                        class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent text-[#495057]"
-                                    >
+                                    <input type="date" placeholder="Select Date" class="w-full border-0 border-b border-[#bdbdbd] focus:outline-none focus:ring-0 focus:border-[#bdbdbd] px-0 pb-1 bg-transparent text-[#495057]">
                                 </div>
                             </div>
 
@@ -1281,10 +1242,7 @@ $(document).ready(() => {
         let html = '';
 
         if (!day.events || day.events.length === 0) {
-            html = `
-                <div class="text-gray-400 text-lg text-center mt-20">
-                </div>
-            `;
+            html = ` <div class="text-gray-400 text-lg text-center mt-20"></div> `;
         } else {
     
             day.events.forEach(event => {
@@ -1318,13 +1276,7 @@ $(document).ready(() => {
                                     </span>
                                 </div>
 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>`: ''}
 
                             </div>
 
@@ -1409,13 +1361,7 @@ $(document).ready(() => {
                                     </span>
                                 </div>
 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>`: ''}
                             </div>
 
                             <div class="text-2xl">
@@ -1501,13 +1447,7 @@ $(document).ready(() => {
                                     <span class="text-[#fea700] font-extrabold">CHECK-IN</span>
                                 </div>
 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>`: ''}
                             </div>
 
                             <div class="text-2xl">
@@ -1593,13 +1533,7 @@ $(document).ready(() => {
                                     <span class="text-[#fea700] font-extrabold">CHECK-OUT</span>
                                 </div>
 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>` : '' }
                             </div>
 
                             <div class="text-2xl">
@@ -1685,13 +1619,7 @@ $(document).ready(() => {
                                     <span class="text-[#ca5] font-extrabold">DEPARTURE</span>
                                 </div>
 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>` : ''}
                             </div>
 
                             <div class="text-2xl">
@@ -1834,13 +1762,7 @@ $(document).ready(() => {
                                     <span class="text-[#ca5] font-extrabold">ARRIVAL</span>
                                 </div>
                                 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>`: ''}
                             </div>
 
                             <div class="text-2xl">
@@ -1983,13 +1905,7 @@ $(document).ready(() => {
                                     <span class="text-[#f49ac1] font-extrabold">DEPARTURE</span>
                                 </div>
 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${!VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>`: ''}
                             </div>
 
                             <div class="text-2xl">
@@ -2092,13 +2008,7 @@ $(document).ready(() => {
                                     <span class="text-[#f49ac1] font-extrabold">ARRIVAL</span>
                                 </div>
 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>`: ''}
                             </div>
 
                             <div class="text-2xl">
@@ -2201,13 +2111,7 @@ $(document).ready(() => {
                                     <span class="text-[#6c9] font-extrabold">DEPARTURE</span>
                                 </div>
 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>`: ''}
                             </div>
 
                             <div class="text-2xl">
@@ -2323,13 +2227,7 @@ $(document).ready(() => {
                                     <span class="text-[#6c9] font-extrabold">ARRIVAL</span>
                                 </div>
 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>`: ''}
                             </div>
 
                             <div class="text-2xl">
@@ -2444,13 +2342,7 @@ $(document).ready(() => {
 
                                 </div>
 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>`: ''}
                             </div>
 
                             <div class="text-2xl">
@@ -2477,13 +2369,7 @@ $(document).ready(() => {
 
                                 </div>
 
-                                ${
-                                    !VIEW_ONLY
-                                    ? `
-                                        <i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>
-                                    `
-                                    : ''
-                                }
+                                ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>` : ''}
                             </div>
 
                             <div class="text-2xl">
@@ -3161,9 +3047,7 @@ $(document).ready(() => {
         }
 
         $.ajax({
-           url: editingEventId
-            ? `/itinerary/event/${editingEventId}`
-            : '/itinerary/event/store',
+           url: editingEventId ? `/itinerary/event/${editingEventId}` : '/itinerary/event/store',
 
             type: 'POST',
             data: formData,
@@ -3206,9 +3090,7 @@ $(document).ready(() => {
 
             error: function (xhr) {
 
-            $('.validation-error')
-                .text('')
-                .addClass('hidden');
+            $('.validation-error').text('').addClass('hidden');
 
             if (xhr.status === 422) {
 
@@ -3218,10 +3100,7 @@ $(document).ready(() => {
 
                     const input = $(`[name="${field}"]`);
 
-                    input.closest('.relative')
-                        .find('.validation-error')
-                        .text(errors[field][0])
-                        .removeClass('hidden');
+                    input.closest('.relative').find('.validation-error').text(errors[field][0]).removeClass('hidden');
                 });
             }
         }
@@ -3281,11 +3160,7 @@ $(document).ready(() => {
                     !VIEW_ONLY
                     ? `
                         <div>
-                            <button id="addItineraryAttachmentBtn"
-                                class="space-x-2 bg-[#B6844A] text-white font-semibold py-2 px-7 rounded cursor-pointer border border-transparent
-                                hover:bg-white hover:border-[#B6844A] hover:text-[#B6844A]
-                                transition-all duration-200 ">
-
+                            <button id="addItineraryAttachmentBtn" class="space-x-2 bg-[#B6844A] text-white font-semibold py-2 px-7 rounded cursor-pointer border border-transparent hover:bg-white hover:border-[#B6844A] hover:text-[#B6844A] transition-all duration-200 ">
                                 <i class="fas fa-paperclip mr-2"></i>
                                 Attachments
                             </button>

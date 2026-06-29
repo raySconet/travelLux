@@ -10,15 +10,9 @@
         <h6 class="text-xl">Reservation Attachments</h6>
 
         <div>
-            <input type="file"
-                id="reservationAttachments"
-                name="attachments[]"
-                multiple
-                class="hidden">
+            <input type="file" id="reservationAttachments" name="attachments[]" multiple class="hidden">
 
-            <button type="button"
-                    id="attachReservationBtn"
-                    class="text-[#B6844A] text-2xl flex-shrink-0">
+            <button type="button" id="attachReservationBtn" class="text-[#B6844A] text-2xl flex-shrink-0">
                 <i class="fas fa-plus-circle cursor-pointer"></i>
             </button>
         </div>
@@ -36,12 +30,8 @@
 
                     <div class="flex flex-col">
 
-                        <a href="{{ asset('storage/attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension) }}"
-                        target="_blank"
-                        class="text-base hover:underline">
-
+                        <a href="{{ asset('storage/attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension) }}" target="_blank" class="text-base hover:underline">
                             {{ $attachment->file_name }}.{{ $attachment->file_extension }}
-
                         </a>
 
                         <p class="text-[#989898] text-sm">
@@ -55,33 +45,19 @@
                 <div class="space-x-4">
 
                     <a href="{{ asset('storage/attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension) }}" target="_blank">
-
                         <i title="Download Attachment" class="fas fa-cloud-download-alt text-[#bdbdbd] text-xl mt-3 cursor-pointer"></i>
-
                     </a>
 
-                    <form method="POST" action="{{ route('reservations.attachments.destroy', $attachment->id) }}" class="inline">
-
-                        @csrf
-                        @method('DELETE')
-
-                        <button type="submit">
-
-                            <i title="Delete Attachment" class="fas fa-trash text-[#bdbdbd] text-xl mt-3 cursor-pointer" onclick="openDeleteModal(this)"></i>
-
-                        </button>
-
-                    </form>
-
+                    <button type="button" onclick="openAttachmentDeleteModal({{ $attachment->id }})">
+                        <i title="Delete Attachment" class="fas fa-trash text-[#bdbdbd] text-xl mt-3 cursor-pointer"></i>
+                    </button>
                 </div>
 
             </div>
 
         @empty
 
-            <div class="text-gray-400 mt-5 empty-row">
-                
-            </div>
+            <div class="text-gray-400 mt-5 empty-row"></div>
 
         @endforelse
 

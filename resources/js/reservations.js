@@ -299,21 +299,22 @@ $(document).ready(function() {
     }
     // end reservation dropdown filtering
 
-
     // start reservation tasks
     window.openReservationsTasksModal = function() {
+        $('.task-validation-error').remove();
+
         const $modal = $('#reservationsTasksModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Add Task');
 
-        const $form = $('#taskForm');
+        const $form = $('#taskFormContainer');
         $form.attr('action', $form.data('store-url'));
         $('#task_method').val('POST');
 
         $('#task_id_modal').val('');
         $('#task_name_modal').val('');
-        $('#task_priority_modal').val(-1);
+        $('#task_priority_modal').val('');
         $('#task_notes_modal').val('');
 
         const dateEl = $modal.find('[x-data]')[0];
@@ -325,13 +326,15 @@ $(document).ready(function() {
     }
 
     window.openEditTaskModal = function (task) {
+        $('.task-validation-error').remove();
+
         const $modal = $('#reservationsTasksModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Edit Task');
         $modal.find('.modal-icon').removeClass('fa-plus-circle').addClass('fa-edit');
 
-        const $form = $('#taskForm');
+        const $form = $('#taskFormContainer');
         $form.attr('action', `/task/${task.id}`);
         $('#task_method').val('PUT');
 
@@ -348,13 +351,88 @@ $(document).ready(function() {
     }
 
     window.closeReservationsTasksModal = function() {
+        $('.task-validation-error').remove();
+
         $('#reservationsTasksModal').addClass('hidden');
     }
+
+    window.toggleTaskComplete = function(taskId, event) {
+        event.stopPropagation();
+
+        localStorage.setItem('reservationActiveTab', 'tasks');
+
+        showLoaderOnSubmit();
+
+        fetch(`/tasks/${taskId}/toggle-complete`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(() => {
+            location.reload();
+        });
+    }
+
+    window.openTaskDeleteModal = function(taskId) {
+
+        const form = document.getElementById('deleteTaskForm');
+
+        form.action = `/tasks/${taskId}`;
+
+        openDeleteModal(form);
+    }
+
+    window.saveTaskAjax = function() {
+        localStorage.setItem('reservationActiveTab', 'tasks');
+        showLoaderOnSubmit();
+        let taskId = $('#task_id_modal').val();
+        let method = $('#task_method').val();
+        let isUpdate = method === 'PUT';
+        let url = isUpdate ? `/task/${taskId}` : $('#taskFormContainer').data('store-url');
+        fetch(url, {
+            method: 'POST',             
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                _method: isUpdate ? 'PUT' : 'POST',  
+                task_name: $('#task_name_modal').val(),
+                priority: $('#task_priority_modal').val(),
+                due_date: $('#task_due_date_modal').val(),
+                task_notes: $('#task_notes_modal').val()
+            })
+        })
+        .then(async response => {
+            if (!response.ok) {
+                const data = await response.json();
+                $('.task-validation-error').remove();
+                if (data.errors) {
+                    Object.keys(data.errors).forEach(field => {
+                        $(`[name="${field}"]`).after(`
+                            <div class="task-validation-error text-red-500 text-sm mt-1">
+                                ${data.errors[field][0]}
+                            </div>
+                        `);
+                    });
+                }
+                hideLoader();
+                return;
+            }
+            location.reload();
+        });
+    };
     // end of reservation task
 
 
     // start reservation payment
     window.openReservationPaymentsModal = function(){
+        $('.payment-validation-error').remove();
+
         const $modal = $('#reservationPaymentsModal');
 
         $modal.removeClass('hidden');
@@ -384,6 +462,8 @@ $(document).ready(function() {
     }
 
     window.openEditPaymentModal = function (payment) {
+        $('.payment-validation-error').remove();
+
         const $modal = $('#reservationPaymentsModal');
 
         $modal.removeClass('hidden');
@@ -409,34 +489,102 @@ $(document).ready(function() {
         }
     }
 
-    $(document).on('click', '.unlink-reservation', function () {
-        let linkedId = $(this).data('id');
-        let reservationId = CURRENT_RESERVATION_ID;
+    window.closeReservationPaymentsModal = function(){
+        $('.payment-validation-error').remove();
 
+        $('#reservationPaymentsModal').addClass('hidden');
+    }
 
-        $.ajax({
-            url: `/reservation/${reservationId}/unlink`,
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                linked_reservation_id: linkedId
-            },
-            success: function () {
-                location.reload(); 
-            },
-            error: function (err) {
-                alert(err.responseJSON?.message ?? 'Error unlinking');
-            }
-        });
+    $('.reservationPaymentsSaveBtn').on('click', function () {
+        savePaymentAjax();
     });
 
-    window.closeReservationPaymentsModal = function(){
-        $('#reservationPaymentsModal').addClass('hidden');
+    window.savePaymentAjax = function () {
+
+        localStorage.setItem('reservationActiveTab', 'payments');
+        showLoaderOnSubmit();
+
+        let paymentId = $('#payment_id_modal').val();
+        let method = $('#payment_method').val();
+        let isUpdate = method === 'PUT';
+
+        let url = isUpdate ? `/payment/${paymentId}` : $('#paymentFormContainer').data('store-url');
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                _method: isUpdate ? 'PUT' : 'POST',
+
+                amount: $('#payment_amount_modal').val(),
+                payment_type: $('#payment_type').val(),
+                payment_method: $('#payment_method_modal').val(),
+                payment_date: $('#payment_date').val(),
+                check_number: $('#check_number').val(),
+                credit_card_number: $('#credit_card_number').val(),
+                notes: $('#payment_notes_modal').val()
+            })
+        })
+        .then(async response => {
+
+            if (!response.ok) {
+                const data = await response.json();
+
+                $('.payment-validation-error').remove();
+
+                if (data.errors) {
+                    Object.keys(data.errors).forEach(field => {
+                        $(`[name="${field}"]`).after(`
+                            <div class="payment-validation-error text-red-500 text-sm mt-1">
+                                ${data.errors[field][0]}
+                            </div>
+                        `);
+                    });
+                }
+
+                hideLoader();
+                return;
+            }
+
+            location.reload();
+        });
+    };
+
+    window.openPaymentDeleteModal = function(paymentId) {
+
+        const form = document.getElementById('deletePaymentForm');
+
+        form.action = `/payment/${paymentId}`;
+
+        openDeleteModal(form);
     }
     //end of reservation payment 
 
+    // start travelers
+    window.toggleIncludeExcludeTraveler = function(travelerId, event) {
+        event.stopPropagation();
+
+        localStorage.setItem('reservationActiveTab', 'travelers');
+
+        showLoaderOnSubmit();
+
+        fetch(`/traveler/${travelerId}/toggle-include`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(() => {
+            location.reload();
+        });
+    }
+    // end travelers
 
     // start reservation travel with
     window.openTravelingWithModal = function(){
@@ -464,9 +612,7 @@ $(document).ready(function() {
         $.ajax({
             url: `/customers/${customerId}/active-reservations`,
             method: 'GET',
-            data: {
-                current_reservation_id: CURRENT_RESERVATION_ID
-            },
+            data: { current_reservation_id: CURRENT_RESERVATION_ID },
             dataType: 'json',
             success: function (data) {
 
@@ -483,15 +629,10 @@ $(document).ready(function() {
                                     <p>Name: ${res.reservation_name ?? '-'}</p>
                                     <p>Number: ${res.reservation_number ?? '-'}</p>
                                 </div>
-                                <p class="text-[#bdbdbd]">
-                                    Dates: ${formatUSDate(res.checkin_date)} - ${formatUSDate(res.checkout_date)}
-                                </p>
+                                <p class="text-[#bdbdbd]">Dates: ${formatUSDate(res.checkin_date)} - ${formatUSDate(res.checkout_date)}</p>
                             </div>
 
-                            <button 
-                                type="button"
-                                class="link-reservation space-x-2 bg-[#B6844A] text-white py-1 px-2 rounded hover:bg-white hover:text-[#B6844A] hover:border-[#B6844A] border transition cursor-pointer"
-                                data-id="${res.id}">
+                            <button type="button" class="link-reservation space-x-2 bg-[#B6844A] text-white py-1 px-2 rounded hover:bg-white hover:text-[#B6844A] hover:border-[#B6844A] border transition cursor-pointer" data-id="${res.id}">
                                 <i class="fas fa-link"></i> Link
                             </button>
                         </div>
@@ -517,14 +658,37 @@ $(document).ready(function() {
             data: {
                 linked_reservation_id: linkedId
             },
-                success: function () {
-                    closeTravelingWithModal();
-                    location.reload(); 
-                },
-                error: function (err) {
-                    alert(err.responseJSON?.message ?? 'Error linking');
-                }
-            });
+            success: function () {
+                closeTravelingWithModal();
+                location.reload(); 
+            },
+            error: function (err) {
+                alert(err.responseJSON?.message ?? 'Error linking');
+            }
+        });
+    });
+
+    $(document).on('click', '.unlink-reservation', function () {
+        let linkedId = $(this).data('id');
+        let reservationId = CURRENT_RESERVATION_ID;
+
+
+        $.ajax({
+            url: `/reservation/${reservationId}/unlink`,
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                linked_reservation_id: linkedId
+            },
+            success: function () {
+                location.reload(); 
+            },
+            error: function (err) {
+                alert(err.responseJSON?.message ?? 'Error unlinking');
+            }
+        });
     });
 
     window.closeTravelingWithModal = function(){
@@ -550,12 +714,14 @@ $(document).ready(function() {
 
     // start reservation dining notes
     window.openDiningInfoModal = function(){
+        $('.dining-validation-error').remove();
+
         const $modal = $('#diningInfoModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Add Dining Note');
 
-        const $form = $('#diningNoteForm');
+        const $form = $('#diningNoteFormContainer');
         $form.attr('action', $form.data('store-url'));
         $('#dining_note_method').val('POST');
 
@@ -576,13 +742,15 @@ $(document).ready(function() {
     }
 
     window.openEditDiningInformationModal = function (diningNote) {
+        $('.dining-validation-error').remove();
+
         const $modal = $('#diningInfoModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Edit Dining Note');
         $modal.find('.modal-icon').removeClass('fa-plus-circle').addClass('fa-edit');
         
-        const $form = $('#diningNoteForm');
+        const $form = $('#diningNoteFormContainer');
         $form.attr('action', `/diningNote/${diningNote.id}`);
         
         $('#dining_note_method').val('PUT');
@@ -599,19 +767,102 @@ $(document).ready(function() {
     }
 
     window.closeDiningInfoModal = function(){
+        $('.dining-validation-error').remove();
+
         $('#diningInfoModal').addClass('hidden');
+    }
+
+    window.toggleDiningCancel = function(diningNoteId, event) {
+        event.stopPropagation();
+
+        localStorage.setItem('reservationActiveTab', 'diningInformation');
+
+        showLoaderOnSubmit();
+
+        fetch(`/diningNotes/${diningNoteId}/toggle-cancel`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(() => location.reload());
+    };
+
+    window.saveDiningAjax = function() {
+
+        localStorage.setItem('reservationActiveTab', 'diningInformation');
+        showLoaderOnSubmit();
+
+        let diningNoteId = $('#dining_note_id_modal').val();
+        let method = $('#dining_note_method').val();
+        let isUpdate = method === 'PUT';
+
+        let url = isUpdate ? `/diningNote/${diningNoteId}` : $('#diningNoteFormContainer').data('store-url');
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                _method: isUpdate ? 'PUT' : 'POST',
+
+                dining_date: $('#dining_date_modal').val(),
+                dining_time: $('#dining_time_modal').val(),
+                meal: $('#meal_modal').val(),
+                notes: $('#notes_modal').val()
+            })
+        })
+        .then(async response => {
+
+            if (!response.ok) {
+                const data = await response.json();
+
+                $('.dining-validation-error').remove();
+
+                if (data.errors) {
+                    Object.keys(data.errors).forEach(field => {
+                        $(`[name="${field}"]`).after(`
+                            <div class="dining-validation-error text-red-500 text-sm mt-1">
+                                ${data.errors[field][0]}
+                            </div>
+                        `);
+                    });
+                }
+
+                hideLoader();
+                return;
+            }
+
+            location.reload();
+        });
+    };
+
+    window.openDiningDeleteModal = function(diningNoteId) {
+
+        const form = document.getElementById('deleteDiningNoteForm');
+
+        form.action = `/diningNotes/${diningNoteId}`;
+
+        openDeleteModal(form);
     }
     // end reservation dining notes
 
 
     // start reservation gift notes
     window.openGiftsModal = function(){
+        $('.gift-validation-error').remove();
+
         const $modal = $('#giftsModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Add Gift');
 
-        const $form = $('#giftForm');
+        const $form = $('#giftFormContainer');
         $form.attr('action', $form.data('store-url'));
         $('#gift_info_method').val('POST');
 
@@ -632,13 +883,15 @@ $(document).ready(function() {
     }
 
     window.openEditGiftInfoModal = function (gift) {
+        $('.gift-validation-error').remove();
+
         const $modal = $('#giftsModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Edit Gift');
         $modal.find('.modal-icon').removeClass('fa-plus-circle').addClass('fa-edit');
 
-        const $form = $('#giftForm');
+        const $form = $('#giftFormContainer');
         $form.attr('action', `/gift/${gift.id}`);
         $('#gift_info_method').val('PUT');
 
@@ -655,7 +908,77 @@ $(document).ready(function() {
     }
 
     window.closeGiftsModal = function(){
+        $('.gift-validation-error').remove();
+
         $('#giftsModal').addClass('hidden');
+    }
+
+    window.saveGiftAjax = function() {
+
+        localStorage.setItem('reservationActiveTab', 'giftsInfo');
+
+        showLoaderOnSubmit();
+
+        let giftId = $('#gift_info_id_modal').val();
+        let method = $('#gift_info_method').val();
+
+        let isUpdate = method === 'PUT';
+
+        let url = isUpdate ? `/gift/${giftId}` : $('#giftFormContainer').data('store-url');
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                _method: isUpdate ? 'PUT' : 'POST',
+                gift_type: $('#gift_type_modal').val(),
+                gift_date: $('#gift_date_modal').val(),
+                amount: $('#amount_modal').val(),
+                notes: $('#gifts_notes_modal').val()
+            })
+        })
+        .then(async response => {
+
+            if (!response.ok) {
+
+                const data = await response.json();
+
+                $('.gift-validation-error').remove();
+
+                if (data.errors) {
+
+                    Object.keys(data.errors).forEach(field => {
+
+                        $(`[name="${field}"]`).after(`
+                            <div class="gift-validation-error text-red-500 text-sm mt-1">
+                                ${data.errors[field][0]}
+                            </div>
+                        `);
+
+                    });
+
+                }
+
+                hideLoader();
+
+                return;
+            }
+
+            location.reload();
+        });
+    };
+
+    window.openGiftDeleteModal = function(giftId) {
+
+        const form = document.getElementById('deleteGiftForm');
+
+        form.action = `/gifts/${giftId}`;
+
+        openDeleteModal(form);
     }
     // end reservation gift notes
 
@@ -684,12 +1007,14 @@ $(document).ready(function() {
 
     // start reservation phone notes
     window.openPhoneNotesModal = function(){
+        $('.phone-validation-error').remove();
+
         const $modal = $('#phoneNotesModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Add Phone Notes');
 
-        const $form = $('#phoneForm');
+        const $form = $('#phoneFormContainer');
         $form.attr('action', $form.data('store-url'));
         $('#phone_note_method').val('POST');
 
@@ -701,13 +1026,15 @@ $(document).ready(function() {
     }
 
     window.openEditPhoneNote = function (phoneNote) {
+        $('.phone-validation-error').remove();
+
         const $modal = $('#phoneNotesModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Edit Phone Notes');
         $modal.find('.modal-icon').removeClass('fa-plus-circle').addClass('fa-edit');
 
-        const $form = $('#phoneForm');
+        const $form = $('#phoneFormContainer');
         $form.attr('action', `/phoneNote/${phoneNote.id}`);
         $('#phone_note_method').val('PUT');
 
@@ -719,19 +1046,108 @@ $(document).ready(function() {
     }
 
     window.closePhoneNotesModal = function(){
+        $('.phone-validation-error').remove();
+
         $('#phoneNotesModal').addClass('hidden');
+    }
+
+    window.togglePhoneNoteCancel = function(phoneNoteId, event) {
+        event.stopPropagation();
+
+        localStorage.setItem('reservationActiveTab', 'phoneNotes');
+
+        showLoaderOnSubmit();
+
+        fetch(`/phoneNotes/${phoneNoteId}/toggle-cancel`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(() => {
+            location.reload();
+        });
+    }
+
+    window.savePhoneNoteAjax = function() {
+        localStorage.setItem('reservationActiveTab', 'phoneNotes');
+
+        showLoaderOnSubmit();
+
+        let phoneNoteId = $('#phone_note_id_modal').val();
+        let method = $('#phone_note_method').val();
+
+        let isUpdate = method === 'PUT';
+
+        let url = isUpdate ? `/phoneNote/${phoneNoteId}` : $('#phoneFormContainer').data('store-url');
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                _method: isUpdate ? 'PUT' : 'POST',
+                category: $('#category').val(),
+                caller_name: $('#caller_name').val(),
+                caller_phone_number: $('#caller_phone_number').val(),
+                notes: $('#phone_notes_modal').val()
+            })
+        })
+        .then(async response => {
+
+            if (!response.ok) {
+
+                const data = await response.json();
+
+                $('.phone-validation-error').remove();
+
+                if (data.errors) {
+
+                    Object.keys(data.errors).forEach(field => {
+
+                        $(`[name="${field}"]`).after(`
+                            <div class="phone-validation-error text-red-500 text-sm mt-1">
+                                ${data.errors[field][0]}
+                            </div>
+                        `);
+
+                    });
+                }
+
+                hideLoader();
+                return;
+            }
+
+            location.reload();
+        });
+    };
+
+    window.openPhoneNoteDeleteModal = function(phoneNoteId) {
+
+        const form = document.getElementById('deletePhoneNoteForm');
+
+        form.action = `/phoneNotes/${phoneNoteId}`;
+
+        openDeleteModal(form);
     }
     // end reservation phone notes
 
 
     // start reservation commission fees
     window.openCommissionFeesModal = function(){
+        $('.commission-validation-error').remove();
+
         const $modal = $('#commissionFeesModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Add Fee');
 
-        const $form = $('#commissionFeeForm');
+        const $form = $('#commissionFeeFormContainer');
         $form.attr('action', $form.data('store-url'));
         $('#commission_fee_method').val('POST');
 
@@ -742,13 +1158,15 @@ $(document).ready(function() {
     }
 
     window.openEditCommissionFeesModal = function(commissionFee) {
+        $('.commission-validation-error').remove();
+
         const $modal = $('#commissionFeesModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Edit Fee');
         $modal.find('.modal-icon').removeClass('fa-plus-circle').addClass('fa-edit');
 
-        const $form = $('#commissionFeeForm');
+        const $form = $('#commissionFeeFormContainer');
         $form.attr('action', `/commissionFee/${commissionFee.id}`);
         $('#commission_fee_method').val('PUT');
         
@@ -760,29 +1178,100 @@ $(document).ready(function() {
     }
 
     window.closeCommissionFeesModal = function(){
+        $('.commission-validation-error').remove();
+
         $('#commissionFeesModal').addClass('hidden');
+    }
+
+    window.saveCommissionFeeAjax = function () {
+
+        localStorage.setItem('reservationActiveTab', 'agentPayments');
+
+        showLoaderOnSubmit();
+
+        let feeId = $('#commission_fee_id_modal').val();
+        let method = $('#commission_fee_method').val();
+
+        let isUpdate = method === 'PUT';
+
+        let url = isUpdate ? `/commissionFee/${feeId}` : $('#commissionFeeFormContainer').data('store-url');
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                _method: isUpdate ? 'PUT' : 'POST',
+                fee_type: $('#fee_type').val(),
+                amount: $('#commission_fee_amount').val(),
+                notes: $('#commission_fee_notes').val()
+            })
+        })
+        .then(async response => {
+
+            if (!response.ok) {
+
+                const data = await response.json();
+
+                $('.commission-validation-error').remove();
+
+                if (data.errors) {
+
+                    Object.keys(data.errors).forEach(field => {
+
+                        $(`[name="${field}"]`).after(`
+                            <div class="commission-validation-error text-red-500 text-sm mt-1">
+                                ${data.errors[field][0]}
+                            </div>
+                        `);
+                    });
+                }
+
+                hideLoader();
+                return;
+            }
+
+            location.reload();
+        });
+    };
+
+    window.openCommissionFeeDeleteModal = function(feeId) {
+
+        const form = document.getElementById('deleteCommissionFeeForm');
+
+        form.action = `/commissionFees/${feeId}`;
+
+        openDeleteModal(form);
     }
     // end reservation commission fees
 
     document.addEventListener('click', function(e) {
         if (e.target.closest('.reservationTasksSaveBtn')) {
-            e.target.closest('form').submit();
+            e.preventDefault();
+            saveTaskAjax();
         }
 
         if (e.target.closest('.diningInformationSaveBtn')) {
-            e.target.closest('form').submit();
+            e.preventDefault();
+            saveDiningAjax();
         }
 
-        if (e.target.closest('giftsModalSaveBtn')) {
-            e.target.closest('form').submit();
+        if (e.target.closest('.giftsModalSaveBtn')) {
+            e.preventDefault();
+            saveGiftAjax();
         }
 
-        if (e.target.closest('phoneNotesModalSaveBtn')) {
-            e.target.closest('form').submit();
+        if (e.target.closest('.phoneNotesModalSaveBtn')) {
+            e.preventDefault();
+            savePhoneNoteAjax();
         }
 
-        if (e.target.closest('commissionFeesModalSaveBtn')) {
-            e.target.closest('form').submit();
+        if (e.target.closest('.commissionFeesModalSaveBtn')) {
+            e.preventDefault();
+            saveCommissionFeeAjax();
         }
     });
 
@@ -811,33 +1300,18 @@ $(document).ready(function() {
                 <div id="${rowId}" class="flex justify-between mt-5 attachment-row">
 
                     <div class="flex space-x-3">
-
                         <i class="fas fa-file text-[#000] text-2xl mt-3"></i>
-
                         <div class="flex flex-col">
-
-                            <p class="text-base">
-                                ${file.name}
-                            </p>
-
-                            <p class="text-[#989898] text-sm">
-                                Size: ${file.size} Bytes
-                            </p>
-
+                            <p class="text-base">${file.name}</p>
+                            <p class="text-[#989898] text-sm">Size: ${file.size} Bytes</p>
                         </div>
-
                     </div>
 
                     <div class="space-x-4">
-
                         <i title="Download Attachment" class="fas fa-cloud-download-alt text-[#bdbdbd] text-xl mt-3"></i>
-
                         <button type="button" onclick="removeReservationFile('${rowId}', '${file.name}')">
-
-                        <i title="Delete Attachment" class="fas fa-trash text-[#bdbdbd] text-xl mt-3"></i>
-
+                            <i title="Delete Attachment" class="fas fa-trash text-[#bdbdbd] text-xl mt-3"></i>
                         </button>
-
                     </div>
 
                 </div>
@@ -864,11 +1338,18 @@ $(document).ready(function() {
         if (reservationTable.find('.attachment-row').length === 0) {
 
             reservationTable.html(`
-                <div class="text-gray-400 mt-5 empty-row">
-                   
-                </div>
+                <div class="text-gray-400 mt-5 empty-row"></div>
             `);
         }
+    }
+
+    window.openAttachmentDeleteModal = function(attachmentId) {
+
+        const form = document.getElementById('deleteAttachmentForm');
+
+        form.action = `/reservation-attachments/${attachmentId}`;
+
+        openDeleteModal(form);
     }
     // end reservation attachments
 

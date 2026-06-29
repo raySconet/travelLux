@@ -24,15 +24,9 @@
 
                             <template>
 
-                                <button type="button" class="h-[32px] px-3 border border-[#545b62] text-[14px] flex items-center gap-2 transition-all"
-                                        :class="selectedCategory.id === category.id
-                                        ? 'bg-[#545b62] text-white'
-                                        : 'bg-white text-[#495057] hover:bg-[#f1f3f5]'">
-
+                                <button type="button" class="h-[32px] px-3 border border-[#545b62] text-[14px] flex items-center gap-2 transition-all" :class="selectedCategory.id === category.id ? 'bg-[#545b62] text-white' : 'bg-white text-[#495057] hover:bg-[#f1f3f5]'">
                                     <i :class="category.icon"></i>
-
                                     <span x-text="category.name"></span>
-
                                 </button>
 
                             </template>
@@ -49,15 +43,9 @@
 
                             <template>
 
-                                <button type="button" class="h-[32px] px-3 border border-[#545b62] text-[14px] flex items-center gap-2 transition-all"
-                                    :class="selectedSubcategory.id === sub.id
-                                        ? 'bg-[#545b62] text-white'
-                                        : 'bg-white text-[#495057] hover:bg-[#f1f3f5]'">
-
+                                <button type="button" class="h-[32px] px-3 border border-[#545b62] text-[14px] flex items-center gap-2 transition-all" :class="selectedSubcategory.id === sub.id ? 'bg-[#545b62] text-white' : 'bg-white text-[#495057] hover:bg-[#f1f3f5]'">
                                     <i :class="sub.icon"></i>
-
                                     <span x-text="sub.name"></span>
-
                                 </button>
 
                             </template>

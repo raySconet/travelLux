@@ -11,9 +11,9 @@
 
         <div class="px-6 py-4 space-y-4">
             <div class="relative mt-2 mb-4">
-                <x-text-input type="text" id="reservationNumber" name="reservationNumber" />
+                <x-text-input type="text" id="reservation_number" name="reservation_number" />
 
-                <x-input-label for="reservationNumber">Reservation number</x-input-label>
+                <x-input-label for="reservation_number">Reservation number</x-input-label>
             </div>
         </div>
 

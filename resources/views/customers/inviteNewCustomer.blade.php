@@ -78,8 +78,12 @@
         </div>
 
         <div class="space-x-2 flex justify-end">
-            <x-secondary-btn><span>Cancel</span></x-secondary-btn>
-            <x-primary-btn><span>Invite</span></x-primary-btn>
+           <x-secondary-btn type="button" onclick="window.location.href='{{ route('customers.customerList') }}'">
+                <span>Cancel</span>
+            </x-secondary-btn>
+            <x-primary-btn>
+                <span>Invite</span>
+            </x-primary-btn>
         </div>
     </div>
     

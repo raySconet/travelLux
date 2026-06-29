@@ -15,12 +15,14 @@ $(document).ready(function() {
     
     // start add family member
     window.openAddFamilyMemberModal = function () {
+        $('.family-validation-error').remove();
+
         const $modal = $('#customersAddFamilyMemberModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Add Family Member');
 
-        const $form = $('#familyMemberForm');
+        const $form = $('#familyMemberFormContainer');
         $form.attr('action', $form.data('store-url')); 
         $('#family_member_method').val('POST');
 
@@ -60,13 +62,15 @@ $(document).ready(function() {
 
 
     window.openEditFamilyMemberModal = function (member) {
+        $('.family-validation-error').remove();
+
         const $modal = $('#customersAddFamilyMemberModal');
 
         $modal.removeClass('hidden');
         $modal.find('h2').text('Edit Family Member');
         $modal.find('.modal-icon').removeClass('fa-plus-circle').addClass('fa-edit');
 
-        const $form = $('#familyMemberForm');
+        const $form = $('#familyMemberFormContainer');
         $form.attr('action', `/family-members/${member.id}`);
         $('#family_member_method').val('PUT');
 
@@ -118,8 +122,127 @@ $(document).ready(function() {
     };
 
     window.closeAddFamilyMemberModal = function() {
+        $('.family-validation-error').remove();
+
         $('#customersAddFamilyMemberModal').addClass('hidden');
     }
+
+    window.openFamilyDeleteModal = function(memberId) {
+        const form = document.getElementById('deleteFamilyMemberForm');
+
+        form.action = `/members/${memberId}`;
+
+        openDeleteModal(form);
+    }
+
+    window.saveFamilyMemberAjax = function() {
+
+        localStorage.setItem('customerActiveTab', 'family');
+
+        showLoaderOnSubmit();
+
+        let memberId = $('#family_member_id').val();
+        let method = $('#family_member_method').val();
+
+        let isUpdate = method === 'PUT';
+
+        let url = isUpdate ? `/family-members/${memberId}` : $('#familyMemberFormContainer').data('store-url');
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                _method: isUpdate ? 'PUT' : 'POST',
+
+                fname: $('#family_fname').val(),
+                mname: $('#family_mname').val(),
+                lname: $('#family_lname').val(),
+                nickname: $('#family_nickname').val(),
+                birth_date: $('#family_birth_date').val(),
+                relation: $('#family_relation').val(),
+                gender: $('#family_gender').val(),
+                cellphone: $('#family_cellphone').val(),
+                home_phone: $('#family_home_phone').val(),
+                work_phone: $('#family_work_phone').val(),
+                email: $('#family_email').val(),
+                traveler_number: $('#family_traveler_number').val(),
+                deceased: $('input[name="deceased"][type="checkbox"]').is(':checked') ? 1 : 0,
+                passport_number: $('#family_passport_number').val(),
+                passport_issue_date: $('#family_passport_issue_date').val(),
+                passport_expiration_date: $('#family_passport_expiration_date').val(),
+                address_line1: $('#family_address_line1').val(),
+                address_line2: $('#family_address_line2').val(),
+                city: $('#family_city').val(),
+                state: $('#family_state').val(),
+                zip_code: $('#family_zip_code').val(),
+                country: $('#family_country').val(),
+                special_notes: $('#family_special_notes').val()
+            })
+        })
+        .then(async response => {
+
+            if (!response.ok) {
+
+                const data = await response.json();
+
+                $('.family-validation-error').remove();
+
+                if (data.errors) {
+
+                    const fieldMap = {
+                        fname: '#family_fname',
+                        lname: '#family_lname',
+                        mname: '#family_mname',
+                        nickname: '#family_nickname',
+                        birth_date: '#family_birth_date',
+                        relation: '#family_relation',
+                        gender: '#family_gender',
+                        cellphone: '#family_cellphone',
+                        home_phone: '#family_home_phone',
+                        work_phone: '#family_work_phone',
+                        email: '#family_email',
+                        traveler_number: '#family_traveler_number',
+                        passport_number: '#family_passport_number',
+                        passport_issue_date: '#family_passport_issue_date',
+                        passport_expiration_date: '#family_passport_expiration_date',
+                        address_line1: '#family_address_line1',
+                        address_line2: '#family_address_line2',
+                        city: '#family_city',
+                        state: '#family_state',
+                        zip_code: '#family_zip_code',
+                        country: '#family_country',
+                        special_notes: '#family_special_notes'
+                    };
+
+                    Object.keys(data.errors).forEach(field => {
+
+                        const selector = fieldMap[field];
+
+                        if (selector) {
+                            $(selector).after(`
+                                <div class="family-validation-error text-red-500 text-sm mt-1">
+                                    ${data.errors[field][0]}
+                                </div>
+                            `);
+                        }
+
+                    });
+
+                }
+
+                hideLoader();
+
+                return;
+            }
+
+            location.reload();
+
+        });
+    };
     // end add family member
 
     // start survey preview
@@ -143,4 +266,14 @@ $(document).ready(function() {
         $('#formIntakePreviewModal').addClass('hidden');
     }
     // end form intake preview
+
+    // start invite customer
+    window.openInviteCustomerAttentionModal = function(){
+        $('#inviteCustomerAttentionModal').removeClass('hidden');
+    }
+
+    window.closeInviteCustomerAttentionModal = function(){
+        $('#inviteCustomerAttentionModal').addClass('hidden');
+    }
+    // end invite customer
 });

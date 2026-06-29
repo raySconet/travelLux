@@ -1,10 +1,4 @@
-@props([
-    'id',
-    'title',
-    'close',
-    'saveClass' => null,
-    'open' => false,
-])
+@props(['id','title','close','saveClass' => null,'open' => false,])
 
 <div id="{{ $id }}" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] {{ $open ? '' : 'hidden' }}">
 
@@ -27,7 +21,7 @@
         </div>
 
         <div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-            <x-primary-btn type="submit" class="{{ $saveClass }}" onclick="showLoaderOnSubmit()">
+            <x-primary-btn type="button" class="{{ $saveClass }}" onclick="showLoaderOnSubmit()">
                 <i class="fa fa-paper-plane"></i>
                 <span>Save</span>
             </x-primary-btn>

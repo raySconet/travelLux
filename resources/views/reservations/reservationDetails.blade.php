@@ -37,7 +37,7 @@
                 @include('reservations.partials.reservation-info')
             </div>
 
-            <div class="p-3 bg-white shadow sm:rounded-lg" x-data="{ section: '{{ session('activeTab', 'reservation-details') }}' }">
+            <div class="p-3 bg-white shadow sm:rounded-lg" x-data="{section: localStorage.getItem('reservationActiveTab') || '{{ session('activeTab', 'reservation-details') }}'}" x-init="localStorage.removeItem('reservationActiveTab')">
                 <input type="hidden" name="activeTab" :value="section">
                 <div class="topButtonsGroup">
                     <div class="btn-group systemUsersNav" role="group">
@@ -168,6 +168,34 @@
 </form>    
 @if(!$isNewReservation)
     <form method="POST" action="{{ route('reservations.destroy', $reservation->id) }}" id="deleteReservationsForm">
+        @csrf
+        @method('DELETE')
+    </form>
+    <form method="POST" id="deleteTaskForm" style="display:none;">
+        @csrf
+        @method('DELETE')
+    </form>
+    <form method="POST" id="deletePaymentForm" style="display:none;">
+        @csrf
+        @method('DELETE')
+    </form>
+    <form method="POST" id="deleteDiningNoteForm" style="display:none;">
+        @csrf
+        @method('DELETE')
+    </form>
+    <form method="POST" id="deleteGiftForm" style="display:none;">
+        @csrf
+        @method('DELETE')
+    </form>
+    <form method="POST" id="deletePhoneNoteForm" style="display:none;">
+        @csrf
+        @method('DELETE')
+    </form>
+    <form method="POST" id="deleteCommissionFeeForm" style="display:none;">
+        @csrf
+        @method('DELETE')
+    </form>
+    <form method="POST" id="deleteAttachmentForm" style="display:none;">
         @csrf
         @method('DELETE')
     </form>

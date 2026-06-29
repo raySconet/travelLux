@@ -531,8 +531,8 @@ class CustomerController extends Controller
             'fname.required' => 'The First Name field is required.',
             'lname.required' => 'The Last Name field is required.'
         ];
-        
-        $data = $request->validate([
+
+        $validator = \Validator::make($request->all(), [
             'fname' => 'required|string',
             'lname' => 'required|string',
             'mname' => 'nullable|string',
@@ -558,6 +558,23 @@ class CustomerController extends Controller
             'special_notes' => 'nullable|string',
         ], $messages);
 
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return redirect()
+                ->route('customers.customerDetails', $customer->id)
+                ->withErrors($validator, 'family')
+                ->withInput()
+                ->with('activeTab', 'family');
+        }
+
+        $data = $validator->validated();
+
         $data['customer_id'] = $customer->id;
         $data['created_by'] = auth()->id();
         $data['created_on'] = now();
@@ -572,7 +589,7 @@ class CustomerController extends Controller
 
     public function updateFamilyMember(Request $request, CustomerFamilyMember $familyMember)
     {
-        $data = $request->validate([
+        $validator = \Validator::make($request->all(), [
             'fname' => 'required|string',
             'lname' => 'required|string',
             'mname' => 'nullable|string',
@@ -598,6 +615,22 @@ class CustomerController extends Controller
             'special_notes' => 'nullable|string',
         ]);
 
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($validator);
+        }
+
+        $data = $validator->validated();
+
+        $data['last_modified_by'] = auth()->id();
+        $data['last_modified_on'] = now();
+
         $familyMember->update($data);
 
         return redirect()
@@ -615,6 +648,12 @@ class CustomerController extends Controller
             'last_modified_by' => auth()->id(),
             'last_modified_on' => now(),
         ]);
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true
+            ]);
+        }
 
         return redirect()
                 ->route('customers.customerDetails', $customerId)

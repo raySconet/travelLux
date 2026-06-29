@@ -18,8 +18,7 @@
                     <select onchange="document.getElementById('destination_id').value=''; this.form.submit()" name="product_id" id="product_id" class="w-64 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 text-[#495057]">
                         <option value="">--Filter By Product--</option>
                         @foreach($products as $product)
-                            <option value="{{ $product->id }}"
-                                {{ request('product_id') == $product->id ? 'selected' : '' }}>
+                            <option value="{{ $product->id }}" {{ request('product_id') == $product->id ? 'selected' : '' }}>
                                 {{ $product->product_name }}
                             </option>    
                         @endforeach    
@@ -29,8 +28,7 @@
                         <option value="">--Filter by Destination--</option>
                         @if(request('product_id'))
                             @foreach($destinations as $destination)
-                                <option value="{{ $destination->id }}"  data-product="{{ $destination->product_id }}"
-                                    {{ request('destination_id') == $destination->id ? 'selected' : '' }}>
+                                <option value="{{ $destination->id }}"  data-product="{{ $destination->product_id }}" {{ request('destination_id') == $destination->id ? 'selected' : '' }}>
                                     {{ $destination->destination_name }}
                                 </option>
                             @endforeach  

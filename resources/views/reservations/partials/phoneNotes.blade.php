@@ -20,16 +20,13 @@
     @forelse($reservation->phoneNotes()->where('is_deleted',0)->get() as $phoneNote)
         <div class="flex justify-between mt-5 cursor-pointer" onclick='openEditPhoneNote(@json($phoneNote))'>
             <div class="flex gap-4">
-                <form method="POST" action="{{ route('phoneNotes.toggleCancel', $phoneNote->id) }}" class="inline">
-                    @csrf
-                    <button onclick="showLoaderOnSubmit();event.stopPropagation();" type="submit" class="cursor-pointer">
-                        @if($phoneNote->is_canceled == 0)
-                            <i title="Cancel this note" class="fas fa-minus-circle text-2xl text-[#bdbdbd] mt-7"></i>
-                        @else
-                            <i title="Undo Cancel" class="fas fa-minus-circle text-2xl text-red-500 mt-7"></i>
-                        @endif        
-                    </button>
-                </form>
+                <button type="button" onclick="togglePhoneNoteCancel({{ $phoneNote->id }}, event)" class="cursor-pointer">
+                    @if($phoneNote->is_canceled == 0)
+                        <i title="Cancel this note" class="fas fa-minus-circle text-2xl text-[#bdbdbd] mt-7"></i>
+                    @else
+                        <i title="Undo Cancel" class="fas fa-minus-circle text-2xl text-red-500 mt-7"></i>
+                    @endif        
+                </button>
                 <div class="flex flex-col text-sm">
                     <div class="flex gap-6">
                         <div class="flex gap-1">
@@ -74,14 +71,9 @@
                     @endif    
                 </div>
             </div>
-            <form method="POST" action="{{ route('phoneNotes.delete', $phoneNote->id )}}" class="inline delete-form">
-                @csrf
-                @method('DELETE')
-
-                <button type="button" method="POST" onclick="event.stopPropagation(); openDeleteModal(this)">
-                    <i title="Delete note" class="fas fa-trash text-[#bdbdbd] text-2xl mt-7 cursor-pointer"></i>
-                </button>
-            </form>
+            <button type="button" onclick="event.stopPropagation(); openPhoneNoteDeleteModal({{ $phoneNote->id }})">
+                <i title="Delete note" class="fas fa-trash text-[#bdbdbd] text-2xl mt-7 cursor-pointer"></i>
+            </button>
         </div>
     @empty
         <p class="text-center text-base">No Phone Notes</p>
@@ -90,10 +82,10 @@
 
 <!-- Reservation Phone Notes Modal -->
 @if (!$isNewReservation)
-    <form id="phoneForm" method="POST" action="{{ route('reservations.phoneNotes.store', $reservation->id) }}" data-store-url="{{ route('reservations.phoneNotes.store', $reservation->id) }}">
-        @csrf
-        <input type="hidden" id="phone_note_id_modal" name="phone_note_id" value="">
-        <input type="hidden" name="_method" id="phone_note_method" value="POST">
+    <div id="phoneFormContainer" data-store-url="{{ route('reservations.phoneNotes.store', $reservation->id) }}">
+
+        <input type="hidden" id="phone_note_id_modal">
+        <input type="hidden" id="phone_note_method" value="POST">
 
         <x-reservations-modal id="phoneNotesModal" title="Add Phone Notes" close="closePhoneNotesModal()" saveClass="phoneNotesModalSaveBtn" :open="$isPhoneNoteModalOpen">
             <div class="relative mt-3">
@@ -129,5 +121,5 @@
                 <x-input-error :messages="$errors->phoneNoteStore->get('notes')" />
             </div>
         </x-reservations-modal>
-    </form>
+    </div>
 @endif

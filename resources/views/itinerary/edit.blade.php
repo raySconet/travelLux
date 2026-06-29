@@ -4,7 +4,7 @@
 @endphp
 <x-app-layout :viewOnly="$viewOnly ?? false">
     <x-slot name="header">
-        <div class="py-4 px-4 bg-white shadow sm:rounded-none flex items-center justify-between">
+        <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
                 <h2 class=" text-xl text-gray-500 leading-tight">
                     <i class="fa-solid fa-plane mr-2 text-[#B6844A]"></i>{{ __('Itinerary') }}
                 </h2>
@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <div class="bg-white shadow rounded-none mt-4 p-4 ml-3">
+    <div class="bg-white shadow rounded-lg mt-4 p-4 ml-3">
         <div class="grid grid-cols-12 gap-6">
             <div class="col-span-2 flex flex-col gap-2 border-r border-[#ccc] pr-2">
                 @if(!$viewOnly)

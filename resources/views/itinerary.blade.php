@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="p-4 px-4 bg-white shadow sm:rounded-none flex items-center justify-between">
+        <div class="p-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
             <h2 class=" text-xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-plane mr-2 text-[#B6844A]"></i>{{ __('Itinerary') }}
             </h2>
@@ -14,7 +14,7 @@
 
     <div class="mx-auto py-2 px-4">
        
-        <div class="py-3 bg-white shadow rounded-none px-2">
+        <div class="py-3 bg-white shadow rounded-lg px-2">
            
             <div class="flex items-end justify-end gap-4 px-6 py-4">
                 <div class="flex flex-col gap-1">
@@ -55,8 +55,7 @@
 
                     <tbody class="divide-y">
                         @foreach ($itineraries as $itinerary)
-                            <tr class="hover:bg-gray-50 cursor-pointer"
-                                onclick="showLoaderOnSubmit();window.location='{{ route('itinerary.edit', $itinerary->id) }}'">
+                            <tr class="hover:bg-gray-50 cursor-pointer" onclick="showLoaderOnSubmit();window.location='{{ route('itinerary.edit', $itinerary->id) }}'">
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $itinerary->name }}

@@ -20,6 +20,11 @@
                     <label for="customer_id">Customer</label>
                     <select name="customer_id" id="customer_id" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                         <option value="">--Select Customer</option>
+                        @foreach($customers as $customer)
+                            <option value="{{ $customer->id }}">
+                                {{ $customer->lname . ',' . $customer->fname }}
+                            </option>
+                        @endforeach    
                     </select>
                 </div>
 
@@ -27,6 +32,11 @@
                     <label for="product_id">Product</label>
                     <select name="product_id" id="product_id" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                         <option value="">--Select Product--</option>
+                        @foreach($products as $product)
+                            <option value="{{ $product->id }}">
+                                {{ $product->product_name }}
+                            </option>
+                        @endforeach        
                     </select>
                 </div>
             </div>

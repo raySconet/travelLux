@@ -130,11 +130,6 @@ $(document).ready(() => {
 
     let deleteForm = null;
 
-    // window.openDeleteModal = function(button) {
-    //     deleteForm = $(button).closest('form'); 
-    //     $('#deleteModal').removeClass('hidden');
-    // }
-
     window.openDeleteModal = function(target) {
 
         if (target instanceof HTMLFormElement) {

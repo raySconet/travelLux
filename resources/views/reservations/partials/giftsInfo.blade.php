@@ -29,14 +29,9 @@
                 <p><b>Amount:</b>  ${{ $gift->amount }}</p>
             </div>
 
-            <form method="POST" action="{{ route('gifts.delete', $gift->id) }}" class="inline delete-form">
-                @csrf
-                @method('DELETE')
-
-                <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                    <i title="Delete Gift" class="fa fa-trash text-[#bdbdbd] text-xl mt-5 cursor-pointer"></i>
-                </button>
-            </form>
+            <button type="button" onclick="event.stopPropagation(); openGiftDeleteModal({{ $gift->id }})">
+                <i title="Delete Gift" class="fa fa-trash text-[#bdbdbd] text-xl mt-5 cursor-pointer"></i>
+            </button>
         </div>
     @empty
         <p class="text-center text-base">No Gifts Available.</p>
@@ -46,10 +41,9 @@
 
 <!-- Reservation Gifts Modal -->
 @if(!$isNewReservation)
-    <form id="giftForm" method="POST" action="{{ route('reservations.gifts.store', $reservation->id) }}" data-source-url="{{ route('reservations.gifts.store', $reservation->id) }}">
-        @csrf
-        <input type="hidden" id="gift_info_id_modal" name="gift_info_id" value="">
-        <input type="hidden" name="_method" id="gift_info_method" value="POST">
+    <div id="giftFormContainer" data-store-url="{{ route('reservations.gifts.store', $reservation->id) }}">
+        <input type="hidden" id="gift_info_id_modal">
+        <input type="hidden" id="gift_info_method" value="POST">
 
         <x-reservations-modal id="giftsModal" title="Add Gift" close="closeGiftsModal()" saveClass="giftsModalSaveBtn" :open="$isGiftModalOpen">
 
@@ -115,5 +109,5 @@
                 >{{ old('notes', $reservation->notes ?? '') }}</textarea>
             </div>
         </x-reservations-modal>
-    </form>    
+    </div>    
 @endif    

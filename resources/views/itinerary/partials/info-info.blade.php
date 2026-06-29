@@ -8,9 +8,7 @@
 
 <div class="mb-8">
 
-    <label class="block text-[14px] text-[#212529] mb-2">
-        Note
-    </label>
+    <label class="block text-[14px] text-[#212529] mb-2">Note</label>
 
     <textarea class="event_note" name="itineraryInfoFormNote" rows="12"></textarea>
 

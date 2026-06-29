@@ -1,9 +1,7 @@
 <div>
     <div class="systemUserIconContainer">
         @php
-            $profilePhoto = $user->profile_photo
-                ? asset('storage/attachments/users/' . $user->profile_photo)
-                : asset('images/mickey.png');
+            $profilePhoto = $user->profile_photo ? asset('storage/attachments/users/' . $user->profile_photo) : asset('images/mickey.png');
         @endphp
 
         <img src="{{ $profilePhoto }}" id="profilePhotoPreview" style="width: 60px; height: 60px; margin-bottom:10px; object-fit:cover; border-radius:50%;" alt="Profile Photo" >

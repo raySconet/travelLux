@@ -67,6 +67,7 @@
 .cover-wrapper {
     background: #ffffff; 
     padding: 10px;
+    border-radius: 8px;
 }
 
 .cover-image-container {
@@ -96,6 +97,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-radius: 8px;
 }
 /* ################################### */
 /* end of itinerary */

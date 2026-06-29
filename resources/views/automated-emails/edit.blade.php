@@ -43,4 +43,10 @@
         @method('DELETE')
     </form>
 @endif
+@foreach($automatedEmail->attachments as $attachment)
+    <form method="POST" action="{{ route('automatedEmails.attachments.destroy', $attachment->id) }}" id="deleteAttachmentForm{{ $attachment->id }}">
+        @csrf
+        @method('DELETE')
+    </form>
+@endforeach
 <x-delete-modal />

@@ -30,16 +30,13 @@
                 @endphp
                 <div class="flex justify-between mt-1 cursor-pointer" onclick='openEditTaskModal(@json($task))'>
                     <div class="flex gap-5">
-                        <form method="POST" action="{{ route('tasks.toggleComplete', $task->id) }}" class="inline">
-                            @csrf
-                            <button onclick="showLoaderOnSubmit();event.stopPropagation();" type="submit" class="cursor-pointer">
-                                @if($task->is_completed == 0)
-                                    <i title="Complete Task" class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl" title="Complete Task"></i>
-                                @else
-                                    <i title="Undo Complete" class="fas fa-check-circle text-[#50c878] mt-3 text-2xl" title="Undo Complete"></i>
-                                @endif
-                            </button>
-                        </form>       
+                        <button type="button" onclick="toggleTaskComplete({{ $task->id }}, event)" class="cursor-pointer">
+                            @if($task->is_completed == 0)
+                                <i class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl"></i>
+                            @else
+                                <i class="fas fa-check-circle text-[#50c878] mt-3 text-2xl"></i>
+                            @endif
+                        </button>
                         <div class="flex flex-col">
                             @if($task->is_completed == 0)
                                 <p class="text-base">{{ $task->task_name }}</p>
@@ -63,14 +60,9 @@
                         @else
                             <i class="fas fa-exclamation-triangle text-red-500" title="High priority"></i>
                         @endif 
-                        
-                        <form method="POST" action="{{ route('tasks.delete', $task->id) }}" class="inline delete-form">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                                <i title="Delete Task" class="fa fa-trash text-[#bdbdbd] cursor-pointer"></i>
-                            </button>
-                        </form>
+                        <button type="button" onclick="event.stopPropagation(); openTaskDeleteModal({{ $task->id }})">
+                            <i title="Delete Task" class="fa fa-trash text-[#bdbdbd] cursor-pointer"></i>
+                        </button>
                     </div>
                 </div>
             @empty
@@ -87,16 +79,13 @@
             @endphp
             <div class="flex justify-between mt-1 cursor-pointer" onclick='openEditTaskModal(@json($task))'>
                 <div class="flex gap-5">
-                    <form method="POST" action="{{ route('tasks.toggleComplete', $task->id) }}" class="inline">
-                        @csrf
-                        <button onclick="showLoaderOnSubmit();event.stopPropagation();" type="submit" class="cursor-pointer">
-                            @if($task->is_completed == 0)
-                                <i title="Complete Task" class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl" title="Complete Task"></i>
-                            @else
-                                <i title="Undo Complete" class="fas fa-check-circle text-[#50c878] mt-3 text-2xl" title="Undo Complete"></i>
-                            @endif
-                        </button>
-                    </form>       
+                    <button type="button" onclick="toggleTaskComplete({{ $task->id }}, event)" class="cursor-pointer">
+                        @if($task->is_completed == 0)
+                            <i class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl"></i>
+                        @else
+                            <i class="fas fa-check-circle text-[#50c878] mt-3 text-2xl"></i>
+                        @endif
+                    </button>
                     <div class="flex flex-col">
                         @if($task->is_completed == 0)
                             <p class="text-base">{{ $task->task_name }}</p>
@@ -120,14 +109,10 @@
                     @else
                         <i class="fas fa-exclamation-triangle text-red-500" title="High priority"></i>
                     @endif 
-                    
-                    <form method="POST" action="{{ route('tasks.delete', $task->id) }}" class="inline delete-form">
-                        @csrf
-                        @method('DELETE')
-                        <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                            <i title="Delete Task" class="fa fa-trash text-[#bdbdbd] cursor-pointer"></i>
-                        </button>
-                    </form>
+                
+                    <button type="button" onclick="event.stopPropagation(); openTaskDeleteModal({{ $task->id }})">
+                        <i title="Delete Task" class="fa fa-trash text-[#bdbdbd] cursor-pointer"></i>
+                    </button>
                 </div>
             </div>
         @empty
@@ -139,10 +124,9 @@
 
 <!-- Reservations Tasks Modal -->
 @if (!$isNewReservation)
-    <form id="taskForm"  method="POST" action="{{ route('reservations.tasks.store', $reservation->id) }}" data-store-url="{{ route('reservations.tasks.store', $reservation->id)}}">
-        @csrf
-        <input type="hidden" id="task_id_modal" name="task_id" value="">
-        <input type="hidden" name="_method" id="task_method" value="POST">
+   <div id="taskFormContainer" data-store-url="{{ route('reservations.tasks.store', $reservation->id) }}">
+        <input type="hidden" id="task_id_modal">
+        <input type="hidden" id="task_method" value="POST">
 
         <x-reservations-modal id="reservationsTasksModal"  title="Add Task" close="closeReservationsTasksModal()" saveClass="reservationTasksSaveBtn" :open="$isTaskModalOpen" >
             <div class="relative mt-2">
@@ -187,7 +171,7 @@
                 <div class="relative mt-10">
                     <label for="priority">Priority</label>
                     <select name="priority" id="task_priority_modal" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
-                        <option value="-1">-- Select Priority --</option>
+                        <option value="">-- Select Priority --</option>
                         <option value="Low" {{ old('priority', $reservation->priority ?? '') == 'Low' ? 'selected' : '' }}>Low</option>
                         <option value="Medium" {{ old('priority', $reservation->priority ?? '') == 'Medium' ? 'selected' : ''}}>Medium</option>
                         <option value="High" {{ old('priority', $reservation->priority ?? '') == 'High' ? 'selected' : '' }}>High</option>
@@ -203,5 +187,5 @@
             </div>
 
         </x-reservations-modal>
-    </form>
+    </div>
 @endif    

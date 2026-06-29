@@ -34,7 +34,8 @@
                 @include('customers.partials.customer-info')
             </div>
 
-            <div class="p-3 bg-white shadow sm:rounded-lg" x-data="{ section: '{{ session('activeTab', 'home') }}' }">
+            <div class="p-3 bg-white shadow sm:rounded-lg" x-data="{section: localStorage.getItem('customerActiveTab') || '{{ session('activeTab', 'home') }}'}" x-init="localStorage.removeItem('customerActiveTab')">
+
                 <input type="hidden" name="activeTab" :value="section">
                 <div class="topButtonsGroup">
                     <div class="btn-group systemUsersNav" role="group">
@@ -54,9 +55,9 @@
                             <i title="Surveys" style="font-size:20px;" class="fas fa-comments"></i>
                         </button> 
                         @if(!$isNewCustomer)
-                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'selfServiceInvitations'}" @click="section = 'selfServiceInvitations'">
-                            <i title="Self Service Invitations" style="font-size:20px;" class="fas fa-address-card"></i>
-                        </button>  
+                            <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'selfServiceInvitations'}" @click="section = 'selfServiceInvitations'">
+                                <i title="Self Service Invitations" style="font-size:20px;" class="fas fa-address-card"></i>
+                            </button>  
                         @endif
                         <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'travelHistory'}" @click="section = 'travelHistory'">
                             <i title="Travel History" style="font-size:20px;" class="fas fa-history"></i>
@@ -121,6 +122,11 @@
 </form>
 @if(!$isNewCustomer)
     <form method="POST" action="{{ route('customers.destroy', $customer->id) }}" id="deleteCustomersForm">
+        @csrf
+        @method('DELETE')
+    </form>
+
+    <form id="deleteFamilyMemberForm" method="POST">
         @csrf
         @method('DELETE')
     </form>

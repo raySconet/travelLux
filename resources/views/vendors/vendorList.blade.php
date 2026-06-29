@@ -18,12 +18,12 @@
                 <div class="relative">
                     <form method="GET" action="{{ route('vendors.vendorList') }}">
                         <input
-                        type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Quick Search"
-                        class="w-130 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none"
-                        oninput="clearTimeout(this.delay); this.delay=setTimeout(() => this.form.submit(), 500)"
+                            type="text"
+                            name="search"
+                            value="{{ request('search') }}"
+                            placeholder="Quick Search"
+                            class="w-130 border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1 focus:outline-none"
+                            oninput="clearTimeout(this.delay); this.delay=setTimeout(() => this.form.submit(), 500)"
                         >
                     </form>
                 </div>
@@ -111,7 +111,7 @@
                     <div class="flex items-center space-x-2">
                         <i class="fas fa-edit text-xl text-[#B6844A]"></i>
                         <h2 id="vendorModalTitle" class="text-xl font-semibold text-gray-700">
-                        Edit Vendor
+                            Edit Vendor
                         </h2>
                     </div>
 

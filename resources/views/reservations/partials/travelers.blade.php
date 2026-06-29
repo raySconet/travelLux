@@ -24,16 +24,13 @@
             <div class="flex items-center justify-between">
 
                 <div class="flex items-center gap-3">
-                    <form method="POST" action="{{ route('travelers.toggleInclude', $traveler->id) }}" class="inline">
-                        @csrf
-                        <button onclick="showLoaderOnSubmit();event.stopPropagation();" type="submit" class="cursor-pointer">
-                            @if($traveler->is_included == 0)
-                                <i class="far fa-check-circle text-[#bdbdbd] text-2xl"></i>
-                            @else
-                                <i class="fas fa-check-circle text-[#50c878] text-2xl"></i>
-                            @endif        
-                        </button>
-                    </form>
+                    <button type="button" onclick="toggleIncludeExcludeTraveler({{ $traveler->id }}, event)" class="cursor-pointer">
+                        @if($traveler->is_included == 0)
+                            <i class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl"></i>
+                        @else
+                            <i class="fas fa-check-circle text-[#50c878] mt-3 text-2xl"></i>
+                        @endif
+                    </button>
 
                     <i class="fa fa-user-tie text-xl"></i>
 

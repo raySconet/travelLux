@@ -42,14 +42,9 @@
                     <p class="text-[#989898]">Notes: {{ $commissionFee->notes }}</p>
                 @endif    
             </div>
-            <form method="POST" action="{{ route('commissionFees.delete', $commissionFee->id) }}" class="inline delete-form">
-                @csrf
-                @method('DELETE')
-
-                <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                    <i title="Delete Fee" class="fas fa-trash text-[#bdbdbd] text-2xl mt-7 cursor-pointer"></i>
-                </button>
-            </form>
+            <button type="button" onclick="event.stopPropagation(); openCommissionFeeDeleteModal({{ $commissionFee->id }})">
+                <i title="Delete Fee" class="fas fa-trash text-[#bdbdbd] text-2xl mt-7 cursor-pointer"></i>
+            </button>
         </div>
         <hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
     @empty
@@ -60,10 +55,9 @@
 
 <!-- Reservation Agent Payments Modal -->
 @if(!$isNewReservation)
-    <form id="commissionFeeForm" method="POST" action="{{ route('reservations.commissionFees.store', $reservation->id) }}" data-store-url="{{ route('reservations.commissionFees.store', $reservation->id)}}">
-        @csrf
-        <input type="hidden" id="commission_fee_id_modal" name="commission_fee_id" value="">
-        <input type="hidden" name="_method" id="commission_fee_method" value="POST">
+    <div id="commissionFeeFormContainer" data-store-url="{{ route('reservations.commissionFees.store', $reservation->id) }}">
+        <input type="hidden" id="commission_fee_id_modal">
+        <input type="hidden" id="commission_fee_method" value="POST">
 
 
         <x-reservations-modal id="commissionFeesModal" title="Add Fee" close="closeCommissionFeesModal()" saveClass="commissionFeesModalSaveBtn" :open="$isCommissionFeeModalOpen">
@@ -93,5 +87,5 @@
                 <x-input-label for="notes">Notes</x-input-label>
             </div>
         </x-reservations-modal>
-    </form>    
+    </div>    
 @endif    

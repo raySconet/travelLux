@@ -192,42 +192,20 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
         <div class="flex items-center gap-2 mt-6">
-            <input 
-                type="hidden" 
-                name="retired" 
-                value="0"
-            >
-            <input 
-                type="checkbox" 
-                class="h-4 w-4" 
-                name="retired" 
-                value="1" 
-                {{ old('retired', $customer->retired ?? 0) == 1 ? 'checked' : '' }}
-            >
+            <input type="hidden" name="retired" value="0">
+            <input type="checkbox" class="h-4 w-4" name="retired" value="1" {{ old('retired', $customer->retired ?? 0) == 1 ? 'checked' : '' }}>
             <label class="text-sm">Retired</label>
         </div>
 
         <div class="flex items-center gap-2 mt-6">
             <input type="hidden" name="children_at_home" value="0">
-            <input 
-                type="checkbox" 
-                class="h-4 w-4" 
-                name="children_at_home" 
-                value="1" 
-                {{ old('children_at_home', $customer->children_at_home ?? 0) == 1 ? 'checked' : '' }}
-            >
+            <input type="checkbox" class="h-4 w-4" name="children_at_home" value="1" {{ old('children_at_home', $customer->children_at_home ?? 0) == 1 ? 'checked' : '' }}>
             <label class="text-sm">Children at Home</label>
         </div>
 
         <div class="flex items-center gap-2 mt-6">
             <input type="hidden" name="virtuoso_life" value="0">
-            <input 
-                type="checkbox" 
-                class="h-4 w-4" 
-                name="virtuoso_life" 
-                value="1" 
-                {{ old('virtuoso_life', $customer->virtuoso_life ?? 0) == 1 ? 'checked' : '' }}
-            >
+            <input type="checkbox" class="h-4 w-4" name="virtuoso_life" value="1" {{ old('virtuoso_life', $customer->virtuoso_life ?? 0) == 1 ? 'checked' : '' }}>
             <label class="text-sm">Virtuoso Life</label>
         </div>
     </div>
@@ -235,12 +213,9 @@
 
     <div class="flex flex-col mt-6">
         <label for="special_notes" class="mb-1 text-sm text-gray-700">Special Notes</label>
-        <textarea
-            id="special_notes"
-            name="special_notes"
-            rows="3"
-            class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1"
-        >{{ old('special_notes', $customer->special_notes ?? '') }}</textarea>
+        <textarea id="special_notes" name="special_notes" rows="3" class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1">
+            {{ old('special_notes', $customer->special_notes ?? '') }}
+        </textarea>
     </div>
 
 </div>

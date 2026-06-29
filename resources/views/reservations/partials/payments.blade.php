@@ -36,13 +36,9 @@
                         <p class="bg-[#e0e0e0] rounded-none px-4 text-[#212121]">{{ $payment->payment_type }}</p>
                     </div>
                 </div>
-                <form method="POST" action="{{ route('reservations.payments.delete', $payment->id) }}" class="inline delete-form">
-                    @csrf
-                    @method('DELETE')
-                    <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                        <i title="Delete Payment" class="fas fa-trash text-[#bdbdbd] mt-3 text-xl cursor-pointer"></i>
-                    </button>
-                </form>
+                <button type="button" onclick="event.stopPropagation(); openPaymentDeleteModal({{ $payment->id }})">
+                    <i title="Delete Payment" class="fas fa-trash text-[#bdbdbd] mt-3 text-xl cursor-pointer"></i>
+                </button>
             </div>
         @empty
             <p class="text-center text-base">No Customer Payments</p>
@@ -127,10 +123,9 @@
 
 <!-- Reservation Payments Modal -->
 @if(!$isNewReservation)
-    <form id="paymentForm" method="POST" action="{{ route('reservations.payments.store', $reservation->id) }}" data-store-url="{{ route('reservations.payments.store', $reservation->id)}}">
-        @csrf
-        <input type="hidden" id="payment_id_modal" name="payment_id" value="">
-        <input type="hidden" name="_method" id="payment_method" value="POST">
+    <div id="paymentFormContainer" data-store-url="{{ route('reservations.payments.store', $reservation->id) }}">
+        <input type="hidden" id="payment_id_modal">
+        <input type="hidden" id="payment_method" value="POST">
 
         <x-reservations-modal id="reservationPaymentsModal" title="Add Payment" close="closeReservationPaymentsModal()" saveClass="reservationPaymentsSaveBtn" :open="$isPaymentModalOpen">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
@@ -229,5 +224,5 @@
                 <x-input-label for="notes">Notes</x-input-label>
             </div>
         </x-reservations-modal>
-    </form>
+    </div>
 @endif

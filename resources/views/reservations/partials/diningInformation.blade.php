@@ -20,16 +20,13 @@
     @forelse($reservation->diningNotes()->where('is_deleted',0)->get() as $diningNote)
         <div class="flex justify-between mt-5 cursor-pointer" onclick='openEditDiningInformationModal(@json($diningNote))'>
             <div class="flex gap-3">
-                <form method="POST" action="{{ route('diningNotes.toggleCancel', $diningNote->id) }}" class="inline">
-                    @csrf
-                    <button onclick="showLoaderOnSubmit();event.stopPropagation();" type="submit" class="cursor-pointer">
-                        @if ($diningNote->is_canceled == 0)
-                            <i title="Cancel this Note" class="fas fa-minus-circle text-2xl text-[#bdbdbd] mt-7" title="Cancel this Note"></i>
-                        @else
-                            <i title="Undo Cancel" class="fas fa-minus-circle text-2xl text-red-500 mt-7" title="Undo Cancel"></i>
-                        @endif        
-                    </button>
-                </form>
+                <button type="button" onclick="toggleDiningCancel({{ $diningNote->id }}, event)" class="cursor-pointer">
+                    @if ($diningNote->is_canceled == 0)
+                        <i title="Cancel this Note" class="fas fa-minus-circle text-2xl text-[#bdbdbd] mt-7" title="Cancel this Note"></i>
+                    @else
+                        <i title="Undo Cancel" class="fas fa-minus-circle text-2xl text-red-500 mt-7" title="Undo Cancel"></i>
+                    @endif        
+                </button>
                 <div class="flex flex-col">
                     <div class="flex gap-1">
                         <i class="fas fa-user text-base mt-1"></i>
@@ -54,14 +51,9 @@
                     @endif    
                 </div>
             </div>
-            <form method="POST" action="{{ route('diningNotes.delete', $diningNote->id) }}" class="inline delete-form">
-                @csrf
-                @method('DELETE')
-
-                <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                    <i title="Delete note" class="fa fa-trash text-[#bdbdbd] text-xl mt-5 cursor-pointer"></i>
-                </button>
-            </form>
+            <button type="button" onclick="event.stopPropagation(); openDiningDeleteModal({{ $diningNote->id }})">
+                <i title="Delete note" class="fa fa-trash text-[#bdbdbd] text-xl mt-5 cursor-pointer"></i>
+            </button>
         </div>
     @empty
         <p class="text-center text-base">No Dining Notes.</p>
@@ -70,10 +62,9 @@
 
 <!-- Reservation Dining Info Modal -->
 @if (!$isNewReservation)
-    <form id="diningNoteForm" method="POST" action="{{ route('reservations.diningNotes.store', $reservation->id) }}" data-store-url="{{ route('reservations.diningNotes.store', $reservation->id) }}" >
-        @csrf
-        <input type="hidden" id="dining_note_id_modal" name="dining_note_id" value="">
-        <input type="hidden" name="_method" id="dining_note_method" value="POST">
+    <div id="diningNoteFormContainer" data-store-url="{{ route('reservations.diningNotes.store', $reservation->id) }}">
+        <input type="hidden" id="dining_note_id_modal">
+        <input type="hidden" id="dining_note_method" value="POST">
         
         <x-reservations-modal id="diningInfoModal" title="Add Dining Note" close="closeDiningInfoModal()" saveClass="diningInformationSaveBtn" :open="$isDiningInfoModalOpen">
             <div x-data="dateDropdown('{{ old('dining_date', $reservation->dining_date ?? '') }}')" class="relative mt-3">
@@ -130,5 +121,5 @@
                 <x-input-error :messages="$errors->diningNoteStore->get('notes')" />
             </div>
         </x-reservations-modal>
-    </form>
+    </div>
 @endif        

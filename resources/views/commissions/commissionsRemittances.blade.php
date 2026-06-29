@@ -19,40 +19,40 @@
         <p class="text-base font-semibold text-white">Search For Reservations</p>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
             <div class="relative mt-3">
-                <x-text-input type="text" id="reservationNumber" name="reservationNumber" class="border-b-[#fff]"  />
+                <x-text-input type="text" id="reservation_number" name="reservation_number" class="border-b-[#fff]"  />
 
-                <x-input-label for="reservationNumber" class="text-white">Reservation Number</x-input-label>
+                <x-input-label for="reservation_number" class="text-white">Reservation Number</x-input-label>
             </div>
 
             <div class="relative mt-3">
-                <x-text-input type="text" id="customerLastName" name="customerLastName" class="border-b-[#fff]" />
+                <x-text-input type="text" id="lname" name="lname" class="border-b-[#fff]" />
 
-                <x-input-label for="customerLastName" class="text-white">Customer Last Name</x-input-label>
+                <x-input-label for="lname" class="text-white">Customer Last Name</x-input-label>
             </div>
 
             <div class="relative mt-3">
-                <x-text-input type="text" id="groupNumber" name="groupNumber" class="border-b-[#fff]"/>
+                <x-text-input type="text" id="group_number" name="group_number" class="border-b-[#fff]"/>
 
-                <x-input-label for="groupNumber" class="text-white">Group Name</x-input-label>
+                <x-input-label for="group_number" class="text-white">Group Name</x-input-label>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
             <div class="relative mt-3">
-                <x-text-input type="text" id="reservationCost" name="reservationCost"  class="border-b-[#fff]"/>
+                <x-text-input type="text" id="reservation_cost" name="reservation_cost"  class="border-b-[#fff]"/>
 
-                <x-input-label for="reservationCost" class="text-white">Reservation Cost</x-input-label>
+                <x-input-label for="reservation_cost" class="text-white">Reservation Cost</x-input-label>
             </div>
 
             <div class="relative mt-3">
-                <x-text-input type="text" id="agencyComission" name="agencyComission" class="border-b-[#fff]" />
+                <x-text-input type="text" id="agency_commission" name="agency_commission" class="border-b-[#fff]" />
 
-                <x-input-label for="agencyComission" class="text-white">Agency Commission</x-input-label>
+                <x-input-label for="agency_commission" class="text-white">Agency Commission</x-input-label>
             </div>
         </div>
 
         <div class="space-x-2 flex justify-end">
-            <x-secondary-btn class="border-none"><i class="far fa-times-circle"></i><span>Cancel</span></x-secondary-btn>
+            <x-secondary-btn class="border-none"><i class="far fa-times-circle"></i><span>Clear</span></x-secondary-btn>
             <x-primary-btn><i class="fas fa-sync"></i><span>Search</span></x-primary-btn>
         </div>
     </div>
@@ -109,47 +109,51 @@
 
 
                     <tbody class="divide-y">
-                            <tr class="hover:bg-gray-50 cursor-pointer">
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                        <tr class="hover:bg-gray-50 cursor-pointer">
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
 
-                                </td>
+                            </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
-                                    <i class="fas fa-tag text-[#B6844A] text-xl" onclick="openEditReservationModal()"></i>
-                                </td>
+                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
+                                <i title="Edit Reservation" class="fas fa-tag text-[#B6844A] text-xl" onclick="openEditReservationModal()"></i>
+                            </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
+                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                            
+                            </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
+                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                            
+                            </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
+                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                            
+                            </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
+                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                            
+                            </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
+                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                            
+                            </td>
 
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
+                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <div class="flex gap-2">
+                                    <input type="checkbox"> <p>Received</p>
+                                    <input type="checkbox"> <p>Look Up</p>
+                                    <input type="checkbox"> <p>Document Fee</p>
+                                </div>
+                            </td>
 
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                                   <i class="fas fa-envelope text-sm"></i>
-                                </td>
-                                
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                                   
-                                </td>    
-                            </tr>
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                <i title="Send Email" class="fas fa-envelope text-sm"></i>
+                            </td>
+                            
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                                <i class="fas fa-clipboard-list text-[#B6844A] text-sm"></i>
+                            </td>    
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -177,50 +181,46 @@
      
             <div class="px-6 py-4 space-y-4">
                 <div>
-                    <p class="text-base">
-                       Reservation #:
-                    </p>
+                    <p class="text-base">Reservation #:</p>
 
-                    <p class="text-base">
-                       Customer:
-                    </p>
+                    <p class="text-base">Customer:</p>
                 </div>
 
                 <div class="relative mt-6">
-                    <x-text-input type="text" id="totalReservationCost" name="totalReservationCost"  />
+                    <x-text-input type="text" id="reservation_cost" name="reservation_cost"  />
 
-                    <x-input-label for="totalReservationCost">Total Reservation Cost</x-input-label>
+                    <x-input-label for="reservation_cost">Total Reservation Cost</x-input-label>
                 </div>
 
                 <div class="relative mt-8">
-                    <x-text-input type="text" id="grossCommission" name="grossCommission"  />
+                    <x-text-input type="text" id="gross_commission" name="gross_commission"  />
 
-                    <x-input-label for="grossCommission">Gross Commission</x-input-label>
+                    <x-input-label for="gross_commission">Gross Commission</x-input-label>
                 </div>
 
                 <div class="relative mt-8">
-                    <x-text-input type="text" id="BDMemail" name="BDMemail"  />
+                    <x-text-input type="text" id="bdm_email" name="bdm_email"  />
 
-                    <x-input-label for="BDMemail">BDM Email</x-input-label>
+                    <x-input-label for="bdm_email">BDM Email</x-input-label>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                     <div class="relative mt-3">
-                        <x-text-input type="text" id="agentCommission" name="agentCommission"  />
+                        <x-text-input type="text" id="agent_commission" name="agent_commission"  />
 
-                        <x-input-label for="agentCommission">Agent Commission</x-input-label>
+                        <x-input-label for="agent_commission">Agent Commission</x-input-label>
                     </div>
 
                     <div class="relative mt-3">
-                        <x-text-input type="text" id="percentage" name="percentage"  />
+                        <x-text-input type="text" id="commission" name="commission"  />
 
-                        <x-input-label for="percentage">Percentage %</x-input-label>
+                        <x-input-label for="commission">Percentage %</x-input-label>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2 mt-6">
-                    <input type="checkbox" class="h-4 w-4">
-                    <label class="text-sm" for="nonCommissionable">Non Commissionable</label>
+                    <input type="checkbox" id="non_commissionable" name="non_commissionable" class="h-4 w-4">
+                    <label class="text-sm" for="non_commissionable">Non Commissionable</label>
                 </div>
             </div>
 
@@ -238,4 +238,4 @@
     </div>
 </x-app-layout>
 <x-add-agent-reservation-modal :customers="$customers" :users="$users" :products="$products" />
-<x-add-unknown-reservation-modal />
+<x-add-unknown-reservation-modal :customers="$customers" :products="$products" />

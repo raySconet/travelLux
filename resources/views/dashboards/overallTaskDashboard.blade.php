@@ -72,7 +72,7 @@
 
                 <div class="text-center mt-6">
                     <a href="#" class="text-base viewAll task-link-overall" data-priority="High" data-period="all" onclick="showLoaderOnSubmit()">
-                    View All
+                        View All
                     </a>
                 </div>
                 <div class="task-details hidden mt-6"></div>
@@ -137,7 +137,7 @@
 
                 <div class="text-center mt-6">
                     <a href="#" class="text-base viewAll task-link-overall" data-priority="Medium" data-period="all" onclick="showLoaderOnSubmit()">
-                    View All
+                        View All
                     </a>
                 </div>
                 <div class="task-details hidden mt-6"></div>
@@ -206,7 +206,7 @@
 
                 <div class="text-center mt-6">
                     <a href="#" class="text-base viewAll task-link-overall" data-priority="Low" data-period="all" onclick="showLoaderOnSubmit()">
-                    View All
+                        View All
                     </a>
                 </div>
                 <div class="task-details hidden mt-6"></div>
@@ -271,7 +271,7 @@
 
                 <div class="text-center mt-6">
                     <a href="#" class="text-base viewAll task-link-overall" data-priority="All" data-period="all" onclick="showLoaderOnSubmit()">
-                    View All
+                        View All
                     </a>
                 </div>
                 <div class="task-details hidden mt-6"></div>

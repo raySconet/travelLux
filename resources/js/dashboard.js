@@ -673,17 +673,6 @@ $(document).ready(function() {
         });
     }
 
-    // $(document).ready(function() {
-
-    //     loadRecentCommissions();
-
-    //     $('#commissionRange').on('change', function() {
-
-    //         loadRecentCommissions($(this).val());
-
-    //     });
-    // });
-
     if (window.location.pathname === '/agentDashboard') {
         loadRecentCommissions();
     }

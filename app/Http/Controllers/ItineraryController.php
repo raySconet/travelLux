@@ -488,8 +488,7 @@ class ItineraryController extends Controller
             }
         ]);
 
-        $pdf = Pdf::loadView('itinerary.itineraryPdf', compact('itinerary'))
-            ->setPaper('a4', 'portrait');
+        $pdf = Pdf::loadView('itinerary.itineraryPdf', compact('itinerary'))->setPaper('a4', 'portrait');
 
         return $pdf->download($itinerary->name . '.pdf');
     }
@@ -505,10 +504,7 @@ class ItineraryController extends Controller
 
         foreach ($request->file('attachments') as $file) {
 
-            $originalName = pathinfo(
-                $file->getClientOriginalName(),
-                PATHINFO_FILENAME
-            );
+            $originalName = pathinfo($file->getClientOriginalName(),PATHINFO_FILENAME);
 
             $extension = $file->getClientOriginalExtension();
 
@@ -521,11 +517,7 @@ class ItineraryController extends Controller
 
             $fileName = $attachment->id . '.' . $extension;
 
-            $file->storeAs(
-                'attachments/itineraries',
-                $fileName,
-                'public'
-            );
+            $file->storeAs('attachments/itineraries',$fileName,'public');
 
             $attachments[] = [
                 'id' => $attachment->id,
@@ -574,9 +566,7 @@ class ItineraryController extends Controller
             'image' => 'required|image|max:10240'
         ]);
 
-        $itinerary->itineraryImages()
-            ->where('is_deleted', 0)
-            ->update(['is_deleted' => 1]);
+        $itinerary->itineraryImages()->where('is_deleted', 0)->update(['is_deleted' => 1]);
 
         $file = $request->file('image');
 
@@ -589,11 +579,7 @@ class ItineraryController extends Controller
             'is_deleted' => 0,
         ]);
 
-        $file->storeAs(
-            'attachments/itineraries/covers',
-            $image->id . '.' . $extension,
-            'public'
-        );
+        $file->storeAs('attachments/itineraries/covers',$image->id . '.' . $extension,'public');
 
         return response()->json([
             'success' => true,
@@ -661,15 +647,9 @@ class ItineraryController extends Controller
 
             $newAttachment->save();
 
-            $oldPath = storage_path(
-                'app/public/attachments/itineraries/' .
-                $attachment->id . '.' . $attachment->extension
-            );
+            $oldPath = storage_path('app/public/attachments/itineraries/' . $attachment->id . '.' . $attachment->extension);
 
-            $newPath = storage_path(
-                'app/public/attachments/itineraries/' .
-                $newAttachment->id . '.' . $newAttachment->extension
-            );
+            $newPath = storage_path('app/public/attachments/itineraries/' . $newAttachment->id . '.' . $newAttachment->extension);
 
             if (file_exists($oldPath)) {
                 copy($oldPath, $newPath);
@@ -688,15 +668,9 @@ class ItineraryController extends Controller
 
             $newImage->save();
 
-            $oldPath = storage_path(
-                'app/public/attachments/itineraries/covers/' .
-                $image->id . '.' . $image->extension
-            );
+            $oldPath = storage_path('app/public/attachments/itineraries/covers/' . $image->id . '.' . $image->extension);
 
-            $newPath = storage_path(
-                'app/public/attachments/itineraries/covers/' .
-                $newImage->id . '.' . $newImage->extension
-            );
+            $newPath = storage_path('app/public/attachments/itineraries/covers/' . $newImage->id . '.' . $newImage->extension);
 
             if (file_exists($oldPath)) {
                 copy($oldPath, $newPath);

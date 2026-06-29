@@ -27,14 +27,9 @@
                     @endif
                 </p>
             </div>
-            <form method="POST" action="{{ route('familyMembers.delete', $member->id) }}" class="inline delete-form">
-                @csrf
-                @method('DELETE')
-
-                <button type="button" onclick="event.stopPropagation(); openDeleteModal(this)">
-                    <i class="fa fa-trash text-base cursor-pointer"></i>
-                </button>
-            </form>
+            <button type="button" onclick="event.stopPropagation(); openFamilyDeleteModal({{ $member->id }})">
+                <i class="fa fa-trash text-base cursor-pointer"></i>
+            </button>
         </div>
     @empty
         <p class="mt-3 text-[#6c757d] text-sm"></p>
@@ -43,10 +38,10 @@
 
 <!-- Add Family Member to customer modal -->
 @if(!$isNewCustomer)
-    <form id="familyMemberForm" method="POST" action="{{ route('customers.familyMembers.store', $customer->id) }}" data-store-url="{{ route('customers.familyMembers.store', $customer->id) }}">
-        @csrf
-        <input type="hidden" id="family_member_id" name="family_member_id" value="">
-        <input type="hidden" name="_method" id="family_member_method" value="POST">
+    <div id="familyMemberFormContainer" data-store-url="{{ route('customers.familyMembers.store', $customer->id) }}">
+        <input type="hidden" id="family_member_id">
+        <input type="hidden" id="family_member_method" value="POST">
+
         <div id="customersAddFamilyMemberModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
             
             <div class="bg-white w-full max-w-3xl rounded-lg shadow-lg relative">
@@ -231,10 +226,7 @@
                     <div x-data="{ open: false }" class="mt-6">
                         <div class="flex flex-row items-center justify-between cursor-pointer" @click="open = !open">
                             <p class="text-lg font-medium">
-                                <i
-                                    class="fas"
-                                    :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"
-                                ></i>
+                                <i class="fas" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                                 Address
                             </p>
                             <p id="family_address_preview" class="text-sm text-gray-600"></p>
@@ -295,18 +287,13 @@
 
                     <div class="flex flex-col mt-4">
                         <label for="special_notes" class="mb-1 text-sm text-gray-700">Special Notes</label>
-                        <textarea
-                            id="family_special_notes"
-                            name="special_notes"
-                            rows="2"
-                            class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1">
-                        </textarea>
+                        <textarea id="family_special_notes" name="special_notes" rows="2" class="w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] resize-none pt-1 pb-1"></textarea>
                     </div>
                 </div>
 
                 
                 <div class="flex justify-end px-6 py-4 border-t-2 border-[#dee2e6] space-x-2">
-                    <x-primary-btn type="submit" class="customerAddFamilyMember">
+                    <x-primary-btn type="button" class="customerAddFamilyMember" onclick="saveFamilyMemberAjax()">
                         <i class="fa fa-paper-plane"></i>
                         <span>Save</span>
                     </x-primary-btn>
@@ -319,5 +306,5 @@
 
             </div>
         </div>
-    </form>    
+    </div>    
 @endif

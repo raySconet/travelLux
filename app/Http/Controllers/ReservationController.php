@@ -656,6 +656,12 @@ class ReservationController extends Controller
 
         $attachment->delete();
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true
+            ]);
+        }
+
         return redirect()
                 ->route('reservations.reservationDetails', $attachment->reservation_id)
                 ->with('success', 'Reservation attachments deleted successfully')
@@ -738,6 +744,13 @@ class ReservationController extends Controller
         ], $messages);
 
         if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
             return redirect()
                 ->route('reservations.reservationDetails', $reservation->id)
                 ->withErrors($validator, 'taskStore')
@@ -762,12 +775,25 @@ class ReservationController extends Controller
 
     public function updateTask(Request $request, ReservationTask $task)
     {
-        $data = $request->validate([
+        $validator = \Validator::make($request->all(), [
             'task_name' => 'required|string|max:255',
             'priority' => 'required|string',
             'due_date' => 'required|date',
             'task_notes' => 'nullable|string',
         ]);
+
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($validator);
+        }
+
+        $data = $validator->validated();
 
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
@@ -782,36 +808,49 @@ class ReservationController extends Controller
 
     public function toggleCompleteTask(ReservationTask $task)
     {
+        $completed = !$task->is_completed;
+
         $task->update([
-            'is_completed' => $task->is_completed ? 0 : 1, 
-            'is_completed_by' =>  auth()->id(),
-            'is_completed_on' =>  now(),
+            'is_completed' => $completed,
+            'is_completed_by' => auth()->id(),
+            'is_completed_on' => now(),
             'last_modified_by' => auth()->id(),
             'last_modified_on' => now(),
         ]);
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'is_completed' => $completed,
+            ]);
+        }
+
         return redirect()
             ->route('reservations.reservationDetails', $task->reservation_id)
-            ->with('success', $task->is_completed ? 'Task marked incomplete' : 'Task completed')
+            ->with('success', $completed ? 'Task completed' : 'Task marked incomplete')
             ->with('activeTab', 'tasks');
     }
 
     public function deleteTask(ReservationTask $task)
     {
-        $reservationId = $task->reservation_id;
-
         $task->update([
             'is_deleted' => 1,
             'last_modified_by' => auth()->id(),
             'last_modified_on' => now(),
         ]);
 
-        return redirect()
-                ->route('reservations.reservationDetails', $reservationId)
-                ->with('success', 'Task deleted successfully')
-                ->with('activeTab', 'tasks');
-    }
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true
+            ]);
+        }
 
+        return redirect()
+            ->route('reservations.reservationDetails', $task->reservation_id)
+            ->with('success', 'Task deleted successfully')
+            ->with('activeTab', 'tasks');
+    }
+    
     public function storePayment(Request $request, Reservation $reservation)
     {
         $messages = [
@@ -827,16 +866,23 @@ class ReservationController extends Controller
             'payment_date' => 'nullable|date',
             'check_number' => 'nullable|integer',
             'credit_card_number' => 'nullable|integer',
-            'notes' => 'nullable|string',
+            'notes' => 'required|string',
         ], $messages); 
 
         if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
             return redirect()
-                ->route('reservations.reservationDetails', $reservation->id)
-                ->withErrors($validator, 'paymentStore')
-                ->withInput()
-                ->with('activeTab', 'payments')
-                ->with('openPaymentModal', true);
+                    ->route('reservations.reservationDetails', $reservation->id)
+                    ->withErrors($validator, 'paymentStore')
+                    ->withInput()
+                    ->with('activeTab', 'payments')
+                    ->with('openPaymentModal', true);
         }
 
         $data = $validator->validated();
@@ -855,15 +901,28 @@ class ReservationController extends Controller
 
     public function updatePayment(Request $request, ReservationPayment $payment)
     {
-        $data = $request->validate([
+        $validator = \Validator::make($request->all(), [
             'amount' => 'required|integer',
             'payment_type' => 'required|string',
             'payment_method' => 'required|string',
             'payment_date' => 'nullable|date',
             'check_number' => 'nullable|integer',
             'credit_card_number' => 'nullable|integer',
-            'notes' => 'nullable|string',
+            'notes' => 'required|string',
         ]);
+
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($validator);
+        }
+
+        $data = $validator->validated();
 
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
@@ -886,6 +945,12 @@ class ReservationController extends Controller
             'last_modified_on' => now(),
         ]);
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true
+            ]);
+        }
+
         return redirect()
                 ->route('reservations.reservationDetails', $reservationId)
                 ->with('success', 'Payment deleted successfully')
@@ -905,12 +970,19 @@ class ReservationController extends Controller
             'notes' => 'required|string',
         ],$messages);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
             return redirect()
                     ->route('reservations.reservationDetails', $reservation->id)
                     ->withErrors($validator, 'diningNoteStore')
                     ->withInput()
-                    ->with('activeTab','diningInformation')
+                    ->with('activeTab', 'diningInformation')
                     ->with('openDiningInfoModal', true);
         }
 
@@ -930,12 +1002,25 @@ class ReservationController extends Controller
 
     public function updateDiningNote(Request $request, ReservationDiningNote $diningNote)
     {
-        $data = $request->validate([
+        $validator = \Validator::make($request->all(), [
             'dining_date' => 'nullable|date',
             'dining_time' => 'nullable|date_format:H:i:s',
             'meal' => 'nullable|string',
             'notes' => 'required|string',
         ]);
+
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($validator);
+        }
+
+        $data = $validator->validated();
 
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
@@ -975,6 +1060,12 @@ class ReservationController extends Controller
             'last_modified_on' => now(),
         ]);
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true
+            ]);
+        }
+
         return redirect()
                 ->route('reservations.reservationDetails', $reservationId)
                 ->with('success', 'Dining Note deleted successfully')
@@ -996,7 +1087,14 @@ class ReservationController extends Controller
             'notes' => 'nullable|string'
         ], $messages);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
             return redirect()
                     ->route('reservations.reservationDetails', $reservation->id)
                     ->withErrors($validator, 'giftStore')
@@ -1021,12 +1119,25 @@ class ReservationController extends Controller
 
     public function updateGift(Request $request, ReservationGift $gift)
     {
-        $data = $request->validate([
+        $validator = \Validator::make($request->all(), [
             'gift_date' => 'required|date',
             'gift_type' => 'required|string',
             'amount' => 'required|integer',
             'notes' => 'nullable|string',
         ]);
+
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($validator);
+        }
+
+        $data = $validator->validated();
 
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
@@ -1049,6 +1160,12 @@ class ReservationController extends Controller
             'last_modified_on' => now()
         ]);
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true
+            ]);
+        }
+
         return redirect()
                 ->route('reservations.reservationDetails', $reservationId)
                 ->with('success', 'Gift deleted successfully')
@@ -1068,13 +1185,20 @@ class ReservationController extends Controller
             'notes' => 'required|string',
         ], $messages);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
             return redirect()
-                    ->route('reservations.reservationDetails', $reservation->id)
-                    ->withErrors($validator, 'phoneNoteStore')
-                    ->withInput()
-                    ->with('activeTab', 'phoneNotes')
-                    ->with('openPhoneNotesModal', true);
+                ->route('reservations.reservationDetails', $reservation->id)
+                ->withErrors($validator, 'phoneNoteStore')
+                ->withInput()
+                ->with('activeTab', 'phoneNotes')
+                ->with('openPhoneNotesModal', true);
         }
 
         $data = $validator->validated();
@@ -1093,12 +1217,26 @@ class ReservationController extends Controller
 
     public function updatePhoneNote(Request $request, ReservationPhoneNote $phoneNote)
     {
-        $data = $request->validate([
+
+        $validator = \Validator::make($request->all(), [
             'category' => 'nullable|string',
             'caller_name' => 'nullable|string',
             'caller_phone_number' => 'nullable|string',
             'notes' => 'required|string',
         ]);
+
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($validator);
+        }
+
+        $data = $validator->validated();
 
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
@@ -1113,18 +1251,27 @@ class ReservationController extends Controller
 
     public function toggleCancelPhoneNote(ReservationPhoneNote $phoneNote)
     {
+        $canceled = !$phoneNote->is_canceled;
+
         $phoneNote->update([
-            'is_canceled' => $phoneNote->is_canceled ? 0 : 1,
+            'is_canceled' => $canceled,
             'canceled_by' => auth()->id(),
             'canceled_on' => now(),
             'last_modified_by' => auth()->id(),
             'last_modified_on' => now(),
         ]);
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'is_canceled' => $canceled,
+            ]);
+        }
+
         return redirect()
-                ->route('reservations.reservationDetails', $phoneNote->reservation_id)
-                ->with('success', $phoneNote->is_canceled ? 'Phone Note marked as uncanceled' : 'Phone Note marked as canceled')
-                ->with('activeTab', 'phoneNotes');
+            ->route('reservations.reservationDetails', $phoneNote->reservation_id)
+            ->with('success',$canceled ? 'Phone Note marked as canceled' : 'Phone Note marked as uncanceled')
+            ->with('activeTab', 'phoneNotes');
     }
 
     public function deletePhoneNote(ReservationPhoneNote $phoneNote)
@@ -1136,6 +1283,12 @@ class ReservationController extends Controller
             'last_modified_by' => auth()->id(),
             'last_modified_on' => now(),
         ]);
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true
+            ]);
+        }
 
         return redirect()
                 ->route('reservations.reservationDetails', $reservationId)
@@ -1156,13 +1309,20 @@ class ReservationController extends Controller
             'notes' => 'nullable|string',
         ], $messages);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
             return redirect()
-                    ->route('reservations.reservationDetails', $reservation->id)
-                    ->withErrors($validator, 'commissionFeeStore')
-                    ->withInput()
-                    ->with('activeTab', 'agentPayments')
-                    ->with('openCommissionFeesModal', true);
+                ->route('reservations.reservationDetails', $reservation->id)
+                ->withErrors($validator, 'commissionFeeStore')
+                ->withInput()
+                ->with('activeTab', 'agentPayments')
+                ->with('openCommissionFeesModal', true);
         }
 
         $data = $validator->validated();
@@ -1170,22 +1330,35 @@ class ReservationController extends Controller
         $data['reservation_id'] = $reservation->id;
         $data['created_by'] = auth()->id();
         $data['created_on'] = now();
-        
+
         ReservationCommissionFee::create($data);
 
         return redirect()
-                ->route('reservations.reservationDetails', $reservation->id)
-                ->with('success', 'Commission Fee added successfully')
-                ->with('activeTab', 'agentPayments');
+            ->route('reservations.reservationDetails', $reservation->id)
+            ->with('success', 'Commission Fee added successfully')
+            ->with('activeTab', 'agentPayments');
     }
 
     public function updateCommissionFee(Request $request, ReservationCommissionFee $commissionFee)
     {
-        $data = $request->validate([
+        $validator = \Validator::make($request->all(), [
             'fee_type' => 'required|string',
             'amount' => 'required|integer',
             'notes' => 'nullable|string',
         ]);
+
+        if ($validator->fails()) {
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($validator);
+        }
+
+        $data = $validator->validated();
 
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
@@ -1193,9 +1366,9 @@ class ReservationController extends Controller
         $commissionFee->update($data);
 
         return redirect()
-                ->back()
-                ->with('success', 'Commission Fee updated successfully')
-                ->with('activeTab', 'agentPayments');
+            ->back()
+            ->with('success', 'Commission Fee updated successfully')
+            ->with('activeTab', 'agentPayments');
     }
 
     public function deleteCommissionFee(ReservationCommissionFee $commissionFee)
@@ -1207,6 +1380,12 @@ class ReservationController extends Controller
             'last_modified_by' => auth()->id(),
             'last_modified_on' => now(),
         ]);
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true
+            ]);
+        }
 
         return redirect()
                 ->route('reservations.reservationDetails', $reservationId)

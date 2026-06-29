@@ -172,8 +172,8 @@
             </div>
 
             <div class="relative mt-7 mb-4">
-                <input type="checkbox">
-                <label>Non Commissionable</label>
+                <input type="checkbox" id="non_commissionable" name="non_commissionable" class="h-4 w-4">
+                <label class="text-sm" for="non_commissionable">Non Commissionable</label>
             </div>
         </div>
 

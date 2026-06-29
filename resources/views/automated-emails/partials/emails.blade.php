@@ -59,12 +59,9 @@
         <div class="mt-3">
             <label for="message">Message</label>
 
-            <textarea 
-                id="message" 
-                name="message"
-                rows="3"
-                class="w-full border-b-2 border-[#bdbdbd] rounded-sm p-2 focus:outline-none"
-            >{{ old('message', $automatedEmail->message ?? '') }}</textarea>
+            <textarea id="message" name="message" rows="3" class="w-full border-b-2 border-[#bdbdbd] rounded-sm p-2 focus:outline-none">
+                {{ old('message', $automatedEmail->message ?? '') }}
+            </textarea>
 
             <x-input-error :messages="$errors->get('message')" />
         </div>
@@ -99,9 +96,8 @@
             <select id="product_list"  name="product_list[]"  class="product_list w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select Product--</option>
                 @foreach($products as $product)
-                    <option value="{{ $product->id }}"
-                            {{ in_array($product->id, $productIds) ? 'selected' : '' }}>
-                            {{ $product->product_name }}
+                    <option value="{{ $product->id }}" {{ in_array($product->id, $productIds) ? 'selected' : '' }}>
+                        {{ $product->product_name }}
                     </option>
                 @endforeach            
             </select>
@@ -112,10 +108,9 @@
             <select name="destination_list[]" id="destination_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select Destination--</option>
                 @foreach($destinations as $destination)
-                    <option value="{{ $destination->id }}" data-product="{{ $destination->product_id }}"
-                        {{ in_array($destination->id, $destinationIds) ? 'selected' : '' }}>
-                    {{ $destination->destination_name }}
-                </option>
+                    <option value="{{ $destination->id }}" data-product="{{ $destination->product_id }}" {{ in_array($destination->id, $destinationIds) ? 'selected' : '' }}>
+                        {{ $destination->destination_name }}
+                    </option>
                 @endforeach            
             </select>
         </div>
@@ -125,8 +120,7 @@
             <select name="resort_list[]" id="resort_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select Resort/Ship--</option>
                 @foreach($resortShips as $resortShip)
-                    <option value="{{ $resortShip->id }}" data-destination="{{ $resortShip->destination_id }}"
-                            {{ in_array($resortShip->id, $resortIds) ? 'selected' : '' }}>
+                    <option value="{{ $resortShip->id }}" data-destination="{{ $resortShip->destination_id }}" {{ in_array($resortShip->id, $resortIds) ? 'selected' : '' }}>
                         {{ $resortShip->resort_ship_name }}
                     </option>
                 @endforeach            
@@ -138,8 +132,7 @@
             <select name="cruise_itinerary_list[]" id="cruise_itinerary_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="">--Select Cruise/Type--</option>
                 @foreach($cruiseItineraries as $cruiseItinerary)
-                    <option value="{{ $cruiseItinerary->id }}" data-resort="{{ $cruiseItinerary->resort_ship_id }}"
-                            {{ in_array($cruiseItinerary->id, $cruiseIds) ? 'selected' : '' }}>
+                    <option value="{{ $cruiseItinerary->id }}" data-resort="{{ $cruiseItinerary->resort_ship_id }}" {{ in_array($cruiseItinerary->id, $cruiseIds) ? 'selected' : '' }}>
                         {{ $cruiseItinerary->cruise_name }}
                     </option>
                 @endforeach            
@@ -176,33 +169,21 @@
                         <tr class="hover:bg-gray-50">
 
                             <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-
-                                <form method="POST" action="{{ route('automatedEmails.attachments.destroy', $attachment->id) }}">
-
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button type="button" onclick="openDeleteModal(this)">
-                                        <i  class="fas fa-trash text-[#989898] cursor-pointer"></i>
-                                    </button>
-                                </form>
+                                <button type="button" onclick="openDeleteModal(document.getElementById('deleteAttachmentForm{{ $attachment->id }}'))">
+                                    <i class="fas fa-trash text-[#989898] cursor-pointer"></i>
+                                </button>
                             </td>
 
                             <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-
                                 <a href="{{ asset('storage/attachments/automatedEmails/' . $attachment->id . '.' . $attachment->file_extension) }}" target="_blank">
-
                                     {{ $attachment->file_name . '.' . $attachment->file_extension }}
                                 </a>
-
                             </td>
 
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="2" class="text-center py-3 text-gray-400">
-                                
-                            </td>
+                            <td colspan="2" class="text-center py-3 text-gray-400"></td>
                         </tr>
                     @endforelse
                 </tbody>

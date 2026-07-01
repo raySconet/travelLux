@@ -5,12 +5,12 @@ window.Alpine = Alpine;
 
 // Alpine.start();
 $(document).ready(() => {
-    
+
     // ----------------------------------------------------------- //
     // start system users //
     // ----------------------------------------------------------- //
 
-    // start email as username 
+    // start email as username
     const emailInput = $('#email');
     const usernameInput = $('#username');
     const emailAsUsernameCheckbox = $('input[name="email_as_username"][value="1"]');
@@ -55,7 +55,7 @@ $(document).ready(() => {
 
     }
     // end email as username
-    
+
     // start profile photo
     $('#editProfilePhoto').on('click', function () {
 
@@ -1232,7 +1232,7 @@ $(document).ready(() => {
 
         selectedDay = $(this).data('day');
 
-        renderDayHeader(selectedDay);   
+        renderDayHeader(selectedDay);
         renderDayEvents(selectedDay);
         toggleDayActions();
     });
@@ -1244,7 +1244,7 @@ $(document).ready(() => {
         if (!day.events || day.events.length === 0) {
             html = ` <div class="text-gray-400 text-lg text-center mt-20"></div> `;
         } else {
-    
+
             day.events.forEach(event => {
                 let formattedTime = '';
 
@@ -1421,7 +1421,7 @@ $(document).ready(() => {
                                             <div>
                                                 <div class="font-bold text-base">Price</div>
                                                 <div class="text-[#212121] mt-1">
-                                                    ${event.itineraryActivityFormCurrency ?? ''}    
+                                                    ${event.itineraryActivityFormCurrency ?? ''}
                                                     ${event.itineraryActivityFormAmount ?? ''}
                                                 </div>
                                             </div>
@@ -1688,7 +1688,7 @@ $(document).ready(() => {
 
                             </div>
 
-                            
+
                             <div class="grid grid-cols-4 gap-4 text-sm">
 
                                 ${
@@ -1761,7 +1761,7 @@ $(document).ready(() => {
 
                                     <span class="text-[#ca5] font-extrabold">ARRIVAL</span>
                                 </div>
-                                
+
                                 ${ !VIEW_ONLY ? `<i class="far fa-times-circle text-[#c60000] mt-1 text-lg cursor-pointer delete-event-btn" data-event-id="${event.id}"></i>`: ''}
                             </div>
 
@@ -1844,7 +1844,7 @@ $(document).ready(() => {
 
                             </div>
 
-                            
+
                             <div class="grid grid-cols-3 gap-4 text-sm">
 
                                 ${
@@ -2575,7 +2575,7 @@ $(document).ready(() => {
         toggleDayActions();
     }
     // end render itinerary day events
-    
+
     // start manage event
     window.openManageEventItineraryModal = function () {
         editingEventId = null;
@@ -2805,7 +2805,7 @@ $(document).ready(() => {
         $('.dynamic-section').addClass('hidden');
 
         $('.dynamic-section').find('input, select, textarea').prop('disabled', true);
-        
+
 
         const key = `${selectedCategory.slug}-${selectedSubcategory.slug}`;
 
@@ -3146,7 +3146,7 @@ $(document).ready(() => {
 
             attachmentsHtml = `
                 <div class="text-gray-400 text-center mt-8">
-                    
+
                 </div>
             `;
         }
@@ -3285,12 +3285,12 @@ $(document).ready(() => {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function (res) {
-                location.reload(); 
+                location.reload();
             }
         });
     });
     // end change cover photo
-    
+
     // start pdf copy link
     window.copyItineraryLink = function (url) {
 

@@ -36,6 +36,14 @@
             @vite([ 'resources/js/vendors.js'])
         @endif
 
+        @if(request()->is('calendar') || request()->is('calendar/*'))
+            @vite('resources/js/calendar.js')
+        @endif
+
+        @if(request()->is('schedule') || request()->is('schedule/*'))
+            @vite('resources/css/schedule.css')
+            @vite('resources/js/schedule.js')
+        @endif
 
         <style>
             [x-cloak] {
@@ -56,7 +64,7 @@
                 :class="sidebarOpen ? 'md:pl-64' : 'md:pl-0'"
             @endif
         >
-            
+
 
             @if(!($viewOnly ?? false))
                 <!-- TOP NAV -->

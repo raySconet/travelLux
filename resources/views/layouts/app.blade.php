@@ -27,13 +27,7 @@
         <!-- Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
-            @vite(['resources/css/administration.css', 'resources/js/administration.js'])
-            @vite([ 'resources/js/customers.js'])
-            @vite([ 'resources/js/reservations.js'])
-            @vite([ 'resources/js/reports.js'])
-            @vite([ 'resources/js/dashboard.js'])
-            @vite([ 'resources/js/commissions.js'])
-            @vite([ 'resources/js/vendors.js'])
+            @vite(['resources/css/administration.css'])
         @endif
 
         @if(request()->is('calendar') || request()->is('calendar/*'))
@@ -43,6 +37,59 @@
         @if(request()->is('schedule') || request()->is('schedule/*'))
             @vite('resources/css/schedule.css')
             @vite('resources/js/schedule.js')
+        @endif
+
+        @if(request()->is('system-users') || request()->is('system-users/*') || request()->is('timelinetasks') || request()->is('timelinetasks/*'))
+            @vite('resources/js/systemUsers-timelineTasks.js')
+        @endif
+
+        @if(request()->is('customersForms') || request()->is('customersForms/*') || request()->is('customers-form') || request()->is('customers-form/*'))
+            @vite('resources/js/formManager.js')
+        @endif
+
+        @if(request()->is('automatedEmails') || request()->is('automatedEmails/*'))
+            @vite('resources/js/automatedEmails.js')
+        @endif
+
+        @if(request()->is('itinerary') || request()->is('itinerary/*'))
+            @vite('resources/js/itinerary.js')
+        @endif
+
+        @if(request()->is('customer-list') || request()->is('customer-list/*') || request()->is('customer') || request()->is('customer/*') || request()->is('inviteNewCustomer'))
+            @vite('resources/js/customers.js')
+        @endif
+
+        @if(request()->is('reservation-list') || request()->is('reservation-list/*'))
+            @vite('resources/js/reservations.js')
+        @endif
+
+        @if(request()->is('vendorReport') || request()->is('1099Report') || request()->is('checkHistoryReport') || request()->is('currentChecksReport') ||
+            request()->is('commissionClaimReport') || request()->is('reservationsNotPaidByALTReport') || request()->is('reservationsPaidByALTReport') ||
+            request()->is('unknownReservationsReport') || request()->is('bookedTripsByStateReport') || request()->is('reservationsChangesReport') ||
+            request()->is('reservationsByAgentReport') || request()->is('productSalesByAgentReport') || request()->is('agentSalesByProductReport') ||
+            request()->is('totalSalesReport') || request()->is('agentExpensesReport') || request()->is('aliasTotalSalesReport') || request()->is('aliasTotalGrossCommission') ||
+            request()->is('allReservationsByDateReport') || request()->is('allTripsByTravelDateReport') || request()->is('top15ExpensiveTripsReport') ||
+            request()->is('cruisesReport') || request()->is('productSalesWithDepositByAgentReport') || request()->is('finalAgencyCommissionReport') ||
+            request()->is('agentsReport') || request()->is('bookedReservationsPerMonthReport') || request()->is('reservationsLeadReport') ||
+            request()->is('totalCommissionReport') || request()->is('hotelOnlyReport') || request()->is('classicVacationsReport') ||
+            request()->is('pleasantEvokeReport') || request()->is('appleVacationsReport') || request()->is('travelImpressionsReport') ||
+            request()->is('vacationExpressReport') || request()->is('expediaReport') || request()->is('rebookingRateReport') || request()->is('salesReport')
+        )
+            @vite('resources/js/reports.js')
+        @endif
+
+        @if(request()->is('agentDashboard') || request()->is('overallTaskDashboard') || request()->is('overallTaskDashboard/*') || request()->is('myOverallTaskDashboard') ||
+            request()->is('myOverallTaskDashboard/*') || request()->is('ownersDashboard') || request()->is('ownersDashboard/*') || request()->is('checkingInThisWeek')
+        )
+            @vite('resources/js/dashboard.js')
+        @endif
+
+        @if(request()->is('commissionRemittances') || request()->is('checkWriter'))
+            @vite('resources/js/commissions.js')
+        @endif
+
+        @if(request()->is('vendor-list') || request()->is('vendor-list/*'))
+            @vite('resources/js/vendors.js')
         @endif
 
         <style>

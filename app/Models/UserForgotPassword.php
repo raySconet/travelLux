@@ -4,21 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Notification extends Model
+class UserForgotPassword extends Model
 {
-    protected $table = 'notifications';
+    protected $table = 'user_forgot_password';
 
     protected $primaryKey = 'id';
-
+    
     protected $fillable = [
         'user_id',
-        'module_name',
-        'record_id',
-        'message',
-        'date',
-        'created_by',
-        'is_read'
-    ];
+        'requested_on',
+        'status'
+    ];    
 
     public function user()
     {

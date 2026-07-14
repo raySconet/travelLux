@@ -59,67 +59,43 @@ use App\Http\Controllers\VacationExpressReportController;
 use App\Http\Controllers\ExpediaReportController;
 use App\Http\Controllers\RebookingRateReportController;
 use App\Http\Controllers\SalesReportController;
+use App\Http\Controllers\NotificationsController;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\IntakeFormController;
+use App\Http\Controllers\FormController;
+
 
 Route::get('/', function () {
     return view('auth/login');
 });
 
-
 Route::get('/dashboard', function () {
     return redirect('/profile');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [ForgotPasswordController::class, 'update'])->name('password.update');
+
+Route::get('/customer/invitation/{token}',[InvitationController::class, 'show'])->name('customer.invitation');
+Route::post('/invitation/submit',[InvitationController::class, 'submit'])->name('invitation.submit');
+
+Route::get('/customer/intake-form/{token}',[IntakeFormController::class, 'show'])->name('customer.intake-form');
+Route::post('/customer/intake-form/submit', [IntakeFormController::class, 'submit'])->name('customer.intake-form.submit');
+
+Route::get('/customer/form/{token}',[FormController::class, 'show'])->name('form.show');
+Route::post('/customer/form/submit',[FormController::class, 'submit'])->name('form.submit');
+
+Route::post('/notifications/{notification}/read', [NotificationsController::class, 'markAsRead'])->middleware('auth')->name('notifications.read');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-Route::post('/users/store', [UserController::class, 'store'])
-    ->middleware(['auth', 'verified'])
-    ->name('store.user');
-
-Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
-Route::post('/users/{user}/update', [UserController::class, 'update'])
-    ->middleware(['auth', 'verified'])
-    ->name('users.update');
-
-Route::get('/permissions', [UserController::class, 'userPermissions'])
-    ->middleware(['auth', 'verified', RoleMiddleware::class . ':super_admin'])
-    ->name('permissions');
-
-Route::post('/permissions/update',[UserController::class, 'updatePermissions'])
-    ->middleware(['auth', 'verified'])
-    ->name('permissions.update');
-
-Route::get('/getUsersAndAssignedUsers', [UserController::class, 'getUsersAndAssignedUsers'])
-    ->middleware(['auth', 'verified', RoleMiddleware::class . ':super_admin'])
-    ->name('getUsersAndAssignedUsers');
-
-Route::post('/assignViewAccess', [UserController::class, 'assignViewAccess'])
-    ->middleware(['auth', 'verified', RoleMiddleware::class . ':super_admin'])
-    ->name('assignViewAccess');
-
-Route::get('/users/permissions/partial', [UserController::class, 'partial'])->name('permissions.partial');
-Route::put('/users/{user}', [UserController::class, 'delete'])->name('user.delete');
-
-Route::get('/getUsers', [UserController::class, 'index']);
-
-
-Route::middleware('auth')->group(function () {
-
-    Route::get('/insurance', [InsuranceController::class, 'index'])->name('insurance.index');
-    Route::post('/insurance', [InsuranceController::class, 'store'])->name('insurance.store');
-    Route::put('/insurance/{id}', [InsuranceController::class, 'update'])->name('insurance.update');
-    Route::delete('/insurance/{id}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
-    Route::get('/insurance/{id}/fetch', [InsuranceController::class, 'fetch'])->name('insurance.fetch');
-
-
-});
-
-Route::get('/user/can-create-case', [CourtCasesController::class, 'canCreateCase']);
-Route::post('/update-event-user', [EventController::class, 'updateEventUser']);
-Route::post('/update-case-user', [CourtCasesController::class, 'updateCaseUser']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/system-users', [SystemUsersController::class, 'index'])->name('system-users');
@@ -204,10 +180,19 @@ Route::middleware('auth')->group(function(){
     Route::delete('/customer/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 
     Route::get('/inviteNewCustomer', [CustomerController::class, 'inviteNewCustomer'])->name('customers.inviteNewCustomer');
+    Route::post('/inviteNewCustomer', [CustomerController::class, 'storeInvitation'])->name('customers.storeInvitation');
 
     Route::post('/customer/{customer}/members', [CustomerController::class, 'storeFamilyMember'])->name('customers.familyMembers.store');
     Route::put('/family-members/{familyMember}', [CustomerController::class, 'updateFamilyMember'])->name('familyMembers.update');
     Route::delete('/members/{member}', [CustomerController::class, 'deleteFamilyMember'])->name('familyMembers.delete');
+
+    Route::post('/customer/{customer}/send-invitation', [CustomerController::class, 'sendInvitation'])->name('customers.sendInvitation');
+
+    Route::post('/customer/{customer}/send-intake-form',[CustomerController::class, 'sendIntakeForm'])->name('customers.sendIntakeForm');
+    Route::post('/intake-form/resend', [CustomerController::class, 'resendIntakeForm'])->name('intake-form.resend');
+
+    Route::post('/customers/send-form',[CustomerController::class,'sendForm'])->name('customers.sendForm');
+    Route::post('/customers/resend-form',[CustomerController::class, 'resendForm'])->name('customers.resendForm');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/reservation-list', [ReservationController::class, 'index'])->name('reservations.reservationList');
@@ -258,6 +243,9 @@ Route::middleware('auth')->group(function(){
     Route::get('/ajax/destinations', [ReservationController::class, 'getDestinationsByProduct']);
     Route::get('/ajax/resorts', [ReservationController::class, 'getResortsByDestination']);
     Route::get('/ajax/cruises', [ReservationController::class, 'getCruisesByResort']);
+
+    Route::post('/reservations/send-form',[ReservationController::class, 'sendForm'])->name('reservations.sendForm');
+    Route::post('/reservations/resend-form',[ReservationController::class, 'resendForm'])->name('reservations.resendForm');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');

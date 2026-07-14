@@ -10,6 +10,16 @@ use App\Models\Country;
 use App\Models\CustomersForm;
 use App\Models\CustomerFamilyMember;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\InviteCustomerRequest;
+use App\Mail\RegistrationInvitationMail;
+use App\Models\CustomerInvitation;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Models\CustomerIntakeForm;
+use App\Mail\IntakeFormMail;
+use App\Mail\CustomerFormMail;
+use App\Models\FormSent;
 
 class CustomerController extends Controller
 {
@@ -107,6 +117,80 @@ class CustomerController extends Controller
 
     public function inviteNewCustomer(){
         return view('customers.inviteNewCustomer');
+    }
+
+    public function storeInvitation(InviteCustomerRequest $request)
+    {
+
+        if (Customer::where('email', $request->email)->where('is_deleted', 0)->exists()) {
+            return back()
+                ->withInput()
+                ->with('email_exists', true);
+        }
+
+        DB::transaction(function () use ($request) {
+
+            $customer = Customer::create([
+
+                'fname' => $request->fname,
+                'lname' => $request->lname,
+                'email' => $request->email,
+
+                'status' => 'Invited',
+
+                'agent_id' => Auth::id(),
+                'created_by' => Auth::id(),
+
+                'is_website_lead_knot' => $request->boolean('is_website_lead_knot'),
+                'is_website_lead' => $request->boolean('is_website_lead'),
+                'is_virtuoso_lead' => $request->boolean('is_virtuoso_lead'),
+                'is_luxury_magazine_lead' => $request->boolean('is_luxury_magazine_lead'),
+                'is_facebook_lead' => $request->boolean('is_facebook_lead'),
+                'is_instagram_lead' => $request->boolean('is_instagram_lead'),
+                'is_radio_lead' => $request->boolean('is_radio_lead'),
+
+                'created_on' => now(),
+            ]);
+
+            CustomerFamilyMember::create([
+
+                'customer_id' => $customer->id,
+                'fname' => $customer->fname,
+                'lname' => $customer->lname,
+                'relation' => 'Self',
+                'created_by' => Auth::id(),
+                'created_on' => now(),
+            ]);
+
+            CustomerInvitation::where('customer_id', $customer->id)
+                ->where('status', 'P')
+                ->update([
+                    'status' => 'C',
+                    'expired_flag' => 1,
+                ]);
+
+            $invitation = CustomerInvitation::create([
+
+                'customer_id' => $customer->id,
+                'status' => 'P',
+                'created_by' => Auth::id(),
+                'created_on' => now(),
+            ]);
+
+            $token = base64_encode($invitation->id . config('app.invitation_salt'));
+
+            Mail::to($customer->email)->send(
+                new RegistrationInvitationMail(
+                    $customer->fname,
+                    Auth::user()->fname . ' ' . Auth::user()->lname,
+                    $token
+                )
+            );
+        });
+
+        return redirect()
+            ->route('customers.customerList')
+            ->with('success', 'Invitation sent successfully.');
     }
 
     public function store(Request $request)
@@ -250,124 +334,6 @@ class CustomerController extends Controller
             'referred_by_phone' => 'nullable|string|max:255',
             'general_notes' => 'nullable|string',
 
-            'interests_all_inclusive' => 'nullable|in:T,F',
-            'four_wheel_drive_expedition' => 'nullable|in:T,F',
-            'adult_education' => 'nullable|in:T,F',
-            'adventure' => 'nullable|in:T,F',
-            'archaeology' => 'nullable|in:T,F',
-            'art_theatre' => 'nullable|in:T,F',
-            'ballooning' => 'nullable|in:T,F',
-            'birding' => 'nullable|in:T,F',
-            'climbing' => 'nullable|in:T,F',
-            'cruise_barge' => 'nullable|in:T,F',
-            'cruise_expedition' => 'nullable|in:T,F',
-            'cruise_large_ship' => 'nullable|in:T,F',
-            'cruise_river' => 'nullable|in:T,F',
-            'cruise_small_ship' => 'nullable|in:T,F',
-            'cycling' => 'nullable|in:T,F',
-            'destination_weddings_romantic' => 'nullable|in:T,F',
-            'diving' => 'nullable|in:T,F',
-            'equestrian' => 'nullable|in:T,F',
-            'escorted_tours' => 'nullable|in:T,F',
-            'extreme_sports' => 'nullable|in:T,F',
-            'family_adventures' => 'nullable|in:T,F',
-            'family_vacations' => 'nullable|in:T,F',
-            'fishing' => 'nullable|in:T,F',
-            'food_wine' => 'nullable|in:T,F',
-            'gaming' => 'nullable|in:T,F',
-            'gardens' => 'nullable|in:T,F',
-            'golf' => 'nullable|in:T,F',
-            'health_fitness' => 'nullable|in:T,F',
-            'hiking' => 'nullable|in:T,F',
-            'history' => 'nullable|in:T,F',
-            'honeymoon_anniversary' => 'nullable|in:T,F',
-            'hotels' => 'nullable|in:T,F',
-            'hunting' => 'nullable|in:T,F',
-            'independent_traveler' => 'nullable|in:T,F',
-            'indigenous_cultures' => 'nullable|in:T,F',
-            'life_cycle_lgbtq' => 'nullable|in:T,F',
-            'multi_generation_travel' => 'nullable|in:T,F',
-            'music' => 'nullable|in:T,F',
-            'naturalist' => 'nullable|in:T,F',
-            'photography' => 'nullable|in:T,F',
-            'private_jet' => 'nullable|in:T,F',
-            'rafting_kayak' => 'nullable|in:T,F',
-            'rail_travel' => 'nullable|in:T,F',
-            'ranch_lodges' => 'nullable|in:T,F',
-            'religious_tourism' => 'nullable|in:T,F',
-            'resorts' => 'nullable|in:T,F',
-            'safari' => 'nullable|in:T,F',
-            'sailing' => 'nullable|in:T,F',
-            'shopping' => 'nullable|in:T,F',
-            'short_notice_travel' => 'nullable|in:T,F',
-            'snow_sports' => 'nullable|in:T,F',
-            'spas' => 'nullable|in:T,F',
-            'sporting_events' => 'nullable|in:T,F',
-            'sports_enthusiast' => 'nullable|in:T,F',
-            'sun_sand' => 'nullable|in:T,F',
-            'sustainable_tourism' => 'nullable|in:T,F',
-            'tennis' => 'nullable|in:T,F',
-            'trekking' => 'nullable|in:T,F',
-            'walking' => 'nullable|in:T,F',
-            'water_sports' => 'nullable|in:T,F',
-            'wellness' => 'nullable|in:T,F',
-            'wildlife' => 'nullable|in:T,F',
-            'space_travel' => 'nullable|in:T,F',
-            'north_america' => 'nullable|in:T,F',
-            'northern_africa' => 'nullable|in:T,F',
-            'canada' => 'nullable|in:T,F',
-            'continental_us' => 'nullable|in:T,F',
-            'alaska' => 'nullable|in:T,F',
-            'hawaii' => 'nullable|in:T,F',
-            'mexico' => 'nullable|in:T,F',
-            'caribbean' => 'nullable|in:T,F',
-            'central_america' => 'nullable|in:T,F',
-            'panama_canal_voyages' => 'nullable|in:T,F',
-            'south_america' => 'nullable|in:T,F',
-            'galapagos_islands' => 'nullable|in:T,F',
-            'europe' => 'nullable|in:T,F',
-            'western_europe' => 'nullable|in:T,F',
-            'france' => 'nullable|in:T,F',
-            'germany' => 'nullable|in:T,F',
-            'greece' => 'nullable|in:T,F',
-            'italy' => 'nullable|in:T,F',
-            'mediterranean_region' => 'nullable|in:T,F',
-            'spain' => 'nullable|in:T,F',
-            'turkey' => 'nullable|in:T,F',
-            'uk_ireland' => 'nullable|in:T,F',
-            'eastern_europe' => 'nullable|in:T,F',
-            'russia' => 'nullable|in:T,F',
-            'scandinavia' => 'nullable|in:T,F',
-            'seychelles_mauitius_maldives' => 'nullable|in:T,F',
-            'africa' => 'nullable|in:T,F',
-            'bermuda' => 'nullable|in:T,F',
-            'costa_rica' => 'nullable|in:T,F',
-            'cuba' => 'nullable|in:T,F',
-            'egypt' => 'nullable|in:T,F',
-            'middle_east' => 'nullable|in:T,F',
-            'australia' => 'nullable|in:T,F',
-            'new_zealand' => 'nullable|in:T,F',
-            'south_pacific' => 'nullable|in:T,F',
-            'asia' => 'nullable|in:T,F',
-            'south_east_asia' => 'nullable|in:T,F',
-            'hong_kong' => 'nullable|in:T,F',
-            'pacific_rim_japan' => 'nullable|in:T,F',
-            'china' => 'nullable|in:T,F',
-            'india' => 'nullable|in:T,F',
-            'antarctica' => 'nullable|in:T,F',
-            'arctic' => 'nullable|in:T,F',
-            'polar_regions' => 'nullable|in:T,F',
-            'portugal' => 'nullable|in:T,F',
-            'trans_atlantic_voyages' => 'nullable|in:T,F',
-            'us_new_england' => 'nullable|in:T,F',
-            'us_northwest' => 'nullable|in:T,F',
-            'us_southeast_fl' => 'nullable|in:T,F',
-            'us_southwest' => 'nullable|in:T,F',
-            'us_west_ca' => 'nullable|in:T,F',
-            'world_grand_voyages' => 'nullable|in:T,F',
-            'direct_mail_marketing_permission' => 'nullable|in:T,F',
-            'email_marketing_permission' => 'nullable|in:T,F',
-
             'retired' => 'nullable|integer',
             'children_at_home' => 'nullable|integer',
             'virtuoso_life' => 'nullable|integer',
@@ -375,13 +341,6 @@ class CustomerController extends Controller
             'agent_id' => 'nullable|integer',
             'created_by' => 'nullable|integer',
             'is_deleted' => 'nullable|integer',
-            'is_website_lead_knot' => 'nullable|integer',
-            'is_website_lead' => 'nullable|integer',
-            'is_virtuoso_lead' => 'nullable|integer',
-            'is_luxury_magazine_lead' => 'nullable|integer',
-            'is_facebook_lead' => 'nullable|integer',
-            'is_instagram_lead' => 'nullable|integer',
-            'is_radio_lead' => 'nullable|integer',
 
             'birth_date' => 'nullable|date',
             'anniversary_date' => 'nullable|date',
@@ -549,4 +508,248 @@ class CustomerController extends Controller
                 ->with('activeTab', 'family');
     }
 
+    public function sendInvitation(Customer $customer)
+    {
+        if (!$customer || $customer->is_deleted) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Customer not found.'
+            ]);
+        }
+
+        if (blank($customer->email)) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid email address.'
+            ]);
+        }
+
+        DB::transaction(function () use ($customer, &$invitation) {
+
+            CustomerInvitation::where('customer_id', $customer->id)
+                ->where('status', 'P')
+                ->update([
+                    'status' => 'C',
+                    'expired_flag' => 1,
+                ]);
+
+            $invitation = CustomerInvitation::create([
+                'customer_id' => $customer->id,
+                'status' => 'P',
+                'created_by' => Auth::id(),
+                'created_on' => now(),
+            ]);
+
+        });
+
+        $token = base64_encode($invitation->id . config('app.invitation_salt'));
+
+        Mail::to($customer->email)->send(
+
+            new RegistrationInvitationMail(
+                $customer->fname,
+                Auth::user()->fname.' '.Auth::user()->lname,
+                $token
+            )
+
+        );
+
+        $isNewCustomer = false;
+        $invitations = $customer->customerInvitations()->orderByDesc('created_on')->get();
+
+        $intakeForms = $customer->customerIntakeForms()->orderByDesc('created_on')->get();
+
+        $html = view('customers.partials.selfServiceInvitations', compact('customer','isNewCustomer','invitations','intakeForms'))->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+        ]);
+    }
+
+    public function sendIntakeForm(Customer $customer)
+    {
+        if ($customer->is_deleted) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Customer not found.'
+            ]);
+        }
+
+        if (blank($customer->email)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid email address.'
+            ]);
+        }
+
+        $intakeForm = DB::transaction(function () use ($customer) {
+
+            $counter = CustomerIntakeForm::where('customer_id', $customer->id)->count() + 1;
+
+            return CustomerIntakeForm::create([
+                'customer_id' => $customer->id,
+                'status'      => 'P',
+                'counter'     => $counter,
+                'created_by'  => Auth::id(),
+                'created_on'  => now(),
+            ]);
+
+        });
+
+        $token = base64_encode($intakeForm->id . config('app.invitation_salt'));
+
+        Mail::to($customer->email)->send(
+            new IntakeFormMail(
+                $customer->fname,
+                Auth::user()->fname . ' ' . Auth::user()->lname,
+                $token
+            )
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Record created successfully.',
+            'intakeFormId' => $intakeForm->id,
+            'counter' => $intakeForm->counter,
+        ]);
+    }
+
+    public function resendIntakeForm(Request $request)
+    {
+        $request->validate([
+            'intakeFormId' => 'required|integer'
+        ]);
+
+        $form = CustomerIntakeForm::with('customer.agent')->find($request->intakeFormId);
+
+        if (!$form) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Intake form not found.'
+            ],404);
+        }
+
+        $customer = $form->customer;
+
+        if (!$customer || empty($customer->email)) {
+
+            return response()->json([
+                'success'=>false,
+                'message'=>'Customer email is missing.'
+            ],422);
+        }
+
+        $form->update([
+            'resent_on' => now()
+        ]);
+
+        $token = base64_encode($form->id . config('app.invitation_salt'));
+
+        $userName = $customer->agent->fname . ' ' . $customer->agent->lname;
+
+        Mail::to($customer->email)->send(
+
+            new IntakeFormMail(
+                $customer->fname,
+                $userName,
+                $token
+            )
+
+        );
+
+        return response()->json([
+            'success'=>true
+        ]);
+    }
+
+    public function sendForm(Request $request)
+    {
+        $request->validate([
+            'customer_id' => 'required|integer',
+            'form_id' => 'required|integer'
+        ]);
+
+        $customer = Customer::findOrFail($request->customer_id);
+
+        $form = CustomersForm::findOrFail($request->form_id);
+
+        if (empty($customer->email)) {
+
+            return back()->with('error','Customer email is missing.');
+
+        }
+
+        $sentForm = FormSent::create([
+            'customer_id' => $customer->id,
+            'reservation_id' => null,
+            'form_id' => $form->id,
+            'sent_by' => Auth::id(),
+            'sent_on' => now()
+        ]);
+
+        $token = encrypt($sentForm->id);
+
+        Mail::to($customer->email)->send(
+            new CustomerFormMail(
+                $customer->fname,
+                Auth::user()->fname.' '.Auth::user()->lname,
+                $token
+            )
+
+        );
+
+        return back()->with('success','Form sent successfully.');
+    }
+
+    public function resendForm(Request $request)
+    {
+        $request->validate([
+            'customer_id' => 'required|integer',
+            'sent_form_id' => 'required|integer',
+        ]);
+
+        $sentForm = FormSent::with([
+            'customer',
+            'form'
+        ])->find($request->sent_form_id);
+
+        if (!$sentForm) {
+
+            return response()->json([
+                'flag' => -1,
+                'message' => 'Form not found.'
+            ]);
+
+        }
+
+        $customer = $sentForm->customer;
+
+        if (!$customer || empty($customer->email)) {
+
+            return response()->json([
+                'flag' => -1,
+                'message' => 'Customer email is missing.'
+            ]);
+
+        }
+
+        $token = encrypt($sentForm->id);
+
+        Mail::to($customer->email)->send(
+            new CustomerFormMail(
+                $customer->fname,
+                Auth::user()->fname . ' ' . Auth::user()->lname,
+                $token
+            )
+
+        );
+
+        return response()->json([
+            'flag' => 1,
+            'message' => 'Successfully re-sent form to customer.'
+        ]);
+    }
 }

@@ -709,6 +709,71 @@ $(document).ready(function() {
     window.closeFormPreviewModal = function(){
         $('#formPreviewModal').addClass('hidden');
     }
+
+    function showSuccessOverlay(callback = null)
+    {
+        $('#copySuccessOverlay').removeClass('hidden').addClass('flex');
+
+        setTimeout(function () {
+            $('#copySuccessOverlay').addClass('hidden').removeClass('flex');
+            if (callback) {
+                callback();
+            }
+        }, 1500);
+    }
+    
+    
+    $('body').on('click', '.sendReservationFormBtn', function () {
+
+        $.ajax({
+
+            url: $('#sendReservationFormForm').attr('action'),
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                reservation_id: $(this).data('reservation'),
+                form_id: $(this).data('form')
+            },
+
+            success: function () {
+                showSuccessOverlay(function () {
+                    location.reload();
+                });
+            },
+
+            error: function (xhr) {
+                alert(xhr.responseJSON?.message ?? 'Failed to send form.');
+            }
+
+        });
+
+    });
+
+    $('body').on('click', '.resendReservationFormBtn', function () {
+
+        $.ajax({
+            url: $('#resendReservationFormForm').attr('action'),
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                reservation_id: $(this).data('reservation'),
+                sent_form_id: $(this).data('sent-form')
+            },
+
+            success: function () {
+                showSuccessOverlay(function () {
+                    location.reload();
+                });
+
+            },
+
+            error: function (xhr) {
+                alert(xhr.responseJSON?.message ?? 'Failed to re-send form.');
+            }
+
+        });
+
+    });
     // end forms
 
 

@@ -84,9 +84,9 @@ window.Alpine = Alpine;
 
 Alpine.start();
 
-
 $(document).ready(() => {
 
+    // start loader
     window.showLoaderOnSubmit = function () {
         showLoader();
     };
@@ -102,9 +102,9 @@ $(document).ready(() => {
     $(document).ajaxStop(function () {
         hideLoader();
     });
+    // end loader
 
-
-    // Excel Button for data table
+    // start excel button for data table
     $('.exportExcelBtn').on('click', function() {
         const table = $('table').first()[0]; 
 
@@ -128,6 +128,7 @@ $(document).ready(() => {
     });
     // end excel button for data table
 
+    // start delete modal
     let deleteForm = null;
 
     window.openDeleteModal = function(target) {
@@ -155,7 +156,69 @@ $(document).ready(() => {
             deleteForm.submit();
         }
     });
+    // end delete modal
 
+    // start notifications
+    $(document).on('click', '.markNotificationAsRead', function (e) {
+
+        e.preventDefault();
+
+        let id = $(this).data('id');
+
+        $.ajax({
+            url: '/notifications/' + id + '/read',
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function () {
+
+                $('#notification-' + id).fadeOut(300, function () {
+                    $(this).remove();
+                });
+
+                let counter = $('.bg-red-600');
+
+                if(counter.length){
+
+                    let value = parseInt(counter.text());
+
+                    value--;
+
+                    if(value <= 0){
+                        counter.remove();
+                    }else{
+                        counter.text(value);
+                    }
+                }
+
+            }
+        });
+
+    });
+
+    $(document).on('click', '.notificationItem', function (e) {
+
+        e.preventDefault();
+
+        let notificationId = $(this).data('notificationid');
+        let url = $(this).data('url');
+
+        $.ajax({
+            url: '/notifications/' + notificationId + '/read',
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            complete: function () {
+                window.location.href = url;
+            }
+        });
+
+    });
+    // end notifications
+
+    // start logout modal
     window.openLogoutModal = function(){
         $('#logoutModal').removeClass('hidden');
     }
@@ -163,4 +226,5 @@ $(document).ready(() => {
     window.closeLogoutModal = function(){
         $('#logoutModal').addClass('hidden');
     }
+    // end delete modal
 });

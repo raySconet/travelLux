@@ -20,7 +20,9 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <i title="Send to Customer" class="fas fa-paper-plane text-[#B6844A] text-xl cursor-pointer"></i>
+                <button type="button" class="sendFormBtn" data-customer="{{ $customer->id }}" data-form="{{ $form->id }}">
+                    <i title="Send to Customer" class="fas fa-paper-plane text-[#B6844A] text-xl cursor-pointer"></i>
+                </button>
                 <i title="Preview Form" onclick='openFormPreviewModal(@json($form->preview_form_html_content))' class="fas fa-eye text-[#bdbdbd] text-xl cursor-pointer"></i>
             </div>
         </div>
@@ -64,7 +66,9 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <i title="Re-Send Link" class="fa fa-redo text-[#B6844A] text-xl cursor-pointer"></i>
+                <button type="button" class="resendFormBtn" data-customer="{{ $customer->id }}" data-sent-form="{{ $sentForm->id }}">
+                    <i title="Re-Send Link" class="fa fa-redo text-[#B6844A] text-xl cursor-pointer"></i>
+                </button>
 
                 <i title="View Form" onclick='openFormPreviewModal(@json($form->preview_form_html_content))' class="fas fa-eye text-[#bdbdbd] text-xl cursor-pointer"></i>
             </div>
@@ -77,3 +81,18 @@
     @endforelse
 @endif    
 <x-form-preview />
+<div id="copySuccessOverlay" class="fixed inset-0 hidden items-center justify-center bg-black/40 z-[9999]">
+    <i class="fas fa-check-square text-[#B6844A] text-8xl"></i>
+</div>
+<form id="sendFormForm" method="POST" action="{{ route('customers.sendForm') }}">
+    @csrf
+
+    <input type="hidden" name="customer_id" id="sendFormCustomerId">
+    <input type="hidden" name="form_id" id="sendFormId">
+</form>
+<form id="resendFormForm" method="POST" action="{{ route('customers.resendForm') }}">
+    @csrf
+
+    <input type="hidden" name="customer_id" id="resendCustomerId">
+    <input type="hidden" name="sent_form_id" id="resendSentFormId">
+</form>

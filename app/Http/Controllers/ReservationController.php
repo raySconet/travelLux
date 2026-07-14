@@ -29,6 +29,9 @@ use App\Models\ReservationPaidInFullAudit;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use App\Models\FormSent;
+use App\Mail\CustomerFormMail;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class ReservationController extends Controller
 {
@@ -1494,6 +1497,114 @@ class ReservationController extends Controller
             ]);
 
         return response()->json(['message' => 'Unlinked successfully']);
+    }
+
+    public function sendForm(Request $request)
+    {
+        $request->validate([
+            'reservation_id' => 'required|integer',
+            'form_id' => 'required|integer',
+        ]);
+
+        $reservation = Reservation::with('customer')->findOrFail($request->reservation_id);
+
+        $form = CustomersForm::findOrFail($request->form_id);
+
+        $customer = $reservation->customer;
+
+        if (!$customer) {
+            return response()->json([
+                'flag' => -1,
+                'message' => 'Customer not found.'
+            ]);
+        }
+
+        $email = $reservation->email_to_send ?: $customer->email;
+
+        if (empty($email)) {
+            return response()->json([
+                'flag' => -1,
+                'message' => 'Customer email is missing.'
+            ]);
+        }
+
+        $sentForm = FormSent::create([
+            'customer_id'    => null,
+            'reservation_id' => $reservation->id,
+            'form_id'        => $form->id,
+            'sent_by'        => Auth::id(),
+            'sent_on'        => now(),
+        ]);
+
+        $token = encrypt($sentForm->id);
+
+        Mail::to($email)->send(
+            new CustomerFormMail(
+                $customer->fname,
+                Auth::user()->fname . ' ' . Auth::user()->lname,
+                $token
+            )
+        );
+
+        return response()->json([
+            'flag' => 1,
+            'message' => 'Form sent successfully.'
+        ]);
+    }
+    
+    public function resendForm(Request $request)
+    {
+        $request->validate([
+            'reservation_id' => 'required|integer',
+            'sent_form_id'   => 'required|integer',
+        ]);
+
+        $sentForm = FormSent::with([
+            'reservation.customer',
+            'form'
+        ])->find($request->sent_form_id);
+
+        if (!$sentForm) {
+            return response()->json([
+                'flag' => -1,
+                'message' => 'Form not found.'
+            ]);
+        }
+
+        $reservation = $sentForm->reservation;
+
+        if (!$reservation || !$reservation->customer) {
+            return response()->json([
+                'flag' => -1,
+                'message' => 'Reservation or customer not found.'
+            ]);
+        }
+
+        $customer = $reservation->customer;
+
+        $email = $reservation->email_to_send ?: $customer->email;
+
+        if (empty($email)) {
+            return response()->json([
+                'flag' => -1,
+                'message' => 'Customer email is missing.'
+            ]);
+        }
+
+        $token = encrypt($sentForm->id);
+
+        Mail::to($email)->send(
+            new CustomerFormMail(
+                $customer->fname,
+                Auth::user()->fname . ' ' . Auth::user()->lname,
+                $token
+            )
+        );
+
+        return response()->json([
+            'flag' => 1,
+            'message' => 'Successfully re-sent form to customer.'
+        ]);
     }
 
 }

@@ -20,7 +20,9 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <i title="Send to Customer" class="fas fa-paper-plane text-[#B6844A] text-xl cursor-pointer"></i>
+                <button type="button" class="sendReservationFormBtn" data-reservation="{{ $reservation->id }}" data-form="{{ $form->id }}">
+                    <i class="fas fa-paper-plane text-[#B6844A] text-xl cursor-pointer"></i>
+                </button>
                 <i title="Preview Form" onclick='openFormPreviewModal(@json($form->preview_form_html_content))' class="fas fa-eye text-[#bdbdbd] text-xl cursor-pointer"></i>
             </div>
         </div>
@@ -72,7 +74,9 @@
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <i title="Re-Send Link" class="fa fa-redo text-[#B6844A] text-xl cursor-pointer"></i>
+                    <button type="button" class="resendReservationFormBtn" data-reservation="{{ $reservation->id }}" data-sent-form="{{ $sentForm->id }}">
+                        <i class="fa fa-redo text-[#B6844A] text-xl cursor-pointer"></i>
+                    </button>
                     <i title="View Form" class="fas fa-eye text-[#bdbdbd] text-xl cursor-pointer" onclick='openFormPreviewModal(@json($sentForm->form?->preview_form_html_content))'>
                     </i>
                 </div>
@@ -85,4 +89,19 @@
         @endforelse
     </div>
 @endif    
+<div id="copySuccessOverlay" class="fixed inset-0 hidden items-center justify-center bg-black/40 z-[9999]">
+    <i class="fas fa-check-square text-[#B6844A] text-8xl"></i>
+</div>
 <x-form-preview />
+<form id="sendReservationFormForm" method="POST" action="{{ route('reservations.sendForm') }}">
+    @csrf
+
+    <input type="hidden" name="reservation_id" id="sendReservationId">
+    <input type="hidden" name="form_id" id="sendReservationFormId">
+</form>
+<form id="resendReservationFormForm" method="POST" action="{{ route('reservations.resendForm') }}">
+    @csrf
+
+    <input type="hidden" name="reservation_id" id="resendReservationId">
+    <input type="hidden" name="sent_form_id" id="resendReservationSentFormId">
+</form>

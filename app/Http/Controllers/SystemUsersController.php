@@ -137,6 +137,18 @@ class SystemUsersController extends Controller
     public function update(Request $request, User $user)
     {
         $this->checkAdmin();
+        $messages = [
+            'fname.required' => 'First Name Is required.',
+            'lname.required' => 'Last Name Is required.',
+            'email.required' => 'Email Is required.',
+            'email.email' => 'Email Address Not Valid.',
+            'username.required' => 'Username Is Required.',
+            'password.required' => 'Password Is required.',
+            'password.confirmed' => 'Passwords do not match.',
+            'role.required' => 'Role Is Required.',
+            'commission.required' => 'Commission Is Required.'
+        ];
+
         $data = $request->validate([
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
@@ -181,7 +193,7 @@ class SystemUsersController extends Controller
             'profile_submit_flag' => 'nullable|integer',
             'is_disabled' => 'nullable|integer',
             'isDeleted' => 'nullable|integer',
-        ]);
+        ], $messages);
 
         if (!empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);

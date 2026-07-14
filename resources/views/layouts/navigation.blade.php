@@ -2,7 +2,7 @@
     $user = auth()->user();
 @endphp
 
-<nav x-data="{ open: false }" class="bg-[#292727] w-full">
+<nav x-data="{ open: false, notificationsOpen: false }" class="bg-[#292727] w-full">
     <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
         @csrf
     </form>
@@ -35,19 +35,62 @@
 
                 <a href="/agentDashboard" class="text-white text-base flex items-center gap-1">
                     <i class="fas fa-chart-line"></i>
-                        Dashboard
+                    Dashboard
                 </a>
 
-                <a href="#" class="text-white text-base flex items-center gap-1">
-                    <i class="fas fa-bell"></i>
-                        Notifications
-                </a>
+                <div class="relative">
 
-                <a href="#"
-                    onclick="openLogoutModal()"
-                    class="text-white text-base flex items-center gap-1">
-                        <i class="fas fa-sign-out-alt"></i>
-                        Logout
+                    <a href="#" @click.prevent="notificationsOpen = !notificationsOpen" class="text-white text-base flex items-center gap-2">
+
+                        <div class="relative">
+
+                            <i class="fas fa-bell text-lg"></i>
+
+                            @if($notificationCounter)
+                                <span class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-[10px] leading-4 min-w-4 h-4 px-1 flex items-center justify-center">
+                                    {{ $notificationCounter }}
+                                </span>
+                            @endif
+
+                        </div>
+
+                        <span>Notifications</span>
+
+                    </a>
+                    @if($notifications->count())
+
+                        <div x-show="notificationsOpen" @click.outside="notificationsOpen = false" x-transition class="absolute left-0 mt-2 w-70 bg-white shadow-lg rounded border z-50 text-base">
+
+                            @foreach($notifications as $notification)
+
+                                <div id="notification-{{ $notification->id }}" class="flex border-b p-3">
+
+                                    <div class="mr-3">
+                                        <a href="#" class="markNotificationAsRead text-[#B6844A]" data-id="{{ $notification->id }}">
+                                            <i title="Mark as Read" class="far fa-check-circle text-lg mt-4"></i>
+                                        </a>
+                                    </div>
+                                    <div class="flex-1 notificationItem cursor-pointer" data-url="{{ $notification->module_name === 'customers' ? route('customers.customerDetails', $notification->record_id) : route('reservations.reservationDetails', $notification->record_id) }}" data-notificationid="{{ $notification->id }}">
+                                        <div>{{ $notification->message }}</div>
+
+                                        <div class="text-sm text-gray-500 mt-1">
+                                            {{ \Carbon\Carbon::parse($notification->date)->format('F d, Y h:i A') }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            @endforeach
+
+                        </div>
+
+                    @endif
+                </div>
+
+                <a href="#" onclick="openLogoutModal()" class="text-white text-base flex items-center gap-1">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
                 </a>
 
             </div>
@@ -70,12 +113,9 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-             {{-- <x-responsive-nav-link :href="route('calendar')" :active="request()->routeIs('calendar')">
-                {{ __('Calendar') }}
-            </x-responsive-nav-link> --}}
+           
         </div>
 
-        <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
                 <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
@@ -93,7 +133,6 @@
                     </x-responsive-nav-link>
                 @endif
 
-                <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
 

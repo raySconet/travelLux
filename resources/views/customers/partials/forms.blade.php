@@ -66,9 +66,12 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <button type="button" class="resendFormBtn" data-customer="{{ $customer->id }}" data-sent-form="{{ $sentForm->id }}">
-                    <i title="Re-Send Link" class="fa fa-redo text-[#B6844A] text-xl cursor-pointer"></i>
-                </button>
+
+                @if($sentForm->submit_flag != 1)
+                    <button type="button" class="resendFormBtn" data-customer="{{ $customer->id }}" data-sent-form="{{ $sentForm->id }}">
+                        <i title="Re-Send Link" class="fa fa-redo text-[#B6844A] text-xl cursor-pointer"></i>
+                    </button>
+                @endif
 
                 <i title="View Form" onclick='openFormPreviewModal(@json($form->preview_form_html_content))' class="fas fa-eye text-[#bdbdbd] text-xl cursor-pointer"></i>
             </div>

@@ -74,11 +74,14 @@
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <button type="button" class="resendReservationFormBtn" data-reservation="{{ $reservation->id }}" data-sent-form="{{ $sentForm->id }}">
-                        <i class="fa fa-redo text-[#B6844A] text-xl cursor-pointer"></i>
-                    </button>
-                    <i title="View Form" class="fas fa-eye text-[#bdbdbd] text-xl cursor-pointer" onclick='openFormPreviewModal(@json($sentForm->form?->preview_form_html_content))'>
-                    </i>
+
+                    @if($sentForm->submit_flag != 1)
+                        <button type="button" class="resendReservationFormBtn" data-reservation="{{ $reservation->id }}" data-sent-form="{{ $sentForm->id }}">
+                            <i title="Re-Send Link" class="fa fa-redo text-[#B6844A] text-xl cursor-pointer"></i>
+                        </button>
+                    @endif
+
+                    <i title="View Form" onclick='openFormPreviewModal(@json($form->preview_form_html_content))' class="fas fa-eye text-[#bdbdbd] text-xl cursor-pointer"></i>
                 </div>
             </div>
 

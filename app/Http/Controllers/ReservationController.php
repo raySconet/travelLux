@@ -32,6 +32,11 @@ use App\Models\FormSent;
 use App\Mail\CustomerFormMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservationDetailsMail;
+use App\Mail\CreditCardAuthorizationMail;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
 
 class ReservationController extends Controller
 {
@@ -637,11 +642,7 @@ class ReservationController extends Controller
 
                 $fileName = $attachment->id . '.' . $extension;
 
-                $file->storeAs(
-                    'attachments/reservations',
-                    $fileName,
-                    'public'
-                );
+                $file->storeAs('attachments/reservations', $fileName, 'public');
             }
         }
 
@@ -653,9 +654,7 @@ class ReservationController extends Controller
 
     public function destroyAttachment(ReservationAttachment $attachment)
     {
-        Storage::disk('public')->delete(
-            'attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension
-        );
+        Storage::disk('public')->delete('attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension);
 
         $attachment->delete();
 
@@ -1607,4 +1606,245 @@ class ReservationController extends Controller
         ]);
     }
 
+    public function sendDetailsToCustomer(Request $request)
+    {
+        $request->validate([
+            'reservations' => ['required','array']
+        ]);
+
+        $reservations = Reservation::with([
+            'customer',
+            'agent',
+            'product',
+            'destination',
+            'resort',
+            'travelers.familyMember',
+            'diningNotes'
+        ])
+        ->whereIn('id',$request->reservations)
+        ->get();
+
+        foreach ($reservations as $reservation) {
+
+            Mail::to($reservation->customer->email)
+                ->send(new ReservationDetailsMail($reservation));
+
+        }
+
+        return response()->json([
+            'success'=>true
+        ]);
+    }
+
+
+    public function sendCreditCardForm(Reservation $reservation)
+    {
+        $reservation->load([
+            'customer',
+            'agent'
+        ]);
+
+        $email = $reservation->email_to_send ?: $reservation->customer->email;
+
+        if (!$email) {
+
+            return response()->json([
+                'success'=>false,
+                'message'=>'Customer email not found.'
+            ],422);
+
+        }
+
+        Mail::to($email)
+            ->send(
+                new CreditCardAuthorizationMail($reservation)
+            );
+
+        return response()->json([
+            'success'=>true
+        ]);
+    }
+
+    public function creditCardForm($token)
+    {
+        try {
+            $reservationId = decrypt($token);
+        } catch (DecryptException $e) {
+            abort(404);
+        }
+
+        $reservation = Reservation::with([
+            'customer',
+            'agent',
+            'product',
+            'destination',
+            'resort',
+            'travelers.familyMember'
+        ])
+        ->where('is_deleted', 0)
+        ->findOrFail($reservationId);
+
+        return view('credit-card.credit-card-form', compact('reservation'));
+    }
+
+    public function resendAutomatedEmail(Reservation $reservation,CustomerAutomatedEmail $customerAutomatedEmail)
+    {
+        $customerAutomatedEmail = CustomerAutomatedEmail::with('automatedEmail')
+            ->where('id', $customerAutomatedEmail->id)
+            ->where('reservation_id', $reservation->id)
+            ->where('customer_id', $reservation->customer_id)
+            ->first();
+
+        $automatedEmail = $customerAutomatedEmail->automatedEmail;
+
+        if (!$customerAutomatedEmail) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Automated email record not found.'
+            ], 404);
+        }
+
+        $automatedEmail = AutomatedEmail::with('attachments')->find($customerAutomatedEmail->automated_email_id);
+
+        if (!$automatedEmail) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Automated email not found.'
+            ], 404);
+        }
+
+        $customer = $reservation->customer;
+        $agent = $reservation->agent;
+
+        if (!$customer || !$agent) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Reservation information is incomplete.'
+            ], 422);
+        }
+
+        $clientEmail = $reservation->email_to_send ?: $customer->email;
+
+        if (!$clientEmail) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Customer email not found.'
+            ], 422);
+        }
+
+        $signature = "
+            <br><br>
+            <span style='color:#FF6600;font-weight:bold;font-size:15px;'>
+                Thank you, please let me know if I can further assist you!
+            </span>
+            <br><br>
+
+            <span style='color:#FF6600;font-weight:bold;font-size:15px;'>
+                {$agent->fname} {$agent->lname}
+            </span>
+            <br>
+        ";
+
+        if (!empty($agent->phone_number)) {
+            $signature .= "
+                <span style='color:#FF6600;font-weight:bold;font-size:15px;'>
+                    {$agent->phone_number}
+                </span>
+                <br>
+            ";
+        }
+
+        $signature .= "
+            <span>
+                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;'
+                    href='mailto:{$agent->email}'>
+                    {$agent->email}
+                </a>
+            </span>
+
+            <br><br>
+
+            <span>
+                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;'
+                    href='https://www.archerluxurytravel.com'>
+                    www.archerluxurytravel.com
+                </a>
+            </span>
+
+            <br><br>
+
+            <span style='color:#006FC9;font-weight:bold;font-size:13px;'>
+                I book everything from hotels, Disney, Universal Studios,
+                All Inclusive resorts, all cruise lines and more!
+            </span>
+        ";
+
+        $body = $automatedEmail->message . $signature;
+
+        try {
+
+            Mail::send([], [], function ($message) use (
+                $clientEmail,
+                $reservation,
+                $agent,
+                $automatedEmail,
+                $body
+            ) {
+
+                $message->to($clientEmail);
+
+                if (!empty($reservation->spouse_email) &&
+                    filter_var($reservation->spouse_email, FILTER_VALIDATE_EMAIL)) {
+
+                    $message->cc($reservation->spouse_email);
+                }
+
+                if ($automatedEmail->bcc_agent) {
+                    $message->bcc($agent->email);
+                }
+
+                $message->subject($automatedEmail->subject);
+
+                $message->html($body);
+
+                foreach ($automatedEmail->attachments as $attachment) {
+
+                    $path = public_path(
+                        'attachments/automatedEmails/' .
+                        $attachment->id .
+                        '.' .
+                        $attachment->file_extension
+                    );
+
+                    if (File::exists($path)) {
+
+                        $message->attach(
+                            $path,
+                            [
+                                'as' => $attachment->file_name . '.' . $attachment->file_extension
+                            ]
+                        );
+                    }
+                }
+            });
+
+            $customerAutomatedEmail->update([
+                'last_resent_date' => now(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Email resent successfully.',
+                'last_resent_date' => $customerAutomatedEmail->fresh()->last_resent_date ? Carbon::parse($customerAutomatedEmail->fresh()->last_resent_date)->format('m/d/Y') : null,
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to resend email.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

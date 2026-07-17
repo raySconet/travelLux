@@ -66,7 +66,6 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\IntakeFormController;
 use App\Http\Controllers\FormController;
 
-
 Route::get('/', function () {
     return view('auth/login');
 });
@@ -90,6 +89,8 @@ Route::get('/customer/form/{token}',[FormController::class, 'show'])->name('form
 Route::post('/customer/form/submit',[FormController::class, 'submit'])->name('form.submit');
 
 Route::post('/notifications/{notification}/read', [NotificationsController::class, 'markAsRead'])->middleware('auth')->name('notifications.read');
+
+Route::get('/credit-card-form/{token}',[ReservationController::class, 'creditCardForm'])->name('credit-card.form');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -246,6 +247,12 @@ Route::middleware('auth')->group(function(){
 
     Route::post('/reservations/send-form',[ReservationController::class, 'sendForm'])->name('reservations.sendForm');
     Route::post('/reservations/resend-form',[ReservationController::class, 'resendForm'])->name('reservations.resendForm');
+
+    Route::post('/reservations/send-details',[ReservationController::class,'sendDetailsToCustomer'])->name('reservations.sendDetails');
+
+    Route::post('/reservations/{reservation}/send-credit-card-form',[ReservationController::class, 'sendCreditCardForm'])->name('reservations.sendCreditCardForm');
+
+    Route::post('/reservations/{reservation}/resend-automated-email/{customerAutomatedEmail}',[ReservationController::class, 'resendAutomatedEmail'])->name('reservations.resendAutomatedEmail');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');

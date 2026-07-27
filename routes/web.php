@@ -18,7 +18,11 @@ use App\Http\Controllers\VendorsController;
 use App\Http\Controllers\CommissionsRemittancesController;
 use App\Http\Controllers\CheckWriterController;
 use App\Http\Controllers\AgentDashboardController;
-use App\Http\Controllers\productConfigurationController;
+use App\Http\Controllers\ProductConfigurationController;
+use App\Http\Controllers\DestinationsController;
+use App\Http\Controllers\ResortShipsController;
+use App\Http\Controllers\CruiseItinerariesController;
+
 use App\Http\Controllers\OverallTaskDashboardController;
 use App\Http\Controllers\MyOverallTaskDashboardController;
 use App\Http\Controllers\OwnersDashboardController;
@@ -107,9 +111,61 @@ Route::middleware('auth')->group(function () {
     Route::put('/user/{user}', [SystemUsersController::class, 'update'])->name('system-users.update');
     Route::delete('/user/{user}', [SystemUsersController::class, 'destroy'])->name('system-users.destroy');
 });
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/productConfiguration', [ProductConfigurationController::class, 'index']);
+    Route::get('/products/{product}/destinations', [DestinationsController::class, 'destinations'])
+        ->name('products.destinations.index');
+
+    Route::get('/destinations/{destination}/resortShips', [ResortShipsController::class, 'resortShips'])
+    ->name('destinations.resortShips.index');
+
+    Route::get('/resortShips/{resortShip}/cruiseItineraries', [CruiseItinerariesController::class, 'cruiseItineraries'])
+    ->name('resortShips.cruiseItineraries.index');
+
+    // Products
+    Route::post('/products', [ProductConfigurationController::class, 'store'])
+        ->name('products.store');
+    Route::get('/products/{product}', [ProductConfigurationController::class, 'show'])
+        ->name('products.show');
+
+    Route::put('/products/{product}', [ProductConfigurationController::class, 'update'])
+        ->name('products.update');
+
+
+    // Destinations (requires Product ID)
+    Route::post('/products/{product}/destinations', [DestinationsController::class, 'store'])
+        ->name('products.destinations.store');
+
+    Route::get('/destinations/{destination}', [DestinationsController::class, 'show'])
+        ->name('destinations.show');
+
+    Route::put('/destinations/{destination}', [DestinationsController::class, 'update'])
+        ->name('destinations.update');
+
+    // Resorts (requires Destination ID)
+    Route::post('/destinations/{destination}/resort-ships', [ResortShipsController::class, 'store'])
+        ->name('destinations.resorts.store');
+
+    Route::get('/resorts/{resort}', [ResortShipsController::class, 'show'])
+        ->name('resorts.show');
+
+    Route::put('/resorts/{resort}', [ResortShipsController::class, 'update'])
+        ->name('resorts.update');
+
+    // Cruises (requires Resort ID)
+    Route::post('/resorts/{resortShip}/cruises', [CruiseItinerariesController::class, 'store'])
+        ->name('resorts.cruises.store');
+
+         Route::get('/cruises/{cruise}', [CruiseItinerariesController::class, 'show'])
+        ->name('cruises.show');
+
+    Route::put('/cruises/{cruise}', [CruiseItinerariesController::class, 'update'])
+        ->name('cruises.update');
 });
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/timelinetasks', [TimelineTasksController::class, 'index'])->name('timelinetasks');
     Route::get('/timelinetasks/create', [TimelineTasksController::class,'create'])->name('timeline-tasks.create');
@@ -152,7 +208,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/itinerary/{itinerary}/view', [ItineraryController::class, 'view'])->middleware('signed')->name('itinerary.view');
     Route::get('/itinerary/{itinerary}', [ItineraryController::class, 'edit'])->name('itinerary.edit');
     Route::delete('/itinerary/{itinerary}', [ItineraryController::class, 'destroy'])->name('itinerary.destroy');
-    
+
     Route::post('/itinerary/{itinerary}/add-day', [ItineraryController::class, 'addDay'])->name('itinerary.addDay');
     Route::put('/itinerary/day/{day}', [ItineraryController::class, 'updateDay'])->name('itineraryDay.update');
     Route::delete('/itinerary/day/{day}', [ItineraryController::class, 'destroyDay'])->name('itineraryDay.destroy');
@@ -210,7 +266,7 @@ Route::middleware('auth')->group(function(){
     Route::post('/tasks/{task}/toggle-complete', [ReservationController::class, 'toggleCompleteTask'])->name('tasks.toggleComplete');
     Route::put('/task/{task}', [ReservationController::class, 'updateTask'])->name('tasks.update');
     Route::delete('/tasks/{task}', [ReservationController::class, 'deleteTask'])->name('tasks.delete');
-    
+
     Route::post('/reservation/{reservation}/payments', [ReservationController::class, 'storePayment'])->name('reservations.payments.store');
     Route::put('/payment/{payment}', [ReservationController::class, 'updatePayment'])->name('reservations.payments.update');
     Route::delete('/payment/{payment}', [ReservationController::class, 'deletePayment'])->name('reservations.payments.delete');
@@ -285,7 +341,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/ownersDashboard/customer-birthdays-details/{range}', [OwnersDashboardController::class,'customerBirthdayDetails']);
     Route::get('/ownersDashboard/customer-anniversary-counts', [OwnersDashboardController::class,'customerAnniversaryCounts']);
     Route::get('/ownersDashboard/customer-anniversary-details/{range}', [OwnersDashboardController::class,'customerAnniversaryDetails']);
-    
+
     Route::get('/checkingInThisWeek', [CheckingInThisWeekController::class,'index'])->name('dashboards.checkingInThisWeek');
 });
 Route::middleware('auth')->group(function(){

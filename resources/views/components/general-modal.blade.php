@@ -1,30 +1,53 @@
-@props(['class' => '', 'id' => null])
-
+@props([
+    'name'=> '',
+    'class' => '',
+    'id' => null,
+])
 <div
-    {{ $attributes->merge([
-        'class' => 'modal fixed inset-0 flex items-center justify-center z-50 hidden overflow-y-auto' . $class,
-        'id' => $id
-    ]) }}
+    x-data="{ show: false }"
+
+    x-on:open-modal.window="
+        if ($event.detail === '{{ $name }}') show = true
+    "
+
+    x-on:close-modal.window="
+        if ($event.detail === '{{ $name }}') show = false
+    "
+
+    x-show="show"
+    x-transition.opacity
+
+    x-on:keydown.escape.window="show = false"
+
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    style="display:none;"
 >
-    <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl relative border border-gray-300">
+
+    <div
+        @click.outside="show = false"
+        class="bg-white rounded-lg shadow-2xl w-full max-w-3xl relative border border-gray-300 {{ $class }}"
+        id="{{ $id }}"
+    >
+
         @isset($header)
-            <div class="modal-title flex justify-between items-center p-4">
+            <div class="flex justify-between items-center p-4">
                 {{ $header }}
             </div>
         @endisset
 
-        <hr style="color: #cccccc80">
-
-        <div class="modal-content p-6">
+        <hr class="border-gray-200">
+        <div class="p-2">
             {{ $slot }}
         </div>
 
-        <hr style="color: #cccccc80">
-
         @isset($footer)
-            <div class="modal-footer grid grid-cols-1 gap-4 p-4">
+            <hr class="border-gray-200">
+
+            <div class="p-4">
                 {{ $footer }}
             </div>
         @endisset
+
     </div>
+
 </div>

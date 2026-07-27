@@ -430,7 +430,7 @@
             <div class="relative">
                 <span class="absolute left-2 top-1/2 text-base font-bold"><i class="fas fa-dollar-sign"></i></span>
 
-                <x-text-input type="text" id="agent_commission" name="agent_commission" class="pl-7" value="{{ old('agent_commission', $reservation->agent_commission ?? '') }}" />
+                <input type="text" id="agent_commission" name="agent_commission" class="peer w-full border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A] pt-5 pb-1 pl-7" value="{{ old('agent_commission', $reservation->agent_commission ?? '') }}" {{ auth()->user()->isAdmin() ? '' : 'readonly' }} />
             </div>
 
             <x-input-error :messages="$errors->get('agent_commission')" />
@@ -688,5 +688,7 @@ window.reservationDefaults = {
 };
 
 window.customersPayload = @json($customersPayload);
+
+window.isAdmin = @json(auth()->user()->isAdmin());
 
 </script>

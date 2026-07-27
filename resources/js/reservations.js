@@ -73,11 +73,10 @@ $(document).ready(function() {
 
     // agent commission calculation
     function updateAgentCommission() {
-
         let totalAgency = parseFloat($('#agency_commission').val()) || 0;
 
         let agentRate = 0;
-
+        
         if ($('#agent_id').is('select')) {
             let selectedOption = $('#agent_id option:selected');
             agentRate = parseFloat(selectedOption.data('commission')) || 0;
@@ -94,11 +93,9 @@ $(document).ready(function() {
 
     $(document).on('change', '#agent_id', updateAgentCommission);
 
-    updateAgentCommission();
-
-    $('#agency_commission').on('input', updateAgentCommission);
-
-    $('#agent_id').on('change', updateAgentCommission);
+    if (!$('#agent_commission').val()) {
+        updateAgentCommission();
+    }
     // end agent commission calculation
 
 
@@ -1054,9 +1051,7 @@ $(document).ready(function() {
 
         $('#reservationAutomatedEmailMessage').html(message);
 
-        $('#reservationAutomatedEmailAgentName').text(
-            `${fname} ${lname}`.trim()
-        );
+        $('#reservationAutomatedEmailAgentName').text(`${fname} ${lname}`.trim());
 
         $('#reservationAutomatedEmailAgentCellphone').text(cellphone);
 
@@ -1087,8 +1082,7 @@ $(document).ready(function() {
             success(response){
 
                 if(response.success){
-                    $('#reservationAutomatedEmailsTable tbody')
-                        .html(response.html);
+                    $('#reservationAutomatedEmailsTable tbody').html(response.html);
                 }
                 else{
                     alert(response.message);

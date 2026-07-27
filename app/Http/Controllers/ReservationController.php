@@ -37,6 +37,7 @@ use App\Mail\CreditCardAuthorizationMail;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ReservationController extends Controller
 {
@@ -268,43 +269,638 @@ class ReservationController extends Controller
         }
     }
 
-    private function generateAutomatedEmails($reservation)
+    private function sendAutomatedEmailsIfNeeded(Reservation $reservation): void
     {
         if ($reservation->stop_auto_emails) {
             return;
         }
 
-        CustomerAutomatedEmail::where('reservation_id', $reservation->id)->delete();
-
-        if (!$reservation->product_id || !$reservation->destination_id || !$reservation->agent_id ) {
+        if (!in_array($reservation->status, ['Active', 'Paid in Full'])) {
             return;
         }
 
-        $emails = AutomatedEmail::where('is_deleted', 0)
+        $reservation->load(['customer','agent',]);
+
+        $customer = $reservation->customer;
+        $agent = $reservation->agent;
+
+        if (!$customer || !$agent) {
+            return;
+        }
+
+        $clientEmail = $reservation->email_to_send ?: $customer->email;
+
+        if (!$clientEmail) {
+            return;
+        }
+
+        $emails = AutomatedEmail::with('attachments')
+            ->where('is_deleted', 0)
             ->where('is_disabled', 0)
-            ->where('product_list', $reservation->product_id)
-            ->where('destination_list', $reservation->destination_id)
-            ->where('agent_id', $reservation->agent_id)
-            ->get();
+            ->where('email_type', 'Reservation Reminder')
+            ->where('agent_id', $agent->id)
+            ->get()
+        ;
 
         foreach ($emails as $email) {
 
-            $baseDate = match ($email->email_type) {
-                'Check In Date' => $reservation->checkin_date,
-                'Check Out Date' => $reservation->checkout_date,
-                'Deposit Due Date' => $reservation->deposit_due_date,
-                'Final Payment Due Date' => $reservation->final_payment_due_date,
-                default => $reservation->created_on,
-            };
+            $productIds = array_filter(explode(',', $email->product_list ?? ''));
 
-            $sendDate = $baseDate ? \Carbon\Carbon::parse($baseDate)->{strtolower($email->before_after) === 'before' ? 'subDays' : 'addDays'}($email->days) : null;
+            $destinationIds = array_values(array_diff(array_filter(explode(',', $email->destination_list ?? '')),['-1']));
 
-            CustomerAutomatedEmail::create([
-                'customer_id' => $reservation->customer_id,
+            $resortIds = array_values(array_diff(array_filter(explode(',', $email->resort_list ?? '')),['-1']));
+
+            $matches = false;
+
+            if ($reservation->resort_id && in_array($reservation->resort_id, $resortIds)) {
+
+                $matches = true;
+
+            } elseif ($reservation->destination_id && in_array($reservation->destination_id, $destinationIds) && empty($resortIds)) {
+
+                $matches = true;
+
+            } elseif ($reservation->product_id && in_array($reservation->product_id, $productIds) && empty($destinationIds) && empty($resortIds)) {
+
+                $matches = true;
+            }
+
+            if (!$matches) {
+                continue;
+            }
+
+            $checkin = Carbon::parse($reservation->checkin_date);
+
+            $sendDate = strtolower($email->before_after) === 'after' ? $checkin->copy()->addDays($email->days) : $checkin->copy()->subDays($email->days);
+
+            if (now()->lt($sendDate)) {
+                continue;
+            }
+
+            $alreadySent = CustomerAutomatedEmail::where([
                 'reservation_id' => $reservation->id,
+                'customer_id' => $reservation->customer_id,
                 'automated_email_id' => $email->id,
-                'date' => $sendDate,
-            ]);
+            ])->exists();
+
+            if ($alreadySent) {
+                continue;
+            }
+
+            if ($this->sendAutomatedEmail($reservation, $email)) {
+
+                CustomerAutomatedEmail::create([
+                    'customer_id' => $reservation->customer_id,
+                    'reservation_id' => $reservation->id,
+                    'automated_email_id' => $email->id,
+                    'date' => now(),
+                ]);
+
+            }
+        }
+    }
+
+    private function sendAutomatedEmail(Reservation $reservation,AutomatedEmail $automatedEmail): bool {
+
+        $customer = $reservation->customer;
+        $agent = $reservation->agent;
+
+        $clientEmail = $reservation->email_to_send ?: $customer->email;
+
+        $signature = "
+            <br><br>
+            <span style='color:#FF6600;font-weight:bold;font-size:15px;'>
+                Thank you, please let me know if I can further assist you!
+            </span>
+
+            <br><br>
+
+            <span style='color:#FF6600;font-weight:bold;font-size:15px;'>
+                {$agent->fname} {$agent->lname}
+            </span>
+            <br>
+        ";
+
+        if (!empty($agent->phone_number)) {
+
+            $signature .= "
+                <span style='color:#FF6600;font-weight:bold;font-size:15px;'>
+                    {$agent->phone_number}
+                </span>
+                <br>
+            ";
+
+        }
+
+        $signature .= "
+            <span>
+                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='mailto:{$agent->email}'>
+                    {$agent->email}
+                </a>
+            </span>
+
+            <br><br>
+
+            <span>
+                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='https://www.archerluxurytravel.com'>
+                    www.archerluxurytravel.com
+                </a>
+            </span>
+
+            <br><br>
+
+            <span style='color:#006FC9;font-weight:bold;font-size:13px;'>
+                I book everything from hotels, Disney, Universal Studios,
+                All Inclusive resorts, all cruise lines and more!
+            </span>
+        ";
+
+        $body = $automatedEmail->message . $signature;
+
+        try {
+
+            Mail::send([], [], function ($message) use (
+                $clientEmail,
+                $reservation,
+                $agent,
+                $automatedEmail,
+                $body
+            ) {
+
+                $message->to($clientEmail);
+
+                if (!empty($reservation->spouse_email) && filter_var($reservation->spouse_email, FILTER_VALIDATE_EMAIL)) {
+
+                    $message->cc($reservation->spouse_email);
+                }
+
+                if ($automatedEmail->bcc_agent) {
+                    $message->bcc($agent->email);
+                }
+
+                $message->subject($automatedEmail->subject);
+
+                $message->html($body);
+
+                foreach ($automatedEmail->attachments as $attachment) {
+
+                    $path = public_path('attachments/automatedEmails/' . $attachment->id . '.' . $attachment->file_extension);
+
+                    if (File::exists($path)) {
+
+                        $message->attach(
+                            $path,
+                            [
+                                'as' => $attachment->file_name . '.' . $attachment->file_extension
+                            ]
+                        );
+
+                    }
+
+                }
+
+            });
+
+            return true;
+
+        } catch (\Throwable $e) {
+
+            Log::error($e);
+
+            return false;
+
+        }
+    }
+
+    private const RESORT_FACT_SHEETS = [
+        // Zoetry Agua Punta Cana
+        166 => 'http://www.amresorts.com/mediasite/documents/2013/12/zoapc-fs.pdf',
+        263 => 'http://www.amresorts.com/mediasite/documents/2013/12/zoapc-fs.pdf',
+        916 => 'http://www.amresorts.com/mediasite/documents/2013/12/zoapc-fs.pdf',
+        967 => 'http://www.amresorts.com/mediasite/documents/2013/12/zoapc-fs.pdf',
+        1062 => 'http://www.amresorts.com/mediasite/documents/2013/12/zoapc-fs.pdf',
+
+        // Zoetry Montego Bay Jamaica
+        180 => 'http://www.amresorts.com/mediasite/documents/2016/03/zombj-fs.pdf',
+        286 => 'http://www.amresorts.com/mediasite/documents/2016/03/zombj-fs.pdf',
+        917 => 'http://www.amresorts.com/mediasite/documents/2016/03/zombj-fs.pdf',
+        968 => 'http://www.amresorts.com/mediasite/documents/2016/03/zombj-fs.pdf',
+        1063 => 'http://www.amresorts.com/mediasite/documents/2016/03/zombj-fs.pdf',
+
+        // Zoetry Paraiso de la Bonita Riviera Maya
+        38 => 'http://www.amresorts.com/mediasite/documents/2013/12/zopdb-fs.pdf',
+        196 => 'http://www.amresorts.com/mediasite/documents/2013/12/zopdb-fs.pdf',
+        302 => 'http://www.amresorts.com/mediasite/documents/2013/12/zopdb-fs.pdf',
+        965 => 'http://www.amresorts.com/mediasite/documents/2013/12/zopdb-fs.pdf',
+        1060 => 'http://www.amresorts.com/mediasite/documents/2013/12/zopdb-fs.pdf',
+
+        // Zoetry Villa Rolandi Isla Mujeres Cancun
+        878 => 'http://www.amresorts.com/mediasite/documents/2014/08/zvrim-fs.pdf',
+        915 => 'http://www.amresorts.com/mediasite/documents/2014/08/zvrim-fs.pdf',
+        966 => 'http://www.amresorts.com/mediasite/documents/2014/08/zvrim-fs.pdf',
+        1019 => 'http://www.amresorts.com/mediasite/documents/2014/08/zvrim-fs.pdf',
+        1061 => 'http://www.amresorts.com/mediasite/documents/2014/08/zvrim-fs.pdf',
+
+        // Secrets Akumal Riviera Maya
+        34 => 'http://www.amresorts.com/mediasite/documents/2015/01/searm-fs.pdf',
+        192 => 'http://www.amresorts.com/mediasite/documents/2015/01/searm-fs.pdf',
+        298 => 'http://www.amresorts.com/mediasite/documents/2015/01/searm-fs.pdf',
+        969 => 'http://www.amresorts.com/mediasite/documents/2015/01/searm-fs.pdf',
+        1064 => 'http://www.amresorts.com/mediasite/documents/2015/01/searm-fs.pdf',
+
+        // Secrets Aura Cozumel
+        879 => 'http://www.amresorts.com/mediasite/documents/2013/12/seacz-fs.pdf',
+        918 => 'http://www.amresorts.com/mediasite/documents/2013/12/seacz-fs.pdf',
+        970 => 'http://www.amresorts.com/mediasite/documents/2013/12/seacz-fs.pdf',
+        1020 => 'http://www.amresorts.com/mediasite/documents/2013/12/seacz-fs.pdf',
+        1065 => 'http://www.amresorts.com/mediasite/documents/2013/12/seacz-fs.pdf',
+
+        // Secrets Huatulco Resort & Spa
+        880 => 'http://www.amresorts.com/mediasite/documents/2013/12/sechu-fs.pdf',
+        919 => 'http://www.amresorts.com/mediasite/documents/2013/12/sechu-fs.pdf',
+        971 => 'http://www.amresorts.com/mediasite/documents/2013/12/sechu-fs.pdf',
+        1021 => 'http://www.amresorts.com/mediasite/documents/2013/12/sechu-fs.pdf',
+        1066 => 'http://www.amresorts.com/mediasite/documents/2013/12/sechu-fs.pdf',
+
+        // Secrets Maroma Beach Riviera Cancun
+        881 => 'http://www.amresorts.com/mediasite/documents/2013/12/semrc-fs.pdf',
+        920 => 'http://www.amresorts.com/mediasite/documents/2013/12/semrc-fs.pdf',
+        972 => 'http://www.amresorts.com/mediasite/documents/2013/12/semrc-fs.pdf',
+        1022 => 'http://www.amresorts.com/mediasite/documents/2013/12/semrc-fs.pdf',
+        1067 => 'http://www.amresorts.com/mediasite/documents/2013/12/semrc-fs.pdf',
+
+        // Secrets Playa Mujeres Golf & Spa Resort
+        882 => 'http://www.amresorts.com/mediasite/documents/2014/02/secpm-fs.pdf',
+        921 => 'http://www.amresorts.com/mediasite/documents/2014/02/secpm-fs.pdf',
+        973 => 'http://www.amresorts.com/mediasite/documents/2014/02/secpm-fs.pdf',
+        1023 => 'http://www.amresorts.com/mediasite/documents/2014/02/secpm-fs.pdf',
+        1068 => 'http://www.amresorts.com/mediasite/documents/2014/02/secpm-fs.pdf',
+
+        // Secrets Puerto Los Cabos Golf & Spa Resort
+        883 => 'http://www.amresorts.com/mediasite/documents/2013/12/seplc-fs.pdf',
+        922 => 'http://www.amresorts.com/mediasite/documents/2013/12/seplc-fs.pdf',
+        974 => 'http://www.amresorts.com/mediasite/documents/2013/12/seplc-fs.pdf',
+        1024 => 'http://www.amresorts.com/mediasite/documents/2013/12/seplc-fs.pdf',
+        1069 => 'http://www.amresorts.com/mediasite/documents/2013/12/seplc-fs.pdf',
+
+        // Secrets Riviera Cancun Resort & Spa
+        884 => 'http://www.amresorts.com/mediasite/documents/2013/12/semrc-fs.pdf',
+        923 => 'http://www.amresorts.com/mediasite/documents/2013/12/semrc-fs.pdf',
+        975 => 'http://www.amresorts.com/mediasite/documents/2013/12/semrc-fs.pdf',
+        1025 => 'http://www.amresorts.com/mediasite/documents/2013/12/semrc-fs.pdf',
+        1070 => 'http://www.amresorts.com/mediasite/documents/2013/12/semrc-fs.pdf',
+
+        // Secrets Silversands Riviera Cancun
+        885 => 'http://www.amresorts.com/mediasite/documents/2013/12/sesrc-fs.pdf',
+        924 => 'http://www.amresorts.com/mediasite/documents/2013/12/sesrc-fs.pdf',
+        976 => 'http://www.amresorts.com/mediasite/documents/2013/12/sesrc-fs.pdf',
+        1026 => 'http://www.amresorts.com/mediasite/documents/2013/12/sesrc-fs.pdf',
+        1071 => 'http://www.amresorts.com/mediasite/documents/2013/12/sesrc-fs.pdf',
+
+        // Secrets The Vine Cancun
+        886 => 'http://www.amresorts.com/mediasite/documents/2013/12/sevcu-fs.pdf',
+        925 => 'http://www.amresorts.com/mediasite/documents/2013/12/sevcu-fs.pdf',
+        977 => 'http://www.amresorts.com/mediasite/documents/2013/12/sevcu-fs.pdf',
+        1027 => 'http://www.amresorts.com/mediasite/documents/2013/12/sevcu-fs.pdf',
+        1072 => 'http://www.amresorts.com/mediasite/documents/2013/12/sevcu-fs.pdf',
+
+        // Secrets Vallarta Bay Puerto Vallarta
+        887 => 'http://www.amresorts.com/mediasite/documents/2013/12/secvb-fs.pdf',
+        926 => 'http://www.amresorts.com/mediasite/documents/2013/12/secvb-fs.pdf',
+        978 => 'http://www.amresorts.com/mediasite/documents/2013/12/secvb-fs.pdf',
+        1028 => 'http://www.amresorts.com/mediasite/documents/2013/12/secvb-fs.pdf',
+        1073 => 'http://www.amresorts.com/mediasite/documents/2013/12/secvb-fs.pdf',
+
+        // Secrets St. James Montego Bay
+        177 => 'http://www.amresorts.com/mediasite/documents/2013/12/sesmb-fs.pdf',
+        283 => 'http://www.amresorts.com/mediasite/documents/2013/12/sesmb-fs.pdf',
+        927 => 'http://www.amresorts.com/mediasite/documents/2013/12/sesmb-fs.pdf',
+        979 => 'http://www.amresorts.com/mediasite/documents/2013/12/sesmb-fs.pdf',
+        1074 => 'http://www.amresorts.com/mediasite/documents/2013/12/sesmb-fs.pdf',
+
+        // Secrets Wild Orchid Montego Bay
+        888 => 'http://www.amresorts.com/mediasite/documents/2013/12/sewmb-fs.pdf',
+        928 => 'http://www.amresorts.com/mediasite/documents/2013/12/sewmb-fs.pdf',
+        980 => 'http://www.amresorts.com/mediasite/documents/2013/12/sewmb-fs.pdf',
+        1029 => 'http://www.amresorts.com/mediasite/documents/2013/12/sewmb-fs.pdf',
+        1075 => 'http://www.amresorts.com/mediasite/documents/2013/12/sewmb-fs.pdf',
+
+        // Secrets Cap Cana Resort & Spa
+        164 => 'http://www.amresorts.com/mediasite/documents/2016/02/seccc-fs.pdf',
+        261 => 'http://www.amresorts.com/mediasite/documents/2016/02/seccc-fs.pdf',
+        929 => 'http://www.amresorts.com/mediasite/documents/2016/02/seccc-fs.pdf',
+        981 => 'http://www.amresorts.com/mediasite/documents/2016/02/seccc-fs.pdf',
+        1076 => 'http://www.amresorts.com/mediasite/documents/2016/02/seccc-fs.pdf',
+
+        // Secrets Royal Beach Punta Cana
+        889 => 'http://www.amresorts.com/mediasite/documents/2013/12/secrb-fs.pdf',
+        930 => 'http://www.amresorts.com/mediasite/documents/2013/12/secrb-fs.pdf',
+        982 => 'http://www.amresorts.com/mediasite/documents/2013/12/secrb-fs.pdf',
+        1030 => 'http://www.amresorts.com/mediasite/documents/2013/12/secrb-fs.pdf',
+        1077 => 'http://www.amresorts.com/mediasite/documents/2013/12/secrb-fs.pdf',
+
+        // Secrets Papagayo Costa Rica
+        49 => 'http://www.amresorts.com/mediasite/documents/2015/07/sepcr-fs.pdf',
+        54 => 'http://www.amresorts.com/mediasite/documents/2015/07/sepcr-fs.pdf',
+        931 => 'http://www.amresorts.com/mediasite/documents/2015/07/sepcr-fs.pdf',
+        1031 => 'http://www.amresorts.com/mediasite/documents/2015/07/sepcr-fs.pdf',
+        107 => 'http://www.amresorts.com/mediasite/documents/2015/07/sepcr-fs.pdf',
+
+        // Breathless Punta Cana Resort & Spa
+        160 => 'http://www.amresorts.com/mediasite/documents/2013/12/brepc-fs.pdf',
+        257 => 'http://www.amresorts.com/mediasite/documents/2013/12/brepc-fs.pdf',
+        935 => 'http://www.amresorts.com/mediasite/documents/2013/12/brepc-fs.pdf',
+        986 => 'http://www.amresorts.com/mediasite/documents/2013/12/brepc-fs.pdf',
+        1082 => 'http://www.amresorts.com/mediasite/documents/2013/12/brepc-fs.pdf',
+
+        // Breathless Cabo San Lucas Resort & Spa
+        24 => 'http://www.amresorts.com/mediasite/documents/2015/07/brecl-fs.pdf',
+        182 => 'http://www.amresorts.com/mediasite/documents/2015/07/brecl-fs.pdf',
+        288 => 'http://www.amresorts.com/mediasite/documents/2015/07/brecl-fs.pdf',
+        987 => 'http://www.amresorts.com/mediasite/documents/2015/07/brecl-fs.pdf',
+        1083 => 'http://www.amresorts.com/mediasite/documents/2015/07/brecl-fs.pdf',
+
+        // Breathless Riviera Cancun Resort & Spa
+        893 => 'http://23.21.66.147/mediasite/documents/2015/07/brerc-fs.pdf',
+        936 => 'http://23.21.66.147/mediasite/documents/2015/07/brerc-fs.pdf',
+        988 => 'http://23.21.66.147/mediasite/documents/2015/07/brerc-fs.pdf',
+        1035 => 'http://23.21.66.147/mediasite/documents/2015/07/brerc-fs.pdf',
+        1084 => 'http://23.21.66.147/mediasite/documents/2015/07/brerc-fs.pdf',
+
+        // Breathless Montego Bay Resort & Spa
+        167 => 'http://www.amresorts.com/mediasite/documents/2016/03/bremb-fs.pdf',
+        273 => 'http://www.amresorts.com/mediasite/documents/2016/03/bremb-fs.pdf',
+        937 => 'http://www.amresorts.com/mediasite/documents/2016/03/bremb-fs.pdf',
+        989 => 'http://www.amresorts.com/mediasite/documents/2016/03/bremb-fs.pdf',
+        1085 => 'http://www.amresorts.com/mediasite/documents/2016/03/bremb-fs.pdf',
+
+        // Dreams Huatulco Resort & Spa
+        894 => 'http://www.amresorts.com/mediasite/documents/2013/12/drehu-fs.pdf',
+        938 => 'http://www.amresorts.com/mediasite/documents/2013/12/drehu-fs.pdf',
+        991 => 'http://www.amresorts.com/mediasite/documents/2013/12/drehu-fs.pdf',
+        1036 => 'http://www.amresorts.com/mediasite/documents/2013/12/drehu-fs.pdf',
+        1087 => 'http://www.amresorts.com/mediasite/documents/2013/12/drehu-fs.pdf',
+
+        // Dreams Los Cabos Suites Golf Resort & Spa
+        895 => 'http://www.amresorts.com/mediasite/documents/2013/12/drelc-fs.pdf',
+        939 => 'http://www.amresorts.com/mediasite/documents/2013/12/drelc-fs.pdf',
+        992 => 'http://www.amresorts.com/mediasite/documents/2013/12/drelc-fs.pdf',
+        1037 => 'http://www.amresorts.com/mediasite/documents/2013/12/drelc-fs.pdf',
+        1088 => 'http://www.amresorts.com/mediasite/documents/2013/12/drelc-fs.pdf',
+
+        // Dreams Playa Mujeres Golf & Spa Resort
+        897 => 'http://www.amresorts.com/mediasite/documents/2016/02/drepm-fs.pdf',
+        941 => 'http://www.amresorts.com/mediasite/documents/2016/02/drepm-fs.pdf',
+        994 => 'http://www.amresorts.com/mediasite/documents/2016/02/drepm-fs.pdf',
+        1039 => 'http://www.amresorts.com/mediasite/documents/2016/02/drepm-fs.pdf',
+        1090 => 'http://www.amresorts.com/mediasite/documents/2016/02/drepm-fs.pdf',
+
+        // Dreams Puerto Aventuras Resort & Spa
+        898 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepa-fs.pdf',
+        942 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepa-fs.pdf',
+        995 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepa-fs.pdf',
+        1040 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepa-fs.pdf',
+        1091 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepa-fs.pdf',
+
+        // Dreams Riviera Cancun Resort & Spa
+        899 => 'http://www.amresorts.com/mediasite/documents/2013/12/drerc-fs.pdf',
+        943 => 'http://www.amresorts.com/mediasite/documents/2013/12/drerc-fs.pdf',
+        996 => 'http://www.amresorts.com/mediasite/documents/2013/12/drerc-fs.pdf',
+        1041 => 'http://www.amresorts.com/mediasite/documents/2013/12/drerc-fs.pdf',
+        1092 => 'http://www.amresorts.com/mediasite/documents/2013/12/drerc-fs.pdf',
+
+        // Dreams Sands Cancun Resort & Spa
+        900 => 'http://www.amresorts.com/mediasite/documents/2014/06/dresc-fs.pdf',
+        944 => 'http://www.amresorts.com/mediasite/documents/2014/06/dresc-fs.pdf',
+        997 => 'http://www.amresorts.com/mediasite/documents/2014/06/dresc-fs.pdf',
+        1042 => 'http://www.amresorts.com/mediasite/documents/2014/06/dresc-fs.pdf',
+        1093 => 'http://www.amresorts.com/mediasite/documents/2014/06/dresc-fs.pdf',
+
+        // Dreams Tulum Resort & Spa
+        901 => 'http://www.amresorts.com/mediasite/documents/2013/12/dretu-fs.pdf',
+        945 => 'http://www.amresorts.com/mediasite/documents/2013/12/dretu-fs.pdf',
+        998 => 'http://www.amresorts.com/mediasite/documents/2013/12/dretu-fs.pdf',
+        1043 => 'http://www.amresorts.com/mediasite/documents/2013/12/dretu-fs.pdf',
+        1094 => 'http://www.amresorts.com/mediasite/documents/2013/12/dretu-fs.pdf',
+
+        // Dreams Villamagna Nuevo Vallarta
+        902 => 'http://www.amresorts.com/mediasite/documents/2013/12/drevm-fs.pdf',
+        946 => 'http://www.amresorts.com/mediasite/documents/2013/12/drevm-fs.pdf',
+        999 => 'http://www.amresorts.com/mediasite/documents/2013/12/drevm-fs.pdf',
+        1044 => 'http://www.amresorts.com/mediasite/documents/2013/12/drevm-fs.pdf',
+        1095 => 'http://www.amresorts.com/mediasite/documents/2013/12/drevm-fs.pdf',
+
+        // Dreams Dominicus La Romana
+        161 => 'http://www.amresorts.com/mediasite/documents/2015/05/dredl-fs.pdf',
+        258 => 'http://www.amresorts.com/mediasite/documents/2015/05/dredl-fs.pdf',
+        948 => 'http://www.amresorts.com/mediasite/documents/2015/05/dredl-fs.pdf',
+        1001 => 'http://www.amresorts.com/mediasite/documents/2015/05/dredl-fs.pdf',
+        1097 => 'http://www.amresorts.com/mediasite/documents/2015/05/dredl-fs.pdf',
+
+        // Dreams Palm Beach Punta Cana
+        905 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepb-fs.pdf',
+        950 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepb-fs.pdf',
+        1003 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepb-fs.pdf',
+        1047 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepb-fs.pdf',
+        1099 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepb-fs.pdf',
+
+        // Dreams Punta Cana Resort & Spa
+        906 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepc-fs.pdf',
+        951 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepc-fs.pdf',
+        1004 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepc-fs.pdf',
+        1048 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepc-fs.pdf',
+        1100 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepc-fs.pdf',
+
+        // Dreams Las Mareas Costa Rica
+        48 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepc-fs.pdf',
+        53 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepc-fs.pdf',
+        952 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepc-fs.pdf',
+        1049 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepc-fs.pdf',
+        1101 => 'http://www.amresorts.com/mediasite/documents/2013/12/drepc-fs.pdf',
+
+        // Dreams Playa Bonita Panama
+        47 => 'http://23.21.66.147/mediasite/documents/2016/09/fs_drepbp.pdf',
+        953 => 'http://23.21.66.147/mediasite/documents/2016/09/fs_drepbp.pdf',
+        1005 => 'http://23.21.66.147/mediasite/documents/2016/09/fs_drepbp.pdf',
+        1050 => 'http://23.21.66.147/mediasite/documents/2016/09/fs_drepbp.pdf',
+        1102 => 'http://23.21.66.147/mediasite/documents/2016/09/fs_drepbp.pdf',
+
+        // Now Amber Puerto Vallarta
+        32 => 'http://www.amresorts.com/mediasite/documents/2013/12/noapv-fs.pdf',
+        190 => 'http://www.amresorts.com/mediasite/documents/2013/12/noapv-fs.pdf',
+        296 => 'http://www.amresorts.com/mediasite/documents/2013/12/noapv-fs.pdf',
+        1007 => 'http://www.amresorts.com/mediasite/documents/2013/12/noapv-fs.pdf',
+        1104 => 'http://www.amresorts.com/mediasite/documents/2013/12/noapv-fs.pdf',
+
+        // Now Jade Riviera Cancun
+        909 => 'http://www.amresorts.com/mediasite/documents/2013/12/nojrc-fs.pdf',
+        956 => 'http://www.amresorts.com/mediasite/documents/2013/12/nojrc-fs.pdf',
+        1009 => 'http://www.amresorts.com/mediasite/documents/2013/12/nojrc-fs.pdf',
+        1053 => 'http://www.amresorts.com/mediasite/documents/2013/12/nojrc-fs.pdf',
+        1106 => 'http://www.amresorts.com/mediasite/documents/2013/12/nojrc-fs.pdf',
+
+        // Now Sapphire Riviera Cancun
+        910 => 'http://www.amresorts.com/mediasite/documents/2013/12/nosrc-fs.pdf',
+        957 => 'http://www.amresorts.com/mediasite/documents/2013/12/nosrc-fs.pdf',
+        1010 => 'http://www.amresorts.com/mediasite/documents/2013/12/nosrc-fs.pdf',
+        1054 => 'http://www.amresorts.com/mediasite/documents/2013/12/nosrc-fs.pdf',
+        1107 => 'http://www.amresorts.com/mediasite/documents/2013/12/nosrc-fs.pdf',
+
+        // Now Larimar Punta Cana
+        163 => 'http://www.amresorts.com/mediasite/documents/2013/12/nolpc-fs.pdf',
+        260 => 'http://www.amresorts.com/mediasite/documents/2013/12/nolpc-fs.pdf',
+        958 => 'http://www.amresorts.com/mediasite/documents/2013/12/nolpc-fs.pdf',
+        1011 => 'http://www.amresorts.com/mediasite/documents/2013/12/nolpc-fs.pdf',
+        1108 => 'http://www.amresorts.com/mediasite/documents/2013/12/nolpc-fs.pdf',
+
+        // Now Onyx Punta Cana
+        911 => 'http://www.amresorts.com/mediasite/documents/2016/03/noopc-fs.pdf',
+        959 => 'http://www.amresorts.com/mediasite/documents/2016/03/noopc-fs.pdf',
+        1012 => 'http://www.amresorts.com/mediasite/documents/2016/03/noopc-fs.pdf',
+        1055 => 'http://www.amresorts.com/mediasite/documents/2016/03/noopc-fs.pdf',
+        1109 => 'http://www.amresorts.com/mediasite/documents/2016/03/noopc-fs.pdf',
+
+        // Sunscape Dorado Pacifico Ixtapa
+        912 => 'http://www.amresorts.com/mediasite/documents/2013/12/sudix-fs.pdf',
+        960 => 'http://www.amresorts.com/mediasite/documents/2013/12/sudix-fs.pdf',
+        1014 => 'http://www.amresorts.com/mediasite/documents/2013/12/sudix-fs.pdf',
+        1056 => 'http://www.amresorts.com/mediasite/documents/2013/12/sudix-fs.pdf',
+        1111 => 'http://www.amresorts.com/mediasite/documents/2013/12/sudix-fs.pdf',
+
+        // Sunscape Puerto Vallarta Resort & Spa
+        913 => 'http://www.amresorts.com/mediasite/documents/2015/11/sunpv-fs.pdf',
+        961 => 'http://www.amresorts.com/mediasite/documents/2015/11/sunpv-fs.pdf',
+        1015 => 'http://www.amresorts.com/mediasite/documents/2015/11/sunpv-fs.pdf',
+        1057 => 'http://www.amresorts.com/mediasite/documents/2015/11/sunpv-fs.pdf',
+        1112 => 'http://www.amresorts.com/mediasite/documents/2015/11/sunpv-fs.pdf',
+
+        // Sunscape Sabor Cozumel
+        914 => 'http://www.amresorts.com/mediasite/documents/2013/12/suscz-fs.pdf',
+        962 => 'http://www.amresorts.com/mediasite/documents/2013/12/suscz-fs.pdf',
+        1016 => 'http://www.amresorts.com/mediasite/documents/2013/12/suscz-fs.pdf',
+        1058 => 'http://www.amresorts.com/mediasite/documents/2013/12/suscz-fs.pdf',
+        1113 => 'http://www.amresorts.com/mediasite/documents/2013/12/suscz-fs.pdf',
+
+        // Sunscape Curacao Resort, Spa & Casino
+        50 => 'http://www.amresorts.com/mediasite/documents/2013/12/sucur-fs.pdf',
+        963 => 'http://www.amresorts.com/mediasite/documents/2013/12/sucur-fs.pdf',
+        1017 => 'http://www.amresorts.com/mediasite/documents/2013/12/sucur-fs.pdf',
+        1059 => 'http://www.amresorts.com/mediasite/documents/2013/12/sucur-fs.pdf',
+        1114 => 'http://www.amresorts.com/mediasite/documents/2013/12/sucur-fs.pdf',
+    ];
+
+    private function sendBrochureToCustomer(Reservation $reservation): bool
+    {
+        if ($reservation->stop_auto_emails) {
+            return false;
+        }
+
+        $reservation->load(['customer','agent',]);
+
+        $customer = $reservation->customer;
+        $agent = $reservation->agent;
+
+        if (!$customer || !$agent) {
+            return false;
+        }
+
+        $clientEmail = $reservation->email_to_send ?: $customer->email;
+
+        if (!$clientEmail) {
+            return false;
+        }
+
+        $factSheetLink = self::RESORT_FACT_SHEETS[$reservation->resort_id] ?? null;
+
+        if (!$factSheetLink) {
+            return false;
+        }
+
+        $signature = "
+            <br><br>
+            <span style='color:#FF6600;font-weight:bold;font-size:15px;'>
+                Thank you, please let me know if I can further assist you!
+            </span>
+
+            <br><br>
+
+            <span style='color:#FF6600;font-weight:bold;font-size:15px;'>
+                {$agent->fname} {$agent->lname}
+            </span>
+            <br>
+        ";
+
+        if (!empty($agent->phone_number)) {
+
+            $signature .= "
+                <span style='color:#FF6600;font-weight:bold;font-size:15px;'>
+                    {$agent->phone_number}
+                </span>
+                <br>
+            ";
+
+        }
+
+        $signature .= "
+            <span>
+                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='mailto:{$agent->email}'>
+                    {$agent->email}
+                </a>
+            </span>
+
+            <br><br>
+
+            <span>
+                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='https://www.archerluxurytravel.com'>
+                    www.archerluxurytravel.com
+                </a>
+            </span>
+
+            <br><br>
+
+            <span style='color:#006FC9;font-weight:bold;font-size:13px;'>
+                I book everything from hotels, Disney, Universal Studios,
+                All Inclusive resorts, all cruise lines and more!
+            </span>
+        ";
+
+        $body = "
+            You have picked a great resort for your trip, here is a fact sheet with
+            additional information. Please feel free to contact me if you see
+            anything you have questions on or want to know more about.
+
+            <br><br>
+
+            <a href='{$factSheetLink}'>{$factSheetLink}</a>
+
+            {$signature}
+        ";
+
+        try {
+
+            Mail::send([], [], function ($message) use ($clientEmail,$reservation,$agent,$body) {
+
+                $message->to($clientEmail);
+
+                if (!empty($reservation->spouse_email) && filter_var($reservation->spouse_email, FILTER_VALIDATE_EMAIL)) {
+
+                    $message->cc($reservation->spouse_email);
+                }
+
+                $message->subject('Fact Sheet');
+
+                $message->html($body);
+
+            });
+
+            return true;
+
+        } catch (\Throwable $e) {
+
+            Log::error($e);
+
+            return false;
+
         }
     }
 
@@ -421,7 +1017,15 @@ class ReservationController extends Controller
 
         $reservation = Reservation::create($data);
         $this->generateTimelineTasks($reservation);
-        $this->generateAutomatedEmails($reservation);
+        if (!$reservation->stop_auto_emails) {
+
+            if (array_key_exists($reservation->resort_id, self::RESORT_FACT_SHEETS)) {
+                $this->sendBrochureToCustomer($reservation);
+            }
+
+            $this->sendAutomatedEmailsIfNeeded($reservation);
+
+        }
 
         $customer = Customer::with(['familyMembers' => function ($q) { $q->where('is_deleted', 0); }])->find($data['customer_id']);
 
@@ -620,9 +1224,33 @@ class ReservationController extends Controller
             }
         }
 
+        $oldCheckin = $reservation->checkin_date;
+        $oldCheckout = $reservation->checkout_date;
+        $oldDeposit = $reservation->deposit_due_date;
+        $oldFinalPayment = $reservation->final_payment_due_date;
+
+        $oldProduct = $reservation->product_id;
+        $oldDestination = $reservation->destination_id;
+        $oldResort = $reservation->resort_id;
+
         $reservation->update($data);
-        $this->generateTimelineTasks($reservation);
-        $this->generateAutomatedEmails($reservation);
+
+        if ($oldCheckin != $reservation->checkin_date || $oldCheckout != $reservation->checkout_date || $oldDeposit != $reservation->deposit_due_date || $oldFinalPayment != $reservation->final_payment_due_date) 
+        {
+            $this->generateTimelineTasks($reservation);
+        }
+
+        if (!$reservation->stop_auto_emails) {
+
+            if ($oldResort != $reservation->resort_id && array_key_exists($reservation->resort_id, self::RESORT_FACT_SHEETS)) {
+                $this->sendBrochureToCustomer($reservation);
+            }
+
+            if ($oldCheckin != $reservation->checkin_date || $oldProduct != $reservation->product_id || $oldDestination != $reservation->destination_id) {
+                $this->sendAutomatedEmailsIfNeeded($reservation);
+            }
+
+        }
 
         if ($request->hasFile('attachments')) {
 
@@ -1426,7 +2054,8 @@ class ReservationController extends Controller
             ->where('is_deleted', 0)
             ->whereNotIn('id', $allLinkedIds)
             ->select('id', 'reservation_number', 'reservation_name', 'checkin_date', 'checkout_date')
-            ->get();
+            ->get()
+        ;
 
         return response()->json($reservations);
     }
@@ -1625,10 +2254,7 @@ class ReservationController extends Controller
         ->get();
 
         foreach ($reservations as $reservation) {
-
-            Mail::to($reservation->customer->email)
-                ->send(new ReservationDetailsMail($reservation));
-
+            Mail::to($reservation->customer->email)->send(new ReservationDetailsMail($reservation));
         }
 
         return response()->json([
@@ -1639,10 +2265,7 @@ class ReservationController extends Controller
 
     public function sendCreditCardForm(Reservation $reservation)
     {
-        $reservation->load([
-            'customer',
-            'agent'
-        ]);
+        $reservation->load(['customer','agent']);
 
         $email = $reservation->email_to_send ?: $reservation->customer->email;
 
@@ -1655,10 +2278,7 @@ class ReservationController extends Controller
 
         }
 
-        Mail::to($email)
-            ->send(
-                new CreditCardAuthorizationMail($reservation)
-            );
+        Mail::to($email)->send(new CreditCardAuthorizationMail($reservation));
 
         return response()->json([
             'success'=>true
@@ -1756,8 +2376,7 @@ class ReservationController extends Controller
 
         $signature .= "
             <span>
-                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;'
-                    href='mailto:{$agent->email}'>
+                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='mailto:{$agent->email}'>
                     {$agent->email}
                 </a>
             </span>
@@ -1765,8 +2384,7 @@ class ReservationController extends Controller
             <br><br>
 
             <span>
-                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;'
-                    href='https://www.archerluxurytravel.com'>
+                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='https://www.archerluxurytravel.com'>
                     www.archerluxurytravel.com
                 </a>
             </span>
@@ -1809,12 +2427,7 @@ class ReservationController extends Controller
 
                 foreach ($automatedEmail->attachments as $attachment) {
 
-                    $path = public_path(
-                        'attachments/automatedEmails/' .
-                        $attachment->id .
-                        '.' .
-                        $attachment->file_extension
-                    );
+                    $path = public_path('attachments/automatedEmails/' . $attachment->id . '.' . $attachment->file_extension);
 
                     if (File::exists($path)) {
 

@@ -10,7 +10,10 @@
     </div>    
 @else
     <div class="relative flex flex-row justify-between gap-3 mt-5">
-        <h6 class="text-lg space-x-2"><span>Credit Card Authorization Form</span> <i class="fas fa-paper-plane text-[#B6844A] text-lg cursor-pointer" title="Send Form"></i></h6>
+        <h6 class="text-lg space-x-2">
+            <span>Credit Card Authorization Form</span> 
+            <i id="sendCreditCardFormBtn" class="fas fa-paper-plane text-[#B6844A] text-lg cursor-pointer" title="Send Form" data-url="{{ route('reservations.sendCreditCardForm', $reservation) }}"></i>
+        </h6>
     </div>  
 
     <div class="relative flex flex-row justify-between gap-3 mt-5">
@@ -226,3 +229,4 @@
         </x-reservations-modal>
     </div>
 @endif
+<x-credit-card-form-confirmation-modal />

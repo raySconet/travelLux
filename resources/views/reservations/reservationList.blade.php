@@ -99,7 +99,7 @@
                         <thead class="bg-white">
                             <tr>
                                 <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                    <i class="fas fa-paper-plane text-[#B6844A] text-base cursor-pointer" title="Send Details to Customer"></i>
+                                    <i id="sendReservationDetailsBtn" data-url="{{ route('reservations.sendDetails') }}" class="fas fa-paper-plane text-[#B6844A] text-base cursor-pointer" title="Send Details to Customer"></i>
                                 </th>    
                                 <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                     Status

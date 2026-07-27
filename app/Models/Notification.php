@@ -19,4 +19,9 @@ class Notification extends Model
         'created_by',
         'is_read'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

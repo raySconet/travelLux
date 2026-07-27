@@ -1,4 +1,4 @@
-<div id="formIntakePreviewModal" class="fixed inset-0 bg-white z-[9999] hidden border border-[#B6844A]">
+<div id="formIntakePreviewModal" class="fixed inset-0 bg-white z-[9999] hidden border border-[#B6844A] flex flex-col">
 
     <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
         <div class="flex items-center space-x-2">

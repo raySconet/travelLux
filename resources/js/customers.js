@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    // start add secndayr email
+    // start add secondary email
     $('#addSecondaryEmail').on('click', function () {
         const row = `
             <div class="relative mt-2 flex items-center gap-3">
@@ -245,6 +245,90 @@ $(document).ready(function() {
     };
     // end add family member
 
+    // start forms
+    window.openFormPreviewModal = function(content){
+        $('#formPreviewContent').html(content);
+        $('#formPreviewModal').removeClass('hidden');
+    }
+
+    window.closeFormPreviewModal = function(){
+        $('#formPreviewModal').addClass('hidden');
+    }
+
+    function showSuccessOverlay(callback = null)
+    {
+        $('#copySuccessOverlay').removeClass('hidden').addClass('flex');
+
+        setTimeout(function () {
+            $('#copySuccessOverlay').addClass('hidden').removeClass('flex');
+
+            if (callback) {
+                callback();
+            }
+
+        }, 1500);
+    }
+
+    $('body').on('click','.sendFormBtn',function(){
+
+        $.ajax({
+
+            url: $('#sendFormForm').attr('action'),
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                customer_id: $(this).data('customer'),
+                form_id: $(this).data('form')
+            },
+
+            success: function () {
+                showSuccessOverlay(function () {
+
+                    location.reload();
+
+                });
+            },
+
+            error: function (xhr) {
+                alert(xhr.responseJSON?.message ?? 'Failed to send form.');
+            }
+
+        });
+
+    });
+
+    $('body').on('click', '.resendFormBtn', function () {
+
+        $.ajax({
+
+            url: $('#resendFormForm').attr('action'),
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                customer_id: $(this).data('customer'),
+                sent_form_id: $(this).data('sent-form')
+            },
+
+            success: function () {
+                showSuccessOverlay(function () {
+                    location.reload();
+                });
+            },
+
+            error: function (xhr) {
+                if (xhr.responseJSON?.message) {
+                    alert(xhr.responseJSON.message);
+                } else {
+                    alert('Failed to re-send form.');
+                }
+
+            }
+
+        });
+
+    });
+    // end forms
+
     // start survey preview
     window.openSurveyPreviewModal = function(content){
         $('#surveyPreviewContent').html(content);
@@ -275,5 +359,130 @@ $(document).ready(function() {
     window.closeInviteCustomerAttentionModal = function(){
         $('#inviteCustomerAttentionModal').addClass('hidden');
     }
+
+    const page = document.getElementById('inviteCustomerPage');
+
+    if (page && page.dataset.emailExists === '1') {
+        openInviteCustomerAttentionModal();
+    }
+
     // end invite customer
+
+    // start send new invitation button
+    $(document).on('click', '#sendNewInvitationBtn', function () {
+        let customerId = $(this).data('customer');
+
+        $.ajax({
+            url: `/customer/${customerId}/send-invitation`,
+            method: "POST",
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+
+            beforeSend() {
+                showLoader();
+            },
+
+            success(response) {
+                if (!response.success) {
+                    showError(response.message);
+                    return;
+                }
+
+            },
+
+            error(xhr) {
+                showError(xhr.responseJSON?.message ?? "Failed to send invitation.");
+            },
+
+            complete() {
+                hideLoader();
+            }
+        });
+
+    });
+    // end send new invitation button
+
+    // start send intake form button
+    $(document).on('click', '#sendIntakeFormBtn', function () {
+
+        let customerId = $(this).data('customer');
+
+        $.ajax({
+
+            url: `/customer/${customerId}/send-intake-form`,
+            method: "POST",
+
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+
+            beforeSend() {
+                showLoader();
+            },
+
+            success(response) {
+
+                if (!response.success) {
+                    showError(response.message);
+                    return;
+                }
+
+                location.reload();
+
+            },
+
+            error(xhr) {
+
+                showError(
+                    xhr.responseJSON?.message ??
+                    "Failed to send intake form."
+                );
+
+            },
+
+            complete() {
+                hideLoader();
+            }
+
+        });
+
+    });
+    // end send intake form button
+
+    // start resend intake form button
+    $(document).on("click", ".resendIntakeFormBtn", function () {
+
+        let intakeFormId = $(this).data("form");
+
+        showLoader();
+
+        $.ajax({
+            url: "/intake-form/resend",
+            type: "POST",
+            data: {
+                _token: $('meta[name="csrf-token"]').attr("content"),
+                intakeFormId: intakeFormId
+            },
+
+            success: function(response){
+
+                hideLoader();
+
+                if(response.success){
+                    location.reload();
+                }
+            },
+
+            error:function(xhr){
+
+                hideLoader();
+
+                showError(xhr.responseJSON.message);
+            }
+
+        });
+
+    });
+    // end resend form intake
 });

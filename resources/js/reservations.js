@@ -709,6 +709,71 @@ $(document).ready(function() {
     window.closeFormPreviewModal = function(){
         $('#formPreviewModal').addClass('hidden');
     }
+
+    function showSuccessOverlay(callback = null)
+    {
+        $('#copySuccessOverlay').removeClass('hidden').addClass('flex');
+
+        setTimeout(function () {
+            $('#copySuccessOverlay').addClass('hidden').removeClass('flex');
+            if (callback) {
+                callback();
+            }
+        }, 1500);
+    }
+    
+    
+    $('body').on('click', '.sendReservationFormBtn', function () {
+
+        $.ajax({
+
+            url: $('#sendReservationFormForm').attr('action'),
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                reservation_id: $(this).data('reservation'),
+                form_id: $(this).data('form')
+            },
+
+            success: function () {
+                showSuccessOverlay(function () {
+                    location.reload();
+                });
+            },
+
+            error: function (xhr) {
+                alert(xhr.responseJSON?.message ?? 'Failed to send form.');
+            }
+
+        });
+
+    });
+
+    $('body').on('click', '.resendReservationFormBtn', function () {
+
+        $.ajax({
+            url: $('#resendReservationFormForm').attr('action'),
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                reservation_id: $(this).data('reservation'),
+                sent_form_id: $(this).data('sent-form')
+            },
+
+            success: function () {
+                showSuccessOverlay(function () {
+                    location.reload();
+                });
+
+            },
+
+            error: function (xhr) {
+                alert(xhr.responseJSON?.message ?? 'Failed to re-send form.');
+            }
+
+        });
+
+    });
     // end forms
 
 
@@ -1003,6 +1068,45 @@ $(document).ready(function() {
     window.closeReservationAutomatedEmailModal = function(){
         $('#reservationAutomatedEmailModal').addClass('hidden');
     }
+
+    $('body').on('click','.resendReservationAutomatedEmail',function(){
+
+        const url = $(this).data('url');
+
+        $.ajax({
+            url,
+            type:'POST',
+            data:{
+                _token:$('meta[name="csrf-token"]').attr('content')
+            },
+
+            beforeSend(){
+                showLoader();
+            },
+
+            success(response){
+
+                if(response.success){
+                    $('#reservationAutomatedEmailsTable tbody')
+                        .html(response.html);
+                }
+                else{
+                    alert(response.message);
+                }
+
+            },
+
+            error(){
+                alert('Failed to resend email.');
+            },
+
+            complete(){
+                hideLoader();
+            }
+
+        });
+
+    });
     // end reservation automated email
 
     // start reservation phone notes
@@ -1377,4 +1481,89 @@ $(document).ready(function() {
     });
     // end reservation itinerary pdf
 
+    // start send details to customer button
+    $(document).on("click", "#sendReservationDetailsBtn", function () {
+
+        let reservations = [];
+
+        $(".reservation-checkbox:checked").each(function () {
+            reservations.push($(this).val());
+        });
+
+        if (reservations.length === 0) {
+            openAttentionModal();
+            return;
+        }
+        sendReservationDetails(reservations);
+    });
+
+    function sendReservationDetails(reservations) {
+
+        const url = $("#sendReservationDetailsBtn").data("url");
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                reservations: reservations
+            },
+            beforeSend() {
+                showLoader();
+            },
+            success(response) {
+                $(".reservation-checkbox").prop("checked", false);
+            },
+            error() {
+                alert("Failed to send reservation details.");
+            },
+            complete() {
+                hideLoader();
+            }
+        });
+    }
+    // end send details to customer button
+
+    // start credit card form confirmation button
+    window.openCreditCardFormConfirmationModal = function() {
+        $('#creditCardFormConfirmationModal').removeClass('hidden');
+    }
+
+    window.closeCreditCardFormConfirmationModal = function() {
+        $('#creditCardFormConfirmationModal').addClass('hidden');
+    }
+
+    $(document).on("click", "#sendCreditCardFormBtn", function () {
+        openCreditCardFormConfirmationModal();
+    });
+
+    $(document).on("click","#creditCardFormConfirmationModal_sendBtn",function () {
+        sendCreditCardForm();
+    });
+
+    function sendCreditCardForm()
+    {
+        const url = $("#sendCreditCardFormBtn").data("url");
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: {
+                _token: $('meta[name="csrf-token"]').attr("content")
+            },
+            beforeSend() {
+                showLoader();
+            },
+            success(response) {
+                closeCreditCardFormConfirmationModal();
+            },
+            error() {
+                alert("Failed to send form.");
+            },
+            complete() {
+                hideLoader();
+            }
+        });
+    }
+    // end credit card form confirmation button
 });

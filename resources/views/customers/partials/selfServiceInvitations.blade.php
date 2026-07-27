@@ -10,7 +10,10 @@
         </div>
     </div>
 
-    <x-primary-btn class="flex items-center gap-4" ><i class="fas fa-paper-plane"></i>Send New Invitation</x-primary-btn>
+    <button type="button" id="sendNewInvitationBtn" data-customer="{{ $customer->id }}" class="space-x-2 bg-[#B6844A] text-white font-semibold py-2 px-7 rounded cursor-pointer border border-transparent hover:bg-white hover:border-[#B6844A] hover:text-[#B6844A] transition-all duration-200 ">
+        <i class="fas fa-paper-plane"></i>
+        Send New Invitation
+    </button>
 </div> 
 <hr class="mt-4 w-full border-b-1 border-[#dee2e6]">
 <div class="relative flex flex-col gap-3 mt-3">
@@ -111,10 +114,10 @@
 <div class="relative flex flex-row justify-between gap-3 mt-5">
     <h6 class="text-xl">Intake Form</h6>
 
-    <x-primary-btn class="flex items-center gap-4">
+    <button type="button" id="sendIntakeFormBtn" data-customer="{{ $customer->id }}" class="space-x-2 bg-[#B6844A] text-white font-semibold py-2 px-7 rounded cursor-pointer border border-transparent hover:bg-white hover:border-[#B6844A] hover:text-[#B6844A] transition-all duration-200">
         <i class="fas fa-paper-plane"></i>
-        Send New Invitation
-    </x-primary-btn>
+        Send Intake Form
+    </button>
 </div>
 
 <hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
@@ -162,7 +165,7 @@
                         <i class="fas fa-address-card text-2xl"></i>
 
                         @if($form->status !== 'S')
-                            <button type="button" class="mt-2" title="Resend">
+                            <button type="button" class="mt-2 resendIntakeFormBtn cursor-pointer" data-form="{{ $form->id }}" title="Resend">
                                 <i class="fas fa-redo text-xl text-[#B6844A]"></i>
                             </button>
                         @endif

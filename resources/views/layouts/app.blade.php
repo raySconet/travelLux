@@ -30,15 +30,6 @@
             @vite(['resources/css/administration.css'])
         @endif
 
-        @if(request()->is('calendar') || request()->is('calendar/*'))
-            @vite('resources/js/calendar.js')
-        @endif
-
-        @if(request()->is('schedule') || request()->is('schedule/*'))
-            @vite('resources/css/schedule.css')
-            @vite('resources/js/schedule.js')
-        @endif
-
         @if(request()->is('system-users') || request()->is('system-users/*') || request()->is('timelinetasks') || request()->is('timelinetasks/*'))
             @vite('resources/js/systemUsers-timelineTasks.js')
         @endif
@@ -54,7 +45,9 @@
         @if(request()->is('itinerary') || request()->is('itinerary/*'))
             @vite('resources/js/itinerary.js')
         @endif
-
+        @if(request()->is('productConfiguration') || request()->is('productConfiguration/*'))
+            @vite('resources/js/productConfiguration.js')
+        @endif
         @if(request()->is('customer-list') || request()->is('customer-list/*') || request()->is('customer') || request()->is('customer/*') || request()->is('inviteNewCustomer'))
             @vite('resources/js/customers.js')
         @endif
@@ -194,7 +187,7 @@
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-        <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script>
+        {{-- <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script> --}}
         <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>

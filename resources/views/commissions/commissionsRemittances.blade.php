@@ -15,7 +15,7 @@
     </x-slot>
 
 
-    <div class="bg-[#90caf9] shadow sm:rounded-lg p-6 w-[98%] mt-2 ml-3">
+    <div class="bg-[#B6844A] shadow sm:rounded-lg p-6 w-[98%] mt-2 ml-3">
         <p class="text-base font-semibold text-white">Search For Reservations</p>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
             <div class="relative mt-3">
@@ -52,8 +52,8 @@
         </div>
 
         <div class="space-x-2 flex justify-end">
-            <x-secondary-btn class="border-none"><i class="far fa-times-circle"></i><span>Clear</span></x-secondary-btn>
-            <x-primary-btn><i class="fas fa-sync"></i><span>Search</span></x-primary-btn>
+            <x-secondary-btn style="background: #303030; border: solid 0px black;" class=""><i class="far fa-times-circle"></i><span>Clear</span></x-secondary-btn>
+            <x-primary-btn style="border:solid 1px white;" ><i class="fas fa-sync"></i><span>Search</span></x-primary-btn>
         </div>
     </div>
 
@@ -68,7 +68,7 @@
         </div>
 
         <div class="p-6">
-       
+
         <div class="bg-white shadow sm:rounded-lg">
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
@@ -82,19 +82,19 @@
                             </th>
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Group Number
-                            </th>   
+                            </th>
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Product
                             </th>
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Cost
-                            </th>  
+                            </th>
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Checkout
-                            </th> 
+                            </th>
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Commission
-                            </th> 
+                            </th>
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Commission Remittance
                             </th>
@@ -103,7 +103,7 @@
                             </th>
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Name
-                            </th>        
+                            </th>
                         </tr>
                     </thead>
 
@@ -119,23 +119,23 @@
                             </td>
 
                             <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                            
+
                             </td>
 
                             <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                            
+
                             </td>
 
                             <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                            
+
                             </td>
 
                             <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                            
+
                             </td>
 
                             <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                            
+
                             </td>
 
                             <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
@@ -149,10 +149,10 @@
                             <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
                                 <i title="Send Email" class="fas fa-envelope text-sm"></i>
                             </td>
-                            
+
                             <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
                                 <i class="fas fa-clipboard-list text-[#B6844A] text-sm"></i>
-                            </td>    
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -163,8 +163,8 @@
     <!-- Edit Reservation Modal -->
     <div id="editReservationModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">
         <div class="bg-white w-full max-w-lg rounded-lg shadow-lg relative">
-            
-        
+
+
             <div class="flex items-center justify-between px-6 py-4 border-b-2 border-[#dee2e6]">
                 <div class="flex items-center space-x-2">
                     <i class="fas fa-edit text-xl text-[#B6844A]"></i>
@@ -178,7 +178,7 @@
                 </button>
             </div>
 
-     
+
             <div class="px-6 py-4 space-y-4">
                 <div>
                     <p class="text-base">Reservation #:</p>

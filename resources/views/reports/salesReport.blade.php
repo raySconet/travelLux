@@ -5,7 +5,10 @@
                 <i class="fa-solid fa-vote-yea mr-2 text-[#B6844A]"></i>{{ __('Sales Report') }}
             </h2>
 
-            <button class="flex items-center gap-2"><i class="far fa-calendar-alt text-[#212121] text-2xl cursor-pointer" onclick="openReportDateRangeModal()"></i>-</button>
+            <button class="flex items-center gap-2 cursor-pointer" onclick="openReportDateRangeModal()">
+                <i class="far fa-calendar-alt text-[#212121] text-2xl"></i>
+                <span id="selectedReportDates" class="text-[#212121] text-base font-bold"></span>
+            </button>
 
         </div>
     </x-slot>

@@ -7,7 +7,10 @@
             
             <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer"><i class="fas fa-cloud-download-alt"></i>Download</button>
 
-            <button class="flex items-center gap-2 cursor-pointer"><i class="far fa-calendar-alt text-[#212121] text-2xl" onclick="openReportDateRangeModal()"></i>-</button>
+            <button  class="flex items-center gap-2 cursor-pointer" onclick="openReportDateRangeModal()">
+                <i class="far fa-calendar-alt text-[#212121] text-2xl" ></i>
+                <span id="selectedReportDates" class="text-[#212121] text-base font-bold"></span>
+            </button>
 
         </div>
     </x-slot>
@@ -21,7 +24,7 @@
                         <tr>
                             <th colspan="8" class="px-6 py-6 text-center">
                                 <span class="inline-block bg-[#bdbdbd] px-3 py-3 rounded-2xl font-normal">
-                                    Total Paid: <b>$</b>
+                                    Total Paid: <span id="totalPaid" class="font-bold">$0.00</span>
                                 </span>
                             </th>
                         </tr>
@@ -53,51 +56,11 @@
                         </tr>
                     </thead>
 
-
-                    <tbody class="divide-y">
-                        @foreach ($users as $user)
-                            <tr class="hover:bg-gray-50 cursor-pointer">
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                                    {{ $user->name }}
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
-                                    
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                                    
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                              
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-
-                                </td>
-                                
-                                <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-
-                                </td>    
-
-                            </tr>
-                        @endforeach
-                    </tbody>
+                    <tbody class="divide-y" id="report1099TableBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
-
-    
     
 </x-app-layout>
 <x-report-range-date>

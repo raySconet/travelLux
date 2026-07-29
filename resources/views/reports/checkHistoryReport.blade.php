@@ -7,8 +7,10 @@
             
             <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer"><i class="fas fa-cloud-download-alt"></i>Download</button>
 
-            <button class="flex items-center gap-2"><i class="far fa-calendar-alt text-[#212121] text-2xl cursor-pointer" onclick="openReportDateRangeModal()"></i>-</button>
-
+            <button class="flex items-center gap-2 cursor-pointer" onclick="openReportDateRangeModal()">
+                <i class="far fa-calendar-alt text-[#212121] text-2xl"></i>
+                <span id="selectedReportDates" class="text-[#212121] text-base font-bold"></span>
+            </button>
         </div>
     </x-slot>
 
@@ -16,10 +18,13 @@
         <div class="p-3 bg-white shadow sm:rounded-lg">
             <div class="flex items-end justify-end px-6 py-4">
                 <div class="relative">
-                    <input type="text" placeholder="Quick Search" class="w-64 border-0 border-b-2 border-gray-400 text-sm px-1 py-1">
+                    <input type="text" id="checkHistorySearch" placeholder="Quick Search" class="w-64 border-0 border-b-2 border-gray-400 text-sm px-1 py-1 focus:outline-none">
                 </div>
             </div>
+            
+            <div id="checkHistoryRecords" class="mt-4"></div>
         </div>
+
     </div>
 
 </x-app-layout>

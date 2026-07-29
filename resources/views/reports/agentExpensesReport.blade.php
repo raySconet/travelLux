@@ -7,8 +7,10 @@
             
             <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer"><i class="fas fa-cloud-download-alt"></i>Download</button>
 
-            <button class="flex items-center gap-2 cursor-pointer"><i class="far fa-calendar-alt text-[#212121] text-2xl" onclick="openReportDateRangeModal()"></i>-</button>
-
+            <button class="flex items-center gap-2 cursor-pointer" onclick="openReportDateRangeModal()">
+                <i class="far fa-calendar-alt text-[#212121] text-2xl"></i>
+                <span id="selectedReportDates" class="text-[#212121] text-base font-bold"></span>
+            </button>
         </div>
     </x-slot>
 
@@ -31,8 +33,8 @@
             <div x-show="adding" x-transition class="px-6 pb-4">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="relative mt-2">
-                        <label for="reservationNumber">Reservation Number</label>
-                        <select name="reservationNumber" id="reservationNumber" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
+                        <label for="reservation_number">Reservation Number</label>
+                        <select name="reservation_number" id="reservation_number" class="w-full mb-4 border-b-2 border-[#bdbdbd] focus:outline-none focus:border-[#B6844A]">
                             <option value="-1">None</option>
                         </select>
                     </div>

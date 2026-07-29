@@ -309,6 +309,9 @@ Route::middleware('auth')->group(function(){
     Route::post('/reservations/{reservation}/send-credit-card-form',[ReservationController::class, 'sendCreditCardForm'])->name('reservations.sendCreditCardForm');
 
     Route::post('/reservations/{reservation}/resend-automated-email/{customerAutomatedEmail}',[ReservationController::class, 'resendAutomatedEmail'])->name('reservations.resendAutomatedEmail');
+
+    Route::get('/commissions-remittances', [CommissionsRemittancesController::class, 'remittances'])
+    ->name('commissions-remittances');
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');

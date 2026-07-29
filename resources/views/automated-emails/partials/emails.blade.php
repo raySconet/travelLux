@@ -1,8 +1,18 @@
 @php
-    $productIds = array_filter(explode(',', $automatedEmail->product_list ?? ''));
-    $destinationIds = array_filter(explode(',', $automatedEmail->destination_list ?? ''));
-    $resortIds = array_filter(explode(',', $automatedEmail->resort_list ?? ''));
-    $cruiseIds = array_filter(explode(',', $automatedEmail->cruise_itinerary_list ?? ''));
+   $productIds = array_filter(explode(',', $automatedEmail->product_list ?? ''));
+   $destinationIds = array_filter(explode(',', $automatedEmail->destination_list ?? ''));
+   $resortIds = array_filter(explode(',', $automatedEmail->resort_list ?? ''));
+   $cruiseIds = array_filter(explode(',', $automatedEmail->cruise_itinerary_list ?? ''));
+   $rowCount = max(count($productIds), count($destinationIds), count($resortIds), count($cruiseIds), 1);
+   $savedRows = [];
+   for ($i = 0; $i < $rowCount; $i++) {
+       $savedRows[] = [
+           'product'     => $productIds[$i]     ?? '',
+           'destination' => $destinationIds[$i] ?? '',
+           'resort'      => $resortIds[$i]       ?? '',
+           'cruise'      => $cruiseIds[$i]       ?? '',
+       ];
+   }
 @endphp
 <div>
     <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
@@ -73,8 +83,7 @@
             <select name="agent_id" id="agent_id" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
                 <option value="-1" {{ old('agent_id', $automatedEmail->agent_id ?? '') == -1 ? 'selected' : '' }}>All Agents</option>
                 @foreach($users as $user)
-                    <option value="{{ $user->id }}"
-                        {{ old('agent_id', $automatedEmail->agent_id ?? '') == $user->id ? 'selected' : '' }}>
+                    <option value="{{ $user->id }}" {{ old('agent_id', $automatedEmail->agent_id ?? '') == $user->id ? 'selected' : '' }}>
                         {{ $user->fname . ' ' . $user->lname }}
                     </option>
                 @endforeach        
@@ -90,61 +99,40 @@
         </div>
     </div>
 
-    <div id="reservationReminderSection" style="display: {{ old('email_type', $automatedEmail->email_type ?? '') === 'Reservation Reminder' ? 'grid' : 'none' }};" class="grid grid-cols-1 md:grid-cols-5 gap-x-5 gap-y-4 items-end">
-        <div class="relative mt-8">
-            <label for="product_list">Product</label>
-            <select id="product_list"  name="product_list[]"  class="product_list w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
+    <div id="reservationReminderSection" style="display: {{ old('email_type', $automatedEmail->email_type ?? '') === 'Reservation Reminder' ? 'block' : 'none' }};">
+        <div id="automatedEmailOptionTemplates" class="hidden" aria-hidden="true">
+            <select id="template_product_list">
                 <option value="">--Select Product--</option>
                 @foreach($products as $product)
-                    <option value="{{ $product->id }}" {{ in_array($product->id, $productIds) ? 'selected' : '' }}>
-                        {{ $product->product_name }}
-                    </option>
-                @endforeach            
+                    <option value="{{ $product->id }}">{{ $product->product_name }}</option>
+                @endforeach
             </select>
-        </div>
-
-        <div class="relative mt-8">
-            <label for="destination_list">Destination</label>
-            <select name="destination_list[]" id="destination_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
+            <select id="template_destination_list">
                 <option value="">--Select Destination--</option>
                 @foreach($destinations as $destination)
-                    <option value="{{ $destination->id }}" data-product="{{ $destination->product_id }}" {{ in_array($destination->id, $destinationIds) ? 'selected' : '' }}>
-                        {{ $destination->destination_name }}
-                    </option>
-                @endforeach            
+                    <option value="{{ $destination->id }}" data-product="{{ $destination->product_id }}">{{ $destination->destination_name }}</option>
+                @endforeach
             </select>
-        </div>
-
-        <div class="relative mt-8">
-            <label for="resort_list">Resort/Ship</label>
-            <select name="resort_list[]" id="resort_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
+            <select id="template_resort_list">
                 <option value="">--Select Resort/Ship--</option>
                 @foreach($resortShips as $resortShip)
-                    <option value="{{ $resortShip->id }}" data-destination="{{ $resortShip->destination_id }}" {{ in_array($resortShip->id, $resortIds) ? 'selected' : '' }}>
-                        {{ $resortShip->resort_ship_name }}
-                    </option>
-                @endforeach            
+                    <option value="{{ $resortShip->id }}" data-destination="{{ $resortShip->destination_id }}">{{ $resortShip->resort_ship_name }}</option>
+                @endforeach
             </select>
-        </div>
-
-        <div class="relative mt-8">
-            <label for="cruise_itinerary_list">Cruise/Type</label>
-            <select name="cruise_itinerary_list[]" id="cruise_itinerary_list" class="w-full border-b-2 border-[#bdbdbd] mb-4 focus:outline-none focus:border-[#B6844A]">
+            <select id="template_cruise_itinerary_list">
                 <option value="">--Select Cruise/Type--</option>
                 @foreach($cruiseItineraries as $cruiseItinerary)
-                    <option value="{{ $cruiseItinerary->id }}" data-resort="{{ $cruiseItinerary->resort_ship_id }}" {{ in_array($cruiseItinerary->id, $cruiseIds) ? 'selected' : '' }}>
-                        {{ $cruiseItinerary->cruise_name }}
-                    </option>
-                @endforeach            
+                    <option value="{{ $cruiseItinerary->id }}" data-resort="{{ $cruiseItinerary->resort_ship_id }}">{{ $cruiseItinerary->cruise_name }}</option>
+                @endforeach
             </select>
         </div>
 
-        <div class="flex justify-center items-center">
-            <i id="addRowAutomatedEmails" class="fa-solid fa-circle-plus text-[#B6844A] mb-4 text-2xl cursor-pointer"></i>
+        <div class="flex items-start gap-3 mt-4">
+            <div id="addRowAutomatedEmailsContainer" class="flex-1 grid grid-cols-1 gap-y-4" data-saved-rows='@json($savedRows)'></div>
+
+            <i id="addRowAutomatedEmails" class="fa-solid fa-circle-plus text-[#B6844A] text-2xl cursor-pointer mt-5"></i>
         </div>
     </div>
-    <div id="addRowAutomatedEmailsContainer" class="mt-4 space-y-3" data-products="{{ $automatedEmail->product_list }}" data-destinations="{{ $automatedEmail->destination_list }}" data-resorts="{{ $automatedEmail->resort_list }}" data-cruises="{{ $automatedEmail->cruise_itinerary_list }}"></div>
-
 
     <div class="mt-7 space-x-2">
         <input type="file" id="attachments" name="attachments[]" multiple class="hidden">

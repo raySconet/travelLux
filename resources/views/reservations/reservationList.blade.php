@@ -86,7 +86,7 @@
            <div class="flex justify-end px-6">
                 <button
                     type="button"
-                    class="exportExcelBtn bg-[#e0e0e0] text-black px-2 py-1 rounded-none border-1 border-[#666]" style="background-image: linear-gradient(to bottom, #f9f9f9 0%, #e0e0e0 100%);">
+                    class="exportExcelBtn bg-[#e0e0e0] text-black px-2 py-1 rounded-none border-1 border-[#666] cursor-pointer" style="background-image: linear-gradient(to bottom, #f9f9f9 0%, #e0e0e0 100%);">
                     Excel
                 </button>
             </div>

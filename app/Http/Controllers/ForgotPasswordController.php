@@ -36,9 +36,7 @@ class ForgotPasswordController extends Controller
             'status' => 'P',
         ]);
 
-        $token = base64_encode(
-            $forgot->id . config('app.invitation_salt')
-        );
+        $token = base64_encode($forgot->id . config('app.invitation_salt'));
 
         Mail::to($user->email)->send(
             new ForgotPasswordMail($user, $token)
@@ -99,11 +97,7 @@ class ForgotPasswordController extends Controller
 
         $forgot = UserForgotPassword::find($id);
 
-        if (
-            !$forgot ||
-            $forgot->status !== 'P' ||
-            now()->timestamp > ($forgot->requested_on + 600)
-        ) {
+        if (!$forgot || $forgot->status !== 'P' || now()->timestamp > ($forgot->requested_on + 600)) {
             abort(403, 'This link is invalid or has expired.');
         }
 

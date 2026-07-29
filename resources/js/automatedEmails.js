@@ -1,339 +1,192 @@
 import './bootstrap';
 
 $(document).ready(() => {
+    const $masterProduct     = $('#template_product_list option').clone();
+    const $masterDestination = $('#template_destination_list option').clone();
+    const $masterResort      = $('#template_resort_list option').clone();
+    const $masterCruise      = $('#template_cruise_itinerary_list option').clone();
 
-    const $masterProduct = $('#product_list option').clone();
-    const $masterDestination = $('#destination_list option').clone();
-    const $masterResort = $('#resort_list option').clone();
-    const $masterCruise = $('#cruise_itinerary_list option').clone();
-
-    const rowAutomatedEmail = `
+    const rowTemplate = `
         <div class="email-row grid grid-cols-1 md:grid-cols-5 gap-x-5 gap-y-4 items-end">
-
             <div class="relative">
                 <label>Product</label>
-                <select name="product_list[]" class="product_list w-full border-b-2 border-[#bdbdbd] mb-4">
-                    <option value="-1">--Select Product--</option>
-                </select>
+                <select name="product_list[]" class="product_list w-full border-b-2 border-[#bdbdbd] mb-4"></select>
             </div>
-
             <div class="relative">
                 <label>Destination</label>
-                <select  name="destination_list[]"  class="destination_list w-full border-b-2 border-[#bdbdbd] mb-4">
-                    <option value="-1">--Select Destination--</option>
-                </select>
+                <select name="destination_list[]" class="destination_list w-full border-b-2 border-[#bdbdbd] mb-4"></select>
             </div>
-
             <div class="relative">
                 <label>Resort/Ship</label>
-                <select name="resort_list[]" class="resort_list w-full border-b-2 border-[#bdbdbd] mb-4">
-                    <option value="-1">--Select Resort/Ship--</option>
-                </select>
+                <select name="resort_list[]" class="resort_list w-full border-b-2 border-[#bdbdbd] mb-4"></select>
             </div>
-
             <div class="relative">
                 <label>Cruise/Type</label>
-                <select name="cruise_itinerary_list[]" class="cruise_list w-full border-b-2 border-[#bdbdbd] mb-4">
-                    <option value="-1">--Select Cruise/Type--</option>
-                </select>
+                <select name="cruise_itinerary_list[]" class="cruise_list w-full border-b-2 border-[#bdbdbd] mb-4"></select>
             </div>
-
             <div class="flex justify-center items-center">
                 <button type="button" class="delete-row text-[#989898] text-2xl mb-3 cursor-pointer">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
-
         </div>`
     ;
 
-    function initDynamicEmailRow($row) {
+    const isSet = (v) => v !== undefined && v !== null && v !== '' && v !== '-1';
 
-        const $product = $row.find('.product_list');
+    function rebuildDestinations($row, selectedValue) {
+        const productId = $row.find('.product_list').val();
         const $destination = $row.find('.destination_list');
-        const $resort = $row.find('.resort_list');
-        const $cruise = $row.find('.cruise_list');
-
-        $product.html($masterProduct.clone());
-
-        $product.val('');
-        $destination.html('<option value="-1">--Select Destination--</option>');
-        $resort.html('<option value="-1">--Select Resort/Ship--</option>');
-        $cruise.html('<option value="-1">--Select Cruise/Type--</option>');
-
-        function filterDest() {
-
-            const productId = $product.val();
-
-            $destination.html('<option value="-1">--Select Destination--</option>');
-
-            if (!productId) {
-
-                $resort.html('<option value="-1">--Select Resort/Ship--</option>');
-                $cruise.html('<option value="-1">--Select Cruise/Type--</option>');
-
-                return;
-            }
-
+        $destination.empty().append('<option value="">--Select Destination--</option>');
+        if (isSet(productId)) {
             $masterDestination.each(function () {
-
                 const $opt = $(this);
-
-                if ($opt.val() && $opt.data('product') == productId) {
+                if ($opt.val() && String($opt.data('product')) === String(productId)) {
                     $destination.append($opt.clone());
                 }
             });
-
-            $destination.val('');
-
-            filterResort();
         }
-
-        function filterResort() {
-
-            const destId = $destination.val();
-
-            $resort.html('<option value="-1">--Select Resort/Ship--</option>');
-
-            if (!destId) {
-
-                $cruise.html('<option value="-1">--Select Cruise/Type--</option>');
-
-                return;
-            }
-
-            $masterResort.each(function () {
-
-                const $opt = $(this);
-
-                if ($opt.val() && $opt.data('destination') == destId) {
-                    $resort.append($opt.clone());
-                }
-            });
-
-            $resort.val('');
-
-            filterCruise();
-        }
-
-        function filterCruise() {
-
-            const resortId = $resort.val();
-
-            $cruise.html('<option value="-1">--Select Cruise/Type--</option>');
-
-            if (!resortId) {
-                return;
-            }
-
-            $masterCruise.each(function () {
-
-                const $opt = $(this);
-
-                if ($opt.val() && $opt.data('resort') == resortId) {
-                    $cruise.append($opt.clone());
-                }
-            });
-
-            $cruise.val('');
-        }
-
-        $product.on('change', filterDest);
-        $destination.on('change', filterResort);
-        $resort.on('change', filterCruise);
+        const target = isSet(selectedValue) && $destination.find(`option[value="${selectedValue}"]`).length ? selectedValue : '';
+        $destination.val(target);
+        rebuildResorts($row);
     }
 
-    $('#addRowAutomatedEmails').on('click', function () {
-        const $row = $(rowAutomatedEmail);
-        $('#addRowAutomatedEmailsContainer').append($row);
-        initDynamicEmailRow($row);
-    });
+   function rebuildResorts($row, selectedValue) {
+       const destId = $row.find('.destination_list').val();
+       const $resort = $row.find('.resort_list');
+       $resort.empty().append('<option value="">--Select Resort/Ship--</option>');
+       if (isSet(destId)) {
+           $masterResort.each(function () {
+               const $opt = $(this);
+               if ($opt.val() && String($opt.data('destination')) === String(destId)) {
+                   $resort.append($opt.clone());
+               }
+           });
+       }
+       const target = isSet(selectedValue) && $resort.find(`option[value="${selectedValue}"]`).length ? selectedValue : '';
+       $resort.val(target);
+       rebuildCruises($row);
+   }
 
-    function toggleReservationSection() {
-        if ($('#email_type').val() === 'Reservation Reminder') {
-            $('#reservationReminderSection').css('display', 'grid');
-        } else {
-            $('#reservationReminderSection').hide();
-        }
-    }
+   function rebuildCruises($row, selectedValue) {
+       const resortId = $row.find('.resort_list').val();
+       const $cruise = $row.find('.cruise_list');
+       $cruise.empty().append('<option value="">--Select Cruise/Type--</option>');
+       if (isSet(resortId)) {
+           $masterCruise.each(function () {
+               const $opt = $(this);
+               if ($opt.val() && String($opt.data('resort')) === String(resortId)) {
+                   $cruise.append($opt.clone());
+               }
+           });
+       }
+       const target = isSet(selectedValue) && $cruise.find(`option[value="${selectedValue}"]`).length ? selectedValue : '';
+       $cruise.val(target);
+   }
 
-    toggleReservationSection();
+   function buildRow(saved) {
+       const $row = $(rowTemplate);
 
-    $(document).on('change', '#email_type', function () {
-        toggleReservationSection();
-    });
+       $row.find('.product_list').html($masterProduct.clone());
+       $row.find('.destination_list').html('<option value="">--Select Destination--</option>');
+       $row.find('.resort_list').html('<option value="">--Select Resort/Ship--</option>');
+       $row.find('.cruise_list').html('<option value="">--Select Cruise/Type--</option>');
+       $row.find('.product_list').on('change', () => rebuildDestinations($row));
+       $row.find('.destination_list').on('change', () => rebuildResorts($row));
+       $row.find('.resort_list').on('change', () => rebuildCruises($row));
+       $row.find('.delete-row').on('click', () => $row.remove());
 
-    const $emailProduct = $('#product_list');
-    const $emailDestination = $('#destination_list');
-    const $emailResort = $('#resort_list');
-    const $emailCruise = $('#cruise_itinerary_list');
+       if (saved && isSet(saved.product)) {
+           $row.find('.product_list').val(saved.product);
+           rebuildDestinations($row, saved.destination);
+           if (isSet(saved.destination)) {
+               $row.find('.destination_list').val(saved.destination);
+               rebuildResorts($row, saved.resort);
+               if (isSet(saved.resort)) {
+                   $row.find('.resort_list').val(saved.resort);
+                   rebuildCruises($row, saved.cruise);
+               }
+           }
+       }
+       return $row;
+   }
 
-    if ($emailProduct.length) {
+   const $rowsContainer = $('#addRowAutomatedEmailsContainer');
+   if ($rowsContainer.length) {
+       let savedRows = [];
+       try {
+           savedRows = JSON.parse($rowsContainer.attr('data-saved-rows') || '[]');
+       } catch (e) {
+           savedRows = [];
+       }
+       const hasAnySavedData = savedRows.some(r => [r.product, r.destination, r.resort, r.cruise].some(isSet));
+       if (hasAnySavedData) {
+           savedRows.forEach(saved => $rowsContainer.append(buildRow(saved)));
+       } else {
+           $rowsContainer.append(buildRow(null));
+       }
+   }
 
-        const allDestinations = $emailDestination.find('option').clone();
-        const allResorts = $emailResort.find('option').clone();
-        const allCruises = $emailCruise.find('option').clone();
+   $(document).on('click', '#addRowAutomatedEmails', function () {
+       $rowsContainer.append(buildRow(null));
+   });
 
-        function filterEmailDestinations() {
-            const product = $emailProduct.val();
+   function toggleReservationSection() {
+       if ($('#email_type').val() === 'Reservation Reminder') {
+           $('#reservationReminderSection').show();
+       } else {
+           $('#reservationReminderSection').hide();
+       }
+   }
 
-            $emailDestination.html('<option value="-1">--Select Destination--</option>');
+   toggleReservationSection();
 
-            allDestinations.each(function () {
-                const $opt = $(this);
+   $(document).on('change', '#email_type', toggleReservationSection);
 
-                if ($opt.val() && $opt.data('product') == product) {
-                    $emailDestination.append($opt.clone());
-                }
-            });
+   const attachBtn = $('#attachBtn');
+   const attachmentsInput = $('#attachments');
+   const attachmentsTableBody = $('#attachmentsTableBody');
+   attachBtn.on('click', function () {
+       attachmentsInput.trigger('click');
+   });
 
-            filterEmailResorts();
-        }
+   let dt = new DataTransfer();
+   attachmentsInput.on('change', function () {
+       const emptyRow = attachmentsTableBody.find('.empty-attachments-row');
+       if (emptyRow.length) emptyRow.remove();
+       Array.from(this.files).forEach(file => {
+           dt.items.add(file);
+           const rowId = 'new-file-' + file.name + '-' + Date.now();
+           const row = `
+            <tr id="${rowId}" class="hover:bg-gray-50">
+                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
+                    <button type="button" onclick="removeSelectedFile('${rowId}', '${file.name}')">
+                        <i class="fas fa-trash text-[#989898] cursor-pointer"></i>
+                    </button>
+                </td>
+                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
+                    ${file.name}
+                </td>
+            </tr>`;
+           attachmentsTableBody.append(row);
+       });
+       attachmentsInput[0].files = dt.files;
+   });
 
-        function filterEmailResorts() {
-            const destination = $emailDestination.val();
-
-            $emailResort.html('<option value="-1">--Select Resort/Ship--</option>');
-
-            allResorts.each(function () {
-                const $opt = $(this);
-
-                if ($opt.val() && $opt.data('destination') == destination) {
-                    $emailResort.append($opt.clone());
-                }
-            });
-
-            filterEmailCruises();
-        }
-
-        function filterEmailCruises() {
-            const resort = $emailResort.val();
-
-            $emailCruise.html('<option value="-1">--Select Cruise/Type--</option>');
-
-            allCruises.each(function () {
-                const $opt = $(this);
-
-                if ($opt.val() && $opt.data('resort') == resort) {
-                    $emailCruise.append($opt.clone());
-                }
-            });
-        }
-
-        $emailProduct.on('change', filterEmailDestinations);
-        $emailDestination.on('change', filterEmailResorts);
-        $emailResort.on('change', filterEmailCruises);
-
-        filterEmailDestinations();
-    }
-
-
-    const $rowsContainer = $('#addRowAutomatedEmailsContainer');
-
-    const productValues = ($rowsContainer.data('products') || '').toString().split(',');
-    const destinationValues = ($rowsContainer.data('destinations') || '').toString().split(',');
-    const resortValues = ($rowsContainer.data('resorts') || '').toString().split(',');
-    const cruiseValues = ($rowsContainer.data('cruises') || '').toString().split(',');
-
-    if (productValues.length > 1) {
-
-        for (let i = 1; i < productValues.length; i++) {
-
-            const $row = $(rowAutomatedEmail);
-
-            $rowsContainer.append($row);
-
-            initDynamicEmailRow($row);
-
-            const $product = $row.find('.product_list');
-            const $destination = $row.find('.destination_list');
-            const $resort = $row.find('.resort_list');
-            const $cruise = $row.find('.cruise_list');
-
-            $product.val(productValues[i]).trigger('change');
-
-            setTimeout(() => {
-
-                $destination.val(destinationValues[i]).trigger('change');
-
-                setTimeout(() => {
-
-                    $resort.val(resortValues[i]).trigger('change');
-
-                    setTimeout(() => {
-
-                        $cruise.val(cruiseValues[i]).trigger('change');
-
-                    }, 0);
-
-                }, 0);
-
-            }, 0);
-        }
-    }
-    const attachBtn = $('#attachBtn');
-    const attachmentsInput = $('#attachments');
-    const attachmentsTableBody = $('#attachmentsTableBody');
-
-    attachBtn.on('click', function () {
-        attachmentsInput.trigger('click');
-    });
-
-    let dt = new DataTransfer();
-
-    attachmentsInput.on('change', function () {
-
-        const emptyRow = attachmentsTableBody.find('.empty-attachments-row');
-        if (emptyRow.length) emptyRow.remove();
-
-        Array.from(this.files).forEach(file => {
-            dt.items.add(file);
-
-            const rowId = 'new-file-' + file.name + '-' + Date.now();
-
-            const row = `
-                <tr id="${rowId}" class="hover:bg-gray-50">
-                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-                        <button type="button" onclick="removeSelectedFile('${rowId}', '${file.name}')">
-                            <i class="fas fa-trash text-[#989898] cursor-pointer"></i>
-                        </button>
-                    </td>
-                    <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-                        ${file.name}
-                    </td>
-                </tr>
-            `;
-
-            attachmentsTableBody.append(row);
-        });
-
-        attachmentsInput[0].files = dt.files;
-    });
-
-    window.removeSelectedFile = function (rowId, fileName) {
-
-        $('#' + rowId).remove();
-
-        const newDt = new DataTransfer();
-
-        Array.from(attachmentsInput[0].files).forEach(file => {
-            if (file.name !== fileName) {
-                newDt.items.add(file);
-            }
-        });
-
-        dt = newDt;
-        attachmentsInput[0].files = dt.files;
-
-        if (attachmentsTableBody.find('tr').length === 0) {
-            attachmentsTableBody.html(`
-                <tr class="empty-attachments-row">
-                    <td colspan="2" class="text-center py-3 text-gray-400">
-                        No attachments
-                    </td>
-                </tr>
-            `);
-        }
-    };
-
+   window.removeSelectedFile = function (rowId, fileName) {
+       $('#' + rowId).remove();
+       const newDt = new DataTransfer();
+       Array.from(attachmentsInput[0].files).forEach(file => {
+           if (file.name !== fileName) newDt.items.add(file);
+       });
+       dt = newDt;
+       attachmentsInput[0].files = dt.files;
+       if (attachmentsTableBody.find('tr').length === 0) {
+           attachmentsTableBody.html(`
+            <tr class="empty-attachments-row">
+                <td colspan="2" class="text-center py-3 text-gray-400">No attachments</td>
+            </tr>`);
+       }
+   };
+   
 });

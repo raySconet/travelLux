@@ -349,9 +349,18 @@ Route::middleware('auth')->group(function(){
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendorReport', [VendorReportController::class, 'index'])->name('reports.vendorReport');
+    Route::post('/vendorReport/load', [VendorReportController::class, 'loadReport'])->name('reports.vendorReport.load');
+
     Route::get('/1099Report', [Report1099Controller::class,'index'])->name('reports.1099Report');
+    Route::post('/1099Report/load', [Report1099Controller::class, 'loadReport'])->name('reports.1099Report.load');
+
     Route::get('/checkHistoryReport', [CheckHistoryReportController::class,'index'])->name('reports.checkHistory');
+    Route::post('/checkHistoryReport/load', [CheckHistoryReportController::class, 'loadReport'])->name('reports.checkHistory.load');
+    Route::post('/checkHistoryReport/undoPayment',[CheckHistoryReportController::class, 'undoPayment'])->name('checkHistoryReport.undoPayment');
+
     Route::get('/currentChecksReport', [CurrentChecksReportController::class,'index'])->name('reports.currentChecks');
+    Route::get('/currentChecksReport/load', [CurrentChecksReportController::class, 'loadReport'])->name('reports.currentChecks.load');
+
     Route::get('/commissionClaimReport',[CommissionClaimReportController::class,'index'])->name('reports.commissionClaimReport');
     Route::get('/reservationsNotPaidByALTReport', [ReservationsNotPaidByALTReportController::class,'index'])->name('reports.reservationsNotPaidByALTReport');
     Route::get('/reservationsPaidByALTReport', [ReservationsPaidByALTReportController::class,'index'])->name('reports.reservationsPaidByALTReport');

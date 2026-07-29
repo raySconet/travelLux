@@ -108,9 +108,7 @@ class AgentDashboardController extends Controller
                     'id' => $r->id,
                     'checkin_date' => $r->checkin_date,
                     'reservation_number' => $r->reservation_number,
-                    'customer' => $r->customer
-                        ? $r->customer->lname . ', ' . $r->customer->fname
-                        : ''
+                    'customer' => $r->customer ? $r->customer->lname . ', ' . $r->customer->fname : ''
                 ];
             })
         ]);

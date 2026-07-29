@@ -166,4 +166,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserForgotPassword::class, 'user_id', 'id');
     }
+
+    public function paidCommissions()
+    {
+        return $this->hasMany(PaidCommission::class, 'agent_id', 'id');
+    }
 }

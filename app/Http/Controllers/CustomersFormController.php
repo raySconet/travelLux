@@ -21,8 +21,7 @@ class CustomersFormController extends Controller
     {
        $this->checkAdmin();
        $search = $request->input('search'); 
-       $customerFormsQuery = CustomersForm::select('id','form_name', 'is_active')
-                                    ->where('is_deleted',0);
+       $customerFormsQuery = CustomersForm::select('id','form_name', 'is_active')->where('is_deleted',0);
         
         if($search){
             $customerFormsQuery->where('form_name', 'like', "%{$search}%");

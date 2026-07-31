@@ -8,7 +8,7 @@
 
     @foreach($agents as $agent)
 
-        <div class="bg-white shadow mb-5 overflow-hidden border border-[#dee2e6]">
+        <div class="checkHistoryCard bg-white shadow mb-5 overflow-hidden border border-[#dee2e6]">
 
             <div class="flex">
 

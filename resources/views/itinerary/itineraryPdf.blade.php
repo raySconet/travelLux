@@ -223,9 +223,7 @@
             @php
                 $cover = $itinerary->itineraryImages->first();
 
-                $coverPath = $cover
-                    ? public_path('storage/attachments/itineraries/covers/' . $cover->id . '.' . $cover->extension)
-                    : public_path('images/archer-logo.png');
+                $coverPath = $cover ? public_path('storage/attachments/itineraries/covers/' . $cover->id . '.' . $cover->extension) : public_path('images/archer-logo.png');
             @endphp
 
             <img src="{{ $coverPath }}" class="logo">

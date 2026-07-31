@@ -10,7 +10,7 @@
 
     <div class="bg-white shadow sm:rounded-lg p-3 ml-3 mr-3 mt-2">
         <ol class="list-decimal list-inside space-y-2">
-            <li>Search by reservation number to try and find a missing commission you were not paid for (either you forgot to submit, it was submitted after it was paid to Archer, or the CRM didn't record it properly).</li>
+            <li>Search by reservation number to try and find a missing commission you were not paid for (either you forgot to submit, it was submitted after it was paid to Travelux, or the CRM didn't record it properly).</li>
             <li>
                 If it's found, CLAIM it! An automatic $15 look up fee will be applied and taken out of the commission amount.
                 <ol type="a" class="list-[lower-alpha] list-inside ml-6 mt-2 space-y-1">
@@ -18,7 +18,7 @@
                 </ol>
             </li>
             <li>
-                At month end, the Accountant for Archer gets a report of all Commission Claims. <u>He will look in to each one automatically.</u> If he finds Archer to be at fault, the $15 lookup fee will be removed before the monthly checks are paid.
+                At month end, the Accountant for Travelux gets a report of all Commission Claims. <u>He will look in to each one automatically.</u> If he finds Travelux to be at fault, the $15 lookup fee will be removed before the monthly checks are paid.
                 <ol type="a" class="list-[lower-alpha] list-inside ml-6 mt-2 space-y-1">
                     <li>Something to keep in mind: check the date created for the unknown claim to the date you either added it to the CRM or marked it Paid in Full. </li>
                     <li>If you put it in after the date it was created, the fee is correct.</li>
@@ -33,7 +33,7 @@
                     <li>If you are owed $12, and the look up fee is $15 I suggest not claiming it as you will be in the <b>HOLE -$3!!!!!</b></li>
                 </ol>
             </li>
-            <li>If you are charged a fee after month end has passed, and you believe it to be Archer's mistake, please email DeeAna with the booking info and details so it can be looked in to.</li>
+            <li>If you are charged a fee after month end has passed, and you believe it to be Travelux's mistake, please email DeeAna with the booking info and details so it can be looked in to.</li>
         </ol>
         <div class="flex gap-4">
             <input type="text" id="reservationNumberSearch" placeholder="Reservation # Search" name="reservationNumberSearch" class="w-50 border-b mt-2 focus:outline-none" />

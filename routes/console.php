@@ -12,3 +12,4 @@ Artisan::command('inspire', function () {
 // Schedule::command('reminder:tasks')->dailyAt('08:00');
 // Schedule::command('reminder:reservation')->dailyAt('08:00');
 // Schedule::command('reminder:this-week')->dailyAt('08:00');
+// Schedule::command('reminder:automated-emails')->dailyAt('08:00');

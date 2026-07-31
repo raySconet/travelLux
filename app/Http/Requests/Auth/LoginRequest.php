@@ -43,7 +43,7 @@ class LoginRequest extends FormRequest
 
 // Attempt login, only for non-deleted users
         if (! Auth::attempt(
-            ['email' => $this->email, 'password' => $this->password, 'isDeleted' => 0],
+            ['email' => $this->email, 'password' => $this->password, 'isDeleted' => 0, 'is_disabled'=>0],
             $this->boolean('remember')
         )) {
             RateLimiter::hit($this->throttleKey());

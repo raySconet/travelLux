@@ -77,7 +77,7 @@
                     <p id="reservationAutomatedEmailAgentCellphone"></p>
                 </div>
                 <p id="reservationAutomatedEmailAgentEmail" class="text-[#3B38FF] text-base font-extrabold"></p>
-                <p class="text-[#3B38FF] text-base font-extrabold mt-4">www.archerluxurytravel.com</p>
+                <p class="text-[#3B38FF] text-base font-extrabold mt-4">www.gotravelux.com</p>
                 <p class="text-[#006FC9] text-sm font-extrabold mt-4">I book everything from hotels,Disney,Universal Studios,All Inclusive resorts,all cruise lines and more!</p>
             </div>
 

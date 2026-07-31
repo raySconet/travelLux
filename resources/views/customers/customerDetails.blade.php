@@ -51,9 +51,9 @@
                         <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'forms'}"  @click="section = 'forms'">
                             <i title="Forms" style="font-size:20px;" class="fab fa-wpforms"></i>
                         </button>    
-                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'surveys'}" @click="section = 'surveys'">
+                        {{-- <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'surveys'}" @click="section = 'surveys'">
                             <i title="Surveys" style="font-size:20px;" class="fas fa-comments"></i>
-                        </button> 
+                        </button>  --}}
                         @if(!$isNewCustomer)
                             <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'selfServiceInvitations'}" @click="section = 'selfServiceInvitations'">
                                 <i title="Self Service Invitations" style="font-size:20px;" class="fas fa-address-card"></i>
@@ -91,9 +91,9 @@
                         @include('customers.partials.forms')
                     </div>
 
-                    <div x-show="section === 'surveys'" x-cloak>
+                    {{-- <div x-show="section === 'surveys'" x-cloak>
                         @include('customers.partials.surveys')
-                    </div>  
+                    </div>   --}}
                     
                     <div x-show="section === 'selfServiceInvitations'" x-cloak>
                         @include('customers.partials.selfServiceInvitations')

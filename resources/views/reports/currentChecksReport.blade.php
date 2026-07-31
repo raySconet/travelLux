@@ -7,7 +7,7 @@
                 Current Checks
             </h2>
 
-            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer">
+            <button onclick="printElement('currentChecksContainer')" class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer">
                 <i class="fas fa-cloud-download-alt"></i>
                 Download
             </button>
@@ -16,9 +16,7 @@
 
     <div class="p-4">
 
-        <div id="currentChecksContainer">
-
-        </div>
+        <div id="currentChecksContainer"></div>
 
     </div>
 

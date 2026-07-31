@@ -57,19 +57,19 @@ class ReservationController extends Controller
 
         $reservationsQuery->where(function ($query) use ($statuses) {
 
-            $regularStatuses = array_diff($statuses,['Paid in Full Paid by Archer','Paid in Full Not Paid by Archer']);
+            $regularStatuses = array_diff($statuses,['Paid in Full Paid by Travelux','Paid in Full Not Paid by Travelux']);
 
             if (!empty($regularStatuses)) {
                 $query->whereIn('status', $regularStatuses);
             }
 
-            if (in_array('Paid in Full Paid by Archer', $statuses)) {
+            if (in_array('Paid in Full Paid by Travelux', $statuses)) {
                 $query->orWhere(function ($q) {
                     $q->where('status', 'Paid in Full')->where('agent_commission_received', 1);
                 });
             }
 
-            if (in_array('Paid in Full Not Paid by Archer', $statuses)) {
+            if (in_array('Paid in Full Not Paid by Travelux', $statuses)) {
                 $query->orWhere(function ($q) {
                     $q->where('status', 'Paid in Full')->where('agent_commission_received', 0);
                 });
@@ -402,8 +402,8 @@ class ReservationController extends Controller
             <br><br>
 
             <span>
-                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='https://www.archerluxurytravel.com'>
-                    www.archerluxurytravel.com
+                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='https://gotravelux.com/'>
+                    www.gotravelux.com
                 </a>
             </span>
 
@@ -851,8 +851,8 @@ class ReservationController extends Controller
             <br><br>
 
             <span>
-                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='https://www.archerluxurytravel.com'>
-                    www.archerluxurytravel.com
+                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='https://gotravelux.com/'>
+                    www.gotravelux.com
                 </a>
             </span>
 
@@ -2384,8 +2384,8 @@ class ReservationController extends Controller
             <br><br>
 
             <span>
-                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='https://www.archerluxurytravel.com'>
-                    www.archerluxurytravel.com
+                <a style='color:#3B3BFF;font-weight:bold;font-size:15px;' href='https://gotravelux.com/'>
+                    www.gotravelux.com
                 </a>
             </span>
 

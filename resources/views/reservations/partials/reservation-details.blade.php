@@ -7,8 +7,7 @@
             <select name="product_id" id="product_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="">--Select Product--</option>
                 @foreach($products as $product)
-                    <option value="{{ $product->id }}"
-                        {{ old('product_id', $reservation->product_id) == $product->id ? 'selected' : '' }}>
+                    <option value="{{ $product->id }}" {{ old('product_id', $reservation->product_id) == $product->id ? 'selected' : '' }}>
                         {{ $product->product_name }}
                     </option>
                 @endforeach    

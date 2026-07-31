@@ -356,55 +356,42 @@ $(document).ready(function() {
 
     });
 
-    $(document).on("click",".checkHistoryTableRecord",
-        function(){
+    $(document).on("click",".checkHistoryTableRecord",function(){
+
+        let id = $(this).data("id");
+
+        let detail = $(`.checkHistoryDetails[data-detail="${id}"]`);
+
+        detail.toggleClass("hidden");
 
 
-            let id = $(this).data("id");
-
-            let detail = $(`.checkHistoryDetails[data-detail="${id}"]`);
-
-            detail.toggleClass("hidden");
+        let icon = $(this).find(".checkHistoryChevron");
 
 
-            let icon = $(this).find(".checkHistoryChevron");
+        if(detail.hasClass("hidden")){
 
-
-            if(detail.hasClass("hidden")){
-
-                icon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
-
-            }
-            else{
-                icon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
-            }
-
+            icon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
 
         }
-    );
-
-
-    $(document).on("keyup","#checkHistorySearch",
-        function(){
-
-            let value = $(this).val().toLowerCase();
-
-            $(".bg-white.shadow.rounded-lg").each(function(){
-
-                let text = $(this).text().toLowerCase();
-
-                if(text.indexOf(value) > -1){
-                    $(this).show();
-                }
-                else{
-                    $(this).hide();
-                }
-
-            });
-
-
+        else{
+            icon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
         }
-    );
+
+    });
+
+    $(document).on("keyup", "#checkHistorySearch", function () {
+
+        let value = $(this).val().toLowerCase();
+
+        $(".checkHistoryCard").each(function () {
+
+            let text = $(this).text().toLowerCase();
+
+            $(this).toggle(text.indexOf(value) > -1);
+
+        });
+
+    });
 
     $(document).on("click", ".undoPaymentBtn", function () {
 

@@ -63,20 +63,29 @@ class CustomerController extends Controller
     {
         $customer = new Customer();
         $isNewCustomer = true;
-        $states = State::orderBy('name')->get();
-        $countries = Country::orderBy('name')->get();
+        
+        $states = Cache::rememberForever('states', function () {
+            return State::select('id','name')
+                ->orderBy('name')
+                ->get();
+        });
 
-        $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted', 0)->orderBy('lname')->get();
+        $countries = Cache::rememberForever('countries', function () {
+            return Country::select('id','name')
+                ->orderBy('name')
+                ->get();
+        });
 
-        return view('customers.customerDetails', compact('customer', 'isNewCustomer', 'states', 'countries','referralCustomers'));
+        $referralCustomers = Customer::select('id','fname','lname')->where('agent_id', auth()->id())->where('is_deleted', 0)->orderBy('lname')->limit(500)->get();
+
+        return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','referralCustomers'));
     }
-
+    
     public function edit(Customer $customer)
     {
         $user = auth()->user();
 
         if (!$user->isAdmin()) {
-
             if ($customer->agent_id != $user->id) {
                 abort(403);
             }
@@ -84,16 +93,27 @@ class CustomerController extends Controller
 
         $isNewCustomer = false;
 
-        $states = State::orderBy('name')->get();
-        $countries = Country::orderBy('name')->get();
+        $states = Cache::rememberForever('states', function () {
+            return State::select('id', 'name')
+                ->orderBy('name')
+                ->get();
+        });
 
+<<<<<<< HEAD
         $availableForms = CustomersForm::where('is_deleted', 0)->where('is_active', 1)
             ->whereHas('customersFormRequired', function ($q) {
                 $q->where('all_customers_required', 1);
             })->get();
+=======
+>>>>>>> e53932fb7025ef35767d0e21072f5bee7639f001
 
-        $sentForms = $customer->formSent()->with('form:id,form_name')->orderByDesc('sent_on')->get();
+        $countries = Cache::rememberForever('countries', function () {
+            return Country::select('id', 'name')
+                ->orderBy('name')
+                ->get();
+        });
 
+<<<<<<< HEAD
         $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted', 0)->orderBy('lname')->get();
 
         $automatedEmails = $customer->automatedEmails()
@@ -113,6 +133,9 @@ class CustomerController extends Controller
         $intakeForms = $customer->customerIntakeForms()->orderByDesc('created_on')->get();
 
         return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms','referralCustomers','automatedEmails','sentForms','invitations','intakeForms'));
+=======
+        return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries'));
+>>>>>>> e53932fb7025ef35767d0e21072f5bee7639f001
     }
 
     public function inviteNewCustomer(){

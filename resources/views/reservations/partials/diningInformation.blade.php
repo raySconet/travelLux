@@ -1,64 +1,56 @@
 @php
     $isDiningInfoModalOpen = session('openDiningInfoModal') || $errors->diningNoteStore->any();
 @endphp    
-@if ($isNewReservation)
-    <div>
-        <div class="space-x-2">
-            <i class="fas fa-exclamation-triangle text-[#6c757d] text-base"></i>
-            <span class="text-[#6c757d] text-base">Dining Information will be available after Reservation is saved.</span>
-        </div>
-    </div>    
-@else
-    <div class="relative flex flex-row justify-between gap-3 mt-5">
-        <h6 class="text-xl">Dining Info</h6>
 
-        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openDiningInfoModal()">
-            <i class="fas fa-plus-circle cursor-pointer"></i>
+<div class="relative flex flex-row justify-between gap-3 mt-5">
+    <h6 class="text-xl">Dining Info</h6>
+
+    <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openDiningInfoModal()">
+        <i class="fas fa-plus-circle cursor-pointer"></i>
+    </button>
+</div>
+
+@forelse($reservation->diningNotes()->where('is_deleted',0)->get() as $diningNote)
+    <div class="flex justify-between mt-5 cursor-pointer" onclick='openEditDiningInformationModal(@json($diningNote))'>
+        <div class="flex gap-3">
+            <button type="button" onclick="toggleDiningCancel({{ $diningNote->id }}, event)" class="cursor-pointer">
+                @if ($diningNote->is_canceled == 0)
+                    <i title="Cancel this Note" class="fas fa-minus-circle text-2xl text-[#bdbdbd] mt-7" title="Cancel this Note"></i>
+                @else
+                    <i title="Undo Cancel" class="fas fa-minus-circle text-2xl text-red-500 mt-7" title="Undo Cancel"></i>
+                @endif        
+            </button>
+            <div class="flex flex-col">
+                <div class="flex gap-1">
+                    <i class="fas fa-user text-base mt-1"></i>
+                    <p class="text-base">{{ $diningNote->agent->fname . ' '. $diningNote->agent->lname }}</p>
+                </div>
+                @if($diningNote->is_canceled == 0)
+                    <p>{{ $diningNote->notes }}</p>
+                @else
+                    <p class="line-through">{{ $diningNote->notes }}</p>
+                @endif
+                @if(!empty($diningNote->dining_date) || !empty($diningNote->dining_time))
+                    <p>
+                        <b>Dining Date Time:</b>
+                        {{ (!empty($diningNote->dining_date) ? \Carbon\Carbon::parse($diningNote->dining_date)->format('m/d/Y') : '' ) . ' ' . ($diningNote->dining_time ?? '') }}
+                    </p>
+                @endif
+                @if(!empty($diningNote->meal))
+                    <p><b>Meal:</b>{{ $diningNote->meal }}</p>
+                @endif
+                @if($diningNote->is_canceled == 1)
+                    <p class="text-[#bdbdbd] text-base">Canceled By: {{ $diningNote->agent->fname . ' ' . $diningNote->agent->lname }} on {{ $diningNote->canceled_on }}</p>
+                @endif    
+            </div>
+        </div>
+        <button type="button" onclick="event.stopPropagation(); openDiningDeleteModal({{ $diningNote->id }})">
+            <i title="Delete note" class="fa fa-trash text-[#bdbdbd] text-xl mt-5 cursor-pointer"></i>
         </button>
     </div>
-
-    @forelse($reservation->diningNotes()->where('is_deleted',0)->get() as $diningNote)
-        <div class="flex justify-between mt-5 cursor-pointer" onclick='openEditDiningInformationModal(@json($diningNote))'>
-            <div class="flex gap-3">
-                <button type="button" onclick="toggleDiningCancel({{ $diningNote->id }}, event)" class="cursor-pointer">
-                    @if ($diningNote->is_canceled == 0)
-                        <i title="Cancel this Note" class="fas fa-minus-circle text-2xl text-[#bdbdbd] mt-7" title="Cancel this Note"></i>
-                    @else
-                        <i title="Undo Cancel" class="fas fa-minus-circle text-2xl text-red-500 mt-7" title="Undo Cancel"></i>
-                    @endif        
-                </button>
-                <div class="flex flex-col">
-                    <div class="flex gap-1">
-                        <i class="fas fa-user text-base mt-1"></i>
-                        <p class="text-base">{{ $diningNote->agent->fname . ' '. $diningNote->agent->lname }}</p>
-                    </div>
-                    @if($diningNote->is_canceled == 0)
-                        <p>{{ $diningNote->notes }}</p>
-                    @else
-                        <p class="line-through">{{ $diningNote->notes }}</p>
-                    @endif
-                    @if(!empty($diningNote->dining_date) || !empty($diningNote->dining_time))
-                        <p>
-                            <b>Dining Date Time:</b>
-                            {{ (!empty($diningNote->dining_date) ? \Carbon\Carbon::parse($diningNote->dining_date)->format('m/d/Y') : '' ) . ' ' . ($diningNote->dining_time ?? '') }}
-                        </p>
-                    @endif
-                    @if(!empty($diningNote->meal))
-                        <p><b>Meal:</b>{{ $diningNote->meal }}</p>
-                    @endif
-                    @if($diningNote->is_canceled == 1)
-                        <p class="text-[#bdbdbd] text-base">Canceled By: {{ $diningNote->agent->fname . ' ' . $diningNote->agent->lname }} on {{ $diningNote->canceled_on }}</p>
-                    @endif    
-                </div>
-            </div>
-            <button type="button" onclick="event.stopPropagation(); openDiningDeleteModal({{ $diningNote->id }})">
-                <i title="Delete note" class="fa fa-trash text-[#bdbdbd] text-xl mt-5 cursor-pointer"></i>
-            </button>
-        </div>
-    @empty
-        <p class="text-center text-base">No Dining Notes.</p>
-    @endforelse        
-@endif  
+@empty
+    <p class="text-center text-base">No Dining Notes.</p>
+@endforelse        
 
 <!-- Reservation Dining Info Modal -->
 @if (!$isNewReservation)

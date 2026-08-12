@@ -79,8 +79,11 @@
                 <a href="/checkHistoryReport" class="block py-1 sidebarA">Check History <i class="text-lg fas fa-history"></i></a>
                 <a href="/currentChecksReport" class="block py-1 sidebarA">Current Checks <i class="text-lg fas fa-search-dollar"></i></a>
                 <a href="/commissionClaimReport" class="block py-1 sidebarA">Commission Claim <i class="text-lg fas fa-dollar-sign"></i></a>
-                <a href="/reservationsNotPaidByALTReport" class="block py-1 sidebarA">Reservations Not Paid By ALT <i class="text-lg fas fa-money-check"></i></a>
-                <a href="/reservationsPaidByALTReport" class="block py-1 sidebarA">Reservations Paid By ALT <i class="text-lg fas fa-money-bill-alt"></i></a>
+                @if(auth()->user()->isAdmin())
+                    <a href="/customersPerAgent" class="block py-1 sidebarA">Customers Per Agent <i class="text-lg fas fa-users"></i></a>
+                @endif
+                <a href="/reservationsNotPaidByTraveluxReport" class="block py-1 sidebarA">Reservations Not Paid By Travelux <i class="text-lg fas fa-money-check"></i></a>
+                <a href="/reservationsPaidByTraveluxReport" class="block py-1 sidebarA">Reservations Paid By Travelux <i class="text-lg fas fa-money-bill-alt"></i></a>
                 @if(auth()->user()->isAdmin())
                     <a href="/unknownReservationsReport" class="block py-1 sidebarA">Unknown Reservations <i class="text-lg fas fa-question"></i></a>
                     <a href="/bookedTripsByStateReport" class="block py-1 sidebarA">Booked Trips by State <i class="text-lg fas fa-flag-usa"></i></a>

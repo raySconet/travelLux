@@ -6,7 +6,7 @@
             <h2 class="text-base">Intake Form Preview</h2>
         </div>
 
-        <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A]">
+        <button type="button" onclick="printElement('formIntakePreviewContent')" class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer">
             <i class="fas fa-cloud-download-alt"></i>
             Download
         </button>

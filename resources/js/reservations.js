@@ -1,4 +1,349 @@
 $(document).ready(function() {
+    // start close reservation button
+    window.closeReservation = function() {
+        localStorage.removeItem('reservationActiveTab');
+
+        const form = document.getElementById('reservationForm');
+        const reservationListUrl = form?.dataset.reservationListUrl;
+
+        if (reservationListUrl) {
+            window.location.href = reservationListUrl;
+        }
+    };
+    // end close reservation button
+    
+    // start reservation details tabs
+    function getReservationId() {
+        return $("#reservationId").val();
+    }
+
+    function isNewReservation() {
+        const id = getReservationId();
+
+        return !id || id === "0" || id === "undefined";
+    }
+
+    function showUnsavedReservationMessage(container, message) {
+        $(container).html(`
+            <div class="space-x-2">
+                <i class="fas fa-exclamation-triangle text-[#6c757d] text-base"></i>
+                <span class="text-[#6c757d] text-base">${message}</span>
+            </div>
+        `);
+    }
+
+    const loadedReservationSections = {};
+
+    function loadReservationSection(key, url, container)
+    {
+        if (loadedReservationSections[key]) {
+            return;
+        }
+
+        loadedReservationSections[key] = true;
+
+        $.ajax({
+            url: url,
+
+            beforeSend: function () {
+                $(container).html('<div class="text-center p-4">Loading...</div>');
+            },
+
+            success: function (response) {
+                $(container).html(response);
+            },
+
+            error: function (xhr) {
+
+                loadedReservationSections[key] = false;
+
+                console.error(
+                    'Reservation section loading failed:',
+                    xhr.status,
+                    xhr.responseText
+                );
+
+                $(container).html('<div class="text-red-500 p-4">Failed loading data.</div>');
+            }
+        });
+    }
+
+    $(document).on('click', '.reservationTasksBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) {
+            showUnsavedReservationMessage("#reservationTasksContainer", "Tasks will be available after Reservation is saved.");
+            return;
+        }
+
+        loadReservationSection('tasks',`/reservations/sections/${id}/tasks`,'#reservationTasksContainer');
+    });
+
+    $(document).on('click', '.reservationPaymentsBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) {
+            showUnsavedReservationMessage("#reservationPaymentsContainer", "Payments will be available after Reservation is saved.");
+            return;
+        }
+
+        loadReservationSection('payments',`/reservations/sections/${id}/payments`,'#reservationPaymentsContainer');
+    });
+
+    $(document).on('click', '.reservationOnBoardCreditBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) return;
+
+        loadReservationSection('onBoardCredit',`/reservations/sections/${id}/on-board-credit`,'#reservationOnBoardCreditContainer');
+    });
+
+    $(document).on('click', '.reservationLinkedReservationsBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) {
+            showUnsavedReservationMessage("#reservationLinkedReservationsContainer", "Linked Reservations will be available after this Reservation is saved.");
+            return;
+        }
+
+        loadReservationSection('linkedReservations',`/reservations/sections/${id}/linked-reservations`,'#reservationLinkedReservationsContainer');
+    });
+
+    $(document).on('click', '.reservationTravelersBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) {
+            showUnsavedReservationMessage("#reservationTravelersContainer", "Travelers will be available after this Reservation is saved.");
+            return;
+        }
+
+        loadReservationSection('travelers',`/reservations/sections/${id}/travelers`,'#reservationTravelersContainer');
+    });
+
+    $(document).on('click', '.reservationFormsBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) {
+            showUnsavedReservationMessage('#reservationFormsContainer', 'Forms will be available after record is saved.');
+            return;
+        }
+
+        loadReservationSection('forms',`/reservations/sections/${id}/forms`,'#reservationFormsContainer');
+    });
+
+    $(document).on('click', '.reservationFlightInfoBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) return;
+
+        loadReservationSection('flightInfo',`/reservations/sections/${id}/flight-info`,'#reservationFlightInfoContainer');
+    });
+
+    $(document).on('click', '.reservationDiningInformationBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) {
+            showUnsavedReservationMessage("#reservationDiningInformationContainer", "Dining Information will be available after Reservation is saved.");
+            return;
+        }
+
+        loadReservationSection('diningInformation',`/reservations/sections/${id}/dining-information`,'#reservationDiningInformationContainer');
+    });
+
+    $(document).on('click', '.reservationGiftsBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) {
+            showUnsavedReservationMessage("#reservationGiftsContainer", "Gifts Info will be available after Reservation is saved.");
+            return;
+        }
+
+        loadReservationSection('giftsInfo',`/reservations/sections/${id}/gifts`,'#reservationGiftsContainer');
+    });
+
+    $(document).on('click', '.reservationAutoEmailsBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) {
+            showUnsavedReservationMessage("#reservationAutoEmailsContainer", "Auto Emails Information will be available after reservation is saved.");
+            return;
+        }
+
+        loadReservationSection('autoEmails',`/reservations/sections/${id}/auto-emails`,'#reservationAutoEmailsContainer');
+    });
+
+    $(document).on('click', '.reservationNotesBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) return;
+
+        loadReservationSection('notes',`/reservations/sections/${id}/notes`,'#reservationNotesContainer');
+    });
+
+    $(document).on('click', '.reservationPhoneNotesBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) {
+            showUnsavedReservationMessage('#reservationPhoneNotesContainer', "Phone Notes will be availble after Reservation is saved.");
+            return; 
+        }
+
+        loadReservationSection('phoneNotes',`/reservations/sections/${id}/phone-notes`,'#reservationPhoneNotesContainer');
+    });
+
+    $(document).on('click', '.reservationAgentPaymentsBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) return;
+
+        loadReservationSection('agentPayments',`/reservations/sections/${id}/agent-payments`,'#reservationAgentPaymentsContainer');
+    });
+
+    $(document).on('click', '.reservationAttachmentsBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) {
+            showUnsavedReservationMessage("#reservationAttachmentsContainer", "Attachments will be available after Reservation is saved.");
+            return;
+        }
+
+        loadReservationSection('attachments',`/reservations/sections/${id}/attachments`,'#reservationAttachmentsContainer');
+    });
+
+    $(document).on('click', '.reservationItineraryBtn', function () {
+
+        const id = getReservationId();
+
+        if (!id) return;
+
+        loadReservationSection('itinerary',`/reservations/sections/${id}/itinerary`,'#reservationItineraryContainer');
+    });
+
+    $(document).ready(function () {
+
+        const activeTab = $('input[name="activeTab"]').val();
+        const id = getReservationId();
+
+        if (!id || activeTab === 'reservation-details') {
+            return;
+        }
+
+        const sectionMap = {
+            tasks: {
+                key: 'tasks',
+                url: `/reservations/sections/${id}/tasks`,
+                container: '#reservationTasksContainer'
+            },
+
+            payments: {
+                key: 'payments',
+                url: `/reservations/sections/${id}/payments`,
+                container: '#reservationPaymentsContainer'
+            },
+
+            onBoardCredit: {
+                key: 'onBoardCredit',
+                url: `/reservations/sections/${id}/on-board-credit`,
+                container: '#reservationOnBoardCreditContainer'
+            },
+
+            linkedReservations: {
+                key: 'linkedReservations',
+                url: `/reservations/sections/${id}/linked-reservations`,
+                container: '#reservationLinkedReservationsContainer'
+            },
+
+            travelers: {
+                key: 'travelers',
+                url: `/reservations/sections/${id}/travelers`,
+                container: '#reservationTravelersContainer'
+            },
+
+            forms: {
+                key: 'forms',
+                url: `/reservations/sections/${id}/forms`,
+                container: '#reservationFormsContainer'
+            },
+
+            flightInfo: {
+                key: 'flightInfo',
+                url: `/reservations/sections/${id}/flight-info`,
+                container: '#reservationFlightInfoContainer'
+            },
+
+            diningInformation: {
+                key: 'diningInformation',
+                url: `/reservations/sections/${id}/dining-information`,
+                container: '#reservationDiningInformationContainer'
+            },
+
+            giftsInfo: {
+                key: 'giftsInfo',
+                url: `/reservations/sections/${id}/gifts`,
+                container: '#reservationGiftsContainer'
+            },
+
+            autoEmails: {
+                key: 'autoEmails',
+                url: `/reservations/sections/${id}/auto-emails`,
+                container: '#reservationAutoEmailsContainer'
+            },
+
+            notes: {
+                key: 'notes',
+                url: `/reservations/sections/${id}/notes`,
+                container: '#reservationNotesContainer'
+            },
+
+            phoneNotes: {
+                key: 'phoneNotes',
+                url: `/reservations/sections/${id}/phone-notes`,
+                container: '#reservationPhoneNotesContainer'
+            },
+
+            agentPayments: {
+                key: 'agentPayments',
+                url: `/reservations/sections/${id}/agent-payments`,
+                container: '#reservationAgentPaymentsContainer'
+            },
+
+            attachments: {
+                key: 'attachments',
+                url: `/reservations/sections/${id}/attachments`,
+                container: '#reservationAttachmentsContainer'
+            },
+
+            selectItineraryTrip: {
+                key: 'itinerary',
+                url: `/reservations/sections/${id}/itinerary`,
+                container: '#reservationItineraryContainer'
+            }
+        };
+
+        const section = sectionMap[activeTab];
+
+        if (!section) {
+            return;
+        }
+
+        loadReservationSection(section.key, section.url, section.container);
+    });
+    // end reservation details tabs
+
     // start reservation attention modal
     window.openAttentionModal = function(){
         $('#attentionReservationModal').removeClass('hidden');
@@ -98,13 +443,7 @@ $(document).ready(function() {
     }
     // end agent commission calculation
 
-
-    //Reservation Dropdown Filtering
-    const savedProductId = window.reservationDefaults?.productId ?? '';
-    const savedDestinationId = window.reservationDefaults?.destinationId ?? '';
-    const savedResortId = window.reservationDefaults?.resortId ?? '';
-    const savedCruiseId = window.reservationDefaults?.cruiseId ?? '';
-
+    // Reservation Dropdown Filtering
     $('#product_id').on('change', function () {
 
         let productId = $(this).val();
@@ -188,112 +527,6 @@ $(document).ready(function() {
         });
 
     });
-
-    function loadDestinations(productId, selectDestId, selectResortId, selectCruiseId) {
-
-        if (!productId) return;
-
-        window.disableGlobalLoader = true;
-
-        $.get('/ajax/destinations', { product_id: productId }, function (data) {
-
-            let html = '<option value="">--Select Destination--</option>';
-
-            data.forEach(d => {
-
-                html += `<option value="${d.id}">${d.destination_name}</option>`;
-
-            });
-
-            $('#destination_id').html(html);
-
-            if (selectDestId) {
-
-                $('#destination_id').val(selectDestId);
-
-                loadResorts(selectDestId, selectResortId, selectCruiseId);
-
-            }
-
-        }).always(function () {
-
-            window.disableGlobalLoader = false;
-
-        });
-
-    }
-
-    function loadResorts(destinationId, selectResortId, selectCruiseId) {
-
-        if (!destinationId) return;
-
-        window.disableGlobalLoader = true;
-
-        $.get('/ajax/resorts', { destination_id: destinationId }, function (data) {
-
-            let html = '<option value="">--Select Resort/Ship--</option>';
-
-            data.forEach(r => {
-
-                html += `<option value="${r.id}">${r.resort_ship_name}</option>`;
-
-            });
-
-            $('#resort_id').html(html);
-
-            if (selectResortId) {
-
-                $('#resort_id').val(selectResortId);
-
-                loadCruises(selectResortId, selectCruiseId);
-
-            }
-
-        }).always(function () {
-
-            window.disableGlobalLoader = false;
-
-        });
-
-    }
-
-    function loadCruises(resortId, selectCruiseId) {
-
-        if (!resortId) return;
-
-        window.disableGlobalLoader = true;
-
-        $.get('/ajax/cruises', { resort_id: resortId }, function (data) {
-
-            let html = '<option value="">--Select Cruise Itinerary--</option>';
-
-            data.forEach(c => {
-
-                html += `<option value="${c.id}">${c.cruise_name}</option>`;
-
-            });
-
-            $('#cruise_itinerary_id').html(html);
-
-            if (selectCruiseId) {
-
-                $('#cruise_itinerary_id').val(selectCruiseId);
-
-            }
-
-        }).always(function () {
-
-            window.disableGlobalLoader = false;
-
-        });
-
-    }
-
-    if (savedProductId) {
-
-        loadDestinations(savedProductId, savedDestinationId, savedResortId, savedCruiseId);
-
-    }
     // end reservation dropdown filtering
 
     // start reservation tasks
@@ -584,41 +817,57 @@ $(document).ready(function() {
     // end travelers
 
     // start reservation travel with
-    window.openTravelingWithModal = function(){
+    window.openTravelingWithModal = function () {
         $('#travelingWithModal').removeClass('hidden');
-    }
+    };
+
+    window.closeTravelingWithModal = function () {
+        $('#travelingWithModal').addClass('hidden');
+
+        $('#linked_customer').val('');
+        $('#possible-reservations').html('');
+    };
 
     function formatUSDate(dateString) {
         if (!dateString) return '-';
 
         let date = new Date(dateString);
 
-        if (isNaN(date.getTime())) return dateString; 
+        if (isNaN(date.getTime())) return dateString;
 
         return date.toLocaleDateString('en-US');
     }
 
-    $('#linked_customer').on('change', function () {
-        let customerId = $(this).val();
+    $(document).on('change', '#linked_customer', function () {
 
+        let customerId = $(this).val();
         let $container = $('#possible-reservations');
+
         $container.html('');
 
-        if (!customerId) return;
+        if (!customerId) {
+            return;
+        }
 
         $.ajax({
             url: `/customers/${customerId}/active-reservations`,
             method: 'GET',
-            data: { current_reservation_id: CURRENT_RESERVATION_ID },
+            data: {
+                current_reservation_id: CURRENT_RESERVATION_ID
+            },
             dataType: 'json',
+
             success: function (data) {
 
                 if (!data || data.length === 0) {
-                    $container.html('');
+                    $container.html(
+                        '<p class="text-gray-400">No active reservations available to link.</p>'
+                    );
                     return;
                 }
 
                 data.forEach(function (res) {
+
                     $container.append(`
                         <div class="flex justify-between items-center">
                             <div class="flex flex-col">
@@ -626,76 +875,93 @@ $(document).ready(function() {
                                     <p>Name: ${res.reservation_name ?? '-'}</p>
                                     <p>Number: ${res.reservation_number ?? '-'}</p>
                                 </div>
-                                <p class="text-[#bdbdbd]">Dates: ${formatUSDate(res.checkin_date)} - ${formatUSDate(res.checkout_date)}</p>
+
+                                <p class="text-[#bdbdbd]">
+                                    Dates:
+                                    ${formatUSDate(res.checkin_date)}
+                                    -
+                                    ${formatUSDate(res.checkout_date)}
+                                </p>
                             </div>
 
                             <button type="button" class="link-reservation space-x-2 bg-[#B6844A] text-white py-1 px-2 rounded hover:bg-white hover:text-[#B6844A] hover:border-[#B6844A] border transition cursor-pointer" data-id="${res.id}">
                                 <i class="fas fa-link"></i> Link
                             </button>
                         </div>
+
                         <hr class="border-[#dee2e6]">
                     `);
                 });
+            },
 
+            error: function (xhr) {
+                console.error('Failed to load active reservations:', xhr);
+                console.error(xhr.responseText);
+
+                $container.html('<p class="text-red-500">Failed to load reservations.</p>');
             }
         });
     });
 
     $(document).on('click', '.link-reservation', function () {
-        let linkedId = $(this).data('id');
 
-        let reservationId = CURRENT_RESERVATION_ID; 
+        let linkedId = $(this).data('id');
+        let reservationId = CURRENT_RESERVATION_ID;
 
         $.ajax({
             url: `/reservation/${reservationId}/link`,
             method: 'POST',
+
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
+
             data: {
                 linked_reservation_id: linkedId
             },
+
             success: function () {
                 closeTravelingWithModal();
-                location.reload(); 
+                location.reload();
             },
+
             error: function (err) {
-                alert(err.responseJSON?.message ?? 'Error linking');
+                console.error('Error linking reservation:', err);
+
+                alert(err.responseJSON?.message ?? 'Error linking reservation');
             }
         });
     });
 
     $(document).on('click', '.unlink-reservation', function () {
+
         let linkedId = $(this).data('id');
         let reservationId = CURRENT_RESERVATION_ID;
-
 
         $.ajax({
             url: `/reservation/${reservationId}/unlink`,
             method: 'POST',
+
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
+
             data: {
                 linked_reservation_id: linkedId
             },
+
             success: function () {
-                location.reload(); 
+                location.reload();
             },
+
             error: function (err) {
-                alert(err.responseJSON?.message ?? 'Error unlinking');
+                console.error('Error unlinking reservation:', err);
+
+                alert(err.responseJSON?.message ?? 'Error unlinking reservation');
             }
         });
     });
-
-    window.closeTravelingWithModal = function(){
-        $('#travelingWithModal').addClass('hidden');
-
-        $('#linked_customer').val('');
-
-        $('#possible-reservations').html('');
-    }
-    // end of reservation travel with
+    // end reservation travel with
 
     // start forms
     window.openFormPreviewModal = function(content){
@@ -1044,7 +1310,6 @@ $(document).ready(function() {
     }
     // end reservation gift notes
 
-
     // start reservation automated email 
     window.openReservationAutomatedEmailModal = function(message,fname,lname,cellphone,email){
         const $modal = $('#reservationAutomatedEmailModal');
@@ -1374,15 +1639,14 @@ $(document).ready(function() {
     });
 
     // start reservation attachments
-    const attachReservationBtn = $('#attachReservationBtn');
-    const reservationInput = $('#reservationAttachments');
-    const reservationTable = $('#reservationAttachmentsTable');
-
-    attachReservationBtn.on('click', function () {
-        reservationInput.trigger('click');
+    $(document).on('click', '#attachReservationBtn', function () {
+        $('#reservationAttachments').trigger('click');
     });
 
-    reservationInput.on('change', function () {
+    $(document).on('change', '#reservationAttachments', function () {
+
+        const reservationInput = $(this);
+        const reservationTable = $('#reservationAttachmentsTable');
 
         const emptyRow = reservationTable.find('.empty-row');
 
@@ -1399,6 +1663,7 @@ $(document).ready(function() {
 
                     <div class="flex space-x-3">
                         <i class="fas fa-file text-[#000] text-2xl mt-3"></i>
+
                         <div class="flex flex-col">
                             <p class="text-base">${file.name}</p>
                             <p class="text-[#989898] text-sm">Size: ${file.size} Bytes</p>
@@ -1407,8 +1672,9 @@ $(document).ready(function() {
 
                     <div class="space-x-4">
                         <i title="Download Attachment" class="fas fa-cloud-download-alt text-[#bdbdbd] text-xl mt-3"></i>
+
                         <button type="button" onclick="removeReservationFile('${rowId}', '${file.name}')">
-                            <i title="Delete Attachment" class="fas fa-trash text-[#bdbdbd] text-xl mt-3"></i>
+                            <i title="Delete Attachment" class="fas fa-trash text-[#bdbdbd] text-xl mt-3 cursor-pointer"></i>
                         </button>
                     </div>
 
@@ -1423,21 +1689,26 @@ $(document).ready(function() {
     {
         $('#' + rowId).remove();
 
+        const input = document.getElementById('reservationAttachments');
+
+        if (!input) {
+            return;
+        }
+
         const dt = new DataTransfer();
 
-        Array.from(reservationInput[0].files).forEach(file => {
+        Array.from(input.files).forEach(file => {
             if (file.name !== fileName) {
                 dt.items.add(file);
             }
         });
 
-        reservationInput[0].files = dt.files;
+        input.files = dt.files;
+
+        const reservationTable = $('#reservationAttachmentsTable');
 
         if (reservationTable.find('.attachment-row').length === 0) {
-
-            reservationTable.html(`
-                <div class="text-gray-400 mt-5 empty-row"></div>
-            `);
+            reservationTable.html(`<div class="text-gray-400 mt-5 empty-row"></div>`);
         }
     }
 
@@ -1448,7 +1719,7 @@ $(document).ready(function() {
         form.action = `/reservation-attachments/${attachmentId}`;
 
         openDeleteModal(form);
-    }
+    };
     // end reservation attachments
 
     // start reservattion itinerary pdf 

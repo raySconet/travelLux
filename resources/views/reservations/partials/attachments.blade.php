@@ -1,65 +1,56 @@
-@if ($isNewReservation)
-    <div class="space-x-2">
-        <i class="fas fa-exclamation-triangle text-[#6c757d] text-base"></i>
-        <span class="text-[#6c757d] text-base">
-            Attachments will be available after Reservation is saved.
-        </span>
+<div class="relative flex flex-row justify-between gap-3 mt-5">
+    <h6 class="text-xl">Reservation Attachments</h6>
+
+    <div>
+        <input type="file" id="reservationAttachments" name="attachments[]" multiple class="hidden">
+
+        <button type="button" id="attachReservationBtn" class="text-[#B6844A] text-2xl flex-shrink-0">
+            <i class="fas fa-plus-circle cursor-pointer"></i>
+        </button>
     </div>
-@else
-    <div class="relative flex flex-row justify-between gap-3 mt-5">
-        <h6 class="text-xl">Reservation Attachments</h6>
+</div>
 
-        <div>
-            <input type="file" id="reservationAttachments" name="attachments[]" multiple class="hidden">
+<div id="reservationAttachmentsTable">
 
-            <button type="button" id="attachReservationBtn" class="text-[#B6844A] text-2xl flex-shrink-0">
-                <i class="fas fa-plus-circle cursor-pointer"></i>
-            </button>
-        </div>
-    </div>
+    @forelse ($reservation->attachments as $attachment)
 
-    <div id="reservationAttachmentsTable">
+        <div class="flex justify-between mt-5 attachment-row">
 
-        @forelse ($reservation->attachments as $attachment)
+            <div class="flex space-x-3">
 
-            <div class="flex justify-between mt-5 attachment-row">
+                <i class="fas fa-file text-[#000] text-2xl mt-3"></i>
 
-                <div class="flex space-x-3">
+                <div class="flex flex-col">
 
-                    <i class="fas fa-file text-[#000] text-2xl mt-3"></i>
-
-                    <div class="flex flex-col">
-
-                        <a href="{{ asset('storage/attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension) }}" target="_blank" class="text-base hover:underline">
-                            {{ $attachment->file_name }}.{{ $attachment->file_extension }}
-                        </a>
-
-                        <p class="text-[#989898] text-sm">
-                            Size: {{ number_format($attachment->file_size) }} Bytes
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="space-x-4">
-
-                    <a href="{{ asset('storage/attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension) }}" target="_blank">
-                        <i title="Download Attachment" class="fas fa-cloud-download-alt text-[#bdbdbd] text-xl mt-3 cursor-pointer"></i>
+                    <a href="{{ asset('storage/attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension) }}" target="_blank" class="text-base hover:underline">
+                        {{ $attachment->file_name }}.{{ $attachment->file_extension }}
                     </a>
 
-                    <button type="button" onclick="openAttachmentDeleteModal({{ $attachment->id }})">
-                        <i title="Delete Attachment" class="fas fa-trash text-[#bdbdbd] text-xl mt-3 cursor-pointer"></i>
-                    </button>
+                    <p class="text-[#989898] text-sm">
+                        Size: {{ number_format($attachment->file_size) }} Bytes
+                    </p>
+
                 </div>
 
             </div>
 
-        @empty
+            <div class="space-x-4">
 
-            <div class="text-gray-400 mt-5 empty-row"></div>
+                <a href="{{ asset('storage/attachments/reservations/' . $attachment->id . '.' . $attachment->file_extension) }}" target="_blank">
+                    <i title="Download Attachment" class="fas fa-cloud-download-alt text-[#bdbdbd] text-xl mt-3 cursor-pointer"></i>
+                </a>
 
-        @endforelse
+                <button type="button" onclick="openAttachmentDeleteModal({{ $attachment->id }})">
+                    <i title="Delete Attachment" class="fas fa-trash text-[#bdbdbd] text-xl mt-3 cursor-pointer"></i>
+                </button>
+            </div>
 
-    </div>
-@endif
+        </div>
+
+    @empty
+
+        <div class="text-gray-400 mt-5 empty-row"></div>
+
+    @endforelse
+
+</div>

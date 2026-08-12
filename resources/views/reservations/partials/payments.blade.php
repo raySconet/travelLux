@@ -1,128 +1,120 @@
 @php 
     $isPaymentModalOpen = session('openPaymentModal') || $errors->paymentStore->any();
 @endphp    
-@if($isNewReservation)
-    <div>
-        <div class="space-x-2">
-            <i class="fas fa-exclamation-triangle text-[#6c757d] text-base"></i>
-            <span class="text-[#6c757d] text-base">Payments will be available after Reservation is saved.</span>
-        </div>
-    </div>    
-@else
-    <div class="relative flex flex-row justify-between gap-3 mt-5">
-        <h6 class="text-lg space-x-2">
-            <span>Credit Card Authorization Form</span> 
-            <i id="sendCreditCardFormBtn" class="fas fa-paper-plane text-[#B6844A] text-lg cursor-pointer" title="Send Form" data-url="{{ route('reservations.sendCreditCardForm', $reservation) }}"></i>
-        </h6>
-    </div>  
 
-    <div class="relative flex flex-row justify-between gap-3 mt-5">
-        <h6 class="text-lg">Reservation Payments</h6>
+<div class="relative flex flex-row justify-between gap-3 mt-5">
+    <h6 class="text-lg space-x-2">
+        <span>Credit Card Authorization Form</span> 
+        <i id="sendCreditCardFormBtn" class="fas fa-paper-plane text-[#B6844A] text-lg cursor-pointer" title="Send Form" data-url="{{ route('reservations.sendCreditCardForm', $reservation) }}"></i>
+    </h6>
+</div>  
 
-        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openReservationPaymentsModal()">
-            <i class="fas fa-plus-circle cursor-pointer"></i>
-        </button>
-    </div>
+<div class="relative flex flex-row justify-between gap-3 mt-5">
+    <h6 class="text-lg">Reservation Payments</h6>
 
-    <div class="relative flex flex-col">
-        @forelse($reservation->payments->where('is_deleted', 0) as $payment)
-            <hr class="mt-6 w-full border-b-1 border-[#dee2e6]">
-            <div class="flex justify-between text-base mb-4 mt-2 cursor-pointer" onclick='openEditPaymentModal(@json($payment))'>
-                <div class="flex flex-col text-sm">
-                    <div class="flex space-x-2 text-base">
-                        <i class="fas fa-calendar-alt mt-1"></i>
-                        <p>{{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('m/d/Y') : ' ' }}</p>
-                    </div>
-                    <div class="flex space-x-4 mt-1">
-                        <p class="bg-[#50c878] text-[#fff] rounded-xl px-2">$ {{ number_format($payment->amount, 2) }}</p>
-                        <p class="text-[#696969]">{{ $payment->payment_method }}</p>
-                        <p class="bg-[#e0e0e0] rounded-none px-4 text-[#212121]">{{ $payment->payment_type }}</p>
-                    </div>
+    <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openReservationPaymentsModal()">
+        <i class="fas fa-plus-circle cursor-pointer"></i>
+    </button>
+</div>
+
+<div class="relative flex flex-col">
+    @forelse($reservation->payments->where('is_deleted', 0) as $payment)
+        <hr class="mt-6 w-full border-b-1 border-[#dee2e6]">
+        <div class="flex justify-between text-base mb-4 mt-2 cursor-pointer" onclick='openEditPaymentModal(@json($payment))'>
+            <div class="flex flex-col text-sm">
+                <div class="flex space-x-2 text-base">
+                    <i class="fas fa-calendar-alt mt-1"></i>
+                    <p>{{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('m/d/Y') : ' ' }}</p>
                 </div>
-                <button type="button" onclick="event.stopPropagation(); openPaymentDeleteModal({{ $payment->id }})">
-                    <i title="Delete Payment" class="fas fa-trash text-[#bdbdbd] mt-3 text-xl cursor-pointer"></i>
-                </button>
+                <div class="flex space-x-4 mt-1">
+                    <p class="bg-[#50c878] text-[#fff] rounded-xl px-2">$ {{ number_format($payment->amount, 2) }}</p>
+                    <p class="text-[#696969]">{{ $payment->payment_method }}</p>
+                    <p class="bg-[#e0e0e0] rounded-none px-4 text-[#212121]">{{ $payment->payment_type }}</p>
+                </div>
             </div>
-        @empty
-            <p class="text-center text-base">No Customer Payments</p>
-        @endif        
-
-        <div class="flex flex-col gap-2" style="background-color: rgba(241, 131, 37,0.2)">
-            <p class="text-right text-base mt-2 mr-2">Total Reservation Cost:<b>$ {{ number_format($reservation->reservation_cost, 2) }}</b></p>
-            @php
-                $totalPayments = $reservation->payments->where('is_deleted', 0)->sum('amount');
-
-                $balanceDue = ($reservation->reservation_cost ?? 0) - $totalPayments;
-            @endphp
-
-            <p class="text-right text-base mb-2 mr-2">Balance Due: <b>$ {{ number_format($balanceDue, 2) }}</b></p>
+            <button type="button" onclick="event.stopPropagation(); openPaymentDeleteModal({{ $payment->id }})">
+                <i title="Delete Payment" class="fas fa-trash text-[#bdbdbd] mt-3 text-xl cursor-pointer"></i>
+            </button>
         </div>
+    @empty
+        <p class="text-center text-base">No Customer Payments</p>
+    @endif        
+
+    <div class="flex flex-col gap-2" style="background-color: rgba(241, 131, 37,0.2)">
+        <p class="text-right text-base mt-2 mr-2">Total Reservation Cost:<b>$ {{ number_format($reservation->reservation_cost, 2) }}</b></p>
+        @php
+            $totalPayments = $reservation->payments->where('is_deleted', 0)->sum('amount');
+
+            $balanceDue = ($reservation->reservation_cost ?? 0) - $totalPayments;
+        @endphp
+
+        <p class="text-right text-base mb-2 mr-2">Balance Due: <b>$ {{ number_format($balanceDue, 2) }}</b></p>
     </div>
+</div>
 
-    <hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
+<hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
 
-    <div class="relative flex flex-col">
-        <p class="text-base mt-2">Important Payment Date</p>
+<div class="relative flex flex-col">
+    <p class="text-base mt-2">Important Payment Date</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-            <div x-data="dateDropdown('{{ old('deposit_due_date', $reservation->deposit_due_date ?? '') }}')" class="relative mt-5">
-                <label class="block text-sm mb-1">Deposit Due Date</label>
-                <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
-                    <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Year</option>
-                        <template x-for="y in years" :key="y">
-                            <option :value="y" x-text="y" :selected="year == y"></option>
-                        </template>
-                    </select>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        <div x-data="dateDropdown('{{ old('deposit_due_date', $reservation->deposit_due_date ?? '') }}')" class="relative mt-5">
+            <label class="block text-sm mb-1">Deposit Due Date</label>
+            <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                    <option value="">Year</option>
+                    <template x-for="y in years" :key="y">
+                        <option :value="y" x-text="y" :selected="year == y"></option>
+                    </template>
+                </select>
 
-                    <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Month</option>
-                        <template x-for="(m, i) in months" :key="i">
-                            <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
-                        </template>
-                    </select>
+                <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                    <option value="">Month</option>
+                    <template x-for="(m, i) in months" :key="i">
+                        <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
+                    </template>
+                </select>
 
-                    <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Day</option>
-                        <template x-for="d in days" :key="d">
-                            <option :value="d" x-text="d" :selected="day == d"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <input type="hidden" name="deposit_due_date" :value="formattedDate">
+                <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                    <option value="">Day</option>
+                    <template x-for="d in days" :key="d">
+                        <option :value="d" x-text="d" :selected="day == d"></option>
+                    </template>
+                </select>
             </div>
 
-            <div x-data="dateDropdown('{{ old('final_payment_due_date', $reservation->final_payment_due_date ?? '') }}')" class="relative mt-5">
-                <label class="block text-sm mb-1">Final Payment Date</label>
-                <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
-                    <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Year</option>
-                        <template x-for="y in years" :key="y">
-                            <option :value="y" x-text="y" :selected="year == y"></option>
-                        </template>
-                    </select>
+            <input type="hidden" name="deposit_due_date" :value="formattedDate">
+        </div>
 
-                    <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Month</option>
-                        <template x-for="(m, i) in months" :key="i">
-                            <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
-                        </template>
-                    </select>
+        <div x-data="dateDropdown('{{ old('final_payment_due_date', $reservation->final_payment_due_date ?? '') }}')" class="relative mt-5">
+            <label class="block text-sm mb-1">Final Payment Date</label>
+            <div class="flex w-full border-b-2 border-[#bdbdbd] overflow-hidden outline-none">
+                <select x-model="year" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                    <option value="">Year</option>
+                    <template x-for="y in years" :key="y">
+                        <option :value="y" x-text="y" :selected="year == y"></option>
+                    </template>
+                </select>
 
-                    <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
-                        <option value="">Day</option>
-                        <template x-for="d in days" :key="d">
-                            <option :value="d" x-text="d" :selected="day == d"></option>
-                        </template>
-                    </select>
-                </div>
+                <select x-model="month" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                    <option value="">Month</option>
+                    <template x-for="(m, i) in months" :key="i">
+                        <option :value="i + 1" x-text="m" :selected="month == i + 1"></option>
+                    </template>
+                </select>
 
-                <input type="hidden" name="final_payment_due_date" :value="formattedDate">
+                <select x-model="day" class="flex-1 border-0 focus:ring-0 focus:outline-none px-3 py-2">
+                    <option value="">Day</option>
+                    <template x-for="d in days" :key="d">
+                        <option :value="d" x-text="d" :selected="day == d"></option>
+                    </template>
+                </select>
             </div>
+
+            <input type="hidden" name="final_payment_due_date" :value="formattedDate">
         </div>
     </div>
-@endif    
+</div>
 
 <!-- Reservation Payments Modal -->
 @if(!$isNewReservation)

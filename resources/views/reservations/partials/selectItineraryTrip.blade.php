@@ -8,8 +8,7 @@
                 <option value="-1">-- Select Trip --</option>
 
                 @foreach($itineraryTrips as $trip)
-                    <option value="{{ $trip->id }}"
-                        {{ old('itinerary_trip_id', $reservation->itinerary_trip_id ?? null) == $trip->id ? 'selected' : '' }}>
+                    <option value="{{ $trip->id }}" {{ old('itinerary_trip_id', $reservation->itinerary_trip_id ?? null) == $trip->id ? 'selected' : '' }}>
                         {{ $trip->name }}
                     </option>
                 @endforeach

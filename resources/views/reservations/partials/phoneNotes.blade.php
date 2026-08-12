@@ -1,84 +1,76 @@
 @php 
     $isPhoneNoteModalOpen = session('openPhoneNotesModal') || $errors->phoneNoteStore->any();
 @endphp
-@if ($isNewReservation)
-    <div>
-        <div class="space-x-2">
-            <i class="fas fa-exclamation-triangle text-[#6c757d] text-base"></i>
-            <span class="text-[#6c757d] text-base">Phone Notes will be available after Reservation is saved.</span>
-        </div>
-    </div>    
-@else
-    <div class="relative flex flex-row justify-between gap-3 mt-5">
-        <h6 class="text-xl">Phone Notes</h6>
 
-        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openPhoneNotesModal()">
-            <i class="fas fa-plus-circle cursor-pointer"></i>
-        </button>
-    </div>    
+<div class="relative flex flex-row justify-between gap-3 mt-5">
+    <h6 class="text-xl">Phone Notes</h6>
 
-    @forelse($reservation->phoneNotes()->where('is_deleted',0)->get() as $phoneNote)
-        <div class="flex justify-between mt-5 cursor-pointer" onclick='openEditPhoneNote(@json($phoneNote))'>
-            <div class="flex gap-4">
-                <button type="button" onclick="togglePhoneNoteCancel({{ $phoneNote->id }}, event)" class="cursor-pointer">
-                    @if($phoneNote->is_canceled == 0)
-                        <i title="Cancel this note" class="fas fa-minus-circle text-2xl text-[#bdbdbd] mt-7"></i>
-                    @else
-                        <i title="Undo Cancel" class="fas fa-minus-circle text-2xl text-red-500 mt-7"></i>
-                    @endif        
-                </button>
-                <div class="flex flex-col text-sm">
-                    <div class="flex gap-6">
+    <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openPhoneNotesModal()">
+        <i class="fas fa-plus-circle cursor-pointer"></i>
+    </button>
+</div>    
+
+@forelse($reservation->phoneNotes()->where('is_deleted',0)->get() as $phoneNote)
+    <div class="flex justify-between mt-5 cursor-pointer" onclick='openEditPhoneNote(@json($phoneNote))'>
+        <div class="flex gap-4">
+            <button type="button" onclick="togglePhoneNoteCancel({{ $phoneNote->id }}, event)" class="cursor-pointer">
+                @if($phoneNote->is_canceled == 0)
+                    <i title="Cancel this note" class="fas fa-minus-circle text-2xl text-[#bdbdbd] mt-7"></i>
+                @else
+                    <i title="Undo Cancel" class="fas fa-minus-circle text-2xl text-red-500 mt-7"></i>
+                @endif        
+            </button>
+            <div class="flex flex-col text-sm">
+                <div class="flex gap-6">
+                    <div class="flex gap-1">
+                        <i class="fas fa-user text-base mt-1"></i>
+                        <p class="text-base">{{ $phoneNote->agent->fname . ' '. $phoneNote->agent->lname }}</p>
+                    </div>
+                    <div class="flex gap-1 mt-1">
+                        <i class="fas fa-calendar-alt mt-1"></i>
+                        <p>{{ $phoneNote->created_on }}</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-6 mt-1">
+                    @if(!empty($phoneNote->caller_name))
                         <div class="flex gap-1">
-                            <i class="fas fa-user text-base mt-1"></i>
-                            <p class="text-base">{{ $phoneNote->agent->fname . ' '. $phoneNote->agent->lname }}</p>
+                            <i class="fas fa-address-card mt-1"></i>
+                            @if($phoneNote->is_canceled == 0)
+                                <p>{{ $phoneNote->caller_name }}</p>
+                            @else 
+                                <p class="line-through">{{ $phoneNote->caller_name }}</p> 
+                            @endif       
                         </div>
-                        <div class="flex gap-1 mt-1">
-                            <i class="fas fa-calendar-alt mt-1"></i>
-                            <p>{{ $phoneNote->created_on }}</p>
+                    @endif
+                    
+                    @if(!empty($phoneNote->caller_phone_number))
+                        <div class="flex gap-1">
+                            <i class="fas fa-phone mt-1"></i>
+                            @if($phoneNote->is_canceled == 0)
+                                <p>{{ $phoneNote->caller_phone_number }}
+                            @else
+                                <p class="line-through">{{ $phoneNote->caller_phone_number }}</p>
+                            @endif        
                         </div>
-                    </div>
-
-                    <div class="flex gap-6 mt-1">
-                        @if(!empty($phoneNote->caller_name))
-                            <div class="flex gap-1">
-                                <i class="fas fa-address-card mt-1"></i>
-                                @if($phoneNote->is_canceled == 0)
-                                    <p>{{ $phoneNote->caller_name }}</p>
-                                @else 
-                                    <p class="line-through">{{ $phoneNote->caller_name }}</p> 
-                                @endif       
-                            </div>
-                        @endif
-                        
-                        @if(!empty($phoneNote->caller_phone_number))
-                            <div class="flex gap-1">
-                                <i class="fas fa-phone mt-1"></i>
-                                @if($phoneNote->is_canceled == 0)
-                                    <p>{{ $phoneNote->caller_phone_number }}
-                                @else
-                                    <p class="line-through">{{ $phoneNote->caller_phone_number }}</p>
-                                @endif        
-                            </div>
-                        @endif    
-                    </div>
-
-                    @if($phoneNote->is_canceled == 0)
-                        <p>{{ $phoneNote->notes }}</p>
-                    @else
-                        <p class="line-through">{{ $phoneNote->notes }}</p>
-                        <p class="text-base text-[#bdbdbd]">Canceled By: {{ $phoneNote->agent->fname . ' ' . $phoneNote->agent->lname }} on {{ $phoneNote->canceled_on }}</p>
                     @endif    
                 </div>
+
+                @if($phoneNote->is_canceled == 0)
+                    <p>{{ $phoneNote->notes }}</p>
+                @else
+                    <p class="line-through">{{ $phoneNote->notes }}</p>
+                    <p class="text-base text-[#bdbdbd]">Canceled By: {{ $phoneNote->agent->fname . ' ' . $phoneNote->agent->lname }} on {{ $phoneNote->canceled_on }}</p>
+                @endif    
             </div>
-            <button type="button" onclick="event.stopPropagation(); openPhoneNoteDeleteModal({{ $phoneNote->id }})">
-                <i title="Delete note" class="fas fa-trash text-[#bdbdbd] text-2xl mt-7 cursor-pointer"></i>
-            </button>
         </div>
-    @empty
-        <p class="text-center text-base">No Phone Notes</p>
-    @endforelse        
-@endif    
+        <button type="button" onclick="event.stopPropagation(); openPhoneNoteDeleteModal({{ $phoneNote->id }})">
+            <i title="Delete note" class="fas fa-trash text-[#bdbdbd] text-2xl mt-7 cursor-pointer"></i>
+        </button>
+    </div>
+@empty
+    <p class="text-center text-base">No Phone Notes</p>
+@endforelse        
 
 <!-- Reservation Phone Notes Modal -->
 @if (!$isNewReservation)

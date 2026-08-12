@@ -4,6 +4,7 @@
         @method('PUT')
     @endif
 
+    <input type="hidden" id="customerId" value="{{ $customer->id }}">
     <x-app-layout>
         <x-slot name="header">
             <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
@@ -34,7 +35,7 @@
                 @include('customers.partials.customer-info')
             </div>
 
-            <div class="p-3 bg-white shadow sm:rounded-lg" x-data="{section: localStorage.getItem('customerActiveTab') || '{{ session('activeTab', 'home') }}'}" x-init="localStorage.removeItem('customerActiveTab')">
+            <div id="customerDetailsSection" class="p-3 bg-white shadow sm:rounded-lg" data-active-tab="{{ old('activeTab', session('activeTab', 'home')) }}" x-data="{ section: '{{ old('activeTab', session('activeTab', 'home')) }}' }">
 
                 <input type="hidden" name="activeTab" :value="section">
                 <div class="topButtonsGroup">
@@ -42,33 +43,30 @@
                         <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'home' }" @click="section = 'home'">
                             <i title="Home Address" style="font-size:20px;" class="fas fa-map-marker-alt"></i>
                         </button>
-                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'rewards' }" @click="section = 'rewards'">
+                       <button type="button" class="systemUsersSectionBtn customerRewardsBtn cursor-pointer"  :class="{ 'active': section === 'rewards' }" @click="section = 'rewards'">
                             <i title="Rewards" style="font-size:20px;" class="fas fa-trophy"></i>
                         </button>
-                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'family' }" @click="section = 'family'">
+                        <button type="button" class="systemUsersSectionBtn customerFamilyBtn cursor-pointer" :class="{ 'active': section === 'family' }" @click="section = 'family'">
                             <i title="Family" style="font-size:20px;" class="fas fa-user-friends"></i>
                         </button>
-                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'forms'}"  @click="section = 'forms'">
+                        <button type="button" class="systemUsersSectionBtn customerFormsBtn cursor-pointer" :class="{ 'active': section === 'forms'}" @click="section = 'forms'">
                             <i title="Forms" style="font-size:20px;" class="fab fa-wpforms"></i>
                         </button>    
-                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'surveys'}" @click="section = 'surveys'">
-                            <i title="Surveys" style="font-size:20px;" class="fas fa-comments"></i>
-                        </button> 
                         @if(!$isNewCustomer)
-                            <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'selfServiceInvitations'}" @click="section = 'selfServiceInvitations'">
+                            <button type="button" class="systemUsersSectionBtn customerSelfServiceInvitationsBtn cursor-pointer" :class="{ 'active': section === 'selfServiceInvitations'}" @click="section = 'selfServiceInvitations'">
                                 <i title="Self Service Invitations" style="font-size:20px;" class="fas fa-address-card"></i>
                             </button>  
                         @endif
-                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'travelHistory'}" @click="section = 'travelHistory'">
+                        <button type="button" class="systemUsersSectionBtn customerTravelHistoryBtn cursor-pointer" :class="{ 'active': section === 'travelHistory'}" @click="section = 'travelHistory'">
                             <i title="Travel History" style="font-size:20px;" class="fas fa-history"></i>
                         </button>     
-                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'referredBy'}" @click="section = 'referredBy'">
+                        <button type="button" class="systemUsersSectionBtn customerReferredByBtn cursor-pointer" :class="{ 'active': section === 'referredBy'}" @click="section = 'referredBy'">
                             <i title="Referred By" style="font-size:20px;" class="fas fa-tag"></i>
                         </button> 
-                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'autoEmails'}" @click="section = 'autoEmails'">
+                        <button type="button" class="systemUsersSectionBtn customerAutomatedEmailsBtn cursor-pointer" :class="{ 'active': section === 'autoEmails'}" @click="section = 'autoEmails'">
                             <i title="Sent Auto Emails" style="font-size:20px;" class="fas fa-envelope"></i>
                         </button>       
-                        <button type="button" class="systemUsersSectionBtn cursor-pointer" :class="{ 'active': section === 'generalNotes'}" @click="section = 'generalNotes'">
+                       <button type="button" class="systemUsersSectionBtn customerGeneralNotesBtn cursor-pointer" :class="{ 'active': section === 'generalNotes'}"  @click="section = 'generalNotes'">
                             <i title="General Notes" style="font-size:20px;" class="fas fa-sticky-note"></i>
                         </button>    
                     </div>
@@ -80,40 +78,118 @@
                     </div>
 
                     <div x-show="section === 'rewards'" x-cloak>
-                        @include('customers.partials.airline-cruises-rewards')
+
+                        <div id="customerRewardsContainer">
+
+                            @if($isNewCustomer)
+                                @include('customers.partials.airline-cruises-rewards', [
+                                    'customer' => $customer,
+                                    'isNewCustomer' => true
+                                ])
+                            @else
+                                <div class="text-center p-4">
+                                    Click Rewards to load data
+                                </div>
+                            @endif
+
+                        </div>
+
                     </div>
 
                     <div x-show="section === 'family'" x-cloak>
-                        @include('customers.partials.family')
+
+                        <div id="familyMembersListContainer">
+                            <div class="text-center p-4">
+                                Click Family to load data
+                            </div>
+                        </div>
+
                     </div>
 
                     <div x-show="section === 'forms'" x-cloak>
-                        @include('customers.partials.forms')
+
+                        <div id="formsListContainer">
+                            <div class="text-center p-4">
+                                Click Forms to load data
+                            </div>
+                        </div>
+
+                    </div>
+                    {{-- <div x-show="section === 'surveys'" x-cloak>
+                        @include('customers.partials.surveys')
+                    </div>   --}}
+
+                    <div x-show="section === 'selfServiceInvitations'" x-cloak>
+
+                        <div id="invitationsListContainer">
+                            <div class="text-center p-4">
+                                Click Invitations to load data
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div x-show="section === 'surveys'" x-cloak>
-                        @include('customers.partials.surveys')
-                    </div>  
-                    
-                    <div x-show="section === 'selfServiceInvitations'" x-cloak>
-                        @include('customers.partials.selfServiceInvitations')
-                    </div> 
+                    <div x-show="section === 'autoEmails'" x-cloak>
+
+                        <div id="customerAutomatedEmailsContainer">
+                            <div class="text-center p-4">
+                                Click Emails to load data
+                            </div>
+                        </div>
+
+                    </div>
 
                     <div x-show="section === 'travelHistory'" x-cloak>
-                        @include('customers.partials.travelHistory')
-                    </div>    
+
+                        <div id="travelHistoryContainer">
+                            <div class="text-center p-4">
+                                Click Travel History to load data
+                            </div>
+                        </div>
+
+                    </div>
 
                     <div x-show="section === 'referredBy'" x-cloak>
-                        @include('customers.partials.referredBy')
-                    </div>    
 
-                    <div x-show="section === 'autoEmails'" x-cloak>
-                        @include('customers.partials.autoEmails')
-                    </div>    
+                        <div id="referredByContainer">
+
+                            @if($isNewCustomer)
+                        
+
+                                @include('customers.partials.referredBy', [
+                                    'customer' => $customer,
+                                    'referralCustomers' => $referralCustomers,
+                                    'isNewCustomer' => true
+                                ])
+                            @else
+                                <div class="text-center p-4">
+                                    Click Referred By to load data
+                                </div>
+                            @endif
+
+                        </div>
+
+                    </div>
 
                     <div x-show="section === 'generalNotes'" x-cloak>
-                        @include('customers.partials.generalNotes')
-                    </div>    
+
+                        <div id="generalNotesContainer">
+
+                            @if($isNewCustomer)
+                                @include('customers.partials.generalNotes', [
+                                    'customer' => $customer,
+                                    'isNewCustomer' => true
+                                ])
+                            @else
+                                <div class="text-center p-4">
+                                    Click General Notes to load data
+                                </div>
+                            @endif
+
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>

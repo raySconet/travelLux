@@ -5,8 +5,11 @@
                 <i class="fa-solid fa-list-alt mr-2 text-[#B6844A]"></i>{{ __('1099 Report') }}
             </h2>
             
-            <button class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer"><i class="fas fa-cloud-download-alt"></i>Download</button>
-
+            <button onclick="printElement('1099ReportContainer')" class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer">
+                <i class="fas fa-cloud-download"></i>
+                Download
+            </button>
+            
             <button  class="flex items-center gap-2 cursor-pointer" onclick="openReportDateRangeModal()">
                 <i class="far fa-calendar-alt text-[#212121] text-2xl" ></i>
                 <span id="selectedReportDates" class="text-[#212121] text-base font-bold"></span>
@@ -17,7 +20,7 @@
 
     <div class="mx-autp py-2 px-4">
        
-        <div class="p-3 bg-white shadow sm:rounded-lg">
+        <div class="p-3 bg-white shadow sm:rounded-lg" id="1099ReportContainer">
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead class="bg-white">

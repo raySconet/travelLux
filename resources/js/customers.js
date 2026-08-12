@@ -1,4 +1,213 @@
 $(document).ready(function() {
+    // start customer details tabs
+    function getCustomerId() {
+        return $("#customerId").val();
+    }
+
+    function isNewCustomer() {
+        const id = getCustomerId();
+
+        return !id || id === "0" || id === "undefined";
+    }
+
+    function showUnsavedCustomerMessage(container, message) {
+        $(container).html(`
+            <div class="space-x-2">
+                <i class="fas fa-exclamation-triangle text-[#6c757d] text-base"></i>
+                <span class="text-[#6c757d] text-base">${message}</span>
+            </div>
+        `);
+    }
+
+    function loadCustomerSection(url, container)
+    {
+        $.ajax({
+            url: url,
+
+            beforeSend: function() {
+                $(container).html(
+                    '<div class="text-center p-4">Loading...</div>'
+                );
+            },
+
+            success: function(response) {
+                $(container).html(response);
+            },
+
+            error: function(xhr) {
+                console.error(
+                    'Section loading failed:',
+                    xhr.status,
+                    xhr.responseText
+                );
+
+                $(container).html(
+                    '<div class="text-red-500 p-4">Failed loading data.</div>'
+                );
+            }
+        });
+    }
+
+    $(document).on('click', '.customerRewardsBtn', function() {
+
+        const id = getCustomerId();
+
+        if (!id) {
+            console.error('Customer ID is missing.');
+            return;
+        }
+
+        loadCustomerSection(`/customers/sections/${id}/rewards`,"#customerRewardsContainer");
+    });
+
+    $(document).on('click', '.customerFamilyBtn', function() {
+
+        const id = getCustomerId();
+
+        if (!id) {
+            showUnsavedCustomerMessage(
+                "#familyMembersListContainer",
+                "Family members will be available after record is saved."
+            );
+            return;
+        }
+
+        loadCustomerSection(`/customers/sections/${id}/family`,"#familyMembersListContainer");
+    });
+
+    $(document).on('click', '.customerFormsBtn', function() {
+
+        const id = getCustomerId();
+
+        if (!id) {
+            showUnsavedCustomerMessage(
+                "#formsListContainer",
+                "Forms will be available after record is saved."
+            );
+            return;
+        }
+
+        loadCustomerSection(`/customers/sections/${id}/forms`,"#formsListContainer");
+    });
+
+    $(document).on('click', '.customerAutomatedEmailsBtn', function() {
+
+        const id = getCustomerId();
+
+        if (!id) {
+            showUnsavedCustomerMessage(
+                "#customerAutomatedEmailsContainer",
+                "Automated emails will be available after record is saved."
+            );
+            return;
+        }
+
+        loadCustomerSection(`/customers/sections/${id}/automated-emails`,"#customerAutomatedEmailsContainer");
+    });
+
+    $(document).on('click', '.customerSelfServiceInvitationsBtn', function() {
+
+        const id = getCustomerId();
+
+        if (!id) {
+            console.error('Customer ID is missing.');
+            return;
+        }
+
+        loadCustomerSection(`/customers/sections/${id}/invitations`,"#invitationsListContainer");
+    });
+
+    $(document).on('click', '.customerTravelHistoryBtn', function() {
+
+        const id = getCustomerId();
+
+        if (!id) {
+            showUnsavedCustomerMessage(
+                "#travelHistoryContainer",
+                "Travel history will be available after record is saved."
+            );
+            return;
+        }
+
+        loadCustomerSection(`/customers/sections/${id}/travel-history`,"#travelHistoryContainer");
+    });
+
+    $(document).on('click', '.customerReferredByBtn', function() {
+
+        const id = getCustomerId();
+
+        if (!id) {
+            console.error('Customer ID is missing.');
+            return;
+        }
+
+        loadCustomerSection(`/customers/sections/${id}/referred-by`,"#referredByContainer");
+    });
+
+    $(document).on('click', '.customerGeneralNotesBtn', function() {
+
+        const id = getCustomerId();
+
+        if (!id) {
+            console.error('Customer ID is missing.');
+            return;
+        }
+
+        loadCustomerSection(`/customers/sections/${id}/general-notes`,"#generalNotesContainer");
+    });
+    
+
+    $(document).ready(function () {
+
+        const id = getCustomerId();
+
+        if (!id) {
+            return;
+        }
+
+        const activeTab = $('#customerDetailsSection').data('active-tab');
+
+        if (!activeTab || activeTab === 'home') {
+            return;
+        }
+
+        switch (activeTab) {
+
+            case 'rewards':
+                loadCustomerSection(`/customers/sections/${id}/rewards`,"#customerRewardsContainer");
+            break;
+
+            case 'family':
+                loadCustomerSection(`/customers/sections/${id}/family`,"#familyMembersListContainer");
+            break;
+
+            case 'forms':
+                loadCustomerSection(`/customers/sections/${id}/forms`,"#formsListContainer");
+            break;
+
+            case 'selfServiceInvitations':
+                loadCustomerSection(`/customers/sections/${id}/invitations`,"#invitationsListContainer");
+            break;
+
+            case 'travelHistory':
+                loadCustomerSection(`/customers/sections/${id}/travel-history`,"#travelHistoryContainer");
+            break;
+
+            case 'referredBy':
+                loadCustomerSection(`/customers/sections/${id}/referred-by`,"#referredByContainer");
+            break;
+
+            case 'autoEmails':
+                loadCustomerSection(`/customers/sections/${id}/automated-emails`,"#customerAutomatedEmailsContainer");
+            break;
+
+            case 'generalNotes':
+                loadCustomerSection(`/customers/sections/${id}/general-notes`,"#generalNotesContainer");
+            break;
+        }
+    });
+    // end customer details tabs
+
     // start add secondary email
     $('#addSecondaryEmail').on('click', function () {
         const row = `

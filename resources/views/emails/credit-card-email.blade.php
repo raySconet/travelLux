@@ -10,7 +10,7 @@ to complete the form. Please print the form, complete and sign it.
 Once finished, kindly send me a picture of it via text or email.
 </p>
 
-<p>Thanks for choosing Archer Luxury Travel for your vacation planning!</p>
+<p>Thanks for choosing Travelux Luxury Travel for your vacation planning!</p>
 
 <p>
 Thank you,<br>

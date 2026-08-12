@@ -356,55 +356,42 @@ $(document).ready(function() {
 
     });
 
-    $(document).on("click",".checkHistoryTableRecord",
-        function(){
+    $(document).on("click",".checkHistoryTableRecord",function(){
+
+        let id = $(this).data("id");
+
+        let detail = $(`.checkHistoryDetails[data-detail="${id}"]`);
+
+        detail.toggleClass("hidden");
 
 
-            let id = $(this).data("id");
-
-            let detail = $(`.checkHistoryDetails[data-detail="${id}"]`);
-
-            detail.toggleClass("hidden");
+        let icon = $(this).find(".checkHistoryChevron");
 
 
-            let icon = $(this).find(".checkHistoryChevron");
+        if(detail.hasClass("hidden")){
 
-
-            if(detail.hasClass("hidden")){
-
-                icon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
-
-            }
-            else{
-                icon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
-            }
-
+            icon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
 
         }
-    );
-
-
-    $(document).on("keyup","#checkHistorySearch",
-        function(){
-
-            let value = $(this).val().toLowerCase();
-
-            $(".bg-white.shadow.rounded-lg").each(function(){
-
-                let text = $(this).text().toLowerCase();
-
-                if(text.indexOf(value) > -1){
-                    $(this).show();
-                }
-                else{
-                    $(this).hide();
-                }
-
-            });
-
-
+        else{
+            icon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
         }
-    );
+
+    });
+
+    $(document).on("keyup", "#checkHistorySearch", function () {
+
+        let value = $(this).val().toLowerCase();
+
+        $(".checkHistoryCard").each(function () {
+
+            let text = $(this).text().toLowerCase();
+
+            $(this).toggle(text.indexOf(value) > -1);
+
+        });
+
+    });
 
     $(document).on("click", ".undoPaymentBtn", function () {
 
@@ -482,4 +469,138 @@ $(document).ready(function() {
         });
     }
     // end current checks report
+    
+    // start commission claim report
+    function showSuccessOverlay(callback = null)
+    {
+        $('#copySuccessOverlay').removeClass('hidden').addClass('flex');
+
+        setTimeout(function () {
+            $('#copySuccessOverlay').addClass('hidden').removeClass('flex');
+            if (callback) {
+                callback();
+            }
+        }, 1500);
+    }
+
+    $('#searchReservationBtn').click(function () {
+
+        let reservationNumber = $('#reservationNumberSearch').val().trim();
+
+        if (reservationNumber === '') {
+            alert('Reservation Number is required.');
+            return;
+        }
+
+        $.ajax({
+
+            url: '/commissionClaimReport/search',
+            type: 'POST',
+            data: {
+                reservationNumber: reservationNumber,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+
+            beforeSend() {
+                showLoader();
+            },
+
+            success(response) {
+
+                let tbody = $('#commissionClaimTableBody');
+
+                tbody.empty();
+
+                if (!response.success) {
+                    alert(response.message);
+                    return;
+                }
+
+                response.data.forEach(function (reservation) {
+
+                    tbody.append(`
+                        <tr class="mt-2 p-2">
+                            <td>
+                                <button class="claimReservationBtn space-x-2 bg-[#B6844A] text-white font-semibold py-2 px-7 rounded cursor-pointer border border-transparent hover:bg-white hover:border-[#B6844A] hover:text-[#B6844A] transition-all duration-200 mt-2" data-id="${reservation.id}">
+                                    <i class='fas fa-check-square'></i>
+                                    Claim
+                                </button>
+                            </td>
+                            <td>${reservation.reservation_number}</td>
+                            <td>${reservation.customer_name}</td>
+                            <td>${reservation.product_name}</td>
+                            <td>$${reservation.agent_commission}</td>
+
+                        </tr>
+                    `);
+
+                });
+
+            },
+
+            error(xhr) {
+
+                if (xhr.status === 422) {
+                    alert(xhr.responseJSON.message);
+                } else {
+                    alert('Failed to load reservations.');
+                }
+
+            },
+
+            complete() {
+                hideLoader();
+            }
+
+        });
+
+    });
+
+    $(document).on('click', '.claimReservationBtn', function () {
+
+        const reservationId = $(this).data('id');
+
+        $.ajax({
+
+            url: '/commissionClaimReport/claim',
+            type: 'POST',
+            data: {
+                reservationId: reservationId,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+
+            beforeSend() {
+                showLoader();
+            },
+
+            success(response) {
+
+                if (!response.success) {
+                    alert(response.message);
+                    return;
+                }
+
+                $(`button[data-id="${reservationId}"]`).closest('tr').remove();
+                showSuccessOverlay();
+
+            },
+
+            error(xhr) {
+
+                if (xhr.status === 422) {
+                    alert(xhr.responseJSON.message);
+                } else {
+                    alert('Failed to claim the commission.');
+                }
+
+            },
+
+            complete() {
+                hideLoader();
+            }
+
+        });
+
+    });
+    // end commission claim report
 });

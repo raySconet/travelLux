@@ -80,6 +80,33 @@ window.openPdf = function (url) {
 
 };
 
+window.printElement = function (containerId) {
+
+    const element = document.getElementById(containerId);
+
+    if (!element) {
+        console.error(`Element with id '${containerId}' not found.`);
+        return;
+    }
+
+    const domClone = element.cloneNode(true);
+
+    let printSection = document.getElementById("printSection");
+
+    if (!printSection) {
+        printSection = document.createElement("div");
+        printSection.id = "printSection";
+        document.body.appendChild(printSection);
+    }
+
+    printSection.innerHTML = "";
+    printSection.appendChild(domClone);
+
+    window.print();
+
+    printSection.remove();
+};
+
 window.Alpine = Alpine;
 
 Alpine.start();

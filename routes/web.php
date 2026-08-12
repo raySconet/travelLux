@@ -22,7 +22,6 @@ use App\Http\Controllers\ProductConfigurationController;
 use App\Http\Controllers\DestinationsController;
 use App\Http\Controllers\ResortShipsController;
 use App\Http\Controllers\CruiseItinerariesController;
-
 use App\Http\Controllers\OverallTaskDashboardController;
 use App\Http\Controllers\MyOverallTaskDashboardController;
 use App\Http\Controllers\OwnersDashboardController;
@@ -33,8 +32,9 @@ use App\Http\Controllers\Report1099Controller;
 use App\Http\Controllers\VendorReportController;
 use App\Http\Controllers\CheckHistoryReportController;
 use App\Http\Controllers\CurrentChecksReportController;
-use App\Http\Controllers\ReservationsNotPaidByALTReportController;
-use App\Http\Controllers\ReservationsPaidByALTReportController;
+use App\Http\Controllers\ReservationsNotPaidByTraveluxReportController;
+use App\Http\Controllers\ReservationsPaidByTraveluxReportController;
+use App\Http\Controllers\CustomersPerAgentController;
 use App\Http\Controllers\UnknownReservationsReportController;
 use App\Http\Controllers\BookedTripsByStateReportController;
 use App\Http\Controllers\ReservationsChangesReportController;
@@ -69,6 +69,8 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\IntakeFormController;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\CustomerSectionController;
+use App\Http\Controllers\ReservationSectionController;
 
 Route::get('/', function () {
     return view('auth/login');
@@ -251,12 +253,24 @@ Route::middleware('auth')->group(function(){
 
     Route::post('/customers/send-form',[CustomerController::class,'sendForm'])->name('customers.sendForm');
     Route::post('/customers/resend-form',[CustomerController::class, 'resendForm'])->name('customers.resendForm');
+
+    Route::prefix('customers/sections')->group(function(){
+        Route::get('/{customer}/rewards', [CustomerSectionController::class,'rewards']);
+        Route::get('/{customer}/family', [CustomerSectionController::class,'family']);
+        Route::get('/{customer}/forms',[CustomerSectionController::class,'forms']);
+        Route::get('/{customer}/invitations',[CustomerSectionController::class,'invitations']);
+        Route::get('/{customer}/travel-history',[CustomerSectionController::class,'travelHistory']);
+        Route::get('/{customer}/referred-by',[CustomerSectionController::class,'referredBy']);
+        Route::get('/{customer}/automated-emails',[CustomerSectionController::class,'automatedEmails']);
+        Route::get('/{customer}/general-notes',[CustomerSectionController::class,'generalNotes']);
+    });
 });
 Route::middleware('auth')->group(function(){
     Route::get('/reservation-list', [ReservationController::class, 'index'])->name('reservations.reservationList');
     Route::get('/reservation-list/create', [ReservationController::class,'create'])->name('reservations.create');
     Route::get('/reservation-list/{reservation}',[ReservationController::class, 'edit'])->name('reservations.reservationDetails');
     Route::get('/reservation-list/{reservation}/duplicate', [ReservationController::class, 'duplicate'])->name('reservations.duplicate');
+    Route::get('/ajax/customers/by-agent/{agentId}', [ReservationController::class, 'getCustomersByAgent'])->name('reservations.customers.byAgent');
 
     Route::post('/reservation', [ReservationController::class, 'store'])->name('reservations.store');
     Route::put('/reservation/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
@@ -317,6 +331,24 @@ Route::middleware('auth')->group(function(){
     Route::post('/reservations/search-completed', [ReservationController::class, 'searchForCompletedReservations'])
         ->name('reservations.search.completed');
 
+    Route::prefix('reservations/sections')->group(function () {
+
+        Route::get('/{reservation}/tasks', [ReservationSectionController::class, 'tasks']);
+        Route::get('/{reservation}/payments',[ReservationSectionController::class, 'payments']);
+        Route::get('/{reservation}/on-board-credit',[ReservationSectionController::class, 'onBoardCredit']);
+        Route::get('/{reservation}/linked-reservations',[ReservationSectionController::class, 'linkedReservations']);
+        Route::get('/{reservation}/travelers', [ReservationSectionController::class, 'travelers']);
+        Route::get('/{reservation}/forms', [ReservationSectionController::class, 'forms']);
+        Route::get('/{reservation}/flight-info', [ReservationSectionController::class, 'flightInfo']);
+        Route::get('/{reservation}/dining-information', [ReservationSectionController::class, 'diningInformation']);
+        Route::get('/{reservation}/gifts', [ReservationSectionController::class, 'giftsInfo']);
+        Route::get('/{reservation}/auto-emails', [ReservationSectionController::class, 'autoEmails']);
+        Route::get('/{reservation}/notes', [ReservationSectionController::class, 'notes']);
+        Route::get('/{reservation}/phone-notes',[ReservationSectionController::class, 'phoneNotes']);
+        Route::get('/{reservation}/agent-payments',[ReservationSectionController::class, 'agentPayments']);
+        Route::get('/{reservation}/attachments',[ReservationSectionController::class, 'attachments']);
+        Route::get('/{reservation}/itinerary',[ReservationSectionController::class, 'itinerary']);
+    });
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');
@@ -366,9 +398,14 @@ Route::middleware('auth')->group(function(){
     Route::get('/currentChecksReport', [CurrentChecksReportController::class,'index'])->name('reports.currentChecks');
     Route::get('/currentChecksReport/load', [CurrentChecksReportController::class, 'loadReport'])->name('reports.currentChecks.load');
 
-    Route::get('/commissionClaimReport',[CommissionClaimReportController::class,'index'])->name('reports.commissionClaimReport');
-    Route::get('/reservationsNotPaidByALTReport', [ReservationsNotPaidByALTReportController::class,'index'])->name('reports.reservationsNotPaidByALTReport');
-    Route::get('/reservationsPaidByALTReport', [ReservationsPaidByALTReportController::class,'index'])->name('reports.reservationsPaidByALTReport');
+    Route::get('/commissionClaimReport', [CommissionClaimReportController::class, 'index'])->name('reports.commissionClaimReport');
+    Route::post('/commissionClaimReport/search', [CommissionClaimReportController::class, 'search'])->name('reports.commissionClaimReport.search');
+    Route::post('/commissionClaimReport/claim', [CommissionClaimReportController::class, 'claim'])->name('reports.commissionClaimReport.claim');
+
+    Route::get('/customersPerAgent', [CustomersPerAgentController::class, 'index'])->name('reports.customersPerAgent');
+
+    Route::get('/reservationsNotPaidByTraveluxReport', [ReservationsNotPaidByTraveluxReportController::class,'index'])->name('reports.reservationsNotPaidByTraveluxReport');
+    Route::get('/reservationsPaidByTraveluxReport', [ReservationsPaidByTraveluxReportController::class,'index'])->name('reports.reservationsPaidByTraveluxReport');
     Route::get('/unknownReservationsReport',[UnknownReservationsReportController::class,'index'])->name('reports.unknownReservationsReport');
     Route::get('/bookedTripsByStateReport', [BookedTripsByStateReportController::class,'index'])->name('reports.bookedTripsByStateReport');
     Route::get('/reservationsChangesReport', [ReservationsChangesReportController::class,'index'])->name('reports.reservationsChangesReport');

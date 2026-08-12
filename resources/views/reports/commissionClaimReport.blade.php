@@ -33,12 +33,12 @@
                     <li>If you are owed $12, and the look up fee is $15 I suggest not claiming it as you will be in the <b>HOLE -$3!!!!!</b></li>
                 </ol>
             </li>
-            <li>If you are charged a fee after month end has passed, and you believe it to be Travelux's mistake, please email DeeAna with the booking info and details so it can be looked in to.</li>
+            <li>If you are charged a fee after month end has passed, and you believe it to be Travelux's mistake, please email Travelux with the booking info and details so it can be looked in to.</li>
         </ol>
         <div class="flex gap-4">
-            <input type="text" id="reservationNumberSearch" placeholder="Reservation # Search" name="reservationNumberSearch" class="w-50 border-b mt-2 focus:outline-none" />
+            <input type="text" id="reservationNumberSearch" placeholder="Reservation # Search" name="reservationNumberSearch" class="w-50 border-b mt-6 focus:outline-none" />
 
-            <x-primary-btn class="flex items-center gap-2 mt-4"><i class="fas fa-paper-plane"></i>Submit</x-primary-btn>
+            <x-primary-btn id="searchReservationBtn" type="button" class="flex items-center gap-2 mt-4"><i class="fas fa-paper-plane mr-2"></i>Submit</x-primary-btn>
         </div>
         <div class="overflow-x-auto mt-5">
             <table class="min-w-full text-sm">
@@ -62,33 +62,12 @@
                     </tr>
                 </thead>
 
-
-                <tbody class="divide-y">
-                        <tr class="hover:bg-gray-50 cursor-pointer">
-                            <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                         
-                            </td>
-
-                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
-                          
-                            </td>
-
-                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                            
-                            </td>
-
-                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                            
-                            </td>
-
-                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                            
-                            </td>
-
-                        </tr>
-                </tbody>
+                <tbody class="divide-y" id="commissionClaimTableBody"></tbody>
             </table>
         </div>
     </div>
     
+    <div id="copySuccessOverlay" class="fixed inset-0 hidden items-center justify-center bg-black/40 z-[9999]">
+        <i class="fas fa-check-square text-[#B6844A] text-8xl"></i>
+    </div>
 </x-app-layout>

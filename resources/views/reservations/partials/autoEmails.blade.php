@@ -1,14 +1,6 @@
-@if($isNewReservation)
-    <div>
-        <div class="space-x-2">
-            <i class="fas fa-exclamation-triangle text-[#6c757d] text-base"></i>
-            <span class="text-[#6c757d] text-base">Auto Emails Information will be available after customer is saved.</span>
-        </div>
-    </div>
-@else
-    @php
-        $autoEmails = $reservation->automatedEmails()->with('automatedEmail')->get();
-    @endphp
+@php
+    $autoEmails = $reservation->automatedEmails()->with('automatedEmail')->get();
+@endphp
 <div>
     <h6 class="text-xl">Sent Auto Emails</h6>
 
@@ -47,7 +39,6 @@
     </div>
 
 </div>  
-@endif  
 
 <!-- Reservation Automated Email modal -->
 <div id="reservationAutomatedEmailModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-[9999]">

@@ -180,7 +180,7 @@ class Reservation extends Model
 
     public function paidInFullAudits()
     {
-        return $this->hasMany(ReservationPaidInFullAudit::class, 'reservation_id')->with('modifiedByUser')->latest('modified_on');
+        return $this->hasMany(ReservationPaidInFullAudit::class,'reservation_id')->latest('modified_on');
     }
 
     public function paidCommissions()

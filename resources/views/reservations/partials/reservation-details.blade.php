@@ -18,8 +18,14 @@
 
         <div class="flex-1 relative mt-6">
             <label for="destination_id" class="text-sm block mb-1">Destination</label>
-            <select name="destination_id"id="destination_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+            <select name="destination_id" id="destination_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="">--Select Destination--</option>
+
+                @foreach($destinations as $destination)
+                    <option value="{{ $destination->id }}" {{ old('destination_id', $reservation->destination_id) == $destination->id ? 'selected' : '' }}>
+                        {{ $destination->destination_name }}
+                    </option>
+                @endforeach
             </select>
 
             <x-input-error :messages="$errors->get('destination_id')" />
@@ -29,8 +35,14 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div class="flex-1 relative mt-6">
             <label for="resort_id" class="text-sm block mb-1">Resort/Ship</label>
-            <select name="resort_id"id="resort_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+            <select name="resort_id" id="resort_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
                 <option value="">--Select Resort/Ship--</option>
+
+                @foreach($resorts as $resort)
+                    <option value="{{ $resort->id }}" {{ old('resort_id', $reservation->resort_id) == $resort->id ? 'selected' : '' }}>
+                        {{ $resort->resort_ship_name }}
+                    </option>
+                @endforeach
             </select>
 
             <x-input-error :messages="$errors->get('resort_id')" />
@@ -38,8 +50,14 @@
 
         <div class="flex-1 relative mt-6">
             <label for="cruise_itinerary_id" class="text-sm block mb-1">Cruise Itinerary</label>
-            <select name="cruise_itinerary_id"id="cruise_itinerary_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
-                <option value="">--Select Cruise/Type--</option>
+            <select name="cruise_itinerary_id" id="cruise_itinerary_id" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1">
+                <option value="">--Select Cruise Itinerary--</option>
+
+                @foreach($cruises as $cruise)
+                    <option value="{{ $cruise->id }}" {{ old('cruise_itinerary_id', $reservation->cruise_itinerary_id) == $cruise->id ? 'selected' : '' }}>
+                        {{ $cruise->cruise_name }}
+                    </option>
+                @endforeach
             </select>
         </div>
     </div>
@@ -236,6 +254,8 @@
                 <option value="Diamond Plus" {{ old('cruise_level', $reservation->cruise_level ?? '') == 'Diamond Plus' ? 'selected' : '' }}>Diamond Plus</option>
                 <option value="Pinnacle" {{ old('cruise_level', $reservation->cruise_level ?? '') == 'Pinnacle' ? 'selected' : '' }}>Pinnacle</option>
                 <option value="Concierge" {{ old('cruise_level', $reservation->cruise_level ?? '') == 'Concierge' ? 'selected' : '' }}>Concierge</option>
+                <option value="Platinum" {{ old('cruise_level', $reservation->cruise_level ?? '') == 'Platinum' ? 'selected' : '' }}>Platinum</option>
+                <option value="Pearl" {{ old('cruise_level', $reservation->cruise_level ?? '') == 'Pearl' ? 'selected' : '' }}>Pearl</option>
             </select>
         </div>
 

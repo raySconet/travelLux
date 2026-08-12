@@ -17,17 +17,18 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         <!-- Flatpickr CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css" />
+        {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"> --}}
+        {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css" /> --}}
 
-        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
+        @if(request()->is('itinerary') || request()->is('itinerary/*'))
+            <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
+        @endif
         <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 
         <!-- Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
-            @vite(['resources/css/administration.css'])
         @endif
 
         @if(request()->is('system-users') || request()->is('system-users/*') || request()->is('timelinetasks') || request()->is('timelinetasks/*'))
@@ -43,11 +44,13 @@
         @endif
 
         @if(request()->is('itinerary') || request()->is('itinerary/*'))
-            @vite('resources/js/itinerary.js')
+            @vite(['resources/js/itinerary.js','resources/css/itinerary.css',])
         @endif
+
         @if(request()->is('productConfiguration') || request()->is('productConfiguration/*'))
             @vite('resources/js/productConfiguration.js')
         @endif
+
         @if(request()->is('customer-list') || request()->is('customer-list/*') || request()->is('customer') || request()->is('customer/*') || request()->is('inviteNewCustomer'))
             @vite('resources/js/customers.js')
         @endif
@@ -186,13 +189,21 @@
             <div class="loader h-12 w-12 border-4 border-t-[#14548d] border-gray-200 rounded-full animate-spin"></div>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        {{-- <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> --}}
         {{-- <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script> --}}
         <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/xrange.js"></script>
+
+        @if(request()->is('itinerary') || request()->is('itinerary/*'))
+            <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
+        @endif
+
+        @if(request()->is('agentDashboard') || request()->is('overallTaskDashboard') || request()->is('overallTaskDashboard/*') || request()->is('myOverallTaskDashboard') ||
+            request()->is('myOverallTaskDashboard/*') || request()->is('ownersDashboard') || request()->is('ownersDashboard/*') || request()->is('checkingInThisWeek')
+        )
+            <script src="https://code.highcharts.com/highcharts.js"></script>
+            <script src="https://code.highcharts.com/modules/xrange.js"></script>
+        @endif
 
 
         <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">

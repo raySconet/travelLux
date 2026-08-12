@@ -1,0 +1,41 @@
+/* ################################### */
+/* start of itinerary */
+/* ################################### */
+.cover-wrapper {
+    background: #ffffff; 
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.cover-image-container {
+    position: relative;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 220px;
+}
+
+.cover-image {
+    max-width: 350px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.cover-overlay {
+    position: absolute;
+    left: -11px;
+    right: -11px;
+    bottom: -9px; 
+    background: rgba(128, 128, 128, 0.55);
+    padding: 8px 12px;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+}
+/* ################################### */
+/* end of itinerary */
+/* ################################### */

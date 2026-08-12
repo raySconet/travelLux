@@ -127,3 +127,66 @@ select option {
     color: #B6844A;
     font-size: 1.1rem;
 }
+
+/* ################################### */
+/* start of alpine tabs */
+/* ################################### */
+.topButtonsGroup {
+   display: flex;
+   justify-content: center;
+   margin-bottom: 20px;
+   margin-top: -5px;
+}
+.systemUsersNav {
+    background: #6c757d;
+    display: flex;
+    gap: 2px;
+}
+.systemUsersSectionBtn {
+    padding: 10px 10px;
+    font-size: 15px;
+    color: white;
+    background: transparent;
+    transition: background-color 0.2s ease;
+}
+.systemUsersSectionBtn:hover {
+    background: #545b62;
+}
+.systemUsersSectionBtn.active {
+    background: #545b62;
+}
+.systemUserIconContainer {
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-end;
+}
+.systemUserIconContainer button {
+	padding: 2px;
+	margin-left: 7px;
+	background-color: #ffffff;
+	color: #B6844A;
+	font-weight: bold;
+}
+.systemUserIconContainer button:hover {
+	background-color: #B6844A;
+	color: #ffffff;
+	border-color: #B6844A;
+}
+.form-input {
+    border: none;
+    border-bottom: 2px solid #bdbdbd;
+    border-radius: 0;
+    padding: 6px 4px;
+    min-width: 100px;
+    background: transparent;
+    color: #000;
+    font-size: 0.8rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+.form-input:focus {
+    border-bottom-color: #B6844A;
+}
+/* ################################### */
+/* end of alpine tabs */
+/* ################################### */

@@ -1,40 +1,31 @@
-@if($isNewCustomer)
-    <div>
-        <div class="space-x-2">
-            <i class="fas fa-exclamation-triangle text-[#6c757d] text-base"></i>
-            <span class="text-[#6c757d] text-base">Family Travelers will be available after customer is saved.</span>
-        </div>
-    </div>    
-@else
-    <div class="relative flex flex-row justify-between gap-3 mt-5">
-        <h6 class="text-lg">Family</h6>
+<div class="relative flex flex-row justify-between gap-3 mt-5">
+    <h6 class="text-lg">Family</h6>
 
-        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openAddFamilyMemberModal()">
-            <i class="fas fa-plus-circle cursor-pointer"></i>
+    <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openAddFamilyMemberModal()">
+        <i class="fas fa-plus-circle cursor-pointer"></i>
+    </button>
+</div>
+
+<hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
+
+@forelse($familyMembers as $member)
+    <div class="flex items-center justify-between mt-3 cursor-pointer" onclick='openEditFamilyMemberModal(@json($member))'>
+        <div class="flex items-center gap-3">
+            <i class="fa fa-user-tie text-base"></i>
+            <p class="text-base">{{ $member->fname }} {{ $member->lname }}</p>
+            <p class="text-sm bg-[#bdbdbd] text-[#fff] px-3">
+                @if($member->relation != -1)
+                    {{ $member->relation }}
+                @endif
+            </p>
+        </div>
+        <button type="button" onclick="event.stopPropagation(); openFamilyDeleteModal({{ $member->id }})">
+            <i class="fa fa-trash text-base cursor-pointer"></i>
         </button>
     </div>
-
-    <hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
-
-    @forelse($customer->familyMembers()->where('is_deleted', 0)->get() as $member)
-        <div class="flex items-center justify-between mt-3 cursor-pointer" onclick='openEditFamilyMemberModal(@json($member))'>
-            <div class="flex items-center gap-3">
-                <i class="fa fa-user-tie text-base"></i>
-                <p class="text-base">{{ $member->fname }} {{ $member->lname }}</p>
-                <p class="text-sm bg-[#bdbdbd] text-[#fff] px-3">
-                    @if($member->relation != -1)
-                        {{ $member->relation }}
-                    @endif
-                </p>
-            </div>
-            <button type="button" onclick="event.stopPropagation(); openFamilyDeleteModal({{ $member->id }})">
-                <i class="fa fa-trash text-base cursor-pointer"></i>
-            </button>
-        </div>
-    @empty
-        <p class="mt-3 text-[#6c757d] text-sm"></p>
-    @endforelse
-@endif
+@empty
+    <p class="mt-3 text-[#6c757d] text-sm"></p>
+@endforelse
 
 <!-- Add Family Member to customer modal -->
 @if(!$isNewCustomer)

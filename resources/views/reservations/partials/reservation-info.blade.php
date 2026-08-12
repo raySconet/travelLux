@@ -1,5 +1,5 @@
 <div>
-    <div x-data="reservationDropdowns(window.customersPayload,{{ $reservation->customer_id ?? 'null' }},{{ $reservation->agent_id ?? 'null' }},'{{ old('email_to_send', $reservation->email_to_send ?? '') }}')">
+    <div x-data="reservationDropdowns(window.selectedCustomer, window.initialAgentId, '{{ old('email_to_send', $reservation->email_to_send ?? '') }}', {{ auth()->id() }}, window.initialCustomers)">
         @if(auth()->user()->isAdmin())
             <div class="flex flex-col gap-1">
                 <label for="agent_id" class="text-sm">Assigned To</label>
@@ -21,18 +21,16 @@
 
         <div class="flex items-center mt-5 gap-3">
             <i class="fas fa-user-plus text-2xl text-[#B6844A] cursor-pointer" title="Quick Customer Add" onclick="openReservationAddCustomerModal()"></i>
-
             <div class="flex-1">
                 <label for="customer" class="text-sm block mb-1">Customer</label>
-                <select name="customer_id" id="customer" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" x-model="selectedCustomer">
+                <select name="customer_id" id="customer" class="w-full border-0 border-b-2 border-[#bdbdbd] text-sm px-1 py-1" x-model="selectedCustomerId">
                     <option value="">Select Customer</option>
-                    <template x-for="customer in filteredCustomers" :key="customer.id">
-                        <option :value="customer.id" x-text="customer.fname + ' ' + customer.lname" :selected="customer.id == selectedCustomer"></option>
+                    <template x-for="customer in customers" :key="customer.id">
+                        <option :value="customer.id" x-text="customer.fname + ' ' + customer.lname" :selected="customer.id == selectedCustomerId"></option>
                     </template>
                 </select>
-
+                <span x-show="loadingCustomers" class="text-xs text-gray-400">Loading…</span>
                 <x-input-error :messages="$errors->get('customer_id')" />
-
             </div>
         </div>
 
@@ -607,88 +605,71 @@
     </div>
 </div>
 <script>
-function reservationDropdowns(customers, currentCustomerId = null, currentAgentId = null, savedEmailToSend = '') {
+function reservationDropdowns(selectedCustomer = null, initialAgentId = null, savedEmailToSend = '', currentUserId = null, initialCustomers = []) {
    return {
-       customers: customers,
-       selectedAgent: {{ auth()->user()->isAdmin() ? 'currentAgentId ?? -1' : auth()->id() }},
-       selectedCustomer: currentCustomerId ?? -1,
-       selectedEmailToSend: '',
+       selectedAgent: initialAgentId ?? '',
+       customers: initialCustomers || [],
+       customersCache: initialAgentId ? { [initialAgentId]: (initialCustomers || []) } : {},
+       loadingCustomers: false,
+       selectedCustomer: selectedCustomer,
+       selectedCustomerId: selectedCustomer?.id ?? '',
+       selectedEmailToSend: savedEmailToSend || '',
        init() {
-           this.$nextTick(() => {
-               if (savedEmailToSend) {
-                   this.selectedEmailToSend = savedEmailToSend;
-               }
-           });
-           this.$watch('selectedCustomer', (value) => {
-               let customer = this.customers.find(c => c.id == value);
-               if (!customer || !customer.family_members?.length) {
-                   this.selectedEmailToSend = '';
+           if (this.selectedCustomer?.email && !this.selectedEmailToSend) {
+               this.selectedEmailToSend = this.selectedCustomer.email;
+           }
+           this.$watch('selectedAgent', async (agentId) => {
+               this.selectedCustomerId = '';
+               this.selectedCustomer = null;
+               this.selectedEmailToSend = '';
+               if (!agentId) { this.customers = []; return; }
+               if (this.customersCache[agentId]) {
+                   this.customers = this.customersCache[agentId];
                    return;
                }
-               if (!this.selectedEmailToSend && customer.email) {
-                   this.selectedEmailToSend = customer.email;
+               this.loadingCustomers = true;
+               try {
+                   const res = await fetch(`/ajax/customers/by-agent/${agentId}`);
+                   const data = await res.json();
+                   this.customersCache[agentId] = data;
+                   this.customers = data;
+               } finally {
+                   this.loadingCustomers = false;
                }
            });
+           this.$watch('selectedCustomerId', (id) => {
+               const customer = this.customers.find(c => c.id == id);
+               this.selectedCustomer = customer || null;
+               if (customer?.email) this.selectedEmailToSend = customer.email;
+               else if (!customer) this.selectedEmailToSend = '';
+           });
        },
-        get filteredCustomers() {
-            if(this.selectedAgent == -1) return this.customers;
-
-            return this.customers.filter(c => c.agent_id == this.selectedAgent);
-        },
-
-        get currentCustomer() {
-            return this.customers.find(c => c.id == this.selectedCustomer);
-        },
-
-        get emailOptions() {
-
-            let customer = this.currentCustomer;
-
-            if (!customer) {
-                return [];
-            }
-
-            let familyMembers = customer.family_members || [];
-
-            if (familyMembers.length === 0) {
-                return [];
-            }
-
-            let options = [];
-
-            if (customer.email) {
-                options.push({
-                    value: customer.email,
-                    label: customer.email + ' (Primary)'
-                });
-            }
-
-            familyMembers.forEach(member => {
-
-                if (member.email) {
-
-                    let fullName = [member.fname, member.lname].filter(Boolean).join(' ');
-
-                    options.push({
-                        value: member.email,
-                        label: member.email + (fullName ? ' - ' + fullName : '')
-                    });
-                }
-            });
-
-            return options;
-        }
+       get currentCustomer() {
+           return this.selectedCustomer;
+       },
+       get emailOptions() {
+           const c = this.selectedCustomer;
+           if (!c?.family_members?.length) return [];
+           const options = [];
+           if (c.email) options.push({ value: c.email, label: c.email + ' (Primary)' });
+           c.family_members.forEach(m => {
+               if (m.email) {
+                   const name = [m.fname, m.lname].filter(Boolean).join(' ');
+                   options.push({ value: m.email, label: m.email + (name ? ' - ' + name : '') });
+               }
+           });
+           return options;
+       }
    }
 }
 window.reservationDefaults = {
-    productId: "{{ old('product_id', $reservation->product_id ?? '') }}",
-    destinationId: "{{ old('destination_id', $reservation->destination_id ?? '') }}",
-    resortId: "{{ old('resort_id', $reservation->resort_id ?? '') }}",
-    cruiseId: "{{ old('cruise_itinerary_id', $reservation->cruise_itinerary_id ?? '') }}"
+   productId: "{{ old('product_id', $reservation->product_id ?? '') }}",
+   destinationId: "{{ old('destination_id', $reservation->destination_id ?? '') }}",
+   resortId: "{{ old('resort_id', $reservation->resort_id ?? '') }}",
+   cruiseId: "{{ old('cruise_itinerary_id', $reservation->cruise_itinerary_id ?? '') }}"
 };
-
-window.customersPayload = @json($customersPayload);
-
+window.selectedCustomer = @json($selectedCustomer);
+window.initialCustomers = @json($initialCustomers);
+window.initialAgentId = @json($initialAgentId);
 window.isAdmin = @json(auth()->user()->isAdmin());
-
 </script>

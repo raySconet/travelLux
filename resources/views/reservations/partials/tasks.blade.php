@@ -1,126 +1,119 @@
 @php
     $isTaskModalOpen = session('openTaskModal') || $errors->taskStore->any();
 @endphp
-@if ($isNewReservation)
-    <div class="space-x-2">
-        <i class="fas fa-exclamation-triangle text-[#6c757d] text-base"></i>
-        <span class="text-[#6c757d] text-base">Tasks will be available after Reservation is saved.</span>
-    </div>
-@else
-    <div class="relative flex flex-row justify-between gap-3 mt-5">
-        <h6 class="text-lg">
-            Reservation Tasks
-            @if($overdueTasksCount > 0)
-                <span class="text-red-500">({{ $overdueTasksCount }} Overdue)</span>
-            @endif
-        </h6>
+<div class="relative flex flex-row justify-between gap-3 mt-5">
+    <h6 class="text-lg">
+        Reservation Tasks
+        @if($overdueTasksCount > 0)
+            <span class="text-red-500">({{ $overdueTasksCount }} Overdue)</span>
+        @endif
+    </h6>
 
-        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openReservationsTasksModal()">
-            <i class="fas fa-plus-circle cursor-pointer"></i>
-        </button>
-    </div>
+    <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openReservationsTasksModal()">
+        <i class="fas fa-plus-circle cursor-pointer"></i>
+    </button>
+</div>
 
-    <hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
-    <div class="relative flex flex-col justify-between gap-3 mt-3">
-        <h5 class="text-base">Timeline Tasks</h5>
+<hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
+<div class="relative flex flex-col justify-between gap-3 mt-3">
+    <h5 class="text-base">Timeline Tasks</h5>
 
-            @forelse($timelineTasks as $task)
-                @php
-                    $isOverdue = $task->is_completed == 0 && $task->due_date && \Carbon\Carbon::parse($task->due_date)->lte(\Carbon\Carbon::today());
-                @endphp
-                <div class="flex justify-between mt-1 cursor-pointer" onclick='openEditTaskModal(@json($task))'>
-                    <div class="flex gap-5">
-                        <button type="button" onclick="toggleTaskComplete({{ $task->id }}, event)" class="cursor-pointer">
-                            @if($task->is_completed == 0)
-                                <i class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl"></i>
-                            @else
-                                <i class="fas fa-check-circle text-[#50c878] mt-3 text-2xl"></i>
-                            @endif
-                        </button>
-                        <div class="flex flex-col">
-                            @if($task->is_completed == 0)
-                                <p class="text-base">{{ $task->task_name }}</p>
-                                <div class="flex text-sm gap-1 {{ $isOverdue ? 'text-red-500' : 'text-[#bdbdbd]' }}">
-                                    <i class="far fa-clock mt-1"></i>
-                                    <p>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('m/d/Y') : ' ' }}</p>
-                                </div>
-                            @else
-                                <p class="text-base line-through">{{ $task->task_name }}</p>
-                                <div class="flex text-[#bdbdbd] text-sm gap-1">
-                                    <p>Completed By : {{ $task->agent->fname . ' '. $task->agent->lname }} on {{ $task->is_completed_on }}</p>
-                                </div>   
-                            @endif
-                        </div>
-                    </div>
-                    <div class="space-x-8 text-2xl">
-                        @if($task->priority == 'Low')
-                            <i class="fas fa-exclamation-triangle text-green-500" title="Low priority"></i>
-                        @elseif($task->priority == 'Medium')
-                            <i class="fas fa-exclamation-triangle text-yellow-500" title="Medium priority"></i>
-                        @else
-                            <i class="fas fa-exclamation-triangle text-red-500" title="High priority"></i>
-                        @endif 
-                        <button type="button" onclick="event.stopPropagation(); openTaskDeleteModal({{ $task->id }})">
-                            <i title="Delete Task" class="fa fa-trash text-[#bdbdbd] cursor-pointer"></i>
-                        </button>
-                    </div>
-                </div>
-            @empty
-                <p class="text-center text-base">No Timeline Tasks.</p>
-            @endforelse
-    </div>
-    <hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
-    <div class="relative flex flex-col justify-between gap-3 mt-3">
-        <h5 class="text-base">General Tasks.</h5>
-
-        @forelse($generalTasks as $task)
-            @php
-                $isOverdue = $task->is_completed == 0 && $task->due_date && \Carbon\Carbon::parse($task->due_date)->lte(\Carbon\Carbon::today());
-            @endphp
-            <div class="flex justify-between mt-1 cursor-pointer" onclick='openEditTaskModal(@json($task))'>
-                <div class="flex gap-5">
-                    <button type="button" onclick="toggleTaskComplete({{ $task->id }}, event)" class="cursor-pointer">
-                        @if($task->is_completed == 0)
-                            <i class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl"></i>
-                        @else
-                            <i class="fas fa-check-circle text-[#50c878] mt-3 text-2xl"></i>
-                        @endif
-                    </button>
-                    <div class="flex flex-col">
-                        @if($task->is_completed == 0)
-                            <p class="text-base">{{ $task->task_name }}</p>
-                            <div class="flex text-sm gap-1 {{ $isOverdue ? 'text-red-500' : 'text-[#bdbdbd]' }}">
-                                <i class="far fa-clock mt-1"></i>
-                                <p>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('m/d/Y') : ' ' }}</p>
-                            </div>
-                        @else
-                            <p class="text-base line-through">{{ $task->task_name }}</p>
-                            <div class="flex text-[#bdbdbd] text-sm gap-1">
-                                <p>Completed By : {{ $task->agent->fname . ' '. $task->agent->lname }} on {{ $task->is_completed_on }}</p>
-                            </div>   
-                        @endif
-                    </div>
-                </div>
-                <div class="space-x-8 text-2xl">
-                    @if($task->priority == 'Low')
-                        <i class="fas fa-exclamation-triangle text-green-500" title="Low priority"></i>
-                    @elseif($task->priority == 'Medium')
-                        <i class="fas fa-exclamation-triangle text-yellow-500" title="Medium priority"></i>
+    @forelse($timelineTasks as $task)
+        @php
+            $isOverdue = $task->is_completed == 0 && $task->due_date && \Carbon\Carbon::parse($task->due_date)->lte(\Carbon\Carbon::today());
+        @endphp
+        <div class="flex justify-between mt-1 cursor-pointer" onclick='openEditTaskModal(@json($task))'>
+            <div class="flex gap-5">
+                <button type="button" onclick="toggleTaskComplete({{ $task->id }}, event)" class="cursor-pointer">
+                    @if($task->is_completed == 0)
+                        <i class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl"></i>
                     @else
-                        <i class="fas fa-exclamation-triangle text-red-500" title="High priority"></i>
-                    @endif 
-                
-                    <button type="button" onclick="event.stopPropagation(); openTaskDeleteModal({{ $task->id }})">
-                        <i title="Delete Task" class="fa fa-trash text-[#bdbdbd] cursor-pointer"></i>
-                    </button>
+                        <i class="fas fa-check-circle text-[#50c878] mt-3 text-2xl"></i>
+                    @endif
+                </button>
+                <div class="flex flex-col">
+                    @if($task->is_completed == 0)
+                        <p class="text-base">{{ $task->task_name }}</p>
+                        <div class="flex text-sm gap-1 {{ $isOverdue ? 'text-red-500' : 'text-[#bdbdbd]' }}">
+                            <i class="far fa-clock mt-1"></i>
+                            <p>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('m/d/Y') : ' ' }}</p>
+                        </div>
+                    @else
+                        <p class="text-base line-through">{{ $task->task_name }}</p>
+                        <div class="flex text-[#bdbdbd] text-sm gap-1">
+                            <p>Completed By : {{ $task->agent->fname . ' '. $task->agent->lname }} on {{ $task->is_completed_on }}</p>
+                        </div>   
+                    @endif
                 </div>
             </div>
-        @empty
-            <p class="text-center text-base">No General Tasks.</p>
-        @endforelse
-          
-    </div>
-@endif
+            <div class="space-x-8 text-2xl">
+                @if($task->priority == 'Low')
+                    <i class="fas fa-exclamation-triangle text-green-500" title="Low priority"></i>
+                @elseif($task->priority == 'Medium')
+                    <i class="fas fa-exclamation-triangle text-yellow-500" title="Medium priority"></i>
+                @else
+                    <i class="fas fa-exclamation-triangle text-red-500" title="High priority"></i>
+                @endif 
+                <button type="button" onclick="event.stopPropagation(); openTaskDeleteModal({{ $task->id }})">
+                    <i title="Delete Task" class="fa fa-trash text-[#bdbdbd] cursor-pointer"></i>
+                </button>
+            </div>
+        </div>
+    @empty
+        <p class="text-center text-base">No Timeline Tasks.</p>
+    @endforelse
+</div>
+<hr class="mt-3 w-full border-b-1 border-[#dee2e6]">
+<div class="relative flex flex-col justify-between gap-3 mt-3">
+    <h5 class="text-base">General Tasks.</h5>
+
+    @forelse($generalTasks as $task)
+        @php
+            $isOverdue = $task->is_completed == 0 && $task->due_date && \Carbon\Carbon::parse($task->due_date)->lte(\Carbon\Carbon::today());
+        @endphp
+        <div class="flex justify-between mt-1 cursor-pointer" onclick='openEditTaskModal(@json($task))'>
+            <div class="flex gap-5">
+                <button type="button" onclick="toggleTaskComplete({{ $task->id }}, event)" class="cursor-pointer">
+                    @if($task->is_completed == 0)
+                        <i class="far fa-check-circle text-[#bdbdbd] mt-3 text-2xl"></i>
+                    @else
+                        <i class="fas fa-check-circle text-[#50c878] mt-3 text-2xl"></i>
+                    @endif
+                </button>
+                <div class="flex flex-col">
+                    @if($task->is_completed == 0)
+                        <p class="text-base">{{ $task->task_name }}</p>
+                        <div class="flex text-sm gap-1 {{ $isOverdue ? 'text-red-500' : 'text-[#bdbdbd]' }}">
+                            <i class="far fa-clock mt-1"></i>
+                            <p>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('m/d/Y') : ' ' }}</p>
+                        </div>
+                    @else
+                        <p class="text-base line-through">{{ $task->task_name }}</p>
+                        <div class="flex text-[#bdbdbd] text-sm gap-1">
+                            <p>Completed By : {{ $task->agent->fname . ' '. $task->agent->lname }} on {{ $task->is_completed_on }}</p>
+                        </div>   
+                    @endif
+                </div>
+            </div>
+            <div class="space-x-8 text-2xl">
+                @if($task->priority == 'Low')
+                    <i class="fas fa-exclamation-triangle text-green-500" title="Low priority"></i>
+                @elseif($task->priority == 'Medium')
+                    <i class="fas fa-exclamation-triangle text-yellow-500" title="Medium priority"></i>
+                @else
+                    <i class="fas fa-exclamation-triangle text-red-500" title="High priority"></i>
+                @endif 
+            
+                <button type="button" onclick="event.stopPropagation(); openTaskDeleteModal({{ $task->id }})">
+                    <i title="Delete Task" class="fa fa-trash text-[#bdbdbd] cursor-pointer"></i>
+                </button>
+            </div>
+        </div>
+    @empty
+        <p class="text-center text-base">No General Tasks.</p>
+    @endforelse
+        
+</div>
 
 <!-- Reservations Tasks Modal -->
 @if (!$isNewReservation)

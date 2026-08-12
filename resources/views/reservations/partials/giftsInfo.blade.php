@@ -1,43 +1,34 @@
 @php 
     $isGiftModalOpen = session('openGiftsModal') || $errors->giftStore->any();
 @endphp    
-@if ($isNewReservation)
-    <div>
-        <div class="space-x-2">
-            <i class="fas fa-exclamation-triangle text-[#6c757d] text-base"></i>
-            <span class="text-[#6c757d] text-base">Gifts Info will be available after Reservation is saved.</span>
+
+<div class="relative flex flex-row justify-between gap-3 mt-5">
+    <h6 class="text-xl">Gifts</h6>
+    
+    <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openGiftsModal()">
+        <i class="fas fa-plus-circle cursor-pointer"></i>
+    </button>
+</div>
+
+@forelse($reservation->gifts()->where('is_deleted',0)->get() as $gift)
+    <div class="flex justify-between mt-5 cursor-pointer" onclick='openEditGiftInfoModal(@json($gift))'>
+        <div class="flex flex-col ml-2 text-sm">
+            <div class="flex gap-1">
+                <i class="fas fa-user text-base mt-1"></i>
+                <p class="text-base">{{ $gift->agent->fname . ' '. $gift->agent->lname }}</p>
+            </div>
+            <p><b>Gift Type:</b>  {{ $gift->gift_type }}</p>
+            <p><b>Date:</b>  {{ $gift->gift_date ? \Carbon\Carbon::parse($gift->gift_date)->format('m/d/Y') : '' }}</p>
+            <p><b>Amount:</b>  ${{ $gift->amount }}</p>
         </div>
-    </div>
-@else
-    <div class="relative flex flex-row justify-between gap-3 mt-5">
-        <h6 class="text-xl">Gifts</h6>
-        
-        <button type="button" class="text-[#B6844A] text-2xl flex-shrink-0" onclick="openGiftsModal()">
-            <i class="fas fa-plus-circle cursor-pointer"></i>
+
+        <button type="button" onclick="event.stopPropagation(); openGiftDeleteModal({{ $gift->id }})">
+            <i title="Delete Gift" class="fa fa-trash text-[#bdbdbd] text-xl mt-5 cursor-pointer"></i>
         </button>
     </div>
-    
-    @forelse($reservation->gifts()->where('is_deleted',0)->get() as $gift)
-        <div class="flex justify-between mt-5 cursor-pointer" onclick='openEditGiftInfoModal(@json($gift))'>
-            <div class="flex flex-col ml-2 text-sm">
-                <div class="flex gap-1">
-                    <i class="fas fa-user text-base mt-1"></i>
-                    <p class="text-base">{{ $gift->agent->fname . ' '. $gift->agent->lname }}</p>
-                </div>
-                <p><b>Gift Type:</b>  {{ $gift->gift_type }}</p>
-                <p><b>Date:</b>  {{ $gift->gift_date ? \Carbon\Carbon::parse($gift->gift_date)->format('m/d/Y') : '' }}</p>
-                <p><b>Amount:</b>  ${{ $gift->amount }}</p>
-            </div>
-
-            <button type="button" onclick="event.stopPropagation(); openGiftDeleteModal({{ $gift->id }})">
-                <i title="Delete Gift" class="fa fa-trash text-[#bdbdbd] text-xl mt-5 cursor-pointer"></i>
-            </button>
-        </div>
-    @empty
-        <p class="text-center text-base">No Gifts Available.</p>
-    @endforelse
-
-@endif        
+@empty
+    <p class="text-center text-base">No Gifts Available.</p>
+@endforelse
 
 <!-- Reservation Gifts Modal -->
 @if(!$isNewReservation)

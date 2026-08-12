@@ -19,19 +19,19 @@
         <p class="text-base font-semibold text-white">Search For Reservations</p>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
             <div class="relative mt-3">
-                <x-text-input type="text" id="reservation_number" name="reservation_number" class="border-b-[#fff]"  />
+                <x-text-input type="text" id="reservation_number" name="reservation_number" class="!border-b-[#fff]"  />
 
                 <x-input-label for="reservation_number" class="text-white">Reservation Number</x-input-label>
             </div>
 
             <div class="relative mt-3">
-                <x-text-input type="text" id="lname" name="lname" class="border-b-[#fff]" />
+                <x-text-input type="text" id="lname" name="lname" class="!border-b-[#fff]" />
 
                 <x-input-label for="lname" class="text-white">Customer Last Name</x-input-label>
             </div>
 
             <div class="relative mt-3">
-                <x-text-input type="text" id="group_number" name="group_number" class="border-b-[#fff]"/>
+                <x-text-input type="text" id="group_number" name="group_number" class="!border-b-[#fff]"/>
 
                 <x-input-label for="group_number" class="text-white">Group Name</x-input-label>
             </div>
@@ -39,13 +39,13 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
             <div class="relative mt-3">
-                <x-text-input type="text" id="reservation_cost" name="reservation_cost"  class="border-b-[#fff]"/>
+                <x-text-input type="text" id="reservation_cost" name="reservation_cost"  class="!border-b-[#fff]"/>
 
                 <x-input-label for="reservation_cost" class="text-white">Reservation Cost</x-input-label>
             </div>
 
             <div class="relative mt-3">
-                <x-text-input type="text" id="agency_commission" name="agency_commission" class="border-b-[#fff]" />
+                <x-text-input type="text" id="agency_commission" name="agency_commission" class="!border-b-[#fff]" />
 
                 <x-input-label for="agency_commission" class="text-white">Agency Commission</x-input-label>
             </div>
@@ -55,6 +55,11 @@
             <x-secondary-btn style="background: #303030; border: solid 0px black;" class=""><i class="far fa-times-circle"></i><span>Clear</span></x-secondary-btn>
             <x-primary-btn style="border:solid 1px white;" ><i class="fas fa-sync"></i><span>Search</span></x-primary-btn>
         </div>
+
+        <div id="commissionRemittancesContainer" class="space-x-2 flex justify-end">
+
+        </div>
+
     </div>
 
     <div class="bg-[#c8e6c9] shadow sm:rounded-lg p-6 mt-5 w-[98%] ml-3">

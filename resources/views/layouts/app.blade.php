@@ -77,7 +77,7 @@
             @vite('resources/js/dashboard.js')
         @endif
 
-        @if(request()->is('commissionRemittances') || request()->is('checkWriter'))
+        @if(request()->is('commissions-remittances') || request()->is('checkWriter'))
             @vite('resources/js/commissions.js')
         @endif
 

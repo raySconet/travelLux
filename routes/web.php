@@ -127,6 +127,7 @@ Route::middleware('auth')->group(function () {
     // Products
     Route::post('/products', [ProductConfigurationController::class, 'store'])
         ->name('products.store');
+
     Route::get('/products/{product}', [ProductConfigurationController::class, 'show'])
         ->name('products.show');
 
@@ -312,13 +313,17 @@ Route::middleware('auth')->group(function(){
 
     Route::get('/commissions-remittances', [CommissionsRemittancesController::class, 'remittances'])
     ->name('commissions-remittances');
+
+    Route::post('/reservations/search-completed', [ReservationController::class, 'searchForCompletedReservations'])
+        ->name('reservations.search.completed');
+
 });
 Route::middleware('auth')->group(function(){
     Route::get('/vendor-list', [VendorsController::class,'index'])->name('vendors.vendorList');
     Route::put('/vendor-list/{product}', [VendorsController::class,'update'])->name('vendors.update');
 });
 Route::middleware('auth')->group(function(){
-    Route::get('/commissionRemittances', [CommissionsRemittancesController::class, 'index'])->name('commissions.commissionsRemittances');
+    // Route::get('/commissionRemittances', [CommissionsRemittancesController::class, 'index'])->name('commissions.commissionsRemittances');
     Route::get('/checkWriter', [CheckWriterController::class, 'index'])->name('commissions.checkWriter');
 });
 Route::middleware('auth')->group(function(){

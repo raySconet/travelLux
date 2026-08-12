@@ -37,15 +37,10 @@
                 @foreach($agents as $agent)
 
                 <div class="border-l-2 border-r-2 border-[#dee2e6] mb-6">
-
-
                     {{-- Agent Header --}}
                     <div class="grid grid-cols-4 items-center border-b-2 border-[#dee2e6] p-4">
-
-
                         {{-- Agent Name --}}
                         <div>
-
                             <div class="font-bold text-lg text-gray-700">
                                 {{ $agent->fname }} {{ $agent->lname }}
                             </div>
@@ -53,14 +48,11 @@
                             <div class="text-gray-500">
                                 {{ $agent->commission }}%
                             </div>
-
                         </div>
-
 
 
                         {{-- Agency Commission --}}
                         <div class="text-center">
-
                             <div class="font-bold">
                                 $0.00
                             </div>
@@ -68,14 +60,11 @@
                             <div class="text-gray-500">
                                 Agency Commission
                             </div>
-
                         </div>
-
 
 
                         {{-- Total unpaid --}}
                         <div class="text-center">
-
                             <div class="font-bold">
                                 $0.00
                             </div>
@@ -83,125 +72,79 @@
                             <div class="text-gray-500">
                                 Total Unpaid
                             </div>
-
                         </div>
-
 
 
 
                         {{-- Pay Button --}}
                         <div class="text-right">
-
-
                             <button
                                 class="bg-[#B6844A] text-white px-4 py-2 rounded hover:bg-white hover:text-[#B6844A] border border-[#B6844A]">
-
                                 PAY AGENT
-
                             </button>
 
-
                             <div class="text-gray-500 mt-2">
-
                                 <span>0</span> Selected
-
                             </div>
-
-
                         </div>
-
-
                     </div>
-
-
 
 
                     {{-- Reservations Table --}}
                     <div class="overflow-x-auto">
-
-
                         <table class="min-w-full text-sm">
-
-
                             <thead>
+                                <tr>
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        <input type="checkbox">
+                                    </th>
 
-                            <tr>
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Customer
+                                    </th>
 
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Reservation
+                                    </th>
 
-                                <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Checkout
+                                    </th>
 
-                                    <input type="checkbox">
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Fees
+                                    </th>
 
-                                </th>
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Total Commission
+                                    </th>
 
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Agent Commission
+                                    </th>
 
-                                <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
-                                    Customer
-                                </th>
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Mentor Commission
+                                    </th>
 
-
-                                <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
-                                    Reservation
-                                </th>
-
-
-                                <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
-                                    Checkout
-                                </th>
-
-
-                                <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
-                                    Fees
-                                </th>
-
-
-                                <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
-                                    Total Commission
-                                </th>
-
-
-                                <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
-                                    Agent Commission
-                                </th>
-
-
-                                <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
-                                    Mentor Commission
-                                </th>
-
-
-                                <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
-                                    Agency Commission
-                                </th>
-
-
-                            </tr>
-
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Agency Commission
+                                    </th>
+                                </tr>
                             </thead>
-
 
                             <tbody>
 
-
                             {{-- Reservations will go here --}}
 
-
                             </tbody>
-
-
                         </table>
-
-
                     </div>
-
-
                 </div>
-
 
                 @endforeach
 
-
-                </div>
+            </div>
     </div>
 </x-app-layout>
 

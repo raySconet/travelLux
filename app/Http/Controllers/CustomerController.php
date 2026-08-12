@@ -90,7 +90,7 @@ class CustomerController extends Controller
         $availableForms = CustomersForm::where('is_deleted', 0)->where('is_active', 1)
             ->whereHas('customersFormRequired', function ($q) {
                 $q->where('all_customers_required', 1);
-            })->get();  
+            })->get();
 
         $sentForms = $customer->formSent()->with('form:id,form_name')->orderByDesc('sent_on')->get();
 
@@ -106,7 +106,7 @@ class CustomerController extends Controller
             ->orderByDesc('date')
             ->get();
 
-        $customer->load(['reservations.customerSurveys' => function ($q) { $q->where('submit_flag', 1); }]);
+        // $customer->load(['reservations.customerSurveys' => function ($q) { $q->where('submit_flag', 1); }]);
 
         $invitations = $customer->customerInvitations()->orderByDesc('created_on')->get();
 
@@ -270,7 +270,7 @@ class CustomerController extends Controller
             'fname' => $data['fname'],
             'lname' => $data['lname'],
             'relation' => 'Self',
-        
+
             'created_by' => auth()->id(),
             'created_on' => now(),
         ]);

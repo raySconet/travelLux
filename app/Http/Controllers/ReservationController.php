@@ -97,7 +97,7 @@ class ReservationController extends Controller
             });
         }
 
-        $reservations = $reservationsQuery->orderBy('created_on', 'asc')->get(); 
+        $reservations = $reservationsQuery->orderBy('created_on', 'asc')->get();
         return view('reservations.reservationList', compact('users', 'reservations', 'statuses', 'agentId'));
     }
 
@@ -122,14 +122,14 @@ class ReservationController extends Controller
         $users = User::select('id','fname', 'lname' ,'email', 'commission')->where('isDeleted',0)->get();
 
         $isNewReservation = true;
-        
+
         $user = auth()->user();
 
         $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
         $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted',0)->orderBy('lname')->get();
-        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)->where('created_by', auth()->id())->orderBy('date', 'desc')->get();   
+        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)->where('created_by', auth()->id())->orderBy('date', 'desc')->get();
         $overdueTasksCount = ReservationTask::where('reservation_id', $reservation->id)->where('is_deleted', 0)->where('is_completed', 0)->whereDate('due_date', '<=', now())->count();
-       
+
         $customersPayload = Cache::remember('customers_payload_'.$user->id, 600, function () use ($user) {
 
         return Customer::query()
@@ -190,9 +190,9 @@ class ReservationController extends Controller
                                 $q->where('is_deleted', 0);
                             })
                             ->get();
-                    
-        $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted',0)->orderBy('lname')->get();  
-        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)->where('created_by', auth()->id())->orderBy('date', 'desc')->get();               
+
+        $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted',0)->orderBy('lname')->get();
+        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)->where('created_by', auth()->id())->orderBy('date', 'desc')->get();
         $linkedReservations = ReservationLink::where('reservation_id', $reservation->id)->where('is_linked', 1) ->with('linkedReservation')->get();
         $overdueTasksCount = ReservationTask::where('reservation_id', $reservation->id)->where('is_deleted', 0)->where('is_completed', 0)->whereDate('due_date', '<=', now())->count();
         $timelineTasks = $reservation->tasks()->with('agent')->where('is_deleted',0)->where('is_timeline_task',1)->get();
@@ -232,6 +232,79 @@ class ReservationController extends Controller
 
         return  view('reservations.reservationDetails', compact('users', 'reservation' ,'isNewReservation','products',  'availableForms','referralCustomers', 'linkedReservations','itineraryTrips', 'overdueTasksCount', 'timelineTasks', 'generalTasks', 'customersPayload','sentForms'));
     }
+
+
+
+
+    public function searchForCompletedReservations(Request $request)
+    {
+        $reservations = Reservation::query()
+            ->with([
+                'customer:id,fname,lname',
+                'agent:id,fname,lname,email',
+                'product:id,product_name',
+            ])
+            ->where('commission_received', 0)
+            ->whereIn('status', [
+                'Paid in Full',
+                'Canceled w/ Insurance Payout',
+                'Canceled - Commission Protected',
+            ])
+            ->where('non_commissionable', 0)
+            ->where('is_deleted', 0)
+
+            ->when($request->filled('reservation_number'), function ($query) use ($request) {
+                $query->where(
+                    'reservation_number',
+                    'LIKE',
+                    '%' . $request->reservation_number . '%'
+                );
+            })
+
+            ->when($request->filled('customer_last_name'), function ($query) use ($request) {
+                $query->whereHas('customer', function ($query) use ($request) {
+                    $query->where(
+                        'lname',
+                        'LIKE',
+                        '%' . $request->customer_last_name . '%'
+                    );
+                });
+            })
+
+            ->when($request->filled('group_number'), function ($query) use ($request) {
+                $query->where(
+                    'group_number',
+                    'LIKE',
+                    '%' . $request->group_number . '%'
+                );
+            })
+
+            ->when($request->filled('reservation_cost'), function ($query) use ($request) {
+                $query->where(
+                    'reservation_cost',
+                    $request->reservation_cost
+                );
+            })
+
+            ->when($request->filled('agency_commission'), function ($query) use ($request) {
+                $query->where(
+                    'agency_commission',
+                    $request->agency_commission
+                );
+            })
+
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'count' => $reservations->count(),
+            'data' => $reservations,
+        ]);
+    }
+
+
+
+
 
     private function generateTimelineTasks($reservation)
     {
@@ -1007,7 +1080,7 @@ class ReservationController extends Controller
         $data['created_on'] = now();
 
         $data['ticket_types'] = !empty($data['ticket_types']) ? implode(',', $data['ticket_types']) : null;
-        $data['add_on_options'] = !empty($data['add_on_options']) ? implode(',', $data['add_on_options']) : null;    
+        $data['add_on_options'] = !empty($data['add_on_options']) ? implode(',', $data['add_on_options']) : null;
         $data['transportation_options'] = !empty($data['transportation_options']) ? implode(',', $data['transportation_options']) : null;
         $data['celebrations'] = !empty($data['celebrations']) ? implode(',', $data['celebrations']) : null;
 
@@ -1157,7 +1230,7 @@ class ReservationController extends Controller
         $data['add_on_options'] = !empty($data['add_on_options']) ? implode(',', $data['add_on_options']) : null;
         $data['transportation_options'] = !empty($data['transportation_options']) ? implode(',', $data['transportation_options']) : null;
         $data['celebrations'] = !empty($data['celebrations']) ? implode(',', $data['celebrations']) : null;
-    
+
         $user = auth()->user();
 
         if (!$user->isAdmin()) {
@@ -1235,7 +1308,7 @@ class ReservationController extends Controller
 
         $reservation->update($data);
 
-        if ($oldCheckin != $reservation->checkin_date || $oldCheckout != $reservation->checkout_date || $oldDeposit != $reservation->deposit_due_date || $oldFinalPayment != $reservation->final_payment_due_date) 
+        if ($oldCheckin != $reservation->checkin_date || $oldCheckout != $reservation->checkout_date || $oldDeposit != $reservation->deposit_due_date || $oldFinalPayment != $reservation->final_payment_due_date)
         {
             $this->generateTimelineTasks($reservation);
         }
@@ -1480,7 +1553,7 @@ class ReservationController extends Controller
             ->with('success', 'Task deleted successfully')
             ->with('activeTab', 'tasks');
     }
-    
+
     public function storePayment(Request $request, Reservation $reservation)
     {
         $messages = [
@@ -1490,14 +1563,14 @@ class ReservationController extends Controller
         ];
 
         $validator = \Validator::make($request->all(), [
-            'amount' => 'required|integer', 
+            'amount' => 'required|integer',
             'payment_type' => 'required|string',
             'payment_method' => 'required|string',
             'payment_date' => 'nullable|date',
             'check_number' => 'nullable|integer',
             'credit_card_number' => 'nullable|integer',
             'notes' => 'required|string',
-        ], $messages); 
+        ], $messages);
 
         if ($validator->fails()) {
 
@@ -1654,7 +1727,7 @@ class ReservationController extends Controller
 
         $data['last_modified_by'] = auth()->id();
         $data['last_modified_on'] = now();
-        
+
 
         $diningNote->update($data);
 
@@ -2060,7 +2133,7 @@ class ReservationController extends Controller
         return response()->json($reservations);
     }
 
-    
+
     public function linkReservation(Request $request, Reservation $reservation)
     {
         $linkedId = $request->linked_reservation_id;
@@ -2179,7 +2252,7 @@ class ReservationController extends Controller
             'message' => 'Form sent successfully.'
         ]);
     }
-    
+
     public function resendForm(Request $request)
     {
         $request->validate([

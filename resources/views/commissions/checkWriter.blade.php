@@ -13,9 +13,9 @@
     </x-slot>
 
     <div class="mx-auto py-2 px-4">
-       
+
         <div class="p-3 bg-white shadow sm:rounded-lg">
-           
+
             <div class="flex  justify-between px-6 py-4 ">
                 <div class="flex flex-row gap-4">
                     <button class="space-x-2 bg-[#B6844A] text-white  py-2 px-4 rounded cursor-pointer border border-transparent hover:bg-white hover:border-[#B6844A] hover:text-[#B6844A] transition-all duration-200">
@@ -32,97 +32,119 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-4 mt-5 border-t-2 border-[#dee2e6]">
-                <div class="col-span-1 flex flex-col border-l-2 border-r-2 border-[#dee2e6] ">
-                    <p>test</p>
-                    <p>test</p>
+            <div class="mt-5 border-t-2 border-[#dee2e6]">
+
+                @foreach($agents as $agent)
+
+                <div class="border-l-2 border-r-2 border-[#dee2e6] mb-6">
+                    {{-- Agent Header --}}
+                    <div class="grid grid-cols-4 items-center border-b-2 border-[#dee2e6] p-4">
+                        {{-- Agent Name --}}
+                        <div>
+                            <div class="font-bold text-lg text-gray-700">
+                                {{ $agent->fname }} {{ $agent->lname }}
+                            </div>
+
+                            <div class="text-gray-500">
+                                {{ $agent->commission }}%
+                            </div>
+                        </div>
+
+
+                        {{-- Agency Commission --}}
+                        <div class="text-center">
+                            <div class="font-bold">
+                                $0.00
+                            </div>
+
+                            <div class="text-gray-500">
+                                Agency Commission
+                            </div>
+                        </div>
+
+
+                        {{-- Total unpaid --}}
+                        <div class="text-center">
+                            <div class="font-bold">
+                                $0.00
+                            </div>
+
+                            <div class="text-gray-500">
+                                Total Unpaid
+                            </div>
+                        </div>
+
+
+
+                        {{-- Pay Button --}}
+                        <div class="text-right">
+                            <button
+                                class="bg-[#B6844A] text-white px-4 py-2 rounded hover:bg-white hover:text-[#B6844A] border border-[#B6844A]">
+                                PAY AGENT
+                            </button>
+
+                            <div class="text-gray-500 mt-2">
+                                <span>0</span> Selected
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {{-- Reservations Table --}}
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        <input type="checkbox">
+                                    </th>
+
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Customer
+                                    </th>
+
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Reservation
+                                    </th>
+
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Checkout
+                                    </th>
+
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Fees
+                                    </th>
+
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Total Commission
+                                    </th>
+
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Agent Commission
+                                    </th>
+
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Mentor Commission
+                                    </th>
+
+                                    <th class="px-4 py-3 border-b-2 border-[#dee2e6]">
+                                        Agency Commission
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                            {{-- Reservations will go here --}}
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <div class="col-span-3 flex flex-col border-r-2 border-[#dee2e6]">
-                    <table class="min-h-full text-sm">
-                        <thead class="bg-white">
-                            <tr>
-                                <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-[#dee2e6]">
-                                    <input type="checkbox">
-                                </th>
+                @endforeach
 
-                                <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-[#dee2e6]">
-                                    Customer
-                                </th>
-
-                                <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-[#dee2e6]">
-                                    Reservation
-                                </th>
-
-                                <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-[#dee2e6]">
-                                    Checkout
-                                </th>
-
-                                <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-[#dee2e6]">
-                                    Fees
-                                </th>
-
-                                <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-[#dee2e6]">
-                                    Total Commission
-                                </th>
-
-                                <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-[#dee2e6]">
-                                    Agent Commission
-                                </th>
-
-                                <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-[#dee2e6]">
-                                    Mentor Commission
-                                </th>
-
-                                <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-[#dee2e6]">
-                                    Agency Commission
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody class="divide-y">
-                            <tr class="hover:bg-gray-50 cursor-pointer">
-                                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-                                    <input type="checkbox">
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-                                    <i class="fas fa-tag text-xl text-[#B6844A]" onclick="openEditReservationCheckWriterModal()"></i>
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-
-                                </td>
-
-                                <td class="px-4 py-3 text-gray-600 border-t-2 border-b-2 border-[#dee2e6]">
-
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
-        </div>
     </div>
 </x-app-layout>
 
@@ -184,13 +206,13 @@
                 <x-primary-btn type="submit" class="editReservationCheckWriterSaveBtn">
                     <i class="fas fa-paper-plane"></i>
                     <span>Save</span>
-                </x-primary-btn> 
-                
+                </x-primary-btn>
+
                 <x-secondary-btn type="button" onclick="closeEditReservationCheckWriterModal()">
                     <i class="fa fa-times-circle"></i>
                     <span>Cancel</span>
                 </x-secondary-btn>
-            </div>    
+            </div>
 
         </div>
     </div>

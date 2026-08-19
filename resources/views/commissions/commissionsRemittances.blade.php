@@ -19,19 +19,19 @@
         <p class="text-base font-semibold text-white">Search For Reservations</p>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
             <div class="relative mt-3">
-                <x-text-input type="text" id="reservation_number" name="reservation_number" class="border-b-[#fff]"  />
+                <x-text-input type="text" id="reservation_number" name="reservation_number" class="!border-b-[#fff]"  />
 
                 <x-input-label for="reservation_number" class="text-white">Reservation Number</x-input-label>
             </div>
 
             <div class="relative mt-3">
-                <x-text-input type="text" id="lname" name="lname" class="border-b-[#fff]" />
+                <x-text-input type="text" id="lname" name="lname" class="!border-b-[#fff]" />
 
                 <x-input-label for="lname" class="text-white">Customer Last Name</x-input-label>
             </div>
 
             <div class="relative mt-3">
-                <x-text-input type="text" id="group_number" name="group_number" class="border-b-[#fff]"/>
+                <x-text-input type="text" id="group_number" name="group_number" class="!border-b-[#fff]"/>
 
                 <x-input-label for="group_number" class="text-white">Group Name</x-input-label>
             </div>
@@ -39,13 +39,13 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
             <div class="relative mt-3">
-                <x-text-input type="text" id="reservation_cost" name="reservation_cost"  class="border-b-[#fff]"/>
+                <x-text-input type="text" id="reservation_cost" name="reservation_cost"  class="!border-b-[#fff]"/>
 
                 <x-input-label for="reservation_cost" class="text-white">Reservation Cost</x-input-label>
             </div>
 
             <div class="relative mt-3">
-                <x-text-input type="text" id="agency_commission" name="agency_commission" class="border-b-[#fff]" />
+                <x-text-input type="text" id="agency_commission" name="agency_commission" class="!border-b-[#fff]" />
 
                 <x-input-label for="agency_commission" class="text-white">Agency Commission</x-input-label>
             </div>
@@ -55,6 +55,11 @@
             <x-secondary-btn style="background: #303030; border: solid 0px black;" class=""><i class="far fa-times-circle"></i><span>Clear</span></x-secondary-btn>
             <x-primary-btn style="border:solid 1px white;" ><i class="fas fa-sync"></i><span>Search</span></x-primary-btn>
         </div>
+
+        <div id="commissionRemittancesContainer" class="space-x-2 flex justify-end">
+
+        </div>
+
     </div>
 
     <div class="bg-[#c8e6c9] shadow sm:rounded-lg p-6 mt-5 w-[98%] ml-3">
@@ -68,93 +73,236 @@
         </div>
 
         <div class="p-6">
+            <div class="bg-white shadow sm:rounded-lg">
+                <div class="overflow-x-auto">
+                <table class="min-w-full text-sm archerTable">
 
-        <div class="bg-white shadow sm:rounded-lg">
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
                     <thead class="bg-white">
                         <tr>
+                            @foreach([
+                                'Customer',
+                                'Reservation',
+                                'Group Number',
+                                'Product',
+                                'Cost',
+                                'Checkout',
+                                'Commission',
+                                'Commission Remittance',
+                                'Agent',
+                                'Name'
+                            ] as $header)
+
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Customer
+                                {{ $header }}
                             </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Reservation
-                            </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Group Number
-                            </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Product
-                            </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Cost
-                            </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Checkout
-                            </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Commission
-                            </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Commission Remittance
-                            </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Agent
-                            </th>
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Name
-                            </th>
+
+                            @endforeach
                         </tr>
                     </thead>
 
 
-                    <tbody class="divide-y">
-                        <tr class="hover:bg-gray-50 cursor-pointer">
-                            <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
+                    <tbody>
 
+                    @foreach($reservations as $reservation)
+
+                        @php
+
+                            $customerName = ($reservation->customer?->lname ?? '') . ', ' .
+                                            ($reservation->customer?->fname ?? '');
+
+                            $agentName = ($reservation->agent?->lname ?? '') . ' ' .
+                                        ($reservation->agent?->fname ?? '');
+
+                            $lookup = $reservation->look_up ?? 0;
+                            $documentFee = $reservation->document_fee ?? 0;
+
+                        @endphp
+
+
+                        <tr class="hover:bg-gray-50">
+
+
+                            {{-- Customer --}}
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
+                                {{ $customerName }}
                             </td>
 
-                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6] border-b-2 border-t-2 border-[#dee2e6]">
-                                <i title="Edit Reservation" class="fas fa-tag text-[#B6844A] text-xl" onclick="openEditReservationModal()"></i>
-                            </td>
 
-                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
 
-                            </td>
+                            {{-- Reservation --}}
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
 
-                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                <div class="flex items-center gap-2">
 
-                            </td>
+                                    <i
+                                        class="fas fa-tag text-[#B6844A] cursor-pointer text-lg"
+                                        title="Edit Reservation"
+                                        data-reservationid="{{ $reservation->id }}"
+                                        onclick="openEditReservationModal()">
+                                    </i>
 
-                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
+                                    <span>
+                                        {{ $reservation->reservation_number }}
+                                    </span>
 
-                            </td>
-
-                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-
-                            </td>
-
-                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-
-                            </td>
-
-                            <td class="px-4 py-3 text-gray-600  border-b-2 border-t-2 border-[#dee2e6]">
-                                <div class="flex gap-2">
-                                    <input type="checkbox"> <p>Received</p>
-                                    <input type="checkbox"> <p>Look Up</p>
-                                    <input type="checkbox"> <p>Document Fee</p>
                                 </div>
+
                             </td>
 
-                            <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                                <i title="Send Email" class="fas fa-envelope text-sm"></i>
+
+
+                            {{-- Group --}}
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
+                                {{ $reservation->group_number }}
                             </td>
 
-                            <td class="px-4 py-3 text-gray-600 border-b-2 border-t-2 border-[#dee2e6]">
-                                <i class="fas fa-clipboard-list text-[#B6844A] text-sm"></i>
+
+
+                            {{-- Product --}}
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
+                                {{ $reservation->product?->product_name }}
                             </td>
+
+
+
+                            {{-- Cost --}}
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
+                                ${{ number_format($reservation->reservation_cost,2) }}
+                            </td>
+
+
+
+                            {{-- Checkout --}}
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
+
+                                {{ \Carbon\Carbon::parse($reservation->checkout_date)->format('m/d/Y') }}
+
+                            </td>
+
+
+
+                            {{-- Commission --}}
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
+
+                                ${{ number_format($reservation->agency_commission,2) }}
+
+                            </td>
+
+
+
+                            {{-- Commission Remittance --}}
+                            <td class="px-4 py-3 border-b-2 border-[#dee2e6]">
+
+                                <div class="flex items-center gap-2 whitespace-nowrap">
+
+
+                                    <div class="flex items-center gap-1">
+
+                                        <input
+                                            type="checkbox"
+                                            checked
+                                            class="h-4 w-4"
+                                        >
+
+                                        <span>Received</span>
+
+                                    </div>
+
+
+
+                                    <div class="flex items-center gap-1">
+
+                                        <input
+                                            type="checkbox"
+                                            {{ $lookup ? 'checked' : '' }}
+                                            class="h-4 w-4"
+                                            title="{{ $lookup
+                                                ? 'Cancel Look Up And Add $15 To Agent Commission.'
+                                                : 'Add Look Up And Remove $15 From Agent Commission.' }}"
+                                        >
+
+                                        <span>Look Up</span>
+
+                                    </div>
+
+
+
+
+                                    <div class="flex items-center gap-1">
+
+                                        <input
+                                            type="checkbox"
+                                            {{ $documentFee ? 'checked' : '' }}
+                                            class="h-4 w-4"
+                                            title="{{ $documentFee
+                                                ? 'Cancel Document Fee And Add $10 To Agent Commission.'
+                                                : 'Add Document Fee And Remove $10 From Agent Commission.' }}"
+                                        >
+
+                                        <span>Document Fee</span>
+
+                                    </div>
+
+
+                                </div>
+
+                            </td>
+
+
+
+
+                            {{-- Agent --}}
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
+
+                                {{ $agentName }}
+
+
+                                @if($reservation->agent?->email)
+
+                                <a href="mailto:{{ $reservation->agent->email }}">
+
+                                    <i
+                                        class="fas fa-envelope ml-2 cursor-pointer"
+                                        title="Send Email">
+                                    </i>
+
+                                </a>
+
+                                @endif
+
+
+                            </td>
+
+
+
+
+                            {{-- Name --}}
+                            <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
+
+                                @if($reservation->reservation_name)
+
+                                    <div class="flex justify-center">
+
+                                        <i
+                                            class="fas fa-clipboard-list text-[#B6844A] cursor-pointer"
+                                            title="{{ $reservation->reservation_name }}">
+                                        </i>
+
+                                    </div>
+
+                                @endif
+
+                            </td>
+
+
                         </tr>
+
+
+                    @endforeach
+
+
                     </tbody>
+
                 </table>
             </div>
         </div>

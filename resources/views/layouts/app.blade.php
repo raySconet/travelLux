@@ -31,7 +31,7 @@
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @endif
 
-        @if(request()->is('system-users') || request()->is('system-users/*') || request()->is('timelinetasks') || request()->is('timelinetasks/*'))
+        @if(request()->is('system-users') || request()->is('system-users/*') || request()->is('timelinetasks') || request()->is('timelinetasks/*') || request()->is('profile') ||request()->is('profile/*'))
             @vite('resources/js/systemUsers-timelineTasks.js')
         @endif
 

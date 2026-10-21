@@ -2,21 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class Top15ExpensiveTripsReportController extends Controller
+class Top15ExpensiveTripsReportController extends DataReportController
 {
-    private function checkAdmin()
-    {
-        if (!auth()->user()->isAdmin()) {
-            abort(403);
-        }
-    }
-
-    public function index()
-    {
-       $this->checkAdmin();
-       return view('reports.top15ExpensiveTripsReport');
-    }
-
+    protected string $report = 'top15ExpensiveTripsReport';
 }

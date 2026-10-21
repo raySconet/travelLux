@@ -2,21 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class PleasantEvokeReportController extends Controller
+class PleasantEvokeReportController extends DataReportController
 {
-    private function checkAdmin()
-    {
-        if (!auth()->user()->isAdmin()) {
-            abort(403);
-        }
-    }
-
-    public function index()
-    {
-       $this->checkAdmin();
-       return view('reports.pleasantEvokeReport');
-    }
-
+    protected string $report = 'pleasantEvokeReport';
 }

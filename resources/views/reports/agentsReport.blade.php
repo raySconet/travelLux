@@ -1,18 +1,26 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="py-4 px-4 bg-white shadow sm:rounded-lg flex items-center justify-between">
-            <h2 class=" text-2xl text-gray-500 leading-tight">
+            <h2 class="text-2xl text-gray-500 leading-tight">
                 <i class="fa-solid fa-user-circle mr-2 text-[#B6844A]"></i>{{ __('Agents Report') }}
             </h2>
-            
+            <div class="flex items-center gap-3">
+                <button type="button" data-report-print class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer">
+                    <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>Print
+                </button>
+                <a href="{{ route('reports.agentsReport', ['export' => 'excel']) }}" class="flex items-center gap-2 bg-white border py-2 px-4 border-[#B6844A] text-[#B6844A] cursor-pointer">
+                    <i class="far fa-file-excel" aria-hidden="true"></i>Download
+                </a>
+            </div>
         </div>
     </x-slot>
 
     <div class="mx-auto py-2 px-4">
        
-        <div class="p-3 bg-white shadow sm:rounded-lg">
+        <div id="reportDataContainer" class="p-3 bg-white shadow sm:rounded-lg">
+            <h2 class="hidden print:block text-xl mb-4">Agents Report</h2>
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
+                <table id="agentsReportTable" class="min-w-full text-sm">
                     <thead class="bg-white">
                         <tr>
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
@@ -30,15 +38,12 @@
                             <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
                                 Cellphone Number
                             </th>  
-                            <th class="px-4 py-3 text-left text-sm font-bold border-b-2 border-t-2 border-[#dee2e6]">
-                                Commission %
-                            </th> 
                         </tr>
                     </thead>
 
 
                     <tbody class="divide-y">
-                        @foreach ($users as $user)
+                        @forelse ($users as $user)
                             <tr class="hover:bg-gray-50 cursor-pointer">
                                 <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
                                     {{ $user->fname }}
@@ -49,7 +54,7 @@
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e5]' }}">
-                                    {{ $user->city . '-' . $user->state . '-' . $user->first_address_line1 }}
+                                    {{ $user->city . ' - ' . $user->state . ' - ' . $user->first_address_line }}
                                 </td>
 
                                 <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
@@ -60,15 +65,14 @@
                                     {{ $user->cell_phone_number }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-600 border-t-2 {{ $loop->last ? '' : 'border-b-2 border-[#dee2e6]' }}">
-                                    {{ $user->commission }}
-                                </td>
-
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No Data Available.</td></tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+    @vite('resources/js/dataReports.js')
 </x-app-layout>

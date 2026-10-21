@@ -2,13 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class ProductSalesByAgentReportController extends Controller
+class ProductSalesByAgentReportController extends DataReportController
 {
-    public function index()
-    {
-       return view('reports.productSalesByAgentReport');
-    }
-
+    protected string $report = 'productSalesByAgentReport';
 }

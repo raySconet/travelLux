@@ -30,7 +30,8 @@
             $vendorAgentCommission = $vendorReservations->sum('agent_commission');
             $vendorAgencyCommission = $vendorGrossCommission - $vendorAgentCommission;
 
-            $destinations = $vendorReservations->groupBy('destination_id');
+            $destinations = $vendorReservations->filter(fn ($row) => $row->destination)
+                ->groupBy('destination_id')->sortBy(fn ($rows) => $rows->first()->destination->destination_name, SORT_NATURAL | SORT_FLAG_CASE);
         @endphp
 
         <div class="flex mb-8 gap-3 bg-white">
@@ -84,7 +85,7 @@
                         $destinationGrossCommission = $destinationReservations->sum('agency_commission');
                         $destinationAgentCommission = $destinationReservations->sum('agent_commission');
                         $destinationAgencyCommission = $destinationGrossCommission - $destinationAgentCommission;
-                        $resorts = $destinationReservations->groupBy('resort_id');
+                        $resorts = $destinationReservations->groupBy('resort_id')->sortBy(fn ($rows) => (int) $rows->first()->resort_id === -1 ? 'N/A' : $rows->first()->resort?->resort_ship_name, SORT_NATURAL | SORT_FLAG_CASE);
                     @endphp
 
                     <div class="bg-[#1e88e5] text-white px-5 py-5 flex justify-between items-start border border-[#dee2e6] m-3">
@@ -135,7 +136,7 @@
                             <div class="w-[175px] border-r border-[#dee2e6] bg-white shrink-0">
 
                                 <div class="bg-[#bbdefb] p-4 text-2xl min-h-[90px]">
-                                    {{ optional($resort)->resort_ship_name ?? 'N/A' }}
+                                    {{ (int) $resortReservations->first()->resort_id === -1 ? 'N/A' : optional($resort)->resort_ship_name }}
                                 </div>
 
                                 <div class="border-t border-[#dee2e6] p-1 pl-3">
@@ -178,7 +179,7 @@
 
                             <div class="flex-1 overflow-x-auto">
 
-                                <table class="min-w-full">
+                                <table class="min-w-full" data-report-sortable>
 
                                     <thead class="bg-white border-b border-[#bdbdbd]">
 

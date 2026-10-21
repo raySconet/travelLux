@@ -23,6 +23,8 @@ class CurrentChecksReportController extends Controller
             ->where('agent_commission_received', 0)
             ->where('commission_received', 1)
             ->where('is_deleted', 0)
+            ->where('agent_id', '!=', 6680)
+            ->whereHas('agent', fn ($query) => $query->where('isDeleted', 0)->where('is_disabled', '!=', 1))
         ;
 
         if ($user->role != 1) {
@@ -31,7 +33,7 @@ class CurrentChecksReportController extends Controller
 
         $reservations = $query
             ->orderBy('agent_id')
-            ->orderBy('checkout_date')
+            ->orderBy('id')
             ->get()
         ;
 

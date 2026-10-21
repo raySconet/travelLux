@@ -2,13 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class ReservationsPaidByTraveluxReportController extends Controller
+class ReservationsPaidByTraveluxReportController extends DataReportController
 {
-    public function index()
-    {
-       return view('reports.reservationsPaidByTraveluxReport');
-    }
-
+    protected string $report = 'reservationsPaidByTraveluxReport';
 }

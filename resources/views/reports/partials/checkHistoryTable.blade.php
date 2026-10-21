@@ -25,7 +25,10 @@
                     <div class="mt-1 text-sm tracking-wide text-[#8c8c8c]">
                         Total Paid
                     </div>
-
+                    @if((int) $agent->id === 8)
+                        <div class="text-base font-bold text-[#B6844A] mt-6">${{ number_format((float) $agent->agencyTotal, 2) }}</div>
+                        <div class="mt-1 text-sm text-[#8c8c8c]">Agency Total</div>
+                    @endif
 
                 </div>
 

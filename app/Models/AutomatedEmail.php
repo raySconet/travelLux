@@ -2,6 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\AutomatedEmailAttachment;
+use App\Models\CruiseItinerary;
+use App\Models\CustomerAutomatedEmail;
+use App\Models\Destination;
+use App\Models\Product;
+use App\Models\ResortShip;
 use Illuminate\Database\Eloquent\Model;
 
 class AutomatedEmail extends Model

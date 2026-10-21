@@ -18,13 +18,18 @@ class CheckHistoryReportController extends Controller
 
     public function loadReport(Request $request)
     {
-        $beginDate = $request->beginDate;
-        $endDate = $request->endDate;
+        $dates = $request->validate([
+            'beginDate' => ['nullable', 'date_format:Y-m-d'],
+            'endDate' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:beginDate'],
+        ]);
+        $beginDate = $dates['beginDate'] ?? now()->subMonth()->toDateString();
+        $endDate = $dates['endDate'] ?? now()->toDateString();
 
         $user = Auth::user();
 
         $agents = User::query()
             ->where('isDeleted', 0)
+            ->where('id', '!=', 6680)
             ->whereHas('paidCommissions')
             ->when(!$user->isAdmin(), function ($query) use ($user) {
                 $query->where('id', $user->id);
@@ -39,13 +44,21 @@ class CheckHistoryReportController extends Controller
             $commissions = PaidCommission::with(['reservation.customer'])
                 ->where('agent_id', $agent->id)
                 ->whereBetween('check_date', [$beginDate, $endDate])
-                ->orderBy('check_date')
+                ->orderBy('id')
                 ->get()
             ;
 
             $agent->history = $commissions;
 
             $agent->totalPaid = $commissions->sum('amount');
+            if ((int) $agent->id === 8) {
+                $agent->agencyTotal = DB::table('reservations')
+                    ->where('commission_received', 1)->where('agent_commission_received', 1)
+                    ->whereIn('status', ['Paid in Full', 'Canceled w/ Insurance Payout', 'Canceled - Commission Protected'])
+                    ->where('checkin_date', '>=', $beginDate)->where('checkout_date', '<=', $endDate)
+                    ->where('agent_id', '!=', 6680)
+                    ->selectRaw('SUM(agency_commission - agent_commission) as total')->value('total');
+            }
         }
 
         $agents = $agents->filter(function ($agent) {

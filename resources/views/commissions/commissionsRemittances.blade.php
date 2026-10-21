@@ -14,7 +14,6 @@
         </div>
     </x-slot>
 
-
     <div class="bg-[#B6844A] shadow sm:rounded-lg p-6 w-[98%] mt-2 ml-3">
         <p class="text-base font-semibold text-white">Search For Reservations</p>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
@@ -120,20 +119,14 @@
 
 
                         <tr class="hover:bg-gray-50">
-
-
                             {{-- Customer --}}
                             <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
                                 {{ $customerName }}
                             </td>
 
-
-
                             {{-- Reservation --}}
                             <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
-
                                 <div class="flex items-center gap-2">
-
                                     <i
                                         class="fas fa-tag text-[#B6844A] cursor-pointer text-lg"
                                         title="Edit Reservation"
@@ -144,55 +137,36 @@
                                     <span>
                                         {{ $reservation->reservation_number }}
                                     </span>
-
                                 </div>
-
                             </td>
-
-
 
                             {{-- Group --}}
                             <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
                                 {{ $reservation->group_number }}
                             </td>
 
-
-
                             {{-- Product --}}
                             <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
                                 {{ $reservation->product?->product_name }}
                             </td>
-
-
 
                             {{-- Cost --}}
                             <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
                                 ${{ number_format($reservation->reservation_cost,2) }}
                             </td>
 
-
-
                             {{-- Checkout --}}
                             <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
-
                                 {{ \Carbon\Carbon::parse($reservation->checkout_date)->format('m/d/Y') }}
-
                             </td>
-
-
 
                             {{-- Commission --}}
                             <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
-
                                 ${{ number_format($reservation->agency_commission,2) }}
-
                             </td>
-
-
 
                             {{-- Commission Remittance --}}
                             <td class="px-4 py-3 border-b-2 border-[#dee2e6]">
-
                                 <div class="flex items-center gap-2 whitespace-nowrap">
 
 
@@ -245,62 +219,34 @@
 
 
                                 </div>
-
                             </td>
-
-
-
 
                             {{-- Agent --}}
                             <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
-
                                 {{ $agentName }}
-
-
                                 @if($reservation->agent?->email)
-
                                 <a href="mailto:{{ $reservation->agent->email }}">
-
                                     <i
                                         class="fas fa-envelope ml-2 cursor-pointer"
                                         title="Send Email">
                                     </i>
-
                                 </a>
-
                                 @endif
-
-
                             </td>
-
-
-
 
                             {{-- Name --}}
                             <td class="px-4 py-3 text-gray-600 border-b-2 border-[#dee2e6]">
-
                                 @if($reservation->reservation_name)
-
                                     <div class="flex justify-center">
-
                                         <i
                                             class="fas fa-clipboard-list text-[#B6844A] cursor-pointer"
                                             title="{{ $reservation->reservation_name }}">
                                         </i>
-
                                     </div>
-
                                 @endif
-
                             </td>
-
-
                         </tr>
-
-
                     @endforeach
-
-
                     </tbody>
 
                 </table>

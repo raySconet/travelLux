@@ -2,22 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class ReservationsByAgentReportController extends Controller
+class ReservationsByAgentReportController extends DataReportController
 {
-    private function checkAdmin()
-    {
-        if (!auth()->user()->isAdmin()) {
-            abort(403);
-        }
-    }
-
-    public function index()
-    {
-       $this->checkAdmin();
-       
-       return view('reports.reservationsByAgentReport');
-    }
-
+    protected string $report = 'reservationsByAgentReport';
 }

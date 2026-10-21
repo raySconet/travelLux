@@ -1,3 +1,5 @@
+import './reportTables';
+
 $(document).ready(function() {
     $.ajaxSetup({
         headers: {
@@ -128,9 +130,10 @@ $(document).ready(function() {
                 return;
         }
 
-        $('#beginDate').val(begin.toISOString().split('T')[0]);
+        const localDate = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        $('#beginDate').val(localDate(begin));
 
-        $('#endDate').val(end.toISOString().split('T')[0]);
+        $('#endDate').val(localDate(end));
 
     });
 
@@ -241,18 +244,19 @@ $(document).ready(function() {
                 }
 
                 let html = '';
+                const escapeText = value => $('<div>').text(value ?? '').html();
 
                 response.data.forEach(function(agent){
 
                     html += `
                         <tr>
-                            <td class="px-4 py-3 border-b border-[#dee2e6]">${agent.agent}</td>
-                            <td class="px-4 py-3 border-b border-[#dee2e6]">${agent.address}</td>
-                            <td class="px-4 py-3 border-b border-[#dee2e6]">${agent.phone ?? ''}</td>
-                            <td class="px-4 py-3 border-b border-[#dee2e6]">${agent.birth_date}</td>
-                            <td class="px-4 py-3 border-b border-[#dee2e6]">${agent.ssn ?? ''}</td>
-                            <td class="px-4 py-3 border-b border-[#dee2e6]">${agent.ein ?? ''}</td>
-                            <td class="px-4 py-3 border-b border-[#dee2e6]">${agent.postal_code ?? ''}</td>
+                            <td class="px-4 py-3 border-b border-[#dee2e6]">${escapeText(agent.agent)}</td>
+                            <td class="px-4 py-3 border-b border-[#dee2e6]">${escapeText(agent.address)}</td>
+                            <td class="px-4 py-3 border-b border-[#dee2e6]">${escapeText(agent.phone)}</td>
+                            <td class="px-4 py-3 border-b border-[#dee2e6]">${escapeText(agent.birth_date)}</td>
+                            <td class="px-4 py-3 border-b border-[#dee2e6]">${escapeText(agent.ssn)}</td>
+                            <td class="px-4 py-3 border-b border-[#dee2e6]">${escapeText(agent.ein)}</td>
+                            <td class="px-4 py-3 border-b border-[#dee2e6]">${escapeText(agent.postal_code)}</td>
                             <td class="px-4 py-3 border-b border-[#dee2e6]">$${agent.commission_paid}</td>
                         </tr>
                     `;

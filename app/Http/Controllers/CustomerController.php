@@ -63,7 +63,7 @@ class CustomerController extends Controller
     {
         $customer = new Customer();
         $isNewCustomer = true;
-        
+
         $states = Cache::rememberForever('states', function () {
             return State::select('id','name')
                 ->orderBy('name')
@@ -80,7 +80,7 @@ class CustomerController extends Controller
 
         return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','referralCustomers'));
     }
-    
+
     public function edit(Customer $customer)
     {
         $user = auth()->user();
@@ -99,13 +99,6 @@ class CustomerController extends Controller
                 ->get();
         });
 
-<<<<<<< HEAD
-        $availableForms = CustomersForm::where('is_deleted', 0)->where('is_active', 1)
-            ->whereHas('customersFormRequired', function ($q) {
-                $q->where('all_customers_required', 1);
-            })->get();
-=======
->>>>>>> e53932fb7025ef35767d0e21072f5bee7639f001
 
         $countries = Cache::rememberForever('countries', function () {
             return Country::select('id', 'name')
@@ -113,29 +106,7 @@ class CustomerController extends Controller
                 ->get();
         });
 
-<<<<<<< HEAD
-        $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted', 0)->orderBy('lname')->get();
-
-        $automatedEmails = $customer->automatedEmails()
-            ->select('id','customer_id','automated_email_id','reservation_id','date')
-            ->where(function ($q) {
-                $q->whereNull('reservation_id')
-                ->orWhere('reservation_id', '');
-            })
-            ->with(['automatedEmail:id,subject'])
-            ->orderByDesc('date')
-            ->get();
-
-        // $customer->load(['reservations.customerSurveys' => function ($q) { $q->where('submit_flag', 1); }]);
-
-        $invitations = $customer->customerInvitations()->orderByDesc('created_on')->get();
-
-        $intakeForms = $customer->customerIntakeForms()->orderByDesc('created_on')->get();
-
-        return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms','referralCustomers','automatedEmails','sentForms','invitations','intakeForms'));
-=======
         return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries'));
->>>>>>> e53932fb7025ef35767d0e21072f5bee7639f001
     }
 
     public function inviteNewCustomer(){

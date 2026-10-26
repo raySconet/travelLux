@@ -99,13 +99,10 @@ class CustomerController extends Controller
                 ->get();
         });
 
-<<<<<<< HEAD
         $availableForms = CustomersForm::where('is_deleted', 0)->where('is_active', 1)
             ->whereHas('customersFormRequired', function ($q) {
                 $q->where('all_customers_required', 1);
             })->get();
-=======
->>>>>>> e53932fb7025ef35767d0e21072f5bee7639f001
 
         $countries = Cache::rememberForever('countries', function () {
             return Country::select('id', 'name')
@@ -113,7 +110,6 @@ class CustomerController extends Controller
                 ->get();
         });
 
-<<<<<<< HEAD
         $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted', 0)->orderBy('lname')->get();
 
         $automatedEmails = $customer->automatedEmails()
@@ -133,9 +129,7 @@ class CustomerController extends Controller
         $intakeForms = $customer->customerIntakeForms()->orderByDesc('created_on')->get();
 
         return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','availableForms','referralCustomers','automatedEmails','sentForms','invitations','intakeForms'));
-=======
         return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries'));
->>>>>>> e53932fb7025ef35767d0e21072f5bee7639f001
     }
 
     public function inviteNewCustomer(){

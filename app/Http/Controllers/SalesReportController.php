@@ -2,13 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class SalesReportController extends Controller
+class SalesReportController extends DataReportController
 {
-    public function index()
-    {
-       return view('reports.salesReport');
-    }
-
+    protected string $report = 'salesReport';
 }

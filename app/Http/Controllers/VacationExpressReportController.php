@@ -2,21 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class VacationExpressReportController extends Controller
+class VacationExpressReportController extends DataReportController
 {
-    private function checkAdmin()
-    {
-        if (!auth()->user()->isAdmin()) {
-            abort(403);
-        }
-    }
-
-    public function index()
-    {
-       $this->checkAdmin();
-       return view('reports.vacationExpressReport');
-    }
-
+    protected string $report = 'vacationExpressReport';
 }

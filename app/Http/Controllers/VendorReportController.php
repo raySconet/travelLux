@@ -27,6 +27,8 @@ class VendorReportController extends Controller
             'resort:id,resort_ship_name'
         ])
         ->where('is_deleted',0)
+        ->where('agent_id', '!=', 6680)
+        ->whereHas('product')
         ->whereBetween('checkin_date',[
             $beginDate->toDateString(),
             $endDate->toDateString()
@@ -60,7 +62,8 @@ class VendorReportController extends Controller
 
         $totalSales = $reservations->sum('reservation_cost');
 
-        $vendors = $reservations->groupBy('product_id');
+        $vendors = $reservations->groupBy('product_id')
+            ->sortBy(fn ($rows) => $rows->first()->product->product_name, SORT_NATURAL | SORT_FLAG_CASE);
 
         return response()->view('reports.partials.vendorReportTable',compact('vendors','totalAgentCommission','totalSales'));
     }

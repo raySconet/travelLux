@@ -2,21 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class FinalAgencyCommissionReportController extends Controller
+class FinalAgencyCommissionReportController extends DataReportController
 {
-    private function checkAdmin()
-    {
-        if (!auth()->user()->isAdmin()) {
-            abort(403);
-        }
-    }
-
-    public function index()
-    {
-       $this->checkAdmin(); 
-       return view('reports.finalAgencyCommissionReport');
-    }
-
+    protected string $report = 'finalAgencyCommissionReport';
 }

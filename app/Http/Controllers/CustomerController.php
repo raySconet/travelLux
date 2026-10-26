@@ -63,7 +63,7 @@ class CustomerController extends Controller
     {
         $customer = new Customer();
         $isNewCustomer = true;
-        
+
         $states = Cache::rememberForever('states', function () {
             return State::select('id','name')
                 ->orderBy('name')
@@ -80,7 +80,7 @@ class CustomerController extends Controller
 
         return view('customers.customerDetails', compact('customer','isNewCustomer','states','countries','referralCustomers'));
     }
-    
+
     public function edit(Customer $customer)
     {
         $user = auth()->user();

@@ -22,7 +22,7 @@
        
         <div class="p-3 bg-white shadow sm:rounded-lg" id="1099ReportContainer">
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
+                <table class="min-w-full text-sm" data-report-sortable>
                     <thead class="bg-white">
                         <tr>
                             <th colspan="8" class="px-6 py-6 text-center">

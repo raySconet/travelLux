@@ -147,26 +147,13 @@ class ReservationController extends Controller
     {
         $reservation = new Reservation();
         $isNewReservation = true;
-<<<<<<< HEAD
-
-=======
->>>>>>> e53932fb7025ef35767d0e21072f5bee7639f001
         $user = auth()->user();
         $selectedCustomer = null;
 
-<<<<<<< HEAD
-        $products = Product::orderBy('product_name')->where('is_deleted',0)->get();
-        $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted',0)->orderBy('lname')->get();
-        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)->where('created_by', auth()->id())->orderBy('date', 'desc')->get();
-        $overdueTasksCount = ReservationTask::where('reservation_id', $reservation->id)->where('is_deleted', 0)->where('is_completed', 0)->whereDate('due_date', '<=', now())->count();
-
-        $customersPayload = Cache::remember('customers_payload_'.$user->id, 600, function () use ($user) {
-=======
         $users = Cache::remember('reservation_users', 600, fn () =>
             User::select('id','fname','lname','email','commission')
                 ->where('isDeleted', 0)->orderBy('lname')->orderBy('fname')->get()
         );
->>>>>>> e53932fb7025ef35767d0e21072f5bee7639f001
 
        $products = Product::select('id', 'product_name')
             ->where('is_deleted', 0)
@@ -215,29 +202,15 @@ class ReservationController extends Controller
             'paidInFullAudits.modifiedByUser',
         ]);
 
-<<<<<<< HEAD
-                                });
-                                $q->where('is_deleted', 0);
-                            })
-                            ->get();
-
-        $referralCustomers = Customer::where('agent_id', auth()->id())->where('is_deleted',0)->orderBy('lname')->get();
-        $itineraryTrips = ItineraryTrip::where('is_deleted', 0)->where('created_by', auth()->id())->orderBy('date', 'desc')->get();
-        $linkedReservations = ReservationLink::where('reservation_id', $reservation->id)->where('is_linked', 1) ->with('linkedReservation')->get();
-        $overdueTasksCount = ReservationTask::where('reservation_id', $reservation->id)->where('is_deleted', 0)->where('is_completed', 0)->whereDate('due_date', '<=', now())->count();
-        $timelineTasks = $reservation->tasks()->with('agent')->where('is_deleted',0)->where('is_timeline_task',1)->get();
-        $generalTasks = $reservation->tasks()->with('agent')->where('is_deleted',0)->where('is_timeline_task',0)->get();
-=======
         $users = Cache::remember('reservation_users', 600, fn () =>
             User::select('id','fname','lname','email','commission')
                 ->where('isDeleted', 0)->orderBy('lname')->orderBy('fname')->get()
         );
-  
+
         $products = Product::select('id', 'product_name')
             ->where('is_deleted', 0)
             ->orderBy('product_name')
             ->get();
->>>>>>> e53932fb7025ef35767d0e21072f5bee7639f001
 
         $destinations = Destination::select('id', 'destination_name')
             ->where('is_deleted', 0)
@@ -271,7 +244,7 @@ class ReservationController extends Controller
         $relevantAgentId = $reservation->agent_id ?? $user->id;
         $initialCustomers = $this->getCustomersForAgent($relevantAgentId);
         $initialAgentId = $reservation->agent_id ?? ($user->isAdmin() ? null : $user->id);
-        
+
         return view('reservations.reservationDetails', compact('users', 'reservation', 'isNewReservation', 'products', 'destinations', 'resorts', 'cruises','overdueTasksCount', 'selectedCustomer', 'initialCustomers', 'initialAgentId'));
     }
 

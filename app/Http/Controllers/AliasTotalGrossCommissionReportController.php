@@ -2,13 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class AliasTotalGrossCommissionReportController extends Controller
+class AliasTotalGrossCommissionReportController extends DataReportController
 {
-    public function index()
-    {
-       return view('reports.aliasTotalGrossCommission');
-    }
-
+    protected string $report = 'aliasTotalGrossCommission';
 }

@@ -230,6 +230,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/itinerary/{itinerary}/duplicate', [ItineraryController::class, 'duplicate'])->name('itinerary.duplicate');
 });
+
 Route::middleware('auth')->group(function(){
     Route::get('/customer-list', [CustomerController::class, 'index'])->name('customers.customerList');
     Route::get('/customer/create', [CustomerController::class,'create'])->name('customers.create');
@@ -407,6 +408,9 @@ Route::middleware('auth')->group(function(){
     Route::get('/reservationsNotPaidByTraveluxReport', [ReservationsNotPaidByTraveluxReportController::class,'index'])->name('reports.reservationsNotPaidByTraveluxReport');
     Route::get('/reservationsPaidByTraveluxReport', [ReservationsPaidByTraveluxReportController::class,'index'])->name('reports.reservationsPaidByTraveluxReport');
     Route::get('/unknownReservationsReport',[UnknownReservationsReportController::class,'index'])->name('reports.unknownReservationsReport');
+    Route::post('/unknownReservationsReport/checked', [UnknownReservationsReportController::class, 'updateChecked'])->name('reports.unknownReservationsReport.checked');
+    Route::get('/unknownReservationsReport/{reservation}/edit', [UnknownReservationsReportController::class, 'edit'])->whereNumber('reservation')->name('reports.unknownReservationsReport.edit');
+    Route::put('/unknownReservationsReport/{reservation}', [UnknownReservationsReportController::class, 'update'])->whereNumber('reservation')->name('reports.unknownReservationsReport.update');
     Route::get('/bookedTripsByStateReport', [BookedTripsByStateReportController::class,'index'])->name('reports.bookedTripsByStateReport');
     Route::get('/reservationsChangesReport', [ReservationsChangesReportController::class,'index'])->name('reports.reservationsChangesReport');
     Route::get('/reservationsByAgentReport', [ReservationsByAgentReportController::class,'index'])->name('reports.reservationsByAgentReport');
@@ -414,6 +418,9 @@ Route::middleware('auth')->group(function(){
     Route::get('/agentSalesByProductReport', [AgentSalesByProductReportController::class,'index'])->name('reports.agentSalesByProductReport');
     Route::get('/totalSalesReport', [TotalSalesReportController::class,'index'])->name('reports.totalSalesReport');
     Route::get('/agentExpensesReport', [AgentExpensesReportController::class,'index'])->name('reports.agentExpensesReport');
+    Route::post('/agentExpensesReport/expenses', [AgentExpensesReportController::class, 'store'])->name('reports.agentExpensesReport.store');
+    Route::patch('/agentExpensesReport/expenses/{expense}', [AgentExpensesReportController::class, 'update'])->whereNumber('expense')->name('reports.agentExpensesReport.update');
+    Route::delete('/agentExpensesReport/expenses/{expense}', [AgentExpensesReportController::class, 'destroy'])->whereNumber('expense')->name('reports.agentExpensesReport.destroy');
     Route::get('/aliasTotalSalesReport', [AliasTotalSalesReportController::class,'index'])->name('reports.aliasTotalSalesReport');
     Route::get('/aliasTotalGrossCommission', [AliasTotalGrossCommissionReportController::class,'index'])->name('reports.aliasTotalGrossCommission');
     Route::get('/allReservationsByDateReport', [AllReservationsByDateReportController::class,'index'])->name('reports.allReservationsByDateReport');

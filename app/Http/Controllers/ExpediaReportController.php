@@ -2,21 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class ExpediaReportController extends Controller
+class ExpediaReportController extends DataReportController
 {
-    private function checkAdmin()
-    {
-        if (!auth()->user()->isAdmin()) {
-            abort(403);
-        }
-    }
-
-    public function index()
-    {
-       $this->checkAdmin();
-       return view('reports.expediaReport');
-    }
-
+    protected string $report = 'expediaReport';
 }

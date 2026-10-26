@@ -59,18 +59,7 @@
             @vite('resources/js/reservations.js')
         @endif
 
-        @if(request()->is('vendorReport') || request()->is('1099Report') || request()->is('checkHistoryReport') || request()->is('currentChecksReport') ||
-            request()->is('commissionClaimReport') || request()->is('reservationsNotPaidByALTReport') || request()->is('reservationsPaidByALTReport') ||
-            request()->is('unknownReservationsReport') || request()->is('bookedTripsByStateReport') || request()->is('reservationsChangesReport') ||
-            request()->is('reservationsByAgentReport') || request()->is('productSalesByAgentReport') || request()->is('agentSalesByProductReport') ||
-            request()->is('totalSalesReport') || request()->is('agentExpensesReport') || request()->is('aliasTotalSalesReport') || request()->is('aliasTotalGrossCommission') ||
-            request()->is('allReservationsByDateReport') || request()->is('allTripsByTravelDateReport') || request()->is('top15ExpensiveTripsReport') ||
-            request()->is('cruisesReport') || request()->is('productSalesWithDepositByAgentReport') || request()->is('finalAgencyCommissionReport') ||
-            request()->is('agentsReport') || request()->is('bookedReservationsPerMonthReport') || request()->is('reservationsLeadReport') ||
-            request()->is('totalCommissionReport') || request()->is('hotelOnlyReport') || request()->is('classicVacationsReport') ||
-            request()->is('pleasantEvokeReport') || request()->is('appleVacationsReport') || request()->is('travelImpressionsReport') ||
-            request()->is('vacationExpressReport') || request()->is('expediaReport') || request()->is('rebookingRateReport') || request()->is('salesReport')
-        )
+        @if(request()->is('vendorReport', '1099Report', 'checkHistoryReport', 'currentChecksReport', 'commissionClaimReport'))
             @vite('resources/js/reports.js')
         @endif
 

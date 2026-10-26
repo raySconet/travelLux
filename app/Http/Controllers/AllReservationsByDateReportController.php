@@ -2,13 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class AllReservationsByDateReportController extends Controller
+class AllReservationsByDateReportController extends DataReportController
 {
-    public function index()
-    {
-       return view('reports.allReservationsByDateReport');
-    }
-
+    protected string $report = 'allReservationsByDateReport';
 }

@@ -103,7 +103,6 @@ class StatementsController extends Controller
             }
         }
 
-        // created_at / updated_at are set by Eloquent
         $statementData = [
             'statement_name'     => $statementName,
             'original_file_name' => $originalFileName,
@@ -223,7 +222,6 @@ class StatementsController extends Controller
     }
 
     // ----------------------------------------------------------- //
-    // Files live in storage (not public), so they can only be opened through viewStatementFile()
     private function getStatementsUploadDir()
     {
         $disk = Storage::disk(self::UPLOAD_DISK);

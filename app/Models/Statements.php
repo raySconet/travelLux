@@ -31,7 +31,6 @@ class Statements extends Model
     }
 
     // ----------------------------------------------------------- //
-    // Saved statements that still have at least one unlinked row
     public static function loadStatements()
     {
         $itemsSummary = DB::table('statement_items')
@@ -58,7 +57,6 @@ class Statements extends Model
     }
 
     // ----------------------------------------------------------- //
-    // Returns the statement row (object) or null
     public static function getStatementById($statementId)
     {
         return DB::table('statements AS S')
@@ -71,7 +69,6 @@ class Statements extends Model
     }
 
     // ----------------------------------------------------------- //
-    // Returns the new statement id, or -1 on failure
     public static function insertStatement(array $statementData, array $items)
     {
         try {
@@ -96,7 +93,6 @@ class Statements extends Model
     }
 
     // ----------------------------------------------------------- //
-    // Returns 1 on success, -1 on failure
     public static function deleteStatement($statementId)
     {
         $statementId = (int)$statementId;

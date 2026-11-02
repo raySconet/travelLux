@@ -47,7 +47,6 @@ class StatementItems extends Model
     }
 
     // ----------------------------------------------------------- //
-    // Used by Commission Remittances: [reservationId => attachedCount]
     public static function getStatementAttachmentCounts($reservationIds)
     {
         $counts = [];
@@ -75,7 +74,6 @@ class StatementItems extends Model
     }
 
     // ----------------------------------------------------------- //
-    // Used by Commission Remittances: returns the reservation row (object) or null
     public static function getReservationForStatements($reservationId)
     {
         return DB::table('reservations AS R')
@@ -87,7 +85,6 @@ class StatementItems extends Model
     }
 
     // ----------------------------------------------------------- //
-    // Used by Commission Remittances
     public static function getAttachedStatementItems($reservationId)
     {
         return DB::table('statement_items AS SI')
@@ -105,7 +102,6 @@ class StatementItems extends Model
     }
 
     // ----------------------------------------------------------- //
-    // Used by Commission Remittances
     public static function getUnlinkedStatementItems()
     {
         return DB::table('statement_items AS SI')
@@ -124,7 +120,6 @@ class StatementItems extends Model
     }
 
     // ----------------------------------------------------------- //
-    // Returns 1 on success, 0 if the row is already linked / deleted, -1 on error
     public static function attachStatementItem($statementItemId, $reservationId)
     {
         try {
@@ -148,7 +143,6 @@ class StatementItems extends Model
     }
 
     // ----------------------------------------------------------- //
-    // Returns 1 on success, 0 if the row isn't attached to this reservation, -1 on error
     public static function detachStatementItem($statementItemId, $reservationId)
     {
         try {

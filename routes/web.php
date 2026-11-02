@@ -71,6 +71,7 @@ use App\Http\Controllers\IntakeFormController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\CustomerSectionController;
 use App\Http\Controllers\ReservationSectionController;
+use App\Http\Controllers\StatementsController;
 
 Route::get('/', function () {
     return view('auth/login');
@@ -385,6 +386,21 @@ Route::middleware('auth')->group(function(){
 
     Route::get('/checkingInThisWeek', [CheckingInThisWeekController::class,'index'])->name('dashboards.checkingInThisWeek');
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/statements', [StatementsController::class, 'index'])->name('statements.index');
+
+    Route::prefix('Statements')
+        ->controller(StatementsController::class)
+        ->group(function () {
+            Route::post('loadStatementsList', 'loadStatementsList')->name('statements.list');
+            Route::post('saveStatement', 'saveStatement')->name('statements.save');
+            Route::get('viewStatementFile/{statementId?}', 'viewStatementFile')->name('statements.file');
+            Route::post('getStatementItems', 'getStatementItems')->name('statements.items');
+            Route::post('deleteStatement', 'deleteStatement')->name('statements.delete');
+        });
+});
+
 Route::middleware('auth')->group(function(){
     Route::get('/vendorReport', [VendorReportController::class, 'index'])->name('reports.vendorReport');
     Route::post('/vendorReport/load', [VendorReportController::class, 'loadReport'])->name('reports.vendorReport.load');

@@ -73,6 +73,10 @@
             @vite('resources/js/commissions.js')
         @endif
 
+        @if(request()->is('statements'))
+            @vite(['resources/js/statements.js', 'resources/css/app.css'])
+        @endif
+
         @if(request()->is('vendor-list') || request()->is('vendor-list/*'))
             @vite('resources/js/vendors.js')
         @endif

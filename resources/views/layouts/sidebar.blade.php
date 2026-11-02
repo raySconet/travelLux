@@ -154,6 +154,7 @@
                 <div x-show="open" x-cloak class="text-sm mt-2 space-y-3"  >
                     <a href="/commissions-remittances" class="block py-1 sidebarA">Commission Remittances <i class="text-lg fas fa-download"></i></a>
                     <a href="/checkWriter" class="block py-1 sidebarA">Check Writer <i class="text-lg fas fa-pen"></i></a>
+                    <a href="/statements" class="block py-1 sidebarA">Statements <i class="text-lg fas fa-receipt"></i></a>
                 </div>
             </li>
         @endif

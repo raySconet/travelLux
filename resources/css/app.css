@@ -190,3 +190,476 @@ select option {
 /* ################################### */
 /* end of alpine tabs */
 /* ################################### */
+
+/* ################################### */
+/* Start of Statements */
+/* ################################### */
+
+/* Variables are defined on the page wrapper AND the modals (the modals sit outside the wrapper) */
+.statementsContainer,
+.stmtModal {
+    --stmtAccent: #B6844A;
+    --stmtAccentSoft: rgba(182, 132, 74, 0.09);
+    --stmtBorder: #e3e6ea;
+    --stmtText: #2f3a45;
+    --stmtMuted: #7b8794;
+    --stmtSuccess: #2e9d5b;
+    --stmtWarning: #c98000;
+    --stmtDanger: #d64545;
+}
+
+.stmtFileIcon .fa-file-alt,
+.stmtFileLink .fa-file-alt {
+    color: #5b6b7b;
+}
+
+/* ---------- Tables (replaces Bootstrap .table / .archerTable) ---------- */
+.stmtTable {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--stmtText);
+    font-size: 14px;
+    background: transparent;
+}
+
+.stmtTable th,
+.stmtTable td {
+    padding: 0.75rem;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+}
+
+.stmtTable thead th {
+    vertical-align: bottom;
+    border-top: none;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: var(--stmtText);
+}
+
+.stmtTable tbody tr:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+/* ---------- Cards ---------- */
+.stmtCard {
+    background: #fff;
+    border: 1px solid var(--stmtBorder);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+}
+
+.stmtCardTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--stmtText);
+}
+
+.stmtCardTitle > div {
+    display: flex;
+    align-items: center;
+}
+
+.stmtCardTitle > div > i {
+    color: var(--stmtAccent);
+    margin-right: 8px;
+}
+
+/* ---------- Dropzone ---------- */
+.stmtDropzone {
+    border: 2px dashed #cfd5dc;
+    border-radius: 10px;
+    background: #fafbfc;
+    padding: 36px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.stmtDropzone:hover,
+.stmtDropzone:focus,
+.stmtDropzone.stmtDragOver {
+    border-color: var(--stmtAccent);
+    background: var(--stmtAccentSoft);
+    outline: none;
+}
+
+.stmtDropzone.stmtDragOver {
+    transform: scale(1.01);
+}
+
+.stmtDropzoneIcon {
+    font-size: 44px;
+    color: var(--stmtAccent);
+    margin-bottom: 8px;
+}
+
+.stmtDropzoneText {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--stmtText);
+}
+
+.stmtDropzoneOr {
+    margin: 8px 0;
+    font-size: 13px;
+    color: var(--stmtMuted);
+}
+
+.stmtDropzoneHint {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--stmtMuted);
+}
+
+/* ---------- Selected file ---------- */
+.stmtFileInfo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid var(--stmtBorder);
+    border-radius: 10px;
+    background: #fafbfc;
+    padding: 14px 16px;
+}
+
+.stmtFileIcon {
+    font-size: 30px;
+    color: var(--stmtDanger);
+}
+
+.stmtFileDetails {
+    flex: 1;
+    min-width: 0;
+}
+
+.stmtFileName {
+    font-weight: 600;
+    color: var(--stmtText);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stmtFileMeta {
+    font-size: 12px;
+    color: var(--stmtMuted);
+}
+
+.stmtFileStatus {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.stmtFileStatus i {
+    margin-right: 6px;
+}
+
+.stmtStatus-scanning { color: var(--stmtAccent); }
+.stmtStatus-done     { color: var(--stmtSuccess); }
+.stmtStatus-warning  { color: var(--stmtWarning); }
+.stmtStatus-error    { color: var(--stmtDanger); }
+
+/* ---------- Icon buttons ---------- */
+.stmtIconBtn {
+    border: none;
+    background: transparent;
+    color: var(--stmtMuted);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.stmtIconBtn:hover {
+    background: var(--stmtAccentSoft);
+    color: var(--stmtAccent);
+}
+
+.stmtIconBtn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--stmtAccentSoft);
+}
+
+.stmtFileRemoveBtn:hover,
+.stmtRemoveRowBtn:hover,
+.stmtDeleteBtn:hover {
+    background: #fdecec;
+    color: var(--stmtDanger);
+}
+
+/* ---------- Scanned results ---------- */
+.stmtBadge {
+    margin-left: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--stmtAccentSoft);
+    color: var(--stmtAccent);
+}
+
+.stmtBadge:empty {
+    display: none;
+}
+
+.stmtResultsTotal {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--stmtMuted);
+}
+
+.stmtResultsTotal strong {
+    color: var(--stmtText);
+    font-size: 16px;
+    margin-left: 4px;
+}
+
+.stmtScanNotice {
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #f3d999;
+    background: #fff8e6;
+    color: #8a6100;
+    font-size: 13px;
+}
+
+.stmtScanNotice i {
+    margin-top: 2px;
+}
+
+.stmtTableWrapper {
+    overflow-x: auto;
+    border: 1px solid var(--stmtBorder);
+    border-radius: 8px;
+}
+
+.stmtEditTable {
+    min-width: 1000px;
+}
+
+.stmtEditTable th,
+.stmtSavedTable th {
+    white-space: nowrap;
+}
+
+.stmtEditTable td {
+    padding: 6px 8px !important;
+    vertical-align: middle !important;
+}
+
+.stmtRowNumber {
+    width: 40px;
+    text-align: center !important;
+    font-size: 12px;
+    color: var(--stmtMuted);
+}
+
+.stmtCellInput {
+    width: 100%;
+    min-width: 90px;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--stmtText);
+    font-size: 13px;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.stmtCellInput:hover {
+    border-color: var(--stmtBorder);
+    background: #fff;
+}
+
+.stmtCellInput:focus {
+    outline: none;
+    border-color: var(--stmtAccent);
+    background: #fff;
+    box-shadow: 0 0 0 3px var(--stmtAccentSoft);
+}
+
+.stmtCellInput::placeholder {
+    color: #c3c9d0;
+}
+
+.stmtCellInput.stmtInvalid {
+    border-color: var(--stmtDanger);
+    background: #fdf1f1;
+}
+
+.stmtAmountInput {
+    text-align: left;
+}
+
+.stmtRowActions {
+    width: 48px;
+    text-align: center !important;
+}
+
+.stmtResultsButtons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.stmtResultsButtons > div {
+    display: flex;
+    gap: 10px;
+}
+
+/* ---------- Saved statements ---------- */
+.stmtFlashMessage {
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #bfe5cd;
+    background: #edf8f1;
+    color: var(--stmtSuccess);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.stmtFlashMessage i {
+    margin-right: 8px;
+}
+
+.stmtSavedName {
+    font-weight: 600;
+    color: var(--stmtText);
+}
+
+.stmtFileLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 260px;
+    color: var(--stmtText);
+}
+
+.stmtFileLink span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stmtFileLink i {
+    color: var(--stmtDanger);
+}
+
+.stmtFileLink:hover {
+    color: var(--stmtAccent);
+    text-decoration: none;
+}
+
+.stmtSavedActions {
+    white-space: nowrap;
+    text-align: right !important;
+}
+
+.stmtSubText,
+.stmtMutedText {
+    font-size: 12px;
+    color: var(--stmtMuted);
+}
+
+.stmtLinkedPill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #eef0f3;
+    color: var(--stmtMuted);
+    white-space: nowrap;
+}
+
+.stmtLinkedPill.stmtPartiallyLinked {
+    background: #fff4dc;
+    color: var(--stmtWarning);
+}
+
+.stmtLinkedPill.stmtLinked {
+    background: #e6f5ec;
+    color: var(--stmtSuccess);
+}
+
+.stmtEmptyState {
+    text-align: center;
+    padding: 34px 10px;
+    color: var(--stmtMuted);
+}
+
+.stmtEmptyState i {
+    display: block;
+    font-size: 36px;
+    margin-bottom: 10px;
+    color: #c3c9d0;
+}
+
+/* ---------- Modals ---------- */
+.stmtModalMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--stmtMuted);
+}
+
+.stmtModalMeta strong,
+.stmtModalMeta a {
+    color: var(--stmtText);
+}
+
+.stmtModalMeta a:hover {
+    color: var(--stmtAccent);
+}
+
+.stmtItemsTableWrapper {
+    max-height: 55vh;
+    overflow: auto;
+    border: 1px solid var(--stmtBorder);
+    border-radius: 8px;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 767px) {
+    .stmtFileInfo {
+        flex-wrap: wrap;
+    }
+
+    .stmtResultsButtons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .stmtResultsButtons > div {
+        flex-direction: column;
+    }
+}
+
+/* ################################### */
+/* End of Statements */
+/* ################################### */
